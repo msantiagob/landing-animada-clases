@@ -33,12 +33,12 @@ RUN mkdir -p /app/data && chown -R astro:nodejs /app/data
 USER astro
 
 # Exponer puerto
-EXPOSE 3000
+EXPOSE 8080
 
 # Variables de entorno
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=8080
 ENV DATABASE_PATH=/tmp/database.sqlite
 
 # Comando de inicio
