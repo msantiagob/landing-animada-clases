@@ -2,7 +2,8 @@ import Database from 'better-sqlite3';
 import { join } from 'path';
 
 // Configuración de la base de datos
-const dbPath = join(process.cwd(), 'database.sqlite');
+const dbPath = process.env.DATABASE_PATH || join(process.cwd(), 'database.sqlite');
+console.log('🗃️  Database path:', dbPath);
 const db = new Database(dbPath);
 
 // Configurar WAL mode para mejor rendimiento
