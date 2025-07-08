@@ -37,6 +37,7 @@ EXPOSE 3000
 
 # Variables de entorno
 ENV NODE_ENV=production
+ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV DATABASE_PATH=/app/data/database.sqlite
 
