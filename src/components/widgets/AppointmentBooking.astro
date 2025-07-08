@@ -86,7 +86,7 @@ const {
         </div>
       </div>
 
-      <form id="appointmentForm">
+      <form id="appointmentForm" method="post" action="/api/appointments">
         <div class="space-y-4">
           <div>
             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -205,6 +205,7 @@ const {
   let selectedDate = null;
   let selectedTime = null;
   let availableSlots = [];
+  let isSubmitting = false;
 
   // Initialize calendar
   function initCalendar() {
@@ -372,11 +373,23 @@ const {
   document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
+    // Prevenir envíos duplicados
+    if (isSubmitting) {
+      return;
+    }
+
+    // Forzar que siempre sea POST
+    if (this.method !== 'post') {
+      this.method = 'post';
+    }
+
     if (!selectedDate || !selectedTime) {
       document.getElementById('errorText').textContent = 'Por favor selecciona una fecha y hora.';
       document.getElementById('errorMessage').classList.remove('hidden');
       return;
     }
+
+    isSubmitting = true;
 
     const formData = new FormData(this);
     const appointmentData = {
@@ -402,6 +415,7 @@ const {
     submitBtn.disabled = true;
 
     try {
+      // Asegurar que siempre se use POST
       const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: {
@@ -409,6 +423,11 @@ const {
         },
         body: JSON.stringify(appointmentData)
       });
+
+      // Verificar que la respuesta es válida
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
 
@@ -440,6 +459,7 @@ const {
       if (selectedDate && selectedTime) {
         submitBtn.disabled = false;
       }
+      isSubmitting = false;
     }
   });
 
