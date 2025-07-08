@@ -370,11 +370,36 @@ const metadata = {
 
     // Load stats
     async function loadStats() {
-      // Mock data - replace with actual API calls
-      document.getElementById('totalPages').textContent = '12';
-      document.getElementById('publishedPages').textContent = '8';
-      document.getElementById('monthlyViews').textContent = '4,567';
-      document.getElementById('conversions').textContent = '234';
+      try {
+        console.log('🔄 Cargando estadísticas...');
+        const response = await fetch('/api/admin/landing-pages', {
+          credentials: 'include'
+        });
+        console.log('📊 Response status:', response.status);
+        console.log('📊 Response headers:', [...response.headers.entries()]);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Error response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('📊 Response data:', data);
+        
+        if (data.success) {
+          document.getElementById('totalPages').textContent = data.stats.total || 0;
+          document.getElementById('publishedPages').textContent = data.stats.published || 0;
+          document.getElementById('monthlyViews').textContent = '0'; // TODO: Implement analytics
+          document.getElementById('conversions').textContent = '0'; // TODO: Implement analytics
+        }
+      } catch (error) {
+        console.error('Error loading stats:', error);
+        document.getElementById('totalPages').textContent = '0';
+        document.getElementById('publishedPages').textContent = '0';
+        document.getElementById('monthlyViews').textContent = '0';
+        document.getElementById('conversions').textContent = '0';
+      }
     }
 
     // Load pages
@@ -382,131 +407,126 @@ const metadata = {
       const grid = document.getElementById('pagesGrid');
       const emptyState = document.getElementById('emptyState');
       
-      // Mock pages data - replace with actual API call
-      const pages = [
-        {
-          id: 1,
-          name: 'Servicios de Consultoría',
-          slug: 'consultoria',
-          type: 'lead-generation',
-          status: 'published',
-          description: 'Página para captar leads de servicios de consultoría',
-          views: 1245,
-          conversions: 45,
-          conversionRate: 3.6,
-          lastModified: new Date()
-        },
-        {
-          id: 2,
-          name: 'Lanzamiento de Producto',
-          slug: 'producto-nuevo',
-          type: 'product',
-          status: 'draft',
-          description: 'Página de lanzamiento del nuevo producto',
-          views: 0,
-          conversions: 0,
-          conversionRate: 0,
-          lastModified: new Date()
-        },
-        {
-          id: 3,
-          name: 'Webinar Gratuito',
-          slug: 'webinar',
-          type: 'event',
-          status: 'published',
-          description: 'Registro para webinar gratuito',
-          views: 856,
-          conversions: 124,
-          conversionRate: 14.5,
-          lastModified: new Date()
+      try {
+        console.log('🔄 Cargando páginas...');
+        console.log('🔄 Filtros actuales:', currentFilters);
+        
+        const params = new URLSearchParams();
+        if (currentFilters.status) params.append('status', currentFilters.status);
+        if (currentFilters.type) params.append('type', currentFilters.type);
+        
+        console.log('🔄 URL final:', `/api/admin/landing-pages?${params}`);
+        
+        const response = await fetch(`/api/admin/landing-pages?${params}`, {
+          credentials: 'include'
+        });
+        
+        console.log('📄 Response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Error response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
         }
-      ];
+        
+        const data = await response.json();
+        console.log('📄 Response data:', data);
+        
+        if (!data.success) {
+          console.error('Error loading pages:', data.error);
+          grid.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+        
+        const pages = data.pages || [];
+        console.log('📄 Páginas encontradas:', pages.length);
+        console.log('📄 Páginas:', pages);
+        
+        if (pages.length === 0) {
+          console.log('📄 No hay páginas, mostrando empty state');
+          grid.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
 
-      // Apply filters
-      let filteredPages = pages;
-      if (currentFilters.status) {
-        filteredPages = filteredPages.filter(page => page.status === currentFilters.status);
-      }
-      if (currentFilters.type) {
-        filteredPages = filteredPages.filter(page => page.type === currentFilters.type);
-      }
+        console.log('📄 Mostrando grid con', pages.length, 'páginas');
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
 
-      if (filteredPages.length === 0) {
+        grid.innerHTML = pages.map(page => `
+          <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+            <div class="page-preview relative">
+              <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+                <div class="text-center">
+                  <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                  </svg>
+                  <p class="text-sm">Vista previa no disponible</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-semibold text-gray-900 truncate">${page.name}</h3>
+                <span class="px-2 py-1 text-xs rounded-full status-${page.status}">
+                  ${getStatusText(page.status)}
+                </span>
+              </div>
+              
+              <p class="text-sm text-gray-600 mb-3 line-clamp-2">${page.config.description || 'Sin descripción'}</p>
+              
+              <div class="grid grid-cols-3 gap-2 text-center mb-3 text-xs">
+                <div>
+                  <div class="font-semibold text-gray-900">0</div>
+                  <div class="text-gray-500">Visitas</div>
+                </div>
+                <div>
+                  <div class="font-semibold text-gray-900">0</div>
+                  <div class="text-gray-500">Conversiones</div>
+                </div>
+                <div>
+                  <div class="font-semibold text-gray-900">0%</div>
+                  <div class="text-gray-500">Tasa conv.</div>
+                </div>
+              </div>
+              
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-gray-400">/${page.slug}</span>
+                <div class="flex space-x-1">
+                  <button onclick="viewPage(${page.id})" class="text-blue-600 hover:text-blue-800 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                  </button>
+                  <button onclick="editPage(${page.id})" class="text-green-600 hover:text-green-800 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  <button onclick="duplicatePage(${page.id})" class="text-purple-600 hover:text-purple-800 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                  </button>
+                  <button onclick="deletePage(${page.id})" class="text-red-600 hover:text-red-800 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        
+      } catch (error) {
+        console.error('Error loading pages:', error);
         grid.classList.add('hidden');
         emptyState.classList.remove('hidden');
-        return;
       }
-
-      grid.classList.remove('hidden');
-      emptyState.classList.add('hidden');
-
-      grid.innerHTML = filteredPages.map(page => `
-        <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-          <div class="page-preview relative">
-            <div class="absolute inset-0 flex items-center justify-center text-gray-400">
-              <div class="text-center">
-                <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                </svg>
-                <p class="text-sm">Vista previa no disponible</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-semibold text-gray-900 truncate">${page.name}</h3>
-              <span class="px-2 py-1 text-xs rounded-full status-${page.status}">
-                ${getStatusText(page.status)}
-              </span>
-            </div>
-            
-            <p class="text-sm text-gray-600 mb-3 line-clamp-2">${page.description}</p>
-            
-            <div class="grid grid-cols-3 gap-2 text-center mb-3 text-xs">
-              <div>
-                <div class="font-semibold text-gray-900">${page.views.toLocaleString()}</div>
-                <div class="text-gray-500">Visitas</div>
-              </div>
-              <div>
-                <div class="font-semibold text-gray-900">${page.conversions}</div>
-                <div class="text-gray-500">Conversiones</div>
-              </div>
-              <div>
-                <div class="font-semibold text-gray-900">${page.conversionRate}%</div>
-                <div class="text-gray-500">Tasa conv.</div>
-              </div>
-            </div>
-            
-            <div class="flex justify-between items-center">
-              <span class="text-xs text-gray-400">/${page.slug}</span>
-              <div class="flex space-x-1">
-                <button onclick="viewPage(${page.id})" class="text-blue-600 hover:text-blue-800 text-sm">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                  </svg>
-                </button>
-                <button onclick="editPage(${page.id})" class="text-green-600 hover:text-green-800 text-sm">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                  </svg>
-                </button>
-                <button onclick="duplicatePage(${page.id})" class="text-purple-600 hover:text-purple-800 text-sm">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                  </svg>
-                </button>
-                <button onclick="deletePage(${page.id})" class="text-red-600 hover:text-red-800 text-sm">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `).join('');
     }
 
     function getStatusText(status) {
@@ -578,22 +598,37 @@ const metadata = {
       window.open(`/landing/${id}`, '_blank');
     }
 
-    function editPage(id) {
-      // Mock page data - replace with actual API call
-      const page = {
-        id,
-        name: 'Página ' + id,
-        slug: 'pagina-' + id,
-        type: 'lead-generation',
-        status: 'published',
-        description: 'Descripción de la página',
-        metaTitle: 'Meta título',
-        metaDescription: 'Meta descripción',
-        template: 'clean',
-        conversionGoal: 'email-signup',
-        trackingCode: 'GTM-XXXXXXX'
-      };
-      showPageModal(page);
+    async function editPage(id) {
+      try {
+        const response = await fetch(`/api/admin/landing-pages?id=${id}`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success && data.pages.length > 0) {
+          const page = data.pages[0];
+          // Map database fields to form fields
+          const pageData = {
+            id: page.id,
+            name: page.name,
+            slug: page.slug,
+            type: page.config.type || 'custom',
+            status: page.status,
+            description: page.config.description || '',
+            metaTitle: page.seo_title || '',
+            metaDescription: page.seo_description || '',
+            template: page.template || 'clean',
+            conversionGoal: page.config.conversionGoal || '',
+            trackingCode: page.config.trackingCode || ''
+          };
+          showPageModal(pageData);
+        } else {
+          alert('Error cargando la página');
+        }
+      } catch (error) {
+        console.error('Error loading page:', error);
+        alert('Error de conexión');
+      }
     }
 
     function duplicatePage(id) {
@@ -603,10 +638,30 @@ const metadata = {
       }
     }
 
-    function deletePage(id) {
+    async function deletePage(id) {
       if (confirm('¿Estás seguro de que quieres eliminar esta página?')) {
-        console.log('Deleting page', id);
-        loadPages();
+        try {
+          const response = await fetch('/api/admin/landing-pages', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ id })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            loadPages();
+            loadStats();
+          } else {
+            alert('Error eliminando la página: ' + result.error);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error de conexión');
+        }
       }
     }
 
@@ -649,7 +704,7 @@ const metadata = {
       alert('Vista previa disponible próximamente');
     });
 
-    document.getElementById('pageForm').addEventListener('submit', (e) => {
+    document.getElementById('pageForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const formData = {
@@ -665,10 +720,55 @@ const metadata = {
         trackingCode: document.getElementById('trackingCode').value
       };
 
-      console.log(isEditMode ? 'Updating page' : 'Creating page', formData);
-      
-      document.getElementById('pageModal').classList.add('hidden');
-      loadPages();
+      if (isEditMode) {
+        formData.id = currentPageId;
+      }
+
+      // Loading state
+      const saveBtn = document.getElementById('savePageBtn');
+      const originalText = saveBtn.textContent;
+      saveBtn.textContent = isEditMode ? 'Actualizando...' : 'Creando...';
+      saveBtn.disabled = true;
+
+      try {
+        console.log('💾 Enviando datos:', formData);
+        console.log('💾 Método:', isEditMode ? 'PUT' : 'POST');
+        
+        const response = await fetch('/api/admin/landing-pages', {
+          method: isEditMode ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(formData)
+        });
+
+        console.log('💾 Response status:', response.status);
+        console.log('💾 Response headers:', [...response.headers.entries()]);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ Error response:', errorText);
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        console.log('💾 Response data:', result);
+        
+        if (result.success) {
+          document.getElementById('pageModal').classList.add('hidden');
+          loadPages();
+          loadStats();
+        } else {
+          alert('Error: ' + result.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+      } finally {
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+      }
     });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {

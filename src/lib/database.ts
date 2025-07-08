@@ -305,5 +305,99 @@ export const dbHelpers = {
     
     const stmt = db.prepare(query);
     return stmt.all(...params);
+  },
+
+  // Landing Pages
+  insertLandingPage: (data: any) => {
+    try {
+      const stmt = db.prepare(`
+        INSERT INTO landing_pages (name, slug, template, config, status, seo_title, seo_description)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `);
+      const configString = typeof data.config === 'string' ? data.config : JSON.stringify(data.config || {});
+      console.log('📝 Insertando landing page con datos:', {
+        name: data.name,
+        slug: data.slug,
+        template: data.template,
+        config: configString,
+        status: data.status || 'draft',
+        seoTitle: data.seoTitle || '',
+        seoDescription: data.seoDescription || ''
+      });
+      return stmt.run(
+        data.name, 
+        data.slug, 
+        data.template, 
+        configString, 
+        data.status || 'draft', 
+        data.seoTitle || '', 
+        data.seoDescription || ''
+      );
+    } catch (error) {
+      console.error('❌ Error en insertLandingPage:', error);
+      throw error;
+    }
+  },
+
+  getLandingPages: (limit = 50, offset = 0) => {
+    const stmt = db.prepare(`
+      SELECT * FROM landing_pages 
+      ORDER BY created_at DESC 
+      LIMIT ? OFFSET ?
+    `);
+    return stmt.all(limit, offset);
+  },
+
+  getLandingPageBySlug: (slug: string) => {
+    const stmt = db.prepare('SELECT * FROM landing_pages WHERE slug = ?');
+    return stmt.get(slug);
+  },
+
+  getLandingPageById: (id: number) => {
+    const stmt = db.prepare('SELECT * FROM landing_pages WHERE id = ?');
+    return stmt.get(id);
+  },
+
+  updateLandingPage: (id: number, data: any) => {
+    const stmt = db.prepare(`
+      UPDATE landing_pages 
+      SET name = ?, slug = ?, template = ?, config = ?, status = ?, 
+          seo_title = ?, seo_description = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `);
+    return stmt.run(
+      data.name, data.slug, data.template, JSON.stringify(data.config || {}),
+      data.status, data.seoTitle, data.seoDescription, id
+    );
+  },
+
+  deleteLandingPage: (id: number) => {
+    const stmt = db.prepare('DELETE FROM landing_pages WHERE id = ?');
+    return stmt.run(id);
+  },
+
+  getLandingPageStats: () => {
+    try {
+      const totalStmt = db.prepare('SELECT COUNT(*) as count FROM landing_pages');
+      const publishedStmt = db.prepare('SELECT COUNT(*) as count FROM landing_pages WHERE status = ?');
+      const draftStmt = db.prepare('SELECT COUNT(*) as count FROM landing_pages WHERE status = ?');
+      
+      const total = totalStmt.get() as { count: number };
+      const published = publishedStmt.get('published') as { count: number };
+      const draft = draftStmt.get('draft') as { count: number };
+      
+      return {
+        total: total.count,
+        published: published.count,
+        draft: draft.count
+      };
+    } catch (error) {
+      console.error('❌ Error en getLandingPageStats:', error);
+      return {
+        total: 0,
+        published: 0,
+        draft: 0
+      };
+    }
   }
 };
