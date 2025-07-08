@@ -5,7 +5,7 @@ import Button from '~/components/ui/Button.astro';
 const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' } = Astro.props;
 ---
 
-<form id="contactForm">
+<form id="contactForm" method="post" action="/api/contact">
   <!-- Messages -->
   <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
     <div class="flex">
@@ -119,12 +119,27 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
 
     if (!form) return;
 
+    // Prevenir envíos duplicados
+    let isSubmitting = false;
+
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
+
+      // Prevenir envíos duplicados
+      if (isSubmitting) {
+        return;
+      }
+
+      // Forzar que siempre sea POST
+      if (form.method !== 'post') {
+        form.method = 'post';
+      }
 
       // Hide previous messages
       successMessage.classList.add('hidden');
       errorMessage.classList.add('hidden');
+
+      isSubmitting = true;
 
       // Get form data
       const formData = new FormData(form);
@@ -149,6 +164,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
       submitBtn.disabled = true;
 
       try {
+        // Asegurar que siempre se use POST
         const response = await fetch('/api/contact', {
           method: 'POST',
           headers: {
@@ -156,6 +172,11 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
           },
           body: JSON.stringify(data)
         });
+
+        // Verificar que la respuesta es válida
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const result = await response.json();
 
@@ -178,6 +199,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
         // Reset button state
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
+        isSubmitting = false;
       }
     });
   });
