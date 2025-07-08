@@ -1,0 +1,146 @@
+---
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Capacitaciones - Sonmyd | Formación Tecnológica Especializada',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+
+  <Hero
+    tagline="Capacitaciones"
+    title="Capacitaciones especializadas en tecnología e inteligencia artificial"
+    subtitle="Formamos a profesionales y equipos de trabajo en las últimas tecnologías. Programas presenciales y virtuales diseñados para impulsar el crecimiento profesional y empresarial."
+    actions={[{ variant: 'primary', target: '_self', text: 'Ver Programas', href: '/contact' }]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Capacitaciones tecnológicas',
+    }}
+  />
+
+  <!-- Features2 Widget ************** -->
+
+  <Features2
+    title="Nuestros Programas de Capacitación"
+    subtitle="Ofrecemos programas especializados que cubren las tecnologías más demandadas del mercado actual"
+    items={[
+      {
+        title: 'Inteligencia Artificial y Machine Learning',
+        description: 'Fundamentos de IA, algoritmos de ML, procesamiento de lenguaje natural y visión por computadora. Implementación práctica con Python y frameworks populares.',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Desarrollo Web Full Stack',
+        description: 'Desde HTML/CSS hasta frameworks modernos como React, Vue, Angular. Backend con Node.js, Python, bases de datos y deployment.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Desarrollo de Apps Móviles',
+        description: 'Creación de aplicaciones nativas e híbridas para iOS y Android. Flutter, React Native, Kotlin y Swift.',
+        icon: 'tabler:device-mobile',
+      },
+      {
+        title: 'Automatización de Procesos',
+        description: 'RPA, automatización con Python, integración de APIs, workflows y optimización de procesos empresariales.',
+        icon: 'tabler:settings-automation',
+      },
+      {
+        title: 'DevOps y Cloud Computing',
+        description: 'Docker, Kubernetes, CI/CD, AWS, Azure, Google Cloud. Infraestructura como código y mejores prácticas.',
+        icon: 'tabler:cloud',
+      },
+      {
+        title: 'Ciberseguridad',
+        description: 'Seguridad de aplicaciones, penetration testing, criptografía, gestión de vulnerabilidades y compliance.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <!-- Steps Widget ****************** -->
+
+  <Steps
+    title="Metodología de Aprendizaje"
+    items={[
+      {
+        title: 'Diagnóstico Inicial',
+        description: 'Evaluamos el nivel actual de conocimientos y definimos objetivos específicos de aprendizaje.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Contenido Personalizado',
+        description: 'Adaptamos el programa según las necesidades específicas de cada participante o empresa.',
+        icon: 'tabler:settings',
+      },
+      {
+        title: 'Práctica Intensiva',
+        description: 'Proyectos reales y casos de estudio que permiten aplicar inmediatamente lo aprendido.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Mentoría Continua',
+        description: 'Acompañamiento personalizado durante todo el proceso de aprendizaje.',
+        icon: 'tabler:user-check',
+      },
+      {
+        title: 'Certificación',
+        description: 'Certificados de finalización que validan las competencias adquiridas.',
+        icon: 'tabler:certificate',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Metodología de capacitación',
+    }}
+  />
+
+  <!-- Content Widget **************** -->
+
+  <Content
+    isReversed
+    title="Modalidades de Capacitación"
+    items={[
+      {
+        title: 'Presencial',
+        description: 'Clases en nuestras instalaciones con interacción directa y práctica en laboratorios especializados.',
+      },
+      {
+        title: 'Virtual en Vivo',
+        description: 'Sesiones en línea con instructores expertos, interacción en tiempo real y soporte técnico.',
+      },
+      {
+        title: 'Empresarial',
+        description: 'Programas personalizados para empresas, adaptados a sus necesidades específicas y horarios.',
+      },
+      {
+        title: 'Autodirigida',
+        description: 'Plataforma de aprendizaje con acceso 24/7, contenido multimedia y evaluaciones automáticas.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1553028826-f4804a6dfd3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Modalidades de capacitación',
+    }}
+  />
+
+  <!-- CallToAction Widget *********** -->
+
+  <CallToAction
+    title="¿Listo para potenciar tus habilidades tecnológicas?"
+    subtitle="Contáctanos para conocer nuestros próximos programas de capacitación y recibe un descuento especial en tu primera inscripción."
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Solicitar Información',
+        href: '/contact',
+      },
+    ]}
+  />
+</Layout>

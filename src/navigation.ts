@@ -7,19 +7,19 @@ export const headerData = {
       links: [
         {
           text: 'Inteligencia Artificial',
-          href: getPermalink('/servicios#ia'),
+          href: getPermalink('/servicios#servicios'),
         },
         {
           text: 'Desarrollo Web',
-          href: getPermalink('/servicios#web'),
+          href: getPermalink('/servicios#servicios'),
         },
         {
           text: 'Apps Multiplataforma',
-          href: getPermalink('/servicios#apps'),
+          href: getPermalink('/servicios#servicios'),
         },
         {
           text: 'Automatizaciones',
-          href: getPermalink('/servicios#automatizacion'),
+          href: getPermalink('/servicios#servicios'),
         },
       ],
     },
@@ -28,19 +28,19 @@ export const headerData = {
       links: [
         {
           text: 'Cursos de IA',
-          href: getPermalink('/capacitaciones#ia'),
+          href: getPermalink('/capacitaciones'),
         },
         {
           text: 'Desarrollo Web',
-          href: getPermalink('/capacitaciones#web'),
+          href: getPermalink('/capacitaciones'),
         },
         {
           text: 'Programación',
-          href: getPermalink('/capacitaciones#programacion'),
+          href: getPermalink('/capacitaciones'),
         },
         {
           text: 'Certificaciones',
-          href: getPermalink('/capacitaciones#certificaciones'),
+          href: getPermalink('/capacitaciones'),
         },
       ],
     },
