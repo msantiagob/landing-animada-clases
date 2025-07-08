@@ -1,5 +1,5 @@
 # Dockerfile para aplicación AstroWind en producción
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Instalar dependencias para SQLite
 RUN apk add --no-cache sqlite
