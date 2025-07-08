@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import { authHelpers } from '../../lib/auth';
+import '../../assets/styles/tailwind.css';
 
 // Verificar autenticación
 const authData = authHelpers.requireAuthFromCookies(Astro.request);
@@ -29,7 +30,6 @@ const metadata = {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{metadata.title}</title>
   <meta name="robots" content="noindex, nofollow" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .sidebar-link.active {
       @apply bg-blue-100 text-blue-700 border-r-4 border-blue-700;

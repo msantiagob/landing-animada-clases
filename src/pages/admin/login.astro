@@ -3,6 +3,7 @@ export const prerender = false;
 
 // Verificar si ya está autenticado y redirigir
 import { authHelpers } from '../../lib/auth';
+import '../../assets/styles/tailwind.css';
 
 const authData = authHelpers.requireAuthFromCookies(Astro.request);
 if (authData) {
@@ -24,7 +25,6 @@ const metadata = {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{metadata.title}</title>
   <meta name="robots" content="noindex, nofollow" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

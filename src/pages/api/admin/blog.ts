@@ -113,7 +113,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const body = await request.json();
-    const { title, slug, category, excerpt, image, tags, content, publishDate } = body;
+    const { title, slug, category, excerpt, image, tags, content, publishDate, metaTitle, metaDescription, canonical, author } = body;
 
     if (!title || !slug || !content) {
       return new Response(JSON.stringify({
@@ -147,7 +147,15 @@ export const POST: APIRoute = async ({ request }) => {
       ...(excerpt && { excerpt }),
       ...(image && { image }),
       ...(category && { category }),
-      ...(tags && tags.length > 0 && { tags })
+      ...(tags && tags.length > 0 && { tags }),
+      ...(author && { author }),
+      ...(metaTitle || metaDescription || canonical ? {
+        metadata: {
+          ...(metaTitle && { title: metaTitle }),
+          ...(metaDescription && { description: metaDescription }),
+          ...(canonical && { canonical })
+        }
+      } : {})
     };
 
     // Crear contenido del archivo
@@ -199,7 +207,7 @@ export const PUT: APIRoute = async ({ request }) => {
     }
 
     const body = await request.json();
-    const { filename, title, slug, category, excerpt, image, tags, content, publishDate } = body;
+    const { filename, title, slug, category, excerpt, image, tags, content, publishDate, metaTitle, metaDescription, canonical, author } = body;
 
     if (!filename || !title || !slug || !content) {
       return new Response(JSON.stringify({
@@ -245,7 +253,15 @@ export const PUT: APIRoute = async ({ request }) => {
       ...(excerpt && { excerpt }),
       ...(image && { image }),
       ...(category && { category }),
-      ...(tags && tags.length > 0 && { tags })
+      ...(tags && tags.length > 0 && { tags }),
+      ...(author && { author }),
+      ...(metaTitle || metaDescription || canonical ? {
+        metadata: {
+          ...(metaTitle && { title: metaTitle }),
+          ...(metaDescription && { description: metaDescription }),
+          ...(canonical && { canonical })
+        }
+      } : {})
     };
 
     // Crear contenido del archivo

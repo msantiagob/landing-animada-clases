@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import { authHelpers } from '../../lib/auth';
+import '../../assets/styles/tailwind.css';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -67,7 +68,6 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{metadata.title}</title>
   <meta name="robots" content="noindex, nofollow" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .sidebar-link.active {
       @apply bg-blue-100 text-blue-700 border-r-4 border-blue-700;
@@ -333,6 +333,35 @@ try {
             <input type="text" id="postTags" class="w-full border border-gray-300 rounded-md px-3 py-2">
           </div>
           
+          <!-- SEO Section -->
+          <div class="border-t pt-4">
+            <h4 class="text-md font-medium text-gray-700 mb-3">🔍 Configuración SEO</h4>
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Meta título (SEO)</label>
+                <input type="text" id="postMetaTitle" class="w-full border border-gray-300 rounded-md px-3 py-2" maxlength="60">
+                <p class="text-xs text-gray-500 mt-1">Máximo 60 caracteres. Si está vacío, usará el título del post.</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Meta descripción (SEO)</label>
+                <textarea id="postMetaDescription" rows="2" class="w-full border border-gray-300 rounded-md px-3 py-2" maxlength="160"></textarea>
+                <p class="text-xs text-gray-500 mt-1">Máximo 160 caracteres. Si está vacío, usará el extracto.</p>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">URL canónica (opcional)</label>
+                  <input type="url" id="postCanonical" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Autor</label>
+                  <input type="text" id="postAuthor" class="w-full border border-gray-300 rounded-md px-3 py-2" value="Sonmyd">
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Contenido (Markdown)</label>
             <textarea id="postContent" rows="15" class="w-full border border-gray-300 rounded-md px-3 py-2 font-mono text-sm"></textarea>
@@ -426,6 +455,12 @@ try {
       document.getElementById('postTags').value = post.tags ? post.tags.join(', ') : '';
       document.getElementById('postContent').value = post.content || '';
       
+      // SEO fields
+      document.getElementById('postMetaTitle').value = post.metaTitle || '';
+      document.getElementById('postMetaDescription').value = post.metaDescription || '';
+      document.getElementById('postCanonical').value = post.canonical || '';
+      document.getElementById('postAuthor').value = post.author || 'Sonmyd';
+      
       if (post.publishDate) {
         const date = new Date(post.publishDate);
         document.getElementById('postPublishDate').value = date.toISOString().slice(0, 16);
@@ -474,7 +509,12 @@ try {
         image: document.getElementById('postImage').value,
         tags: document.getElementById('postTags').value.split(',').map(t => t.trim()).filter(t => t),
         content: document.getElementById('postContent').value,
-        publishDate: document.getElementById('postPublishDate').value
+        publishDate: document.getElementById('postPublishDate').value,
+        // SEO fields
+        metaTitle: document.getElementById('postMetaTitle').value,
+        metaDescription: document.getElementById('postMetaDescription').value,
+        canonical: document.getElementById('postCanonical').value,
+        author: document.getElementById('postAuthor').value
       };
 
       const method = isEditMode ? 'PUT' : 'POST';
