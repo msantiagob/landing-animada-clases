@@ -7,6 +7,8 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json();
     const { name, email, message, phone, company } = body;
 
+    console.log('📧 Datos recibidos en /api/contact:', body);
+
     // Validaciones básicas
     if (!name || !email || !message) {
       return new Response(JSON.stringify({
@@ -50,7 +52,9 @@ export const POST: APIRoute = async ({ request }) => {
     };
 
     // Insertar en base de datos
+    console.log('💾 Insertando en base de datos:', formData);
     const result = dbHelpers.insertContactForm(formData);
+    console.log('✅ Resultado de inserción:', result);
 
     if (result.lastInsertRowid) {
       // Enviar notificación por email de forma asíncrona

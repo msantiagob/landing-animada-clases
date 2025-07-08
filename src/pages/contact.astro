@@ -22,16 +22,32 @@ const metadata = {
       {
         type: 'text',
         name: 'name',
-        label: 'Nombre',
+        label: 'Nombre *',
+        placeholder: 'Tu nombre completo'
       },
       {
         type: 'email',
         name: 'email',
-        label: 'Correo Electrónico',
+        label: 'Correo Electrónico *',
+        placeholder: 'tu@email.com'
+      },
+      {
+        type: 'tel',
+        name: 'phone',
+        label: 'Teléfono (opcional)',
+        placeholder: '+57 300 123 4567'
+      },
+      {
+        type: 'text',
+        name: 'company',
+        label: 'Empresa (opcional)',
+        placeholder: 'Nombre de tu empresa'
       },
     ]}
     textarea={{
-      label: 'Mensaje',
+      label: 'Mensaje *',
+      placeholder: 'Cuéntanos sobre tu proyecto o necesidades específicas...',
+      rows: 5
     }}
     disclaimer={{
       label:
