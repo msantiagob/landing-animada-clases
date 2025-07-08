@@ -39,7 +39,7 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
-ENV DATABASE_PATH=/app/data/database.sqlite
+ENV DATABASE_PATH=/tmp/database.sqlite
 
 # Comando de inicio
 CMD ["node", "./dist/server/entry.mjs"]
