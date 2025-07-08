@@ -39,7 +39,7 @@ EXPOSE 8080
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
-ENV DATABASE_PATH=/tmp/database.sqlite
+ENV DATABASE_PATH=/app/database.sqlite
 
 # Comando de inicio
 CMD ["node", "./dist/server/entry.mjs"]

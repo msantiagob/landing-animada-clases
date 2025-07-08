@@ -116,10 +116,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   } catch (error) {
     console.error('Error procesando cita:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     
     return new Response(JSON.stringify({
       success: false,
-      error: 'Error interno del servidor. Inténtalo más tarde.'
+      error: 'Error interno del servidor. Inténtalo más tarde.',
+      debug: process.env.NODE_ENV === 'development' ? error.message : undefined
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
