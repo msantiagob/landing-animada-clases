@@ -1,6 +1,6 @@
 site:
-  name: AstroWind
-  site: 'https://astrowind.vercel.app'
+  name: Sonmyd
+  site: 'https://sonmyd.com'
   base: '/'
   trailingSlash: false
 
@@ -9,14 +9,14 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: AstroWind
-    template: '%s — AstroWind'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+    default: Sonmyd - Soluciones Tecnológicas e IA
+    template: '%s — Sonmyd'
+  description: "\U0001F680 Transformamos tu negocio con IA, desarrollo web, apps multiplataforma y automatizaciones. Capacitaciones especializadas y soluciones tecnológicas de vanguardia."
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: AstroWind
+    site_name: Sonmyd
     images:
       - url: '~/assets/images/default.png'
         width: 1200
@@ -28,7 +28,7 @@ metadata:
     cardType: summary_large_image
 
 i18n:
-  language: en
+  language: es
   textDirection: ltr
 
 apps:
@@ -44,19 +44,19 @@ apps:
 
     list:
       isEnabled: true
-      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
+      pathname: 'blog' # Ruta principal del blog, puedes cambiar esto a "articulos" (/articulos)
       robots:
         index: true
 
     category:
       isEnabled: true
-      pathname: 'category' # Category main path /category/some-category, you can change this to "group" (/group/some-category)
+      pathname: 'categoria' # Ruta principal de categoría /categoria/alguna-categoria
       robots:
         index: true
 
     tag:
       isEnabled: true
-      pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
+      pathname: 'etiqueta' # Ruta principal de etiqueta /etiqueta/alguna-etiqueta
       robots:
         index: false
 

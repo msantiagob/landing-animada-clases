@@ -1,23 +1,23 @@
 ---
-title: 'Privacy Policy'
+title: 'Política de Privacidad'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-_Last updated_: January 06, 2023
+_Última actualización_: 6 de enero de 2023
 
-This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
+Esta Política de Privacidad describe Nuestras políticas y procedimientos sobre la recopilación, uso y divulgación de Su información cuando utiliza el Servicio y le informa sobre Sus derechos de privacidad y cómo la ley lo protege.
 
-We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy is just a Demo.
+Usamos Sus datos personales para proporcionar y mejorar el Servicio. Al usar el Servicio, Usted acepta la recopilación y uso de información de acuerdo con esta Política de Privacidad. Esta Política de Privacidad es solo una Demostración.
 
-## Interpretation and Definitions
+## Interpretación y Definiciones
 
-### Interpretation
+### Interpretación
 
-The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
+Las palabras cuya letra inicial está en mayúscula tienen significados definidos bajo las siguientes condiciones. Las siguientes definiciones tendrán el mismo significado independientemente de si aparecen en singular o en plural.
 
-### Definitions
+### Definiciones
 
-For the purposes of this Privacy Policy:
+Para los propósitos de esta Política de Privacidad:
 
 - **Account** means a unique account created for You to access our Service or parts of our Service.
 - **Company** (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to AstroWind LLC, 1 Cupertino, CA 95014.

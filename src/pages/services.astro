@@ -7,7 +7,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'Services',
+  title: 'Servicios de Sonmyd - Soluciones Tecnológicas Especializadas',
 };
 ---
 
@@ -15,10 +15,10 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
-    tagline="Services"
-    title="Elevate your projects with our stunning templates"
-    subtitle="Explore our meticulously crafted templates tailored to various industries and purposes. From captivating presentations to functional website designs, we offer the tools you need to succeed."
-    actions={[{ variant: 'primary', target: '_blank', text: 'Start exploring', href: '/' }]}
+    tagline="Servicios"
+    title="Potencia tu negocio con nuestras soluciones tecnológicas avanzadas"
+    subtitle="Descubre nuestro portafolio completo de servicios especializados en IA, desarrollo web, apps móviles y automatización. Soluciones personalizadas que transforman ideas en resultados tangibles para tu empresa."
+    actions={[{ variant: 'primary', target: '_self', text: 'Solicitar Cotización', href: '/contact' }]}
     image={{
       src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
       alt: 'AstroWind Hero Image',
@@ -28,32 +28,32 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Explore our diverse templates"
-    subtitle="Discover our selection below to streamline and elevate your projects."
+    title="Nuestros Servicios Especializados"
+    subtitle="Ofrecemos un ecosistema completo de servicios tecnológicos diseñados para impulsar la transformación digital de tu empresa."
     columns={3}
     items={[
       {
-        title: 'Educational',
+        title: 'Inteligencia Artificial',
         description:
-          'By harmonizing instructional design and visual appeal, templates streamline content creation for varied materials, expediting development and cultivating engaging educational spaces.',
-        icon: 'tabler:school',
+          'Desarrollamos chatbots inteligentes, sistemas de machine learning, análisis predictivo y automatización con IA que optimizan procesos y mejoran la toma de decisiones empresariales.',
+        icon: 'tabler:brain',
       },
       {
-        title: 'Interior Design',
+        title: 'Desarrollo Web Full-Stack',
         description:
-          'Crafting functional, visually appealing spaces for residential and commercial use. Templates emphasize layout, colors, and furniture setups, offering a versatile toolkit for your design vision.',
-        icon: 'tabler:home-star',
+          'Creamos aplicaciones web escalables con React, Angular, Vue.js y backends robustos. Desde e-commerce hasta plataformas empresariales, garantizamos rendimiento y seguridad.',
+        icon: 'tabler:code',
       },
       {
-        title: 'Photography',
-        description: `Empowering photographers, our templates facilitate captivating storytelling. With a keen focus on layout, galleries, and typography, they cater to both professionals and enthusiasts.`,
-        icon: 'tabler:photo',
+        title: 'Apps Multiplataforma',
+        description: `Desarrollamos aplicaciones nativas y híbridas para iOS y Android usando React Native, Flutter y Xamarin. Experiencia de usuario óptima en todos los dispositivos.`,
+        icon: 'tabler:device-mobile',
       },
       {
-        title: 'E-commerce',
+        title: 'Automatización de Procesos',
         description:
-          'Developing engaging online stores, our E-commerce templates ensure a dynamic presence to effectively showcase products. Ideal for startups or revamps.',
-        icon: 'tabler:shopping-cart',
+          'Implementamos RPA, workflows inteligentes y sistemas de automatización que reducen costos operativos, eliminan errores humanos y aumentan la productividad empresarial.',
+        icon: 'tabler:robot',
       },
       {
         title: 'Blog',
@@ -62,27 +62,27 @@ const metadata = {
         icon: 'tabler:article',
       },
       {
-        title: 'Business',
+        title: 'Capacitaciones Tecnológicas',
         description:
-          'Providing polished options for effective visual communication, these templates empower both startups and established companies for a professional brand presence.',
-        icon: 'tabler:building-store',
+          'Programas de formación especializada en IA, desarrollo web, DevOps y metodologías ágiles. Certificaciones internacionales y talleres prácticos personalizados.',
+        icon: 'tabler:school',
       },
       {
-        title: 'Branding',
+        title: 'Consultoría Digital',
         description:
-          'Offering pre-designed elements for a consistent brand identity, including logos and marketing materials. Ideal for new ventures or revamps.',
-        icon: 'tabler:arrow-big-up-lines',
+          'Asesoramos en transformación digital, arquitectura de software, migración cloud y estrategias de innovación tecnológica para maximizar el ROI.',
+        icon: 'tabler:chart-line',
       },
       {
-        title: 'Medical',
-        description: `From presentations to patient forms, these tools enhance communication effectiveness for healthcare professionals. Ideal for medical practices and research pursuits.`,
-        icon: 'tabler:vaccine',
+        title: 'Soporte Técnico 24/7',
+        description: `Brindamos mantenimiento preventivo, actualizaciones de seguridad, monitoreo en tiempo real y soporte especializado para garantizar la operación continua.`,
+        icon: 'tabler:headset',
       },
       {
-        title: 'Fashion Design',
+        title: 'Integraciones y APIs',
         description:
-          'With attention to detail, customization, and contemporary design, they empower designers to showcase ideas cohesively. Ideal for all levels of designers.',
-        icon: 'tabler:tie',
+          'Conectamos tus sistemas existentes con nuevas tecnologías, desarrollamos APIs REST y GraphQL, e implementamos microservicios para ecosistemas unificados.',
+        icon: 'tabler:plug-connected',
       },
     ]}
   />
@@ -93,28 +93,28 @@ const metadata = {
     isReversed
     items={[
       {
-        title: 'High-Quality Designs',
+        title: 'Metodología Probada',
         description:
-          'Our templates feature top-tier designs that ensure a professional and polished appearance for your projects.',
-        icon: 'tabler:wand',
+          'Aplicamos metodologías ágiles y DevOps con más de 15 años de experiencia, garantizando entregas puntuales y calidad excepcional.',
+        icon: 'tabler:chart-line',
       },
       {
-        title: 'Customization Tools',
+        title: 'Soluciones Personalizadas',
         description:
-          'Tailor each template to your unique needs with user-friendly customization tools that let you personalize colors, fonts, and content.',
+          'Cada proyecto se adapta específicamente a tus necesidades empresariales, usando las tecnologías más adecuadas para tu industria.',
         icon: 'tabler:settings',
       },
       {
-        title: 'Pre-Designed Elements',
+        title: 'Equipo Multidisciplinario',
         description:
-          'Save time and effort with our ready-to-use elements, including graphics, icons, and layouts that enhance the visual appeal of your creations.',
-        icon: 'tabler:presentation',
+          'Contamos con especialistas certificados en IA, desarrollo full-stack, UX/UI y arquitectura de software trabajando en tu proyecto.',
+        icon: 'tabler:users',
       },
       {
-        title: 'Preview and Mockup Views',
+        title: 'Acompañamiento Continuo',
         description:
-          'Visualize the final outcome before making any changes using our preview and mockup views, ensuring your projects meet your expectations.',
-        icon: 'tabler:carousel-horizontal',
+          'Te mantenemos informado en cada etapa del proyecto con demos, reportes de progreso y comunicación directa con el equipo.',
+        icon: 'tabler:message-circle',
       },
     ]}
     image={{
@@ -123,7 +123,7 @@ const metadata = {
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Main Features</h3>
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Características Principales</h3>
     </Fragment>
   </Content>
 
@@ -133,28 +133,28 @@ const metadata = {
     isAfterContent
     items={[
       {
-        title: 'Time Savings',
+        title: 'ROI Comprobado',
         description:
-          'Streamline your workflow, enabling you to create stunning materials efficiently and allocate more time to your core tasks.',
+          'Nuestros clientes experimentan un retorno de inversión promedio del 300% en el primer año, optimizando procesos y aumentando la productividad.',
+        icon: 'tabler:trending-up',
+      },
+      {
+        title: 'Escalabilidad Garantizada',
+        description:
+          'Diseñamos soluciones que crecen contigo. Arquitecturas robustas que soportan desde 100 hasta millones de usuarios sin comprometer el rendimiento.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Seguridad Enterprise',
+        description:
+          'Implementamos los más altos estándares de seguridad: encriptación end-to-end, autenticación multifactor y cumplimiento de normativas internacionales.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Tiempo de Mercado Rápido',
+        description:
+          'Metodologías ágiles que reducen el time-to-market hasta en un 50%, con entregas incrementales que generan valor desde la primera semana.',
         icon: 'tabler:clock',
-      },
-      {
-        title: 'Professional Appearance',
-        description:
-          'Elevate your projects with the polished and sophisticated look that our templates provide, making a lasting impression on your audience.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Cost-Efficiency',
-        description:
-          'Benefit from cost savings by avoiding the need for custom design work, as our templates offer professional-grade designs at a fraction of the cost.',
-        icon: 'tabler:coin',
-      },
-      {
-        title: 'Instant Download',
-        description:
-          'Enjoy immediate access to your chosen templates upon purchase, enabling you to begin working on your projects without delay.',
-        icon: 'tabler:file-download',
       },
     ]}
     image={{
@@ -163,19 +163,19 @@ const metadata = {
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Benefits</h3>
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Beneficios</h3>
     </Fragment>
   </Content>
 
   <!-- Testimonials Widget *********** -->
 
   <Testimonials
-    title="Words from real customers"
+    title="Palabras de clientes reales"
     testimonials={[
       {
         testimonial: `The designs are not only visually appealing but also highly professional. The templates have saved me a significant amount of time while helping me make a lasting impression on my clients.`,
         name: 'Emily Kennedy',
-        job: 'Front-end developer',
+        job: 'Desarrolladora Front-end',
         image: {
           src: 'https://images.unsplash.com/photo-1618835962148-cf177563c6c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=930&q=80',
           alt: 'Emily Kennedy Image',
@@ -184,7 +184,7 @@ const metadata = {
       {
         testimonial: `It beautifully showcases my work, with its clean and elegant design that lets my photographs shine. Customization was a breeze, even for a non-tech person like me. The result is a professional and immersive portfolio that's garnered numerous compliments.`,
         name: 'Sarah Hansen',
-        job: 'Photographer',
+        job: 'Fotógrafa',
         image: {
           src: 'https://images.unsplash.com/photo-1561406636-b80293969660?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
           alt: 'Sarah Hansen Image',
@@ -193,7 +193,7 @@ const metadata = {
       {
         testimonial: `I discovered these templates and I'm impressed by their variety and quality. They've helped me establish a consistent brand image across my marketing and social platforms, elevating my business's overall appearance.`,
         name: 'Mark Wilkinson',
-        job: 'Small business owner',
+        job: 'Propietario de pequeña empresa',
         image: {
           src: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=824&q=80',
           alt: 'Mark Wilkinson Image',
@@ -202,7 +202,7 @@ const metadata = {
     ]}
     callToAction={{
       target: '_blank',
-      text: 'More testimonials...',
+      text: 'Más testimonios...',
       href: 'https://github.com/onwidget/astrowind',
       icon: 'tabler:chevron-right',
     }}
@@ -214,11 +214,11 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Start exploring',
+        text: 'Comenzar a explorar',
         href: '/',
       },
     ]}
-    title="Dive into our template collection"
-    subtitle="Whether you're in business, design, or education, our templates are here to elevate your projects."
+    title="Sumérgete en nuestra colección de plantillas"
+    subtitle="Ya sea que estés en negocios, diseño o educación, nuestras plantillas están aquí para elevar tus proyectos."
   />
 </Layout>

@@ -1,17 +1,17 @@
 ---
-title: 'Terms and Conditions'
+title: 'Términos y Condiciones'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-_Last updated_: January 06, 2023
+_Última actualización_: 6 de enero de 2023
 
-Please read these terms and conditions carefully before using Our Service.
+Por favor lee estos términos y condiciones cuidadosamente antes de usar Nuestro Servicio.
 
-## Interpretation and Definitions
+## Interpretación y Definiciones
 
-### Interpretation
+### Interpretación
 
-The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
+Las palabras cuya letra inicial está en mayúscula tienen significados definidos bajo las siguientes condiciones. Las siguientes definiciones tendrán el mismo significado independientemente de si aparecen en singular o en plural.
 
 ### Definitions
 

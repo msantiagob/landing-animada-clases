@@ -13,7 +13,7 @@ import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const metadata = {
-  title: 'AstroWind — Free template for creating websites with Astro + Tailwind CSS',
+  title: 'Sonmyd - Soluciones Tecnológicas e IA | Transformamos tu Negocio',
   ignoreTitleTemplate: true,
 };
 ---
@@ -25,77 +25,75 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/onwidget/astrowind',
-        target: '_blank',
+        text: 'Consulta Gratuita',
+        href: '/contact',
+        target: '_self',
         icon: 'tabler:download',
       },
-      { text: 'Learn more', href: '#features' },
+      { text: 'Nuestros Servicios', href: '/servicios' },
     ]}
     image={{ src: '~/assets/images/hero-image.png', alt: 'AstroWind Hero Image' }}
   >
     <Fragment slot="title">
-      Free template for <span class="hidden xl:inline">creating websites with</span>
-      <span class="text-accent dark:text-white"> Astro 5.0</span> + Tailwind CSS
+      Transformamos tu negocio con <span class="hidden xl:inline">soluciones tecnológicas de</span>
+      <span class="text-accent dark:text-white"> Inteligencia Artificial</span> y desarrollo avanzado
     </Fragment>
 
     <Fragment slot="subtitle">
       <span class="hidden sm:inline">
-        <span class="font-semibold">AstroWind</span> is a free, customizable and production-ready template for Astro 5.0
-        + Tailwind CSS.</span
+        <span class="font-semibold">Sonmyd</span> lidera la innovación tecnológica con soluciones de IA, desarrollo web y automatizaciones empresariales.</span
       >
-      <span class="block mb-1 sm:hidden font-bold text-blue-600">AstroWind: Production-ready.</span>
-      Suitable for Startups, Small Business, SaaS websites, Professional Portfolios, Marketing websites, Landing Pages &
-      Blogs.
+      <span class="block mb-1 sm:hidden font-bold text-blue-600">Sonmyd: Innovación que transforma.</span>
+      Especializados en capacitaciones tecnológicas, desarrollo de aplicaciones multiplataforma y automatización de procesos empresariales.
     </Fragment>
   </Hero>
 
   <!-- Note Widget ******************* -->
 
-  <Note title="Philosophy:" description="Simplicity, Best Practices and High Performance" />
+  <Note title="Nuestra Visión:" description="Innovación, Excelencia Técnica y Resultados Transformadores" />
 
   <!-- Features Widget *************** -->
 
   <Features
     id="features"
-    tagline="Features"
-    title="What you get with AstroWind"
-    subtitle="One of the most professional and comprehensive templates currently on the market. Most starred & forked Astro theme in 2022, 2023 and 2024."
+    tagline="Por qué elegirnos"
+    title="Lo que obtienes con Sonmyd"
+    subtitle="Somos líderes en soluciones tecnológicas empresariales. Expertos certificados con más de 500 proyectos exitosos y capacitaciones especializadas en las últimas tecnologías."
     items={[
       {
-        title: 'Astro + Tailwind CSS Integration',
+        title: 'Soluciones de Inteligencia Artificial',
         description:
-          'A seamless integration between two great frameworks that offer high productivity, performance and versatility.',
-        icon: 'tabler:brand-tailwind',
+          'Implementamos IA avanzada para automatizar procesos, optimizar operaciones y generar insights valiosos para tu negocio.',
+        icon: 'tabler:brain',
       },
       {
-        title: 'Ready-to-use Components',
+        title: 'Desarrollo Web Multiplataforma',
         description:
-          'Widgets made with Tailwind CSS ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
-        icon: 'tabler:components',
+          'Creamos aplicaciones web y móviles de alto rendimiento que funcionan perfectamente en cualquier dispositivo y plataforma.',
+        icon: 'tabler:device-desktop',
       },
       {
-        title: 'Best Practices',
+        title: 'Capacitaciones Especializadas',
         description:
-          'Creating secure, efficient, and user-friendly websites that deliver exceptional experiences and lasting value.',
-        icon: 'tabler:list-check',
+          'Formamos a tu equipo en las últimas tecnologías con programas personalizados y certificaciones reconocidas internacionalmente.',
+        icon: 'tabler:school',
       },
       {
-        title: 'Excellent Page Speed',
+        title: 'Automatización de Procesos',
         description:
-          'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
-        icon: 'tabler:rocket',
+          'Optimizamos tus operaciones con sistemas automatizados que reducen costos, eliminan errores y aumentan la productividad empresarial.',
+        icon: 'tabler:robot',
       },
       {
-        title: 'Search Engine Optimization (SEO)',
+        title: 'Soporte Técnico Especializado',
         description:
-          "SEO lies in its ability to enhance a website's visibility, driving organic traffic and enabling it to reach a wider audience.",
-        icon: 'tabler:arrows-right-left',
+          "Ofrecemos acompañamiento continuo con nuestro equipo de expertos, garantizando el éxito y evolución constante de tus proyectos tecnológicos.",
+        icon: 'tabler:headset',
       },
       {
-        title: 'Open to new ideas and contributions',
+        title: 'Innovación Continua',
         description:
-          'Embracing a culture that is open to new ideas and contributions is integral fostering innovation, collaboration, and a dynamic user experience.',
+          'Mantenemos tu negocio a la vanguardia con las últimas tendencias tecnológicas y metodologías ágiles de desarrollo.',
         icon: 'tabler:bulb',
       },
     ]}
@@ -105,23 +103,23 @@ const metadata = {
 
   <Content
     isReversed
-    tagline="Inside template"
-    title="AstroWind's Blueprint: Fun Meets Functionality!"
+    tagline="Nuestro enfoque"
+    title="Metodología Sonmyd: ¡Donde la Innovación se Encuentra con Resultados!"
     items={[
       {
-        title: 'Built on top of Astro 5.0',
+        title: 'Tecnologías de Vanguardia',
         description:
-          'Benefiting from the performance and developer-friendly features of this modern static site generator.',
+          'Utilizamos las últimas tecnologías en IA, cloud computing y frameworks modernos para garantizar soluciones escalables y futuras.',
       },
       {
-        title: 'Styled using Tailwind CSS',
+        title: 'Metodologías Ágiles',
         description:
-          'Facilitating rapid design and consistent styling with this highly popular utility-first CSS framework.',
+          'Implementamos Scrum y DevOps para entregas rápidas, comunicación transparente y adaptación continua a tus necesidades.',
       },
       {
-        title: 'Cross-browser compatibility',
+        title: 'Equipo Multidisciplinario',
         description:
-          'Ensure your website looks and functions consistently across various web browsers, delivering a seamless experience to all users.',
+          'Contamos con especialistas en IA, desarrollo full-stack, UX/UI y arquitectura de software trabajando en sinergia para tu proyecto.',
       },
     ]}
     image={{
@@ -130,8 +128,8 @@ const metadata = {
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Building on modern foundations</h3>
-      Gain a competitive advantage by incorporating industry leading practices
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Innovación que impulsa resultados</h3>
+      Obtén una ventaja competitiva con tecnologías de última generación y expertise comprobado
     </Fragment>
 
     <Fragment slot="bg">
@@ -169,7 +167,7 @@ const metadata = {
       alt: 'Blueprint Image',
     }}
   >
-    <Fragment slot="content">Ensure your online presence truly represents you.</Fragment>
+    <Fragment slot="content">Transformamos tus ideas en soluciones tecnológicas que generan valor real.</Fragment>
 
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
@@ -207,7 +205,7 @@ const metadata = {
       alt: 'Astronauts Image',
     }}
   >
-    <Fragment slot="content">Designed to foster growth and success.</Fragment>
+    <Fragment slot="content">Potenciamos tu negocio con herramientas que escalan contigo.</Fragment>
 
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
@@ -217,29 +215,31 @@ const metadata = {
   <!-- Steps Widget ****************** -->
 
   <Steps
-    title="Get your dream website up and running in no time with AstroWind."
+    title="Transforma tu negocio en 4 pasos simples con Sonmyd."
     items={[
       {
-        title: 'Step 1: <span class="font-medium">Download</span>',
+        title: 'Paso 1: <span class="font-medium">Consulta</span>',
         description:
-          "Kickstart with GitHub! Either fork the AstroWind template or simply click 'Use this template'. Your canvas awaits, ready for your digital masterpiece. In just a few clicks, you've already set the foundation.",
-        icon: 'tabler:package',
+          "Iniciamos con una consulta gratuita para entender tus necesidades. Analizamos tu negocio, objetivos y desafíos para diseñar la solución perfecta.",
+        icon: 'tabler:messages',
       },
       {
-        title: 'Step 2: <span class="font-medium">Add content</span>',
+        title: 'Paso 2: <span class="font-medium">Planificación</span>',
         description:
-          "Pour your vision into it. Add images, text, and all that jazz to breathe life into your digital space. Remember, it's the content that tells your story, so make it captivating.",
-        icon: 'tabler:letter-case',
+          "Desarrollamos un plan detallado con cronogramas, hitos y entregables claros. Tu proyecto queda completamente estructurado antes de iniciar.",
+        icon: 'tabler:calendar-event',
       },
       {
-        title: 'Step 3: <span class="font-medium">Customize styles</span>',
+        title: 'Paso 3: <span class="font-medium">Desarrollo</span>',
         description:
-          'Give it your personal touch. Tailor colors, fonts, and layouts until it feels just right. Your unique flair, amplified by AstroWind! Precision in design ensures a seamless user experience.',
-        icon: 'tabler:paint',
+          'Nuestro equipo experto construye tu solución con las mejores prácticas, manteniéndote informado en cada etapa del proceso.',
+        icon: 'tabler:code',
       },
       {
-        title: 'Ready!',
-        icon: 'tabler:check',
+        title: 'Paso 4: <span class="font-medium">¡Lanzamiento y Soporte!</span>',
+        description:
+          'Implementamos tu solución y te acompañamos con soporte continuo, capacitación y actualizaciones.',
+        icon: 'tabler:rocket',
       },
     ]}
     image={{
@@ -251,58 +251,58 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Most used widgets"
-    subtitle="Provides frequently used components for building websites using Tailwind CSS"
-    tagline="Components"
+    title="Nuestros Servicios Principales"
+    subtitle="Soluciones tecnológicas especializadas que transforman tu negocio y potencian tu crecimiento empresarial"
+    tagline="Servicios"
     items={[
       {
-        title: 'Headers',
-        description: "Ever tried driving without GPS? Boom! That's why websites need headers for direction.",
+        title: 'Inteligencia Artificial',
+        description: "Implementamos chatbots, análisis predictivo y automatización inteligente para optimizar tus operaciones.",
         icon: 'flat-color-icons:template',
       },
       {
-        title: 'Heros',
+        title: 'Desarrollo Web',
         description:
-          "Picture a superhero landing – epic, right? That's the job of a Hero section, making grand entrances!",
+          "Creamos aplicaciones web modernas, rápidas y escalables que destacan en el mercado digital.",
         icon: 'flat-color-icons:gallery',
       },
       {
-        title: 'Features',
+        title: 'Apps Multiplataforma',
         description:
-          'Where websites strut their stuff and show off superpowers. No holding back on the bragging rights here!',
+          'Desarrollamos aplicaciones móviles nativas y híbridas que funcionan perfectamente en iOS y Android.',
         icon: 'flat-color-icons:approval',
       },
       {
-        title: 'Content',
+        title: 'Automatización',
         description:
-          "Dive into the meat and potatoes of a site; without it, you'd just be window shopping. Content is king.",
+          "Optimizamos procesos empresariales con sistemas automatizados que ahorran tiempo y reducen errores.",
         icon: 'flat-color-icons:document',
       },
       {
-        title: 'Call-to-Action',
+        title: 'Capacitaciones',
         description:
-          'That enthusiastic friend who\'s always urging, "Do it! Do it!"? Yeah, that\'s this button nudging you towards adventure.',
+          'Formamos a tu equipo en las últimas tecnologías con cursos especializados y certificaciones.',
         icon: 'flat-color-icons:advertising',
       },
       {
-        title: 'Pricing',
-        description: 'Behold the dessert menu of the website world. Tempting choices await, can you resist?',
+        title: 'Consultoría Técnica',
+        description: 'Asesoramos en arquitectura de software, migraciones cloud y transformación digital.',
         icon: 'flat-color-icons:currency-exchange',
       },
       {
-        title: 'Testimonial',
-        description: 'Step into the gossip corner! Here, other visitors spill the beans and share the juicy details.',
+        title: 'Soporte Técnico',
+        description: 'Brindamos soporte 24/7 y mantenimiento continuo para garantizar el óptimo funcionamiento.',
         icon: 'flat-color-icons:voice-presentation',
       },
       {
-        title: 'Contact',
+        title: 'Integraciones',
         description:
-          'Like a digital mailbox, but faster! Drop a line, ask a question, or send a virtual high-five. Ding! Message in.',
+          'Conectamos tus sistemas existentes con nuevas tecnologías para crear un ecosistema digital unificado.',
         icon: 'flat-color-icons:business-contact',
       },
       {
-        title: 'Footers',
-        description: "The footer's like the credits of a movie but sprinkled with easter eggs. Time to hunt!",
+        title: 'Analytics & BI',
+        description: "Implementamos soluciones de Business Intelligence para convertir tus datos en insights accionables.",
         icon: 'flat-color-icons:database',
       },
     ]}
@@ -315,7 +315,7 @@ const metadata = {
   <!-- HighlightedPosts Widget ******* -->
 
   <BlogLatestPosts
-    title="Find out more content in our Blog"
+    title="Insights y Tendencias Tecnológicas"
     information={`The blog is used to display AstroWind documentation.
                         Each new article will be an important step that you will need to know to be an expert in creating a website using Astro + Tailwind CSS.
                         Astro is a very interesting technology. Thanks.
@@ -325,38 +325,38 @@ const metadata = {
   <!-- FAQs Widget ******************* -->
 
   <FAQs
-    title="Frequently Asked Questions"
-    subtitle="Dive into the following questions to gain insights into the powerful features that AstroWind offers and how it can elevate your web development journey."
-    tagline="FAQs"
+    title="Preguntas Frecuentes"
+    subtitle="Sumérgete en las siguientes preguntas para obtener información sobre las poderosas características que ofrece AstroWind y cómo puede elevar tu viaje de desarrollo web."
+    tagline="Preguntas Frecuentes"
     classes={{ container: 'max-w-6xl' }}
     items={[
       {
-        title: 'Why AstroWind?',
+        title: '¿Por qué elegir Sonmyd?',
         description:
-          "Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels.",
+          "Somos líderes en innovación tecnológica con un equipo de expertos certificados. Nuestra metodología ágil y enfoque en resultados garantiza el éxito de tu proyecto desde el primer día.",
       },
       {
-        title: 'What do I need to start?',
+        title: '¿Qué necesito para empezar?',
         description:
           'Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds. Many say exploration is part of our destiny, but it’s actually our duty to future generations.',
       },
       {
-        title: 'How to install the Astro + Tailwind CSS template?',
+        title: '¿Cómo instalar la plantilla Astro + Tailwind CSS?',
         description:
           "Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.",
       },
       {
-        title: "What's something that you don't understand?",
+        title: '¿Qué es algo que no entiendes?',
         description:
           "A flower in my garden, a mystery in my panties. Heart attack never stopped old Big Bear. I didn't even know we were calling him Big Bear.",
       },
       {
-        title: 'What is something that you would like to try again?',
+        title: '¿Qué es algo que te gustaría volver a intentar?',
         description:
           "A business big enough that it could be listed on the NASDAQ goes belly up. Disappears! It ceases to exist without me. No, you clearly don't know who you're talking to, so let me clue you in.",
       },
       {
-        title: 'If you could only ask one question to each person you meet, what would that question be?',
+        title: 'Si solo pudieras hacer una pregunta a cada persona que conoces, ¿cuál sería esa pregunta?',
         description:
           "This is not about revenge. This is about justice. A lot of things can change in twelve years, Admiral. Well, that's certainly good to know. About four years. I got tired of hearing how young I looked.",
       },
@@ -367,10 +367,10 @@ const metadata = {
 
   <Stats
     stats={[
-      { title: 'Downloads', amount: '132K' },
-      { title: 'Stars', amount: '24.8K' },
-      { title: 'Forks', amount: '10.3K' },
-      { title: 'Users', amount: '48.4K' },
+      { title: 'Proyectos Exitosos', amount: '500+' },
+      { title: 'Clientes Satisfechos', amount: '150+' },
+      { title: 'Horas de Capacitación', amount: '10K+' },
+      { title: 'Años de Experiencia', amount: '15+' },
     ]}
   />
 
@@ -380,20 +380,20 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/onwidget/astrowind',
-        target: '_blank',
+        text: 'Consulta Gratuita',
+        href: '/contact',
+        target: '_self',
         icon: 'tabler:download',
       },
     ]}
   >
     <Fragment slot="title">
-      Astro&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
+      Sonmyd&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tu Éxito</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Be very surprised by these huge fake numbers you are seeing on this page. <br class="hidden md:inline" />Don't
-      waste more time! :P
+      Únete a las empresas líderes que ya transformaron su negocio con nuestras soluciones. <br class="hidden md:inline" />No
+      dejes que la competencia te adelante. ¡Actúa ahora!
     </Fragment>
   </CallToAction>
 </Layout>

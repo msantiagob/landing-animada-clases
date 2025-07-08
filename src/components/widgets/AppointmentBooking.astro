@@ -1,0 +1,475 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+
+const {
+  title = "Agenda tu Consulta Gratuita",
+  subtitle = "Selecciona el día y hora que mejor te convenga para tu consulta personalizada",
+  tagline = "Reserva tu Cita",
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+    <!-- Calendar Section -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Selecciona una fecha</h3>
+      
+      <!-- Calendar Navigation -->
+      <div class="flex justify-between items-center mb-4">
+        <button id="prevMonth" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <h4 id="currentMonth" class="text-lg font-semibold text-gray-800 dark:text-white"></h4>
+        <button id="nextMonth" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="grid grid-cols-7 gap-1 text-center text-sm">
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Dom</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Lun</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Mar</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Mié</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Jue</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Vie</div>
+        <div class="p-2 font-medium text-gray-600 dark:text-gray-400">Sáb</div>
+      </div>
+      <div id="calendarDays" class="grid grid-cols-7 gap-1 mt-2">
+        <!-- Calendar days will be generated here -->
+      </div>
+
+      <!-- Time Slots -->
+      <div id="timeSlots" class="mt-6 hidden">
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Horarios disponibles</h4>
+        <div id="availableSlots" class="grid grid-cols-2 gap-2">
+          <!-- Time slots will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Información de contacto</h3>
+      
+      <!-- Success Message -->
+      <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+        <div class="flex">
+          <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          <div>
+            <strong>¡Cita agendada correctamente!</strong>
+            <p class="text-sm mt-1">Recibirás un email de confirmación con todos los detalles.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div class="flex">
+          <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          <span id="errorText">Error al agendar la cita. Inténtalo más tarde.</span>
+        </div>
+      </div>
+
+      <form id="appointmentForm">
+        <div class="space-y-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Nombre completo *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Tu nombre completo"
+            />
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email *
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="tu@email.com"
+            />
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Teléfono
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="+57 300 123 4567"
+            />
+          </div>
+
+          <div>
+            <label for="company" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Empresa
+            </label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Nombre de tu empresa"
+            />
+          </div>
+
+          <div>
+            <label for="serviceType" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Tipo de servicio *
+            </label>
+            <select
+              id="serviceType"
+              name="serviceType"
+              required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Selecciona un servicio</option>
+              <option value="Inteligencia Artificial">Inteligencia Artificial</option>
+              <option value="Desarrollo Web">Desarrollo Web</option>
+              <option value="Apps Multiplataforma">Apps Multiplataforma</option>
+              <option value="Automatización">Automatización de Procesos</option>
+              <option value="Capacitaciones">Capacitaciones Técnicas</option>
+              <option value="Consultoría">Consultoría Digital</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Mensaje adicional
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="3"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Cuéntanos sobre tu proyecto o necesidades específicas..."
+            ></textarea>
+          </div>
+
+          <!-- Selected Date and Time Display -->
+          <div id="selectedDateTime" class="hidden p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <p class="text-sm font-medium text-blue-800 dark:text-blue-200">
+              Fecha seleccionada: <span id="selectedDateText"></span>
+            </p>
+            <p class="text-sm font-medium text-blue-800 dark:text-blue-200">
+              Hora seleccionada: <span id="selectedTimeText"></span>
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            disabled
+            class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            Confirmar Cita
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</WidgetWrapper>
+
+<script>
+  let currentDate = new Date();
+  let selectedDate = null;
+  let selectedTime = null;
+  let availableSlots = [];
+
+  // Initialize calendar
+  function initCalendar() {
+    updateCalendarHeader();
+    generateCalendarDays();
+  }
+
+  function updateCalendarHeader() {
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    document.getElementById('currentMonth').textContent = 
+      `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+  }
+
+  function generateCalendarDays() {
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const today = new Date();
+
+    // First day of the month and number of days
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      const emptyDay = document.createElement('div');
+      emptyDay.className = 'p-2';
+      calendarDays.appendChild(emptyDay);
+    }
+
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayDate = new Date(year, month, day);
+      const dayElement = document.createElement('button');
+      dayElement.className = 'p-2 rounded-lg text-sm transition-colors';
+      dayElement.textContent = day;
+
+      // Disable past dates and weekends
+      const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+      const isPast = dayDate < today;
+      
+      if (isPast || isWeekend) {
+        dayElement.className += ' text-gray-400 cursor-not-allowed';
+        dayElement.disabled = true;
+      } else {
+        dayElement.className += ' text-gray-700 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-blue-900';
+        dayElement.addEventListener('click', () => selectDate(dayDate));
+      }
+
+      calendarDays.appendChild(dayElement);
+    }
+  }
+
+  async function selectDate(date) {
+    selectedDate = date;
+    selectedTime = null;
+
+    // Update visual selection
+    document.querySelectorAll('#calendarDays button').forEach(btn => {
+      btn.classList.remove('bg-blue-600', 'text-white');
+      if (!btn.disabled) {
+        btn.classList.add('text-gray-700', 'hover:bg-blue-100', 'dark:text-gray-300', 'dark:hover:bg-blue-900');
+      }
+    });
+
+    event.target.classList.remove('text-gray-700', 'hover:bg-blue-100', 'dark:text-gray-300', 'dark:hover:bg-blue-900');
+    event.target.classList.add('bg-blue-600', 'text-white');
+
+    // Load available time slots
+    await loadTimeSlots(date);
+    
+    // Show time slots section
+    document.getElementById('timeSlots').classList.remove('hidden');
+    
+    updateSelectedDateTime();
+  }
+
+  async function loadTimeSlots(date) {
+    const dateString = date.toISOString().split('T')[0];
+    
+    try {
+      const response = await fetch(`/api/appointments?date=${dateString}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        availableSlots = data.availableSlots;
+        displayTimeSlots(data.availableSlots);
+      } else {
+        console.error('Error loading time slots:', data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  function displayTimeSlots(slots) {
+    const container = document.getElementById('availableSlots');
+    container.innerHTML = '';
+
+    if (slots.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">No hay horarios disponibles para esta fecha</p>';
+      return;
+    }
+
+    slots.forEach(time => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'p-2 text-sm border border-gray-300 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors';
+      button.textContent = time;
+      button.addEventListener('click', () => selectTime(time, button));
+      
+      container.appendChild(button);
+    });
+  }
+
+  function selectTime(time, buttonElement) {
+    selectedTime = time;
+
+    // Update visual selection
+    document.querySelectorAll('#availableSlots button').forEach(btn => {
+      btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+      btn.classList.add('border-gray-300', 'hover:bg-blue-50', 'hover:border-blue-300');
+    });
+
+    buttonElement.classList.remove('border-gray-300', 'hover:bg-blue-50', 'hover:border-blue-300');
+    buttonElement.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+
+    updateSelectedDateTime();
+    
+    // Enable submit button
+    document.getElementById('submitBtn').disabled = false;
+  }
+
+  function updateSelectedDateTime() {
+    const selectedDateTimeDiv = document.getElementById('selectedDateTime');
+    const selectedDateText = document.getElementById('selectedDateText');
+    const selectedTimeText = document.getElementById('selectedTimeText');
+
+    if (selectedDate) {
+      selectedDateText.textContent = selectedDate.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      if (selectedTime) {
+        selectedTimeText.textContent = selectedTime;
+        selectedDateTimeDiv.classList.remove('hidden');
+      } else {
+        selectedDateTimeDiv.classList.add('hidden');
+      }
+    }
+  }
+
+  // Form submission
+  document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (!selectedDate || !selectedTime) {
+      document.getElementById('errorText').textContent = 'Por favor selecciona una fecha y hora.';
+      document.getElementById('errorMessage').classList.remove('hidden');
+      return;
+    }
+
+    const formData = new FormData(this);
+    const appointmentData = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      company: formData.get('company'),
+      serviceType: formData.get('serviceType'),
+      date: selectedDate.toISOString().split('T')[0],
+      time: selectedTime,
+      message: formData.get('message'),
+      duration: 60
+    };
+
+    // Hide previous messages
+    document.getElementById('successMessage').classList.add('hidden');
+    document.getElementById('errorMessage').classList.add('hidden');
+
+    // Loading state
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Agendando...';
+    submitBtn.disabled = true;
+
+    try {
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appointmentData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        document.getElementById('successMessage').classList.remove('hidden');
+        this.reset();
+        selectedDate = null;
+        selectedTime = null;
+        document.getElementById('selectedDateTime').classList.add('hidden');
+        document.getElementById('timeSlots').classList.add('hidden');
+        
+        // Reset calendar selection
+        document.querySelectorAll('#calendarDays button').forEach(btn => {
+          btn.classList.remove('bg-blue-600', 'text-white');
+          if (!btn.disabled) {
+            btn.classList.add('text-gray-700', 'hover:bg-blue-100', 'dark:text-gray-300', 'dark:hover:bg-blue-900');
+          }
+        });
+      } else {
+        document.getElementById('errorText').textContent = result.error;
+        document.getElementById('errorMessage').classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('errorText').textContent = 'Error de conexión. Inténtalo más tarde.';
+      document.getElementById('errorMessage').classList.remove('hidden');
+    } finally {
+      submitBtn.textContent = originalText;
+      if (selectedDate && selectedTime) {
+        submitBtn.disabled = false;
+      }
+    }
+  });
+
+  // Navigation events
+  document.getElementById('prevMonth').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    generateCalendarDays();
+    updateCalendarHeader();
+    
+    // Hide time slots when changing month
+    document.getElementById('timeSlots').classList.add('hidden');
+    selectedDate = null;
+    selectedTime = null;
+    document.getElementById('selectedDateTime').classList.add('hidden');
+    document.getElementById('submitBtn').disabled = true;
+  });
+
+  document.getElementById('nextMonth').addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    generateCalendarDays();
+    updateCalendarHeader();
+    
+    // Hide time slots when changing month
+    document.getElementById('timeSlots').classList.add('hidden');
+    selectedDate = null;
+    selectedTime = null;
+    document.getElementById('selectedDateTime').classList.add('hidden');
+    document.getElementById('submitBtn').disabled = true;
+  });
+
+  // Initialize calendar on page load
+  document.addEventListener('DOMContentLoaded', initCalendar);
+</script>

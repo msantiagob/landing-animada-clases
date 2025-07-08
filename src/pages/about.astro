@@ -7,7 +7,7 @@ import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'About us',
+  title: 'Acerca de Sonmyd - Líderes en Soluciones Tecnológicas',
 };
 ---
 
@@ -15,60 +15,60 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
-    tagline="About us"
+    tagline="Acerca de nosotros"
     image={{
       src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
       alt: 'Caos Image',
     }}
   >
     <Fragment slot="title">
-      Elevate your online presence with our <br />
-      <span class="text-accent dark:text-white"> Beautiful Website Templates</span>
+      Transformamos negocios con <br />
+      <span class="text-accent dark:text-white"> Soluciones Tecnológicas de Vanguardia</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Donec efficitur, ipsum quis congue luctus, mauris magna convallis mauris, eu auctor nisi lectus non augue. Donec
-      quis lorem non massa vulputate efficitur ac at turpis. Sed tincidunt ex a nunc convallis, et lobortis nisi tempus.
-      Suspendisse vitae nisi eget tortor luctus maximus sed non lectus.
+      Somos una empresa líder en el desarrollo de soluciones tecnológicas avanzadas, especializados en Inteligencia Artificial,
+      desarrollo web, aplicaciones multiplataforma y automatizaciones empresariales. Con más de 15 años de experiencia,
+      hemos transformado digitalmente a cientos de empresas en América Latina.
     </Fragment>
   </Hero>
 
   <!-- Stats Widget ****************** -->
 
   <Stats
-    title="Statistics about us"
+    title="Nuestro Impacto en Números"
     stats={[
-      { title: 'Offices', amount: '4' },
-      { title: 'Employees', amount: '248' },
-      { title: 'Templates', amount: '12' },
-      { title: 'Awards', amount: '24' },
+      { title: 'Países Atendidos', amount: '8' },
+      { title: 'Especialistas', amount: '50+' },
+      { title: 'Proyectos Exitosos', amount: '500+' },
+      { title: 'Certificaciones', amount: '45+' },
     ]}
   />
 
   <!-- Features3 Widget ************** -->
 
   <Features3
-    title="Our templates"
-    subtitle="Etiam scelerisque, enim eget vestibulum luctus, nibh mauris blandit nulla, nec vestibulum risus justo ut enim. Praesent lacinia diam et ante imperdiet euismod."
+    title="Nuestras Especialidades"
+    subtitle="Ofrecemos soluciones tecnológicas integrales que abarcan desde IA hasta desarrollo multiplataforma, respaldadas por certificaciones internacionales y experiencia comprobada."
     columns={3}
     isBeforeContent={true}
     items={[
       {
-        title: 'Educational',
+        title: 'Inteligencia Artificial',
         description:
-          'Morbi faucibus luctus quam, sit amet aliquet felis tempor id. Cras augue massa, ornare quis dignissim a, molestie vel nulla.',
+          'Desarrollamos chatbots inteligentes, sistemas de análisis predictivo y automatización con IA para optimizar operaciones empresariales.',
         icon: 'tabler:template',
       },
       {
-        title: 'Interior Design',
+        title: 'Desarrollo Web Avanzado',
         description:
-          'Vivamus porttitor, tortor convallis aliquam pretium, turpis enim consectetur elit, vitae egestas purus erat ac nunc nulla.',
+          'Creamos aplicaciones web escalables, APIs robustas y sistemas de e-commerce con las últimas tecnologías del mercado.',
         icon: 'tabler:template',
       },
       {
-        title: 'Photography',
+        title: 'Apps Multiplataforma',
         description:
-          'Duis sed lectus in nisl vehicula porttitor eget quis odio. Aliquam erat volutpat. Nulla eleifend nulla id sem fermentum.',
+          'Desarrollamos aplicaciones nativas y híbridas para iOS y Android con React Native, Flutter y tecnologías nativas.',
         icon: 'tabler:template',
       },
     ]}
@@ -81,9 +81,9 @@ const metadata = {
     isAfterContent={true}
     items={[
       {
-        title: 'E-commerce',
+        title: 'Automatización de Procesos',
         description:
-          'Rutrum non odio at vehicula. Proin ipsum justo, dignissim in vehicula sit amet, dignissim id quam. Sed ac tincidunt sapien.',
+          'Implementamos RPA, workflows inteligentes y sistemas de automatización que reducen costos operativos hasta un 60%.',
         icon: 'tabler:template',
       },
       {
@@ -93,25 +93,25 @@ const metadata = {
         icon: 'tabler:template',
       },
       {
-        title: 'Business',
+        title: 'Capacitaciones Técnicas',
         description:
-          'Morbi et elit finibus, facilisis justo ut, pharetra ipsum. Donec efficitur, ipsum quis congue luctus, mauris magna.',
+          'Programas de formación especializada en IA, desarrollo web, DevOps y metodologías ágiles con certificación internacional.',
         icon: 'tabler:template',
       },
       {
-        title: 'Branding',
+        title: 'Consultoría Digital',
         description:
-          'Suspendisse vitae nisi eget tortor luctus maximus sed non lectus. Cras malesuada pretium placerat. Nullam venenatis dolor a ante rhoncus.',
+          'Asesoramos en transformación digital, arquitectura de software, migración cloud y estrategias de innovación tecnológica.',
         icon: 'tabler:template',
       },
       {
-        title: 'Medical',
+        title: 'Médico',
         description:
           'Vestibulum malesuada lacus id nibh posuere feugiat. Nam volutpat nulla a felis ultrices, id suscipit mauris congue. In hac habitasse platea dictumst.',
         icon: 'tabler:template',
       },
       {
-        title: 'Fashion Design',
+        title: 'Diseño de Moda',
         description:
           'Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus.',
         icon: 'tabler:template',
@@ -126,23 +126,23 @@ const metadata = {
   <!-- Steps2 Widget ****************** -->
 
   <Steps2
-    title="Our values"
-    subtitle="Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus. Nulla facilisi. Vestibulum malesuada lacus."
+    title="Nuestros valores"
+    subtitle="Nuestros valores fundamentales guían cada proyecto y relación. Creemos en la excelencia técnica, la innovación continua y el compromiso absoluto con el éxito de nuestros clientes."
     items={[
       {
-        title: 'Customer-centric approach',
+        title: 'Orientación al Cliente',
         description:
-          'Donec id nibh neque. Quisque et fermentum tortor. Fusce vitae dolor a mauris dignissim commodo. Ut eleifend luctus condimentum.',
+          'Cada solución que desarrollamos está diseñada pensando en las necesidades específicas del cliente, garantizando resultados que superan expectativas.',
       },
       {
-        title: 'Constant Improvement',
+        title: 'Innovación Continua',
         description:
-          'Phasellus laoreet fermentum venenatis. Vivamus dapibus pulvinar arcu eget mattis. Fusce eget mauris leo.',
+          'Mantenemos a nuestro equipo actualizado con las últimas tecnologías y tendencias, asegurando soluciones de vanguardia.',
       },
       {
-        title: 'Ethical Practices',
+        title: 'Excelencia Técnica',
         description:
-          'Vestibulum imperdiet libero et lectus molestie, et maximus augue porta. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+          'Aplicamos las mejores prácticas de desarrollo, estándares de calidad internacional y metodologías probadas en cada proyecto.',
       },
     ]}
   />
@@ -150,29 +150,29 @@ const metadata = {
   <!-- Steps2 Widget ****************** -->
 
   <Steps2
-    title="Achievements"
-    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla, sed porttitor est nibh at nulla."
+    title="Logros"
+    subtitle="Nuestros logros respaldan nuestra experiencia y compromiso con la excelencia. Cada reconocimiento representa la confianza de nuestros clientes y socios estratégicos."
     isReversed={true}
     callToAction={{
-      text: 'See more',
+      text: 'Ver más',
       href: '/',
     }}
     items={[
       {
-        title: 'Global reach',
-        description: 'Nam malesuada urna in enim imperdiet tincidunt. Phasellus non tincidunt nisi, at elementum mi.',
+        title: 'Presencia Internacional',
+        description: 'Operamos en 8 países de América Latina, con proyectos exitosos en sectores financiero, retail, salud y educación.',
         icon: 'tabler:globe',
       },
       {
-        title: 'Positive customer feedback and reviews',
+        title: '98% de Satisfacción del Cliente',
         description:
-          'Cras semper nulla leo, eget laoreet erat cursus sed. Praesent faucibus massa in purus iaculis dictum.',
+          'Nuestros clientes nos evalúan consistentemente con puntuaciones superiores al 98%, respaldando nuestro compromiso con la calidad.',
         icon: 'tabler:message-star',
       },
       {
-        title: 'Awards and recognition as industry experts',
+        title: 'Líderes en Innovación Tecnológica',
         description:
-          'Phasellus lacinia cursus velit, eu malesuada magna pretium eu. Etiam aliquet tellus purus, blandit lobortis ex rhoncus vitae.',
+          'Reconocidos por Microsoft, Google y AWS como partners especializados. Certificaciones en Azure, AWS y Google Cloud Platform.',
         icon: 'tabler:award',
       },
     ]}
@@ -181,25 +181,25 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Our locations"
-    tagline="Find us"
+    title="Oficinas Principales"
+    tagline="Encuéntranos"
     columns={4}
     items={[
       {
-        title: 'EE.UU',
-        description: '1234 Lorem Ipsum St, 12345, Miami',
+        title: 'Colombia',
+        description: 'Bogotá - Sede Principal y Centro de Innovación',
       },
       {
-        title: 'Spain',
-        description: '5678 Lorem Ipsum St, 56789, Madrid',
+        title: 'México',
+        description: 'Ciudad de México - Hub de Expansión Norte',
       },
       {
-        title: 'Australia',
-        description: '9012 Lorem Ipsum St, 90123, Sydney',
+        title: 'Perú',
+        description: 'Lima - Centro de Operaciones Regionales',
       },
       {
-        title: 'Brazil',
-        description: '3456 Lorem Ipsum St, 34567, São Paulo',
+        title: 'Chile',
+        description: 'Santiago - Oficina de Desarrollo y Soporte',
       },
     ]}
   />
@@ -207,20 +207,20 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Technical Support"
-    tagline="Contact us"
+    title="Soporte Técnico"
+    tagline="Contáctanos"
     columns={2}
     items={[
       {
-        title: 'Chat with us',
+        title: 'Soporte en Línea 24/7',
         description:
-          'Integer luctus laoreet libero, auctor varius purus rutrum sit amet. Ut nec molestie nisi, quis eleifend mi.',
+          'Chat especializado con nuestros ingenieros para resolver dudas técnicas, consultas de proyectos y soporte de emergencia.',
         icon: 'tabler:messages',
       },
       {
-        title: 'Call us',
+        title: 'Consulta Telefónica',
         description:
-          'Mauris faucibus finibus orci, in posuere elit viverra non. In hac habitasse platea dictumst. Cras lobortis metus a hendrerit congue.',
+          'Línea directa con nuestros especialistas para asesoría personalizada, cotizaciones y planificación de proyectos.',
         icon: 'tabler:headset',
       },
     ]}

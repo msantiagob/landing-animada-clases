@@ -1,0 +1,703 @@
+---
+export const prerender = false;
+
+import { authHelpers } from '../../lib/auth';
+
+// Verificar autenticación
+const authData = authHelpers.requireAuthFromCookies(Astro.request);
+if (!authData) {
+  return Astro.redirect('/admin/login');
+}
+
+const user = authHelpers.getUserById(authData.userId);
+if (!user) {
+  return Astro.redirect('/admin/login');
+}
+
+const metadata = {
+  title: 'Gestión de Landing Pages - Admin Sonmyd',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+---
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{metadata.title}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .sidebar-link.active {
+      @apply bg-blue-100 text-blue-700 border-r-4 border-blue-700;
+    }
+    .page-preview {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-preview::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      height: 20px;
+      background: linear-gradient(90deg, #dee2e6 0%, #adb5bd 50%, #dee2e6 100%);
+      border-radius: 4px;
+    }
+    .status-published { @apply bg-green-100 text-green-800; }
+    .status-draft { @apply bg-yellow-100 text-yellow-800; }
+    .status-archived { @apply bg-gray-100 text-gray-800; }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="w-64 bg-white shadow-lg">
+      <div class="p-6 border-b">
+        <h2 class="text-xl font-bold text-gray-800">Admin Sonmyd</h2>
+        <p class="text-sm text-gray-600">Bienvenido, {user.name}</p>
+      </div>
+      
+      <nav class="mt-6">
+        <a href="/admin/dashboard" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 5 4-4 4 4"></path>
+          </svg>
+          Dashboard
+        </a>
+        
+        <a href="/admin/forms" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.34a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          Formularios
+        </a>
+        
+        <a href="/admin/appointments" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v14a2 2 0 002 2z"></path>
+          </svg>
+          Citas
+        </a>
+        
+        <a href="/admin/blog" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Blog
+        </a>
+        
+        <a href="/admin/emails" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+          Emails
+        </a>
+        
+        <a href="/admin/landing-pages" class="sidebar-link active flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+          Landing Pages
+        </a>
+      </nav>
+      
+      <!-- Logout -->
+      <div class="absolute bottom-0 w-64 p-6 border-t">
+        <button id="logoutBtn" class="flex items-center text-gray-700 hover:text-red-600">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+      <!-- Header -->
+      <div class="bg-white shadow-sm p-6 border-b">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">Gestión de Landing Pages</h1>
+            <p class="text-gray-600">Administra las páginas de aterrizaje y conversión</p>
+          </div>
+          
+          <div class="flex space-x-4">
+            <button id="newPageBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+              Nueva Página
+            </button>
+            <button id="templatesBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm">
+              Plantillas
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500">Total Páginas</h3>
+                <p id="totalPages" class="text-2xl font-bold text-gray-900">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-green-100 text-green-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500">Publicadas</h3>
+                <p id="publishedPages" class="text-2xl font-bold text-gray-900">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500">Visitas del Mes</h3>
+                <p id="monthlyViews" class="text-2xl font-bold text-gray-900">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-sm font-medium text-gray-500">Conversiones</h3>
+                <p id="conversions" class="text-2xl font-bold text-gray-900">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+          <div class="flex flex-wrap items-center gap-4">
+            <div>
+              <label class="text-sm font-medium text-gray-700 mr-2">Estado:</label>
+              <select id="statusFilter" class="border border-gray-300 rounded px-3 py-1 text-sm">
+                <option value="">Todos</option>
+                <option value="published">Publicadas</option>
+                <option value="draft">Borradores</option>
+                <option value="archived">Archivadas</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm font-medium text-gray-700 mr-2">Tipo:</label>
+              <select id="typeFilter" class="border border-gray-300 rounded px-3 py-1 text-sm">
+                <option value="">Todos</option>
+                <option value="sales">Ventas</option>
+                <option value="lead-generation">Generación de leads</option>
+                <option value="product">Producto</option>
+                <option value="event">Evento</option>
+              </select>
+            </div>
+            <button id="refreshBtn" class="bg-gray-600 text-white px-4 py-1 rounded text-sm hover:bg-gray-700">
+              Actualizar
+            </button>
+          </div>
+        </div>
+
+        <!-- Pages Grid -->
+        <div id="pagesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Pages will be loaded here -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-12 hidden">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No hay páginas</h3>
+          <p class="mt-1 text-sm text-gray-500">Crea tu primera landing page para comenzar.</p>
+          <button onclick="showPageModal()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Nueva Página
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Modal -->
+  <div id="pageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+    <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white">
+      <div class="mt-3">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800" id="pageModalTitle">Nueva Landing Page</h3>
+          <button id="closePageModal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <form id="pageForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la página</label>
+              <input type="text" id="pageName" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
+              <input type="text" id="pageSlug" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de página</label>
+              <select id="pageType" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                <option value="">Seleccionar tipo</option>
+                <option value="sales">Página de ventas</option>
+                <option value="lead-generation">Generación de leads</option>
+                <option value="product">Página de producto</option>
+                <option value="event">Página de evento</option>
+                <option value="custom">Personalizada</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <select id="pageStatus" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                <option value="draft">Borrador</option>
+                <option value="published">Publicada</option>
+                <option value="archived">Archivada</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <textarea id="pageDescription" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Meta título (SEO)</label>
+              <input type="text" id="pageMetaTitle" class="w-full border border-gray-300 rounded-md px-3 py-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Meta descripción (SEO)</label>
+              <input type="text" id="pageMetaDescription" class="w-full border border-gray-300 rounded-md px-3 py-2">
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Plantilla base</label>
+            <select id="pageTemplate" class="w-full border border-gray-300 rounded-md px-3 py-2">
+              <option value="clean">Plantilla limpia</option>
+              <option value="hero-form">Hero con formulario</option>
+              <option value="features">Página de características</option>
+              <option value="pricing">Página de precios</option>
+              <option value="contact">Página de contacto</option>
+            </select>
+          </div>
+          
+          <div class="border-t pt-4">
+            <h4 class="text-md font-medium text-gray-700 mb-3">Configuración de conversión</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Goal de conversión</label>
+                <select id="conversionGoal" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                  <option value="">Sin objetivo específico</option>
+                  <option value="email-signup">Registro de email</option>
+                  <option value="contact-form">Formulario de contacto</option>
+                  <option value="appointment">Agendar cita</option>
+                  <option value="purchase">Compra</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Código de seguimiento</label>
+                <input type="text" id="trackingCode" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="GTM-XXXXXXX">
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" id="cancelPageBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+              Cancelar
+            </button>
+            <button type="button" id="previewPageBtn" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+              Vista Previa
+            </button>
+            <button type="submit" id="savePageBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentFilters = { status: '', type: '' };
+    let isEditMode = false;
+    let currentPageId = null;
+
+    // Load stats
+    async function loadStats() {
+      // Mock data - replace with actual API calls
+      document.getElementById('totalPages').textContent = '12';
+      document.getElementById('publishedPages').textContent = '8';
+      document.getElementById('monthlyViews').textContent = '4,567';
+      document.getElementById('conversions').textContent = '234';
+    }
+
+    // Load pages
+    async function loadPages() {
+      const grid = document.getElementById('pagesGrid');
+      const emptyState = document.getElementById('emptyState');
+      
+      // Mock pages data - replace with actual API call
+      const pages = [
+        {
+          id: 1,
+          name: 'Servicios de Consultoría',
+          slug: 'consultoria',
+          type: 'lead-generation',
+          status: 'published',
+          description: 'Página para captar leads de servicios de consultoría',
+          views: 1245,
+          conversions: 45,
+          conversionRate: 3.6,
+          lastModified: new Date()
+        },
+        {
+          id: 2,
+          name: 'Lanzamiento de Producto',
+          slug: 'producto-nuevo',
+          type: 'product',
+          status: 'draft',
+          description: 'Página de lanzamiento del nuevo producto',
+          views: 0,
+          conversions: 0,
+          conversionRate: 0,
+          lastModified: new Date()
+        },
+        {
+          id: 3,
+          name: 'Webinar Gratuito',
+          slug: 'webinar',
+          type: 'event',
+          status: 'published',
+          description: 'Registro para webinar gratuito',
+          views: 856,
+          conversions: 124,
+          conversionRate: 14.5,
+          lastModified: new Date()
+        }
+      ];
+
+      // Apply filters
+      let filteredPages = pages;
+      if (currentFilters.status) {
+        filteredPages = filteredPages.filter(page => page.status === currentFilters.status);
+      }
+      if (currentFilters.type) {
+        filteredPages = filteredPages.filter(page => page.type === currentFilters.type);
+      }
+
+      if (filteredPages.length === 0) {
+        grid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      grid.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      grid.innerHTML = filteredPages.map(page => `
+        <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+          <div class="page-preview relative">
+            <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+              <div class="text-center">
+                <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-sm">Vista previa no disponible</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-semibold text-gray-900 truncate">${page.name}</h3>
+              <span class="px-2 py-1 text-xs rounded-full status-${page.status}">
+                ${getStatusText(page.status)}
+              </span>
+            </div>
+            
+            <p class="text-sm text-gray-600 mb-3 line-clamp-2">${page.description}</p>
+            
+            <div class="grid grid-cols-3 gap-2 text-center mb-3 text-xs">
+              <div>
+                <div class="font-semibold text-gray-900">${page.views.toLocaleString()}</div>
+                <div class="text-gray-500">Visitas</div>
+              </div>
+              <div>
+                <div class="font-semibold text-gray-900">${page.conversions}</div>
+                <div class="text-gray-500">Conversiones</div>
+              </div>
+              <div>
+                <div class="font-semibold text-gray-900">${page.conversionRate}%</div>
+                <div class="text-gray-500">Tasa conv.</div>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-gray-400">/${page.slug}</span>
+              <div class="flex space-x-1">
+                <button onclick="viewPage(${page.id})" class="text-blue-600 hover:text-blue-800 text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+                <button onclick="editPage(${page.id})" class="text-green-600 hover:text-green-800 text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </button>
+                <button onclick="duplicatePage(${page.id})" class="text-purple-600 hover:text-purple-800 text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                  </svg>
+                </button>
+                <button onclick="deletePage(${page.id})" class="text-red-600 hover:text-red-800 text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getStatusText(status) {
+      const texts = {
+        'published': 'Publicada',
+        'draft': 'Borrador',
+        'archived': 'Archivada'
+      };
+      return texts[status] || status;
+    }
+
+    function getTypeText(type) {
+      const texts = {
+        'sales': 'Ventas',
+        'lead-generation': 'Generación de leads',
+        'product': 'Producto',
+        'event': 'Evento',
+        'custom': 'Personalizada'
+      };
+      return texts[type] || type;
+    }
+
+    // Generate slug from name
+    function generateSlug(name) {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    }
+
+    // Modal functions
+    function showPageModal(page = null) {
+      const modal = document.getElementById('pageModal');
+      const title = document.getElementById('pageModalTitle');
+      
+      if (page) {
+        isEditMode = true;
+        currentPageId = page.id;
+        title.textContent = 'Editar Landing Page';
+        populateForm(page);
+      } else {
+        isEditMode = false;
+        currentPageId = null;
+        title.textContent = 'Nueva Landing Page';
+        document.getElementById('pageForm').reset();
+      }
+      
+      modal.classList.remove('hidden');
+    }
+
+    function populateForm(page) {
+      document.getElementById('pageName').value = page.name || '';
+      document.getElementById('pageSlug').value = page.slug || '';
+      document.getElementById('pageType').value = page.type || '';
+      document.getElementById('pageStatus').value = page.status || 'draft';
+      document.getElementById('pageDescription').value = page.description || '';
+      document.getElementById('pageMetaTitle').value = page.metaTitle || '';
+      document.getElementById('pageMetaDescription').value = page.metaDescription || '';
+      document.getElementById('pageTemplate').value = page.template || 'clean';
+      document.getElementById('conversionGoal').value = page.conversionGoal || '';
+      document.getElementById('trackingCode').value = page.trackingCode || '';
+    }
+
+    // Global functions
+    function viewPage(id) {
+      // Open page in new tab
+      window.open(`/landing/${id}`, '_blank');
+    }
+
+    function editPage(id) {
+      // Mock page data - replace with actual API call
+      const page = {
+        id,
+        name: 'Página ' + id,
+        slug: 'pagina-' + id,
+        type: 'lead-generation',
+        status: 'published',
+        description: 'Descripción de la página',
+        metaTitle: 'Meta título',
+        metaDescription: 'Meta descripción',
+        template: 'clean',
+        conversionGoal: 'email-signup',
+        trackingCode: 'GTM-XXXXXXX'
+      };
+      showPageModal(page);
+    }
+
+    function duplicatePage(id) {
+      if (confirm('¿Quieres duplicar esta página?')) {
+        console.log('Duplicating page', id);
+        loadPages();
+      }
+    }
+
+    function deletePage(id) {
+      if (confirm('¿Estás seguro de que quieres eliminar esta página?')) {
+        console.log('Deleting page', id);
+        loadPages();
+      }
+    }
+
+    // Event listeners
+    document.getElementById('pageName').addEventListener('input', function() {
+      if (!isEditMode) {
+        document.getElementById('pageSlug').value = generateSlug(this.value);
+      }
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', (e) => {
+      currentFilters.status = e.target.value;
+      loadPages();
+    });
+
+    document.getElementById('typeFilter').addEventListener('change', (e) => {
+      currentFilters.type = e.target.value;
+      loadPages();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      loadPages();
+      loadStats();
+    });
+
+    document.getElementById('newPageBtn').addEventListener('click', () => showPageModal());
+    document.getElementById('templatesBtn').addEventListener('click', () => {
+      alert('Función de plantillas disponible próximamente');
+    });
+
+    document.getElementById('closePageModal').addEventListener('click', () => {
+      document.getElementById('pageModal').classList.add('hidden');
+    });
+
+    document.getElementById('cancelPageBtn').addEventListener('click', () => {
+      document.getElementById('pageModal').classList.add('hidden');
+    });
+
+    document.getElementById('previewPageBtn').addEventListener('click', () => {
+      alert('Vista previa disponible próximamente');
+    });
+
+    document.getElementById('pageForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('pageName').value,
+        slug: document.getElementById('pageSlug').value,
+        type: document.getElementById('pageType').value,
+        status: document.getElementById('pageStatus').value,
+        description: document.getElementById('pageDescription').value,
+        metaTitle: document.getElementById('pageMetaTitle').value,
+        metaDescription: document.getElementById('pageMetaDescription').value,
+        template: document.getElementById('pageTemplate').value,
+        conversionGoal: document.getElementById('conversionGoal').value,
+        trackingCode: document.getElementById('trackingCode').value
+      };
+
+      console.log(isEditMode ? 'Updating page' : 'Creating page', formData);
+      
+      document.getElementById('pageModal').classList.add('hidden');
+      loadPages();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'logout' })
+        });
+        if (response.ok) {
+          window.location.href = '/admin/login';
+        }
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStats();
+      loadPages();
+    });
+
+    // Make functions globally available
+    window.viewPage = viewPage;
+    window.editPage = editPage;
+    window.duplicatePage = duplicatePage;
+    window.deletePage = deletePage;
+    window.showPageModal = showPageModal;
+  </script>
+</body>
+</html>
