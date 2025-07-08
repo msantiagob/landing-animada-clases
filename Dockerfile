@@ -10,14 +10,17 @@ WORKDIR /app
 # Copiar package.json y package-lock.json
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm ci --only=production
+# Instalar dependencias (incluyendo dev dependencies para build)
+RUN npm ci
 
 # Copiar código fuente
 COPY . .
 
 # Construir la aplicación
 RUN npm run build
+
+# Limpiar dev dependencies después del build
+RUN npm prune --production
 
 # Crear usuario no-root para seguridad
 RUN addgroup -g 1001 -S nodejs
