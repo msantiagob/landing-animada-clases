@@ -363,6 +363,94 @@ const metadata = {
     </div>
   </div>
 
+  <!-- Templates Modal -->
+  <div id="templatesModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+    <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 shadow-lg rounded-md bg-white">
+      <div class="mt-3">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Plantillas de Landing Pages</h3>
+          <button id="closeTemplatesModal" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Template 1: Clean -->
+          <div class="template-card border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" data-template="clean">
+            <div class="h-32 bg-gray-100 rounded mb-3 flex items-center justify-center">
+              <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-800">Plantilla Limpia</h4>
+            <p class="text-sm text-gray-600 mt-1">Diseño minimalista y elegante</p>
+            <button class="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Usar Plantilla
+            </button>
+          </div>
+
+          <!-- Template 2: Hero Form -->
+          <div class="template-card border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" data-template="hero-form">
+            <div class="h-32 bg-blue-100 rounded mb-3 flex items-center justify-center">
+              <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-800">Hero + Formulario</h4>
+            <p class="text-sm text-gray-600 mt-1">Ideal para generar leads</p>
+            <button class="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Usar Plantilla
+            </button>
+          </div>
+
+          <!-- Template 3: Features -->
+          <div class="template-card border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" data-template="features">
+            <div class="h-32 bg-green-100 rounded mb-3 flex items-center justify-center">
+              <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-800">Características</h4>
+            <p class="text-sm text-gray-600 mt-1">Muestra beneficios y features</p>
+            <button class="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Usar Plantilla
+            </button>
+          </div>
+
+          <!-- Template 4: Pricing -->
+          <div class="template-card border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" data-template="pricing">
+            <div class="h-32 bg-purple-100 rounded mb-3 flex items-center justify-center">
+              <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-800">Precios</h4>
+            <p class="text-sm text-gray-600 mt-1">Tabla de precios y planes</p>
+            <button class="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Usar Plantilla
+            </button>
+          </div>
+
+          <!-- Template 5: Contact -->
+          <div class="template-card border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer" data-template="contact">
+            <div class="h-32 bg-yellow-100 rounded mb-3 flex items-center justify-center">
+              <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.34a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h4 class="font-semibold text-gray-800">Contacto</h4>
+            <p class="text-sm text-gray-600 mt-1">Información de contacto</p>
+            <button class="mt-3 w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">
+              Usar Plantilla
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentFilters = { status: '', type: '' };
     let isEditMode = false;
@@ -456,13 +544,19 @@ const metadata = {
 
         grid.innerHTML = pages.map(page => `
           <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
-            <div class="page-preview relative">
-              <div class="absolute inset-0 flex items-center justify-center text-gray-400">
+            <div class="page-preview relative overflow-hidden">
+              <div class="bg-gradient-to-br from-blue-50 to-purple-50 h-full p-4">
                 <div class="text-center">
-                  <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                  </svg>
-                  <p class="text-sm">Vista previa no disponible</p>
+                  <div class="mb-3">
+                    ${getTemplateIcon(page.template)}
+                  </div>
+                  <h4 class="font-semibold text-gray-800 text-sm mb-1">${getTemplateTitle(page.template)}</h4>
+                  <p class="text-xs text-gray-600">${page.config.description || 'Sin descripción'}</p>
+                  <div class="mt-3 flex justify-center">
+                    <a href="/landing/${page.slug}" target="_blank" class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
+                      Ver página
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -547,6 +641,28 @@ const metadata = {
         'custom': 'Personalizada'
       };
       return texts[type] || type;
+    }
+
+    function getTemplateIcon(template) {
+      const icons = {
+        'clean': '<svg class="w-8 h-8 text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>',
+        'hero-form': '<svg class="w-8 h-8 text-blue-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+        'features': '<svg class="w-8 h-8 text-green-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>',
+        'pricing': '<svg class="w-8 h-8 text-purple-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+        'contact': '<svg class="w-8 h-8 text-yellow-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.34a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>'
+      };
+      return icons[template] || icons['clean'];
+    }
+
+    function getTemplateTitle(template) {
+      const titles = {
+        'clean': 'Plantilla Limpia',
+        'hero-form': 'Hero + Formulario',
+        'features': 'Características',
+        'pricing': 'Precios',
+        'contact': 'Contacto'
+      };
+      return titles[template] || 'Plantilla Personalizada';
     }
 
     // Generate slug from name
@@ -689,7 +805,7 @@ const metadata = {
 
     document.getElementById('newPageBtn').addEventListener('click', () => showPageModal());
     document.getElementById('templatesBtn').addEventListener('click', () => {
-      alert('Función de plantillas disponible próximamente');
+      showTemplatesModal();
     });
 
     document.getElementById('closePageModal').addEventListener('click', () => {
@@ -701,7 +817,13 @@ const metadata = {
     });
 
     document.getElementById('previewPageBtn').addEventListener('click', () => {
-      alert('Vista previa disponible próximamente');
+      const slug = document.getElementById('pageSlug').value;
+      if (slug) {
+        const previewUrl = `/landing/${slug}`;
+        window.open(previewUrl, '_blank');
+      } else {
+        alert('Por favor ingresa un slug para generar la vista previa');
+      }
     });
 
     document.getElementById('pageForm').addEventListener('submit', async (e) => {
@@ -792,12 +914,91 @@ const metadata = {
       loadPages();
     });
 
+    // Templates functionality
+    function showTemplatesModal() {
+      document.getElementById('templatesModal').classList.remove('hidden');
+    }
+
+    function createFromTemplate(template) {
+      const templateData = {
+        clean: {
+          name: 'Página Limpia',
+          slug: 'pagina-limpia-' + Date.now(),
+          template: 'clean',
+          type: 'custom',
+          description: 'Página con diseño minimalista y elegante'
+        },
+        'hero-form': {
+          name: 'Generación de Leads',
+          slug: 'generar-leads-' + Date.now(),
+          template: 'hero-form',
+          type: 'lead-generation',
+          description: 'Página optimizada para capturar leads con formulario',
+          conversionGoal: 'email-signup'
+        },
+        features: {
+          name: 'Página de Características',
+          slug: 'caracteristicas-' + Date.now(),
+          template: 'features',
+          type: 'product',
+          description: 'Muestra los beneficios y características de tu producto'
+        },
+        pricing: {
+          name: 'Tabla de Precios',
+          slug: 'precios-' + Date.now(),
+          template: 'pricing',
+          type: 'sales',
+          description: 'Página de precios y planes para conversión'
+        },
+        contact: {
+          name: 'Página de Contacto',
+          slug: 'contacto-' + Date.now(),
+          template: 'contact',
+          type: 'lead-generation',
+          description: 'Información de contacto y formulario',
+          conversionGoal: 'contact-form'
+        }
+      };
+
+      const data = templateData[template];
+      if (data) {
+        document.getElementById('templatesModal').classList.add('hidden');
+        showPageModal();
+        
+        // Llenar el formulario con los datos de la plantilla
+        document.getElementById('pageName').value = data.name;
+        document.getElementById('pageSlug').value = data.slug;
+        document.getElementById('pageType').value = data.type;
+        document.getElementById('pageTemplate').value = data.template;
+        document.getElementById('pageDescription').value = data.description;
+        if (data.conversionGoal) {
+          document.getElementById('conversionGoal').value = data.conversionGoal;
+        }
+      }
+    }
+
+    // Event listeners for templates
+    document.getElementById('closeTemplatesModal').addEventListener('click', () => {
+      document.getElementById('templatesModal').classList.add('hidden');
+    });
+
+    // Add click handlers for template cards
+    document.querySelectorAll('.template-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          const template = card.dataset.template;
+          createFromTemplate(template);
+        }
+      });
+    });
+
     // Make functions globally available
     window.viewPage = viewPage;
     window.editPage = editPage;
     window.duplicatePage = duplicatePage;
     window.deletePage = deletePage;
     window.showPageModal = showPageModal;
+    window.showTemplatesModal = showTemplatesModal;
   </script>
 </body>
 </html>
