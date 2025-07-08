@@ -42,3 +42,4 @@ ENV DATABASE_PATH=/app/data/database.sqlite
 
 # Comando de inicio
 CMD ["node", "./dist/server/entry.mjs"]
+# Comando de inicio
