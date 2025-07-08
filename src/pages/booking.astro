@@ -1,0 +1,27 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import AppointmentBooking from '~/components/widgets/AppointmentBooking.astro';
+
+const metadata = {
+  title: 'Agenda tu Cita - Consulta Gratuita con Expertos | Sonmyd',
+  description: 'Agenda tu consulta gratuita con nuestros expertos en tecnología. Selecciona el día y hora que mejor te convenga para tu asesoría personalizada.',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- HeroText Widget ******************* -->
+  <HeroText 
+    tagline="Agenda tu Cita" 
+    title="Reserva tu Consulta Gratuita"
+    subtitle="Selecciona el día y hora que mejor te convenga para tu asesoría personalizada con nuestros expertos en tecnología."
+  />
+
+  <!-- AppointmentBooking Widget ********* -->
+  <AppointmentBooking 
+    id="booking"
+    title="Agenda tu Consulta Gratuita"
+    subtitle="Nuestros especialistas te contactarán para analizar tu proyecto y diseñar una solución personalizada"
+    tagline="Reserva tu Cita"
+  />
+</Layout>
