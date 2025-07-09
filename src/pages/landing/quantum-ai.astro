@@ -1,0 +1,282 @@
+---
+import Layout from '~/layouts/LandingLayout.astro';
+import CyberHero from '~/components/ui/CyberHero.astro';
+import TechCard from '~/components/ui/TechCard.astro';
+import SuperButton from '~/components/ui/SuperButton.astro';
+import StatsSection from '~/components/ui/StatsSection.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'QuantumAI - Inteligencia Artificial Cuántica',
+  description: 'La próxima generación de IA que revoluciona la computación',
+};
+
+const stats = [
+  { value: '1000x', label: 'Más Rápido', icon: 'tabler:rocket', color: 'blue' },
+  { value: '99.9%', label: 'Precisión', icon: 'tabler:target', color: 'green' },
+  { value: '50TB', label: 'Datos Procesados', icon: 'tabler:database', color: 'purple' },
+  { value: '24/7', label: 'Disponibilidad', icon: 'tabler:clock', color: 'orange' },
+];
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Section -->
+  <CyberHero
+    title="QUANTUM AI"
+    subtitle="La Próxima Frontera Tecnológica"
+    description="Experimenta el poder de la inteligencia artificial cuántica. Procesa información a velocidades imposibles y resuelve problemas complejos en segundos."
+    primaryButton={{
+      text: "Acceso Anticipado",
+      href: "#early-access",
+      icon: "tabler:atom"
+    }}
+    secondaryButton={{
+      text: "Ver Demostración",
+      href: "#demo",
+      icon: "tabler:play"
+    }}
+    background="cyber"
+    particles={true}
+  />
+
+  <!-- Features Section -->
+  <section class="py-20 bg-black relative overflow-hidden">
+    <!-- Animated background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-5xl font-bold text-white mb-6">
+          Capacidades <span class="text-gradient">Cuánticas</span>
+        </h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+          Revoluciona tu forma de procesar información con tecnología cuántica
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <TechCard
+          title="Superposición Cuántica"
+          description="Procesa múltiples posibilidades simultáneamente, acelerando cálculos complejos exponencialmente."
+          icon="tabler:atom-2"
+          variant="neon"
+          animate={true}
+        >
+          <SuperButton
+            variant="neon"
+            size="sm"
+            text="Explorar"
+            href="#quantum"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+
+        <TechCard
+          title="Machine Learning Cuántico"
+          description="Algoritmos de aprendizaje que aprovechan la mecánica cuántica para patrones imposibles."
+          icon="tabler:brain"
+          variant="gradient"
+          animate={true}
+        >
+          <SuperButton
+            variant="glass"
+            size="sm"
+            text="Aprender Más"
+            href="#ml"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+
+        <TechCard
+          title="Optimización Cuántica"
+          description="Resuelve problemas de optimización NP-hard en tiempo polinomial."
+          icon="tabler:chart-line"
+          variant="modern"
+          animate={true}
+        >
+          <SuperButton
+            variant="primary"
+            size="sm"
+            text="Optimizar"
+            href="#optimize"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+
+        <TechCard
+          title="Criptografía Cuántica"
+          description="Seguridad inquebrantable basada en principios fundamentales de la física cuántica."
+          icon="tabler:shield-lock"
+          variant="neon"
+          animate={true}
+        >
+          <SuperButton
+            variant="neon"
+            size="sm"
+            text="Proteger"
+            href="#security"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+
+        <TechCard
+          title="Simulación Molecular"
+          description="Simula sistemas moleculares complejos para descubrimientos científicos."
+          icon="tabler:molecule"
+          variant="gradient"
+          animate={true}
+        >
+          <SuperButton
+            variant="glass"
+            size="sm"
+            text="Simular"
+            href="#simulation"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+
+        <TechCard
+          title="Inteligencia Cuántica"
+          description="IA que piensa en estados cuánticos, procesando información de forma revolucionaria."
+          icon="tabler:cpu"
+          variant="modern"
+          animate={true}
+        >
+          <SuperButton
+            variant="primary"
+            size="sm"
+            text="Activar"
+            href="#ai"
+            icon="tabler:arrow-right"
+          />
+        </TechCard>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <StatsSection
+    title="Rendimiento Cuántico"
+    subtitle="Números que desafían la realidad"
+    stats={stats}
+    variant="neon"
+    columns={4}
+    animate={true}
+  />
+
+  <!-- Demo Section -->
+  <section id="demo" class="py-20 bg-matrix relative overflow-hidden">
+    <div class="absolute inset-0 opacity-30">
+      <div class="absolute w-full h-full bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent animate-pulse"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-5xl font-bold text-white mb-6">
+          Demostración <span class="text-neon">Interactiva</span>
+        </h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+          Experimenta el poder de la computación cuántica en tiempo real
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="glass rounded-3xl p-8 md:p-12">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="text-center">
+              <div class="text-4xl font-bold text-gradient mb-4">Procesamiento Clásico</div>
+              <div class="bg-red-500/20 rounded-2xl p-6 border border-red-500/30">
+                <div class="text-2xl text-red-400 mb-2">2.5 horas</div>
+                <div class="text-sm text-gray-400">Optimización de rutas</div>
+              </div>
+            </div>
+            
+            <div class="text-center">
+              <div class="text-4xl font-bold text-neon mb-4">Procesamiento Cuántico</div>
+              <div class="bg-cyan-500/20 rounded-2xl p-6 border border-cyan-500/30">
+                <div class="text-2xl text-cyan-400 mb-2">0.3 segundos</div>
+                <div class="text-sm text-gray-400">Misma optimización</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <SuperButton
+              variant="neon"
+              size="lg"
+              text="Probar Demostración"
+              href="#try"
+              icon="tabler:play"
+              pulse={true}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Early Access Section -->
+  <section id="early-access" class="py-20 bg-tech relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse top-1/4 left-1/4"></div>
+      <div class="absolute w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse top-1/3 right-1/4"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-5xl font-bold text-white mb-6">
+        Acceso <span class="text-gradient">Anticipado</span>
+      </h2>
+      <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+        Sé parte de la revolución cuántica. Acceso limitado para los primeros adopters.
+      </p>
+      
+      <div class="glass rounded-3xl p-8 mb-8 max-w-2xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <input
+            type="text"
+            placeholder="Nombre completo"
+            class="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300"
+          />
+          <input
+            type="email"
+            placeholder="Email corporativo"
+            class="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300"
+          />
+        </div>
+        
+        <textarea
+          placeholder="Describe tu caso de uso para IA cuántica..."
+          rows="4"
+          class="w-full px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300 mb-6"
+        ></textarea>
+        
+        <SuperButton
+          variant="glow"
+          size="lg"
+          text="Solicitar Acceso"
+          icon="tabler:send"
+          pulse={true}
+          class="w-full"
+        />
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <SuperButton
+          variant="glass"
+          size="lg"
+          text="Descargar Whitepaper"
+          href="/whitepaper"
+          icon="tabler:download"
+        />
+        
+        <SuperButton
+          variant="neon"
+          size="lg"
+          text="Agendar Consulta"
+          href="/consultation"
+          icon="tabler:calendar"
+        />
+      </div>
+    </div>
+  </section>
+</Layout>

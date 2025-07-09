@@ -1,0 +1,107 @@
+---
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+
+interface Stat {
+  value: string;
+  label: string;
+  icon?: string;
+  color?: 'blue' | 'purple' | 'green' | 'orange' | 'cyan';
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  stats: Stat[];
+  variant?: 'modern' | 'neon' | 'glass';
+  columns?: 2 | 3 | 4;
+  animate?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  stats,
+  variant = 'modern',
+  columns = 4,
+  animate = true,
+  class: className = '',
+} = Astro.props;
+
+const colorClasses = {
+  blue: 'from-blue-500 to-blue-600',
+  purple: 'from-purple-500 to-purple-600',
+  green: 'from-green-500 to-green-600',
+  orange: 'from-orange-500 to-orange-600',
+  cyan: 'from-cyan-500 to-cyan-600',
+};
+
+const columnClasses = {
+  2: 'grid-cols-1 md:grid-cols-2',
+  3: 'grid-cols-1 md:grid-cols-3',
+  4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+};
+
+const containerClasses = twMerge(
+  'py-20 bg-black/50',
+  className
+);
+---
+
+<section class={containerClasses}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {(title || subtitle) && (
+      <div class="text-center mb-16">
+        {title && (
+          <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
+            {title.split(' ').map((word, index) => (
+              index === title.split(' ').length - 1 ? 
+                <span class="text-gradient">{word}</span> : 
+                word + ' '
+            ))}
+          </h2>
+        )}
+        {subtitle && (
+          <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            {subtitle}
+          </p>
+        )}
+      </div>
+    )}
+
+    <div class={twMerge('grid gap-8', columnClasses[columns])}>
+      {stats.map((stat, index) => (
+        <div 
+          class={twMerge(
+            'text-center',
+            variant === 'modern' ? 'glass rounded-3xl p-8' : 
+            variant === 'neon' ? 'card-neon' : 
+            'card-gradient',
+            animate ? 'animate-slide-up' : ''
+          )}
+          style={animate ? `animation-delay: ${index * 0.1}s` : ''}
+        >
+          {stat.icon && (
+            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4">
+              <div class={twMerge(
+                'w-16 h-16 rounded-2xl flex items-center justify-center animate-float',
+                `bg-gradient-to-br ${colorClasses[stat.color || 'blue']}`
+              )}>
+                <Icon name={stat.icon} class="w-8 h-8 text-white" />
+              </div>
+            </div>
+          )}
+          
+          <div class="text-5xl md:text-6xl font-black text-gradient mb-2">
+            {stat.value}
+          </div>
+          
+          <div class="text-gray-300 text-lg font-medium">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
