@@ -40,7 +40,7 @@
   }
 
   .light .btn-tertiary {
-    @apply text-gray-700 hover:text-gray-900 hover:bg-gray-100 border-gray-300 bg-gray-50 shadow-sm hover:shadow-md;
+    @apply text-gray-700 hover:text-gray-900 hover:bg-gray-100 border-2 border-gray-500 bg-gray-50 shadow-sm hover:shadow-md hover:border-gray-600;
   }
 
   /* Botones modernos con gradientes */

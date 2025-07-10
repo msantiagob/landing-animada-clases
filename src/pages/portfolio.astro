@@ -1,0 +1,360 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Note from '~/components/widgets/Note.astro';
+import Features from '~/components/widgets/Features.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Content from '~/components/widgets/Content.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+
+const metadata = {
+  title: 'Portfolio - Sonmyd | Proyectos de IA y Desarrollo Tecnológico',
+  description: 'Descubre nuestros casos de éxito en Inteligencia Artificial, desarrollo web, automatización y transformación digital. Más de 500 proyectos completados.',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+  <Hero
+    tagline="Nuestro Portfolio"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Iniciar tu Proyecto',
+        href: '/contact',
+        icon: 'tabler:rocket',
+      },
+      { text: 'Ver Servicios', href: '/servicios', variant: 'tertiary' },
+    ]}
+    image={{ 
+      src: 'https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', 
+      alt: 'Portfolio de Proyectos Tecnológicos' 
+    }}
+  >
+    <Fragment slot="title">
+      Casos de <span class="text-accent">Éxito</span> que 
+      <span class="hidden lg:inline">Transforman</span> Industrias
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Descubre cómo hemos ayudado a más de <span class="font-semibold">200 empresas</span> a transformar 
+      sus procesos con soluciones de IA, desarrollo web avanzado y automatización inteligente. 
+      Resultados reales, impacto medible.
+    </Fragment>
+  </Hero>
+
+  <!-- Stats Widget ****************** -->
+  <Stats
+    stats={[
+      { title: 'Proyectos de IA', amount: '150+' },
+      { title: 'Apps Desarrolladas', amount: '200+' },
+      { title: 'Procesos Automatizados', amount: '300+' },
+      { title: 'Horas Ahorradas', amount: '50,000+' },
+    ]}
+  />
+
+  <!-- Features Widget *************** -->
+  <Features
+    id="proyectos-destacados"
+    tagline="Proyectos Destacados"
+    title="Casos de Éxito Recientes"
+    subtitle="Explora algunos de nuestros proyectos más innovadores y los resultados que hemos logrado"
+    items={[
+      {
+        title: 'Sistema de IA para Diagnóstico Médico',
+        description: 'Desarrollamos un sistema de Computer Vision que detecta anomalías en rayos X con 95% de precisión. Reduce tiempo de diagnóstico en 70%.',
+        icon: 'tabler:heart-handshake',
+      },
+      {
+        title: 'Plataforma E-commerce con IA',
+        description: 'E-commerce con recomendaciones personalizadas usando ML. Aumentó ventas 45% y mejoró experiencia del usuario significativamente.',
+        icon: 'tabler:shopping-cart',
+      },
+      {
+        title: 'Automatización RPA Bancaria',
+        description: 'Automatizamos procesos de verificación de créditos. Reducimos tiempo de 3 días a 30 minutos y eliminamos errores humanos.',
+        icon: 'tabler:building-bank',
+      },
+      {
+        title: 'Chatbot Inteligente para Soporte',
+        description: 'Chatbot con NLP que resuelve 80% de consultas automáticamente. Redujo costos de soporte en 60% y mejoró satisfacción.',
+        icon: 'tabler:message-chatbot',
+      },
+      {
+        title: 'App de Gestión Empresarial',
+        description: 'Aplicación web completa para gestión de inventarios, ventas y clientes. Integración con múltiples APIs y dashboard en tiempo real.',
+        icon: 'tabler:chart-dots',
+      },
+      {
+        title: 'Sistema de Análisis Predictivo',
+        description: 'ML para predecir demanda de productos. Mejoró planificación de inventarios y redujo desperdicios en 35%.',
+        icon: 'tabler:trending-up',
+      },
+    ]}
+  />
+
+  <!-- Content Widget **************** -->
+  <Content
+    isReversed
+    tagline="Caso de Estudio: HealthTech"
+    title="Sistema de IA para Diagnóstico Médico"
+    items={[
+      {
+        title: 'Desafío',
+        description: 'Clínica necesitaba acelerar diagnósticos radiológicos y reducir errores humanos.',
+      },
+      {
+        title: 'Solución',
+        description: 'Desarrollamos sistema de Computer Vision con Deep Learning para análisis automático.',
+      },
+      {
+        title: 'Tecnologías',
+        description: 'Python, TensorFlow, OpenCV, React, PostgreSQL, AWS.',
+      },
+      {
+        title: 'Resultados',
+        description: '95% precisión, 70% reducción en tiempo, 0 errores críticos.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Sistema de IA Médica',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Transformando la Medicina con IA
+      </h3>
+      Este proyecto revolucionó el proceso de diagnóstico en una clínica de 50 médicos, 
+      permitiendo análisis instantáneo de imágenes radiológicas con precisión superior a la humana.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-slate-800"></div>
+    </Fragment>
+  </Content>
+
+  <!-- Content Widget **************** -->
+  <Content
+    isAfterContent
+    tagline="Caso de Estudio: RetailTech"
+    title="E-commerce Inteligente con Recomendaciones ML"
+    items={[
+      {
+        title: 'Desafío',
+        description: 'Baja conversión y experiencia de usuario genérica en tienda online.',
+      },
+      {
+        title: 'Solución',
+        description: 'E-commerce con engine de recomendaciones basado en ML y análisis de comportamiento.',
+      },
+      {
+        title: 'Tecnologías',
+        description: 'React, Node.js, MongoDB, Python, Scikit-learn, AWS Lambda.',
+      },
+      {
+        title: 'Resultados',
+        description: '45% aumento en ventas, 60% mejora en engagement, 25% más conversión.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'E-commerce con IA',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Personalizando la Experiencia de Compra
+      </h3>
+      Desarrollamos una plataforma que aprende de cada interacción del usuario para ofrecer 
+      recomendaciones ultra-personalizadas que impulsan las ventas.
+    </Fragment>
+  </Content>
+
+  <!-- Content Widget **************** -->
+  <Content
+    isReversed
+    tagline="Caso de Estudio: FinTech"
+    title="Automatización RPA para Proceso Crediticio"
+    items={[
+      {
+        title: 'Desafío',
+        description: 'Proceso manual de verificación crediticia tomaba 3 días y generaba errores.',
+      },
+      {
+        title: 'Solución',
+        description: 'Sistema RPA que automatiza verificación, análisis de riesgo y aprobación.',
+      },
+      {
+        title: 'Tecnologías',
+        description: 'UiPath, Python, SQL Server, Power BI, APIs bancarias.',
+      },
+      {
+        title: 'Resultados',
+        description: 'De 3 días a 30 minutos, 100% precisión, 80% reducción de costos.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Automatización Bancaria',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Revolucionando los Procesos Financieros
+      </h3>
+      La automatización inteligente transformó completamente el proceso crediticio, 
+      eliminando cuellos de botella y mejorando la experiencia del cliente.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-green-50 dark:bg-slate-800"></div>
+    </Fragment>
+  </Content>
+
+  <!-- Features2 Widget ************** -->
+  <Features2
+    tagline="Tecnologías"
+    title="Stack Tecnológico de Nuestros Proyectos"
+    subtitle="Utilizamos las tecnologías más avanzadas y probadas del mercado"
+    items={[
+      {
+        title: 'Inteligencia Artificial',
+        description: 'TensorFlow, PyTorch, Scikit-learn, OpenCV, Hugging Face',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Frontend Moderno',
+        description: 'React, Vue.js, Angular, Next.js, TypeScript, Tailwind CSS',
+        icon: 'tabler:brand-react',
+      },
+      {
+        title: 'Backend Robusto',
+        description: 'Node.js, Python (Django/FastAPI), .NET Core, Go',
+        icon: 'tabler:server',
+      },
+      {
+        title: 'Bases de Datos',
+        description: 'PostgreSQL, MongoDB, Redis, Elasticsearch, Neo4j',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Cloud & DevOps',
+        description: 'AWS, Azure, Docker, Kubernetes, Terraform, CI/CD',
+        icon: 'tabler:cloud',
+      },
+      {
+        title: 'Automatización',
+        description: 'UiPath, Power Automate, Zapier, custom RPA solutions',
+        icon: 'tabler:robot',
+      },
+    ]}
+  />
+
+  <!-- Testimonials Widget *********** -->
+  <Testimonials
+    title="Lo que Dicen Nuestros Clientes sobre los Resultados"
+    testimonials={[
+      {
+        testimonial: `El sistema de IA que desarrolló Sonmyd para nosotros ha revolucionado nuestro proceso de diagnóstico. La precisión es impresionante y hemos reducido los tiempos de espera significativamente.`,
+        name: 'Dr. Ana Martínez',
+        job: 'Directora Médica, ClínicaSalud',
+        image: {
+          src: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+          alt: 'Dr. Ana Martínez',
+        },
+      },
+      {
+        testimonial: `Desde que implementamos el e-commerce con recomendaciones de IA, nuestras ventas aumentaron 45%. La personalización que logramos es increíble.`,
+        name: 'Luis Rodríguez',
+        job: 'CEO, TiendaOnline',
+        image: {
+          src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+          alt: 'Luis Rodríguez',
+        },
+      },
+      {
+        testimonial: `La automatización RPA nos cambió la vida. Lo que antes tomaba días, ahora se resuelve en minutos. El ROI se vio desde el primer mes.`,
+        name: 'Carmen Vega',
+        job: 'Gerente de Operaciones, BancoSeguro',
+        image: {
+          src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
+          alt: 'Carmen Vega',
+        },
+      },
+    ]}
+  />
+
+  <!-- Features Widget *************** -->
+  <Features
+    id="mas-proyectos"
+    tagline="Más Proyectos"
+    title="Otros Casos de Éxito"
+    subtitle="Una muestra adicional de proyectos exitosos en diferentes industrias"
+    items={[
+      {
+        title: 'Sistema de Gestión Hotelera',
+        description: 'Plataforma completa para cadena de hoteles con reservas automatizadas, gestión de habitaciones y analytics avanzados.',
+        icon: 'tabler:building',
+      },
+      {
+        title: 'App de Delivery con IA',
+        description: 'Aplicación móvil con optimización de rutas por IA, predicción de demanda y sistema de puntuación de repartidores.',
+        icon: 'tabler:truck-delivery',
+      },
+      {
+        title: 'Portal Educativo Interactivo',
+        description: 'Plataforma e-learning con videos adaptativos, evaluaciones automáticas y seguimiento personalizado del progreso.',
+        icon: 'tabler:school',
+      },
+      {
+        title: 'Sistema de Monitoreo IoT',
+        description: 'Dashboard en tiempo real para monitoreo de sensores industriales con alertas predictivas y análisis de tendencias.',
+        icon: 'tabler:device-analytics',
+      },
+      {
+        title: 'Marketplace B2B',
+        description: 'Plataforma de comercio B2B con sistema de cotizaciones, gestión de proveedores y analytics de compras.',
+        icon: 'tabler:building-store',
+      },
+      {
+        title: 'CRM con Análisis Predictivo',
+        description: 'Sistema CRM personalizado con IA para predecir probabilidad de venta y automatización de seguimiento.',
+        icon: 'tabler:users',
+      },
+    ]}
+  />
+
+  <!-- Note Widget ******************* -->
+  <Note title="¿Tu Proyecto no Encaja en Estos Ejemplos?" description="Cada proyecto es único. Contáctanos para discutir tu idea específica y cómo podemos ayudarte a hacerla realidad." />
+
+  <!-- CallToAction Widget *********** -->
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Empezar mi Proyecto',
+        href: '/contact',
+        icon: 'tabler:rocket',
+      },
+      {
+        variant: 'tertiary',
+        text: 'Agendar Demo',
+        href: '/contact',
+        icon: 'tabler:calendar',
+      },
+    ]}
+  >
+    <Fragment slot="title">
+      ¿Inspirado por Nuestros <br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Casos de Éxito?</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Tu proyecto podría ser nuestro próximo caso de éxito. Agenda una consultoría gratuita 
+      y descubre cómo podemos transformar tu idea en una solución tecnológica ganadora.
+    </Fragment>
+  </CallToAction>
+</Layout>
