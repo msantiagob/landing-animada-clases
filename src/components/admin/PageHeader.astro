@@ -1,0 +1,50 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  actions?: Array<{
+    id: string;
+    label: string;
+    variant: 'primary' | 'secondary' | 'gradient';
+    icon?: string;
+  }>;
+}
+
+const { title, description, actions = [] } = Astro.props;
+
+const getButtonClasses = (variant: string) => {
+  const baseClasses = 'px-4 py-2 rounded-lg text-sm';
+  switch (variant) {
+    case 'primary':
+      return `${baseClasses} bg-blue-600 text-white hover:bg-blue-700`;
+    case 'secondary':
+      return `${baseClasses} bg-gray-600 text-white hover:bg-gray-700`;
+    case 'gradient':
+      return `${baseClasses} bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700`;
+    default:
+      return baseClasses;
+  }
+};
+---
+
+<div class="bg-white shadow-sm p-6 border-b">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">{title}</h1>
+      {description && (
+        <p class="text-gray-600">{description}</p>
+      )}
+    </div>
+    
+    {actions.length > 0 && (
+      <div class="flex space-x-4">
+        {actions.map((action) => (
+          <button id={action.id} class={getButtonClasses(action.variant)}>
+            {action.icon && <span class="mr-1">{action.icon}</span>}
+            {action.label}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+</div>

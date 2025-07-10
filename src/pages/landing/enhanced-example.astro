@@ -1,0 +1,572 @@
+---
+import Layout from '~/layouts/LandingLayout.astro';
+import EnhancedHero from '~/components/ui/EnhancedHero.astro';
+import TechCard from '~/components/ui/TechCard.astro';
+import SuperButton from '~/components/ui/SuperButton.astro';
+import StatsSection from '~/components/ui/StatsSection.astro';
+import PricingSection from '~/components/ui/PricingSection.astro';
+import EnhancedForm from '~/components/ui/EnhancedForm.astro';
+import Modal from '~/components/ui/Modal.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'Enhanced Landing Page Example - Advanced Features',
+  description: 'Showcasing all the new enhanced features including modal forms, better animations, and admin controls',
+};
+
+const stats = [
+  { value: '500%', label: 'ROI Increase', icon: 'tabler:trending-up', color: 'green' as const },
+  { value: '90%', label: 'Customer Satisfaction', icon: 'tabler:heart', color: 'red' as const },
+  { value: '1M+', label: 'Users Served', icon: 'tabler:users', color: 'blue' as const },
+  { value: '24/7', label: 'Support Available', icon: 'tabler:headset', color: 'purple' as const },
+];
+
+const features = [
+  {
+    title: 'AI-Powered Analytics',
+    description: 'Advanced machine learning algorithms analyze user behavior and optimize conversion rates automatically.',
+    icon: 'tabler:robot',
+    variant: 'gradient' as const,
+    animate: true,
+  },
+  {
+    title: 'Real-Time Collaboration',
+    description: 'Work seamlessly with your team in real-time with our advanced collaboration tools.',
+    icon: 'tabler:users',
+    variant: 'modern' as const,
+    animate: true,
+  },
+  {
+    title: 'Advanced Security',
+    description: 'Enterprise-grade security with end-to-end encryption and compliance certifications.',
+    icon: 'tabler:shield-check',
+    variant: 'neon' as const,
+    animate: true,
+  },
+  {
+    title: 'Mobile-First Design',
+    description: 'Responsive design that works perfectly on all devices and screen sizes.',
+    icon: 'tabler:device-mobile',
+    variant: 'glass' as const,
+    animate: true,
+  },
+  {
+    title: 'API Integration',
+    description: 'Connect with thousands of apps and services through our robust API ecosystem.',
+    icon: 'tabler:plug',
+    variant: 'gradient' as const,
+    animate: true,
+  },
+  {
+    title: '24/7 Support',
+    description: 'Round-the-clock customer support with instant chat and dedicated account managers.',
+    icon: 'tabler:headset',
+    variant: 'modern' as const,
+    animate: true,
+  },
+];
+
+const pricingPlans = [
+  {
+    name: 'Starter',
+    price: '$29',
+    period: '/month',
+    description: 'Perfect for individuals and small teams',
+    features: [
+      { text: 'Up to 5 team members', included: true },
+      { text: '10GB storage', included: true },
+      { text: 'Basic analytics', included: true },
+      { text: 'Email support', included: true },
+      { text: 'Advanced integrations', included: false },
+      { text: 'Priority support', included: false },
+    ],
+    button: {
+      text: 'Start Free Trial',
+      variant: 'secondary' as const,
+      action: 'modal' as const,
+      modalId: 'contactModal'
+    }
+  },
+  {
+    name: 'Professional',
+    price: '$79',
+    period: '/month',
+    description: 'Best for growing businesses',
+    features: [
+      { text: 'Up to 25 team members', included: true },
+      { text: '100GB storage', included: true },
+      { text: 'Advanced analytics', included: true, highlight: true },
+      { text: 'Priority email support', included: true },
+      { text: 'Advanced integrations', included: true },
+      { text: 'Custom branding', included: true },
+    ],
+    button: {
+      text: 'Get Started',
+      variant: 'primary' as const,
+      action: 'modal' as const,
+      modalId: 'contactModal'
+    },
+    popular: true,
+    badge: {
+      text: 'Most Popular',
+      color: 'blue' as const
+    }
+  },
+  {
+    name: 'Enterprise',
+    price: '$199',
+    period: '/month',
+    description: 'For large organizations',
+    features: [
+      { text: 'Unlimited team members', included: true },
+      { text: '1TB storage', included: true },
+      { text: 'Custom analytics', included: true, highlight: true },
+      { text: '24/7 phone support', included: true },
+      { text: 'Custom integrations', included: true },
+      { text: 'Dedicated account manager', included: true },
+    ],
+    button: {
+      text: 'Contact Sales',
+      variant: 'glow' as const,
+      action: 'modal' as const,
+      modalId: 'contactModal'
+    },
+    badge: {
+      text: 'Enterprise',
+      color: 'purple' as const
+    }
+  }
+];
+
+const formFields = [
+  {
+    name: 'name',
+    label: 'Full Name',
+    type: 'text' as const,
+    placeholder: 'Enter your full name',
+    required: true,
+    icon: 'tabler:user',
+    width: 'half' as const
+  },
+  {
+    name: 'email',
+    label: 'Email Address',
+    type: 'email' as const,
+    placeholder: 'Enter your email',
+    required: true,
+    icon: 'tabler:mail',
+    width: 'half' as const
+  },
+  {
+    name: 'company',
+    label: 'Company Name',
+    type: 'text' as const,
+    placeholder: 'Enter your company name',
+    width: 'half' as const
+  },
+  {
+    name: 'phone',
+    label: 'Phone Number',
+    type: 'tel' as const,
+    placeholder: 'Enter your phone number',
+    width: 'half' as const
+  },
+  {
+    name: 'plan',
+    label: 'Interested Plan',
+    type: 'select' as const,
+    options: [
+      { value: 'starter', label: 'Starter Plan' },
+      { value: 'professional', label: 'Professional Plan' },
+      { value: 'enterprise', label: 'Enterprise Plan' }
+    ],
+    width: 'full' as const
+  },
+  {
+    name: 'message',
+    label: 'Message',
+    type: 'textarea' as const,
+    placeholder: 'Tell us about your needs...',
+    width: 'full' as const,
+    validation: {
+      maxLength: 500
+    }
+  }
+];
+---
+
+<Layout metadata={metadata}>
+  <!-- Enhanced Hero Section -->
+  <EnhancedHero
+    title="The Future of Business Automation"
+    subtitle="⭐ AI-Powered Platform"
+    description="Transform your business operations with our cutting-edge AI platform. Automate workflows, analyze data, and scale your success with intelligent automation."
+    image={{
+      src: "/images/hero-dashboard.jpg",
+      alt: "Advanced Dashboard Interface",
+      position: "right"
+    }}
+    primaryButton={{
+      text: "Start Free Trial",
+      href: "#",
+      icon: "tabler:rocket",
+      variant: "glow",
+      action: "modal",
+      modalId: "contactModal"
+    }}
+    secondaryButton={{
+      text: "Watch Demo",
+      href: "#demo",
+      icon: "tabler:play",
+      variant: "glass",
+      action: "form",
+      formId: "demoForm"
+    }}
+    features={[
+      { icon: "tabler:check", text: "No credit card required", highlight: true },
+      { icon: "tabler:check", text: "14-day free trial" },
+      { icon: "tabler:check", text: "Cancel anytime" },
+      { icon: "tabler:check", text: "24/7 support" }
+    ]}
+    socialProof={{
+      title: "Trusted by industry leaders",
+      items: [
+        { logo: "/images/logos/company1.png", alt: "Company 1" },
+        { logo: "/images/logos/company2.png", alt: "Company 2" },
+        { logo: "/images/logos/company3.png", alt: "Company 3" },
+        { logo: "/images/logos/company4.png", alt: "Company 4" }
+      ]
+    }}
+    background="gradient"
+    particles={true}
+    animations={true}
+    height="screen"
+  />
+
+  <!-- Stats Section -->
+  <StatsSection
+    title="Proven Results"
+    subtitle="Numbers don't lie - see the impact we've made"
+    stats={stats}
+    variant="glass"
+    columns={4}
+    animate={true}
+  />
+
+  <!-- Features Section -->
+  <section class="py-20 bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/30 to-pink-50/30 dark:from-blue-900/10 dark:via-purple-900/10 dark:to-pink-900/10"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Powerful Features for <span class="text-gradient">Modern Teams</span>
+        </h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Everything you need to streamline your workflow and boost productivity
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {features.map((feature, index) => (
+          <div style={`animation-delay: ${index * 100}ms`}>
+            <TechCard
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+              variant={feature.variant}
+              animate={feature.animate}
+              hover={true}
+              glow={true}
+            >
+              <SuperButton
+                variant="secondary"
+                size="sm"
+                text="Learn More"
+                href="#"
+                icon="tabler:arrow-right"
+                class="mt-4"
+              />
+            </TechCard>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section id="demo" class="py-20 bg-white dark:bg-gray-800 relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute w-full h-full bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-pulse"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          See It in <span class="text-gradient">Action</span>
+        </h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Watch our platform transform your business operations in real-time
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="relative bg-gray-900 rounded-2xl shadow-2xl p-8">
+          <div class="aspect-video bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg flex items-center justify-center">
+            <button class="play-button w-24 h-24 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110">
+              <Icon name="tabler:play" class="w-8 h-8 text-white ml-1" />
+            </button>
+          </div>
+          
+          <div class="mt-8 text-center">
+            <SuperButton
+              variant="glow"
+              size="lg"
+              text="Schedule Personal Demo"
+              href="#"
+              icon="tabler:calendar"
+              pulse={true}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <PricingSection
+    title="Choose Your Plan"
+    subtitle="Flexible Pricing"
+    description="Start free and scale as you grow. No hidden fees, no surprises."
+    plans={pricingPlans}
+    billingToggle={{
+      monthly: "Monthly",
+      yearly: "Yearly",
+      discount: "Save 20%"
+    }}
+    variant="cards"
+    columns={3}
+    animations={true}
+  />
+
+  <!-- Testimonials Section -->
+  <section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          What Our <span class="text-gradient">Customers Say</span>
+        </h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+          Join thousands of satisfied customers who've transformed their business
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          {
+            name: "Sarah Johnson",
+            role: "CEO, TechCorp",
+            avatar: "/images/avatars/sarah.jpg",
+            content: "This platform has completely transformed how we operate. The automation features alone saved us 40 hours per week.",
+            rating: 5
+          },
+          {
+            name: "Michael Chen",
+            role: "CTO, InnovateLabs",
+            avatar: "/images/avatars/michael.jpg",
+            content: "The AI-powered analytics gave us insights we never knew we needed. Our conversion rates increased by 300%.",
+            rating: 5
+          },
+          {
+            name: "Emily Rodriguez",
+            role: "Operations Manager, ScaleUp",
+            avatar: "/images/avatars/emily.jpg",
+            content: "Implementation was seamless, and the support team was incredible. We saw results within the first week.",
+            rating: 5
+          }
+        ].map((testimonial, index) => (
+          <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300" style={`animation-delay: ${index * 200}ms`}>
+            <div class="flex items-center mb-4">
+              {Array.from({ length: 5 }).map(() => (
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              ))}
+            </div>
+            
+            <blockquote class="text-gray-700 dark:text-gray-300 mb-6">
+              "{testimonial.content}"
+            </blockquote>
+            
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <span class="text-white font-semibold text-lg">
+                  {testimonial.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+              <div class="ml-4">
+                <div class="font-semibold text-gray-900 dark:text-white">
+                  {testimonial.name}
+                </div>
+                <div class="text-gray-600 dark:text-gray-400 text-sm">
+                  {testimonial.role}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Form Section -->
+  <section id="contact" class="py-20 bg-white dark:bg-gray-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Ready to Get <span class="text-gradient">Started?</span>
+        </h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300">
+          Contact us today and let's discuss how we can help transform your business
+        </p>
+      </div>
+
+      <EnhancedForm
+        id="demoForm"
+        title="Request a Demo"
+        description="Fill out the form below and we'll get back to you within 24 hours"
+        fields={formFields}
+        submitButton={{
+          text: "Request Demo",
+          variant: "primary",
+          size: "lg",
+          loadingText: "Sending Request..."
+        }}
+        variant="default"
+        honeypot={true}
+        successMessage="Thank you! We'll be in touch within 24 hours."
+        errorMessage="Sorry, there was an error sending your request. Please try again."
+      />
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="py-20 bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-5xl font-bold text-white mb-6">
+        Transform Your Business <span class="text-gradient">Today</span>
+      </h2>
+      <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+        Join thousands of companies already using our platform to streamline operations and boost growth.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <SuperButton
+          variant="glow"
+          size="xl"
+          text="Start Free Trial"
+          href="#"
+          icon="tabler:rocket"
+          pulse={true}
+        />
+        
+        <SuperButton
+          variant="glass"
+          size="xl"
+          text="Schedule Demo"
+          href="#"
+          icon="tabler:calendar"
+        />
+      </div>
+      
+      <div class="mt-8 text-sm text-gray-400">
+        <p>✓ No credit card required • ✓ 14-day free trial • ✓ Cancel anytime</p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<!-- Contact Modal -->
+<Modal
+  id="contactModal"
+  title="Contact Us"
+  size="lg"
+  closable={true}
+  backdrop={true}
+  animation="slide"
+>
+  <EnhancedForm
+    fields={formFields}
+    submitButton={{
+      text: "Send Message",
+      variant: "primary",
+      size: "lg"
+    }}
+    variant="modal"
+    honeypot={true}
+    successMessage="Thank you for your message! We'll get back to you soon."
+  />
+</Modal>
+
+<script>
+  // Enhanced interactions
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Play button animation
+    const playButton = document.querySelector('.play-button');
+    if (playButton) {
+      playButton.addEventListener('click', () => {
+        // Add your video/demo opening logic here
+        console.log('Opening demo video...');
+      });
+    }
+
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-slide-up');
+        }
+      });
+    });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>
+
+<style>
+  .play-button {
+    transition: all 0.3s ease;
+  }
+
+  .play-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+</style>
