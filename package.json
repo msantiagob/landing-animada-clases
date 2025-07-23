@@ -9,6 +9,9 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:3000": "astro dev --port 3000",
+    "dev:4000": "astro dev --port 4000",
+    "dev:5000": "astro dev --port 5000",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
