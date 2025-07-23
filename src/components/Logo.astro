@@ -2,8 +2,13 @@
 import { SITE } from 'astrowind:config';
 ---
 
-<span
-  class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
->
-  🚀 {SITE?.name}
+<span class="flex items-center self-center ml-2 rtl:ml-0 rtl:mr-2">
+  <img 
+    src="/src/assets/favicons/web-app-manifest-192x192.png" 
+    alt="Sonmyd Logo" 
+    class="w-8 h-8 mr-2"
+  />
+  <span class="text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white">
+    {SITE?.name}
+  </span>
 </span>
