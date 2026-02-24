@@ -2,8 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 import HeroHome from "../components/HeroHome.astro";
 import TextMarquee from "../components/TextMarquee.astro";
-import GalleryText from "../components/GalleryText.astro";
-import ImageMarquee from "../components/ImageMarquee.astro";
 import Faqs from "../components/Faqs.astro";
 import StepsTimeline from "../components/StepsTimeline.astro";
 import Plans from "../components/Plans.astro";
@@ -12,101 +10,83 @@ import Introducing from "../components/Introducing.astro";
 import GL from "../components/GL.astro";
 import GLPlaces from "../components/GlPlaces.astro";
 
-import logo1 from "../assets/logoipsum-344.svg";
-import logo2 from "../assets/logoipsum-350.svg";
-import logo3 from "../assets/logoipsum-345.svg";
-import logo4 from "../assets/logoipsum-385.svg";
-import logo5 from "../assets/logoipsum-375.svg";
-import logo6 from "../assets/logoipsum-378.svg";
-import logo7 from "../assets/logoipsum-346.svg";
-import logo8 from "../assets/logoipsum-331.svg";
+import fotoMiguel from "../assets/img/foto_miguel.png";
 ---
 
-<Layout title="Home">
-  <HeroHome
-    title="Build Faster. Launch Smarter."
-    subtitle="Everything you need to design, manage, and ship high-quality projects without friction, guesswork, or wasted time."
-    cta={{
-      title: "Get Started",
-      url: "#",
-    }}
-  />
+<Layout title="sonmyd | Clases de IA Personalizadas — Miguel Zuluaga">
+  <div id="inicio">
+    <HeroHome
+      title="Domina la IA con mentoría experta."
+      subtitle="Clases 1 a 1 de Inteligencia Artificial diseñadas para ti, desde fundamentos hasta nivel avanzado. Aprende con quien vive y respira IA."
+      cta={{
+        title: "Reserva tu primera sesión",
+        url: "#precios",
+      }}
+      photo={fotoMiguel.src}
+      photoAlt="Miguel Zuluaga — sonmyd"
+    />
+  </div>
 
-  <Introducing
-    title="A platform designed to turn ideas into impact"
-    text="From first concept to final delivery, our tools streamline collaboration, eliminate bottlenecks, and keep your team focused on what matters most: results. Simple to adopt, powerful at scale."
-    cta={{
-      title: "Get Started",
-      url: "#",
-    }}
-  />
+  <div id="clases">
+    <Introducing
+      title="Soy Miguel Zuluaga, experto en Inteligencia Artificial"
+      text="Llevo años trabajando con IA aplicada: modelos de lenguaje, visión computacional, automatización y más. Mi misión es que tú también puedas dominar estas herramientas con un aprendizaje claro, práctico y a tu ritmo."
+      cta={{
+        title: "Conoce mi metodología",
+        url: "#metodologia",
+      }}
+    />
+  </div>
 
-  <StepsTimeline
-    title="How it works"
-    items={[
-      {
-        title: "Set up in minutes",
-        text: "Create your workspace, invite your team, and configure projects effortlessly—no complex onboarding or technical setup required.",
-      },
-      {
-        title: "Collaborate without friction",
-        text: "Centralize communication, assets, and tasks in one place so everyone stays aligned and productive.",
-      },
-      {
-        title: "Deliver measurable results",
-        text: "Track progress in real time, optimize workflows, and ship projects faster with complete visibility.",
-      },
+  <TextMarquee
+    class="marquee"
+    texts={[
+      "Inteligencia Artificial",
+      "Machine Learning",
+      "IA Generativa",
+      "Prompt Engineering",
+      "Automatización con IA",
+      "Computer Vision",
     ]}
   />
 
-  <GalleryText
-    title="Designed for teams that value clarity and speed"
-    text="A clean interface, powerful features, and thoughtful details come together to help your team move faster—without sacrificing quality."
-    cta={{
-      title: "Try It Today",
-      url: "#",
-    }}
-    images={[
-      {
-        alt: "Dashboard overview",
-        src: "/image-1.jpg",
-        width: 6000,
-        height: 4000,
-      },
-      {
-        alt: "Project collaboration view",
-        src: "/image-2.jpg",
-        width: 2689,
-        height: 4032,
-      },
-      {
-        alt: "Analytics and reporting",
-        src: "/image-3.jpg",
-        width: 3734,
-        height: 5359,
-      },
-    ]}
-    marqueeTexts={[
-      "Creative Firepower",
-      "Built for Speed",
-      "Trusted by Professionals",
-      "Simple, Transparent Pricing",
-    ]}
-  />
+  <div id="metodologia">
+    <StepsTimeline
+      title="Cómo funciona"
+      items={[
+        {
+          title: "Diagnóstico personalizado",
+          text: "Comenzamos con una sesión gratuita para conocer tu nivel actual, tus objetivos y definir el camino de aprendizaje perfecto para ti.",
+        },
+        {
+          title: "Clases a tu medida",
+          text: "Sesiones 1 a 1 adaptadas a tu ritmo, tu horario y tu estilo de aprendizaje. Teoría y práctica en equilibrio perfecto.",
+        },
+        {
+          title: "Proyectos reales",
+          text: "Aplicamos cada concepto a casos de uso concretos y proyectos reales. Construyes portafolio mientras aprendes.",
+        },
+        {
+          title: "Seguimiento continuo",
+          text: "Monitoreo constante de tu progreso, ajuste del plan y soporte entre sesiones para que nunca te quedes atascado.",
+        },
+      ]}
+    />
+  </div>
 
   <Statements
     items={[
       {
-        title: "For modern teams",
-        text: "Every feature is designed to reduce complexity and maximize execution speed.",
+        title: "Desde cero hasta IA avanzada",
+        text: "No importa tu punto de partida. Tengo rutas de aprendizaje para principiantes absolutos y para quienes ya tienen bases técnicas.",
       },
       {
-        title: "Scales as you grow",
-        text: "Whether you’re a solo creator or a global team, the platform adapts to your workflow.",
+        title: "Práctica real desde el primer día",
+        text: "Nada de teoría sin aplicación. Desde la primera clase trabajamos con herramientas y casos de uso del mundo real.",
       },
       {
-        title: "Real outcomes",
-        text: "Less busywork, more progress—so you can deliver meaningful results consistently.",
+        title: "Tu ritmo, tu agenda",
+        text: "Las clases se adaptan a tu disponibilidad. Tú eliges cuándo y con qué frecuencia aprender.",
       },
     ]}
   />
@@ -114,125 +94,99 @@ import logo8 from "../assets/logoipsum-331.svg";
   <TextMarquee
     class="marquee"
     texts={[
-      "Creative Firepower",
-      "Built for Speed",
-      "Trusted by Professionals",
-      "Simple, Transparent Pricing",
+      "ChatGPT & LLMs",
+      "Python para IA",
+      "Automatización",
+      "APIs de IA",
+      "Fine-tuning",
+      "RAG & Embeddings",
     ]}
   />
 
-  <Plans
-    title="Plans & Pricing"
-    subtitle="Start for free, upgrade when you’re ready. No hidden fees, no long-term commitments."
-    items={[
-      {
-        title: "Free Plan",
-        price: {
-          amount: "$0",
-          duration: "month",
+  <div id="precios">
+    <Plans
+      title="Planes & Precios"
+      subtitle="Elige el plan que mejor se adapte a tus metas. Sin compromisos a largo plazo."
+      items={[
+        {
+          title: "Plan Explorador",
+          price: {
+            amount: "$49",
+            duration: "sesión",
+          },
+          link: {
+            title: "Empezar ahora",
+            url: "#contacto",
+          },
+          features: [
+            { title: "Sesión de 60 minutos" },
+            { title: "Material de apoyo incluido" },
+            { title: "Grabación de la clase" },
+            { title: "Sesiones de seguimiento", disabled: true },
+            { title: "Proyecto personalizado", disabled: true },
+          ],
         },
-        link: {
-          title: "Get Started Free",
-          url: "#",
+        {
+          title: "Plan Intensivo",
+          price: {
+            amount: "$180",
+            duration: "mes",
+          },
+          link: {
+            title: "Reservar mi lugar",
+            url: "#contacto",
+          },
+          features: [
+            { title: "4 sesiones de 90 minutos/mes" },
+            { title: "Material y recursos curados" },
+            { title: "Grabación de todas las clases" },
+            { title: "Seguimiento y soporte continuo" },
+            { title: "Proyecto real de portafolio" },
+          ],
         },
-        features: [
-          { title: "Up to 50 accounts" },
-          { title: "Unlimited projects" },
-          { title: "Chat support", disabled: true },
-          { title: "Email support", disabled: true },
-          { title: "Custom onboarding", disabled: true },
-        ],
-      },
-      {
-        title: "Premium Plan",
-        price: {
-          amount: "$20",
-          duration: "month",
-        },
-        link: {
-          title: "Start 14-Day Trial",
-          url: "#",
-        },
-        features: [
-          { title: "Up to 50 accounts" },
-          { title: "Unlimited projects" },
-          { title: "Priority chat support" },
-          { title: "Email support" },
-          { title: "Custom onboarding assistance" },
-        ],
-      },
-    ]}
-  />
+      ]}
+    />
+  </div>
 
-  <Faqs
-    title="Frequently Asked Questions"
-    mobileTitle="FAQs"
-    subtitle="Quick answers to the most common questions."
-    items={[
-      {
-        question: "Who is this platform for?",
-        answer:
-          "It’s built for creators, startups, agencies, and teams who want to move faster without sacrificing quality or control.",
-      },
-      {
-        question: "Can I upgrade or downgrade at any time?",
-        answer:
-          "Yes. You can change plans whenever you need, with no penalties or long-term contracts.",
-      },
-      {
-        question: "Does the free plan really cost nothing?",
-        answer:
-          "Absolutely. The free plan gives you full access to core features so you can evaluate the platform with confidence.",
-      },
-      {
-        question: "Is my data secure?",
-        answer:
-          "Yes. We use industry-standard security practices to protect your data and ensure reliability.",
-      },
-      {
-        question: "Do you offer support during onboarding?",
-        answer:
-          "Premium users receive guided onboarding and priority support to ensure a smooth start.",
-      },
-    ]}
-  />
-
-  <ImageMarquee
-    images={[
-      {
-        src: logo1.src,
-        alt: "Logo 1",
-      },
-      {
-        src: logo3.src,
-        alt: "Logo 3",
-      },
-      {
-        src: logo4.src,
-        alt: "Logo 4",
-      },
-      {
-        src: logo8.src,
-        alt: "Logo 8",
-      },
-      {
-        src: logo5.src,
-        alt: "Logo 5",
-      },
-      {
-        src: logo6.src,
-        alt: "Logo 6",
-      },
-      {
-        src: logo2.src,
-        alt: "Logo 2",
-      },
-      {
-        src: logo7.src,
-        alt: "Logo 7",
-      },
-    ]}
-  />
+  <div id="contacto">
+    <Faqs
+      title="Preguntas Frecuentes"
+      mobileTitle="FAQs"
+      subtitle="Todo lo que necesitas saber antes de empezar."
+      items={[
+        {
+          question: "¿Necesito conocimientos previos de programación?",
+          answer:
+            "No es obligatorio. Tengo rutas de aprendizaje para todos los niveles: desde quienes nunca han programado hasta desarrolladores que quieren especializarse en IA. En la sesión de diagnóstico definimos el camino ideal para ti.",
+        },
+        {
+          question: "¿Cómo se realizan las clases?",
+          answer:
+            "Las clases son 100% online vía videollamada (Google Meet o Zoom). Trabajamos con pantalla compartida, ejercicios en vivo y herramientas reales de IA durante cada sesión.",
+        },
+        {
+          question: "¿Puedo cambiar mi plan después de comenzar?",
+          answer:
+            "Sí. Puedes cambiar de plan en cualquier momento según tu disponibilidad y presupuesto. La flexibilidad es parte del servicio.",
+        },
+        {
+          question: "¿Qué temas cubre el programa?",
+          answer:
+            "Fundamentos de IA y Machine Learning, Python para IA, Modelos de Lenguaje (LLMs), IA Generativa, Prompt Engineering, APIs de IA, automatización con agentes, Computer Vision y más. El plan se personaliza según tus objetivos.",
+        },
+        {
+          question: "¿Cuánto tiempo necesito dedicar entre sesiones?",
+          answer:
+            "Lo que tú puedas. Diseño el plan con ejercicios que se ajustan a tu disponibilidad real, desde 30 minutos diarios hasta sesiones más intensivas si prefieres avanzar más rápido.",
+        },
+        {
+          question: "¿Hay una sesión de prueba gratuita?",
+          answer:
+            "Sí. La primera sesión de diagnóstico de 30 minutos es completamente gratuita. Nos conocemos, evaluamos tu nivel y definimos si hay fit antes de cualquier compromiso.",
+        },
+      ]}
+    />
+  </div>
 
   <GL />
   <GLPlaces />

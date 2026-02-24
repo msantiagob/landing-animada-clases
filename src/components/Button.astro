@@ -137,8 +137,10 @@ const attrs =
     }
 
     &:global(.btn-primary-alt) {
-      --text-color: var(--btn-txt-color, var(--color-text));
-      --bg-color: var(--btn-bg-color, var(--color-brand-3));
+      --text-color: var(--btn-txt-color, var(--color-white));
+      --bg-color: var(--btn-bg-color, rgba(var(--rgb-brand-3), 1));
+      --hover-bg-color: var(--btn-hover-bg-color, var(--color-brand-1));
+      --hover-text-color: var(--btn-hover-text-color, var(--color-white));
     }
 
     &:hover,

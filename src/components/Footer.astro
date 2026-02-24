@@ -1,5 +1,5 @@
 ---
-import Logo from "../assets/logo.svg";
+import logoImg from "../assets/img/logo.webp";
 import type { Link } from "../types";
 
 interface Props {
@@ -16,8 +16,7 @@ const { logoUrl, logoAlt, links } = Astro.props;
     <div class="inner u-container">
       <div class="wrapper">
         <a class="logo" href={logoUrl}>
-          <Logo />
-          <span class="u-sr-only">{logoAlt}</span>
+          <img src={logoImg.src} alt={logoAlt} />
         </a>
 
         <div class="menu">
@@ -51,8 +50,9 @@ const { logoUrl, logoAlt, links } = Astro.props;
   }
 
   footer {
-    background: #1f2023;
-    color: rgba(255, 255, 255, 0.8);
+    background: #030308;
+    border-top: 1px solid rgba(235, 14, 56, 0.15);
+    color: rgba(255, 255, 255, 0.7);
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -66,13 +66,10 @@ const { logoUrl, logoAlt, links } = Astro.props;
     position: relative;
     z-index: 3;
 
-    svg {
-      width: 4.8rem;
-      height: 1.5rem;
-
-      :global(path) {
-        fill: currentcolor;
-      }
+    img {
+      height: 2rem;
+      width: auto;
+      display: block;
     }
   }
 

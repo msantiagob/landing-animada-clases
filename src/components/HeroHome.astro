@@ -6,9 +6,11 @@ interface Props {
   title: string;
   subtitle?: string;
   cta?: Link;
+  photo?: string;
+  photoAlt?: string;
 }
 
-const { title, subtitle, cta } = Astro.props;
+const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props;
 ---
 
 <div class="sy-hero-home">
@@ -26,7 +28,18 @@ const { title, subtitle, cta } = Astro.props;
         }
         {cta ? <Button {...cta} arrow class="cta" /> : null}
       </div>
-      <div data-gl-place></div>
+      {
+        photo ? (
+          <div class="photo-wrap">
+            <div data-gl-place class="gl-place"></div>
+            <div class="photo-inner">
+              <img src={photo} alt={photoAlt} />
+            </div>
+          </div>
+        ) : (
+          <div data-gl-place></div>
+        )
+      }
     </div>
   </div>
 </div>
@@ -49,40 +62,22 @@ const { title, subtitle, cta } = Astro.props;
     }
 
     &:before {
-      background: linear-gradient(
-        40deg,
-        var(--color-bg) 0%,
-        2.76008%,
-        rgb(255, 237, 220) 5.52017%,
-        9.87983%,
-        rgb(252, 221, 187) 14.2395%,
-        17.7994%,
-        rgb(248, 190, 160) 21.3592%,
-        24.4337%,
-        rgb(240, 168, 150) 27.5081%,
-        30.2589%,
-        rgb(231, 150, 151) 33.0097%,
-        35.5987%,
-        rgb(222, 136, 162) 38.1877%,
-        40.7767%,
-        rgb(211, 132, 177) 43.3657%,
-        46.6019%,
-        rgb(200, 136, 198) 49.8382%,
-        53.3981%,
-        rgb(198, 155, 219) 56.9579%,
-        60.356%,
-        rgb(203, 181, 234) 63.754%,
-        67.475%,
-        rgb(213, 201, 242) 71.196%,
-        75.0531%,
-        rgb(224, 220, 248) 78.9101%,
-        83.5457%,
-        rgb(242, 241, 255) 88.1812%,
-        94.0906%,
-        var(--color-bg) 100%
-      );
-      background-position: center;
-      mask: linear-gradient(0deg, rgba(0, 0, 0, 0) 1%, rgba(0, 0, 0, 1) 100%);
+      background: radial-gradient(
+          ellipse 80% 60% at 70% 40%,
+          rgba(235, 14, 56, 0.18) 0%,
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 60% 50% at 30% 60%,
+          rgba(50, 170, 255, 0.12) 0%,
+          transparent 55%
+        ),
+        radial-gradient(
+          ellipse 100% 80% at 50% 0%,
+          rgba(235, 14, 56, 0.08) 0%,
+          transparent 50%
+        );
+      mask: linear-gradient(0deg, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 1) 100%);
     }
 
     &:after {
@@ -103,30 +98,96 @@ const { title, subtitle, cta } = Astro.props;
     @media (--mq-tablet) {
       flex-direction: column;
       align-items: flex-start;
+      gap: 4rem;
+    }
+  }
+
+  .content {
+    flex: 1;
+    max-width: 30rem;
+
+    @media (--mq-tablet) {
+      max-width: 100%;
     }
   }
 
   .title {
     --fs: 4.5rem;
     --lh: 1;
-    max-width: 5.7em;
+    max-width: 10em;
 
     @media (--mq-phone) {
-      --fs: 3.5rem;
+      --fs: 3rem;
     }
   }
 
   .subtitle {
     --fs: var(--font-size-lg);
-    max-width: 25em;
+    max-width: 28em;
     margin-top: 1.5rem;
+    color: var(--color-text-alt);
   }
 
   .cta {
     margin-top: 2rem;
   }
 
-  [data-gl-place] {
+  .photo-wrap {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gl-place {
+    --d: 1;
+    --s: 28rem;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+
+    @media (--mq-tablet) {
+      --s: 22rem;
+    }
+
+    @media (--mq-phone) {
+      --s: 18rem;
+    }
+  }
+
+  .photo-inner {
+    position: relative;
+    z-index: 2;
+    width: 22rem;
+    height: 26rem;
+    border-radius: 2rem;
+    overflow: hidden;
+    border: 1.5px solid rgba(235, 14, 56, 0.4);
+    box-shadow:
+      0 0 60px rgba(235, 14, 56, 0.2),
+      0 0 120px rgba(50, 170, 255, 0.1),
+      inset 0 0 30px rgba(0, 0, 0, 0.5);
+
+    @media (--mq-tablet) {
+      width: 18rem;
+      height: 22rem;
+    }
+
+    @media (--mq-phone) {
+      width: 14rem;
+      height: 17rem;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+  }
+
+  [data-gl-place]:not(.gl-place) {
     --d: 1;
     --s: 24rem;
     margin-top: -2rem;

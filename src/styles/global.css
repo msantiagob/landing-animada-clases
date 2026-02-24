@@ -14,13 +14,13 @@
   --rgb-white: 255, 255, 255;
   --rgb-black: 0, 0, 0;
 
-  --rgb-text: 11, 31, 91; /* #0b1f5b */
-  --rgb-text-alt: 132, 142, 172; /* #848eac */
-  --rgb-brand-1: 141, 115, 245; /* #8d73f5 */
-  --rgb-brand-2: 221, 232, 184; /* #dde8b8 */
-  --rgb-brand-3: 236, 231, 253; /* #ece7fd */
-  --rgb-brand-4: 232, 242, 207; /* #e8f2cf */
-  --rgb-brand-5: 140, 175, 49; /* #8caf31 */
+  --rgb-text: 240, 240, 250; /* near white */
+  --rgb-text-alt: 130, 130, 165; /* muted */
+  --rgb-brand-1: 235, 14, 56; /* #EB0E38 - rojo principal */
+  --rgb-brand-2: 50, 170, 255; /* #32AAFF - azul */
+  --rgb-brand-3: 16, 16, 30; /* superficie oscura */
+  --rgb-brand-4: 10, 10, 20; /* fondo más oscuro */
+  --rgb-brand-5: 50, 170, 255; /* azul para acentos */
 
   --color-text: rgb(var(--rgb-text));
   --color-text-alt: rgb(var(--rgb-text-alt));
@@ -31,7 +31,7 @@
   --color-brand-3: rgb(var(--rgb-brand-3));
   --color-brand-4: rgb(var(--rgb-brand-4));
   --color-brand-5: rgb(var(--rgb-brand-5));
-  --color-bg: #f7f8f2;
+  --color-bg: #07070f;
 
   /* easings */
   --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);

@@ -123,10 +123,10 @@ const { title, subtitle, items } = Astro.props;
     border-radius: 1rem;
     max-width: 20rem;
     width: 100%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
     position: relative;
     padding: 2px;
-    background: var(--color-white);
+    background: rgb(var(--rgb-brand-3));
     overflow: hidden;
 
     &:last-child {
@@ -134,7 +134,7 @@ const { title, subtitle, items } = Astro.props;
       &:after {
         background: linear-gradient(
           135deg,
-          var(--color-brand-3) 0%,
+          rgba(var(--rgb-brand-2), 0.8) 0%,
           var(--color-brand-1) 100%
         );
         border-radius: 1rem;
@@ -151,7 +151,7 @@ const { title, subtitle, items } = Astro.props;
   }
 
   .plan-inner {
-    background: var(--color-white);
+    background: rgb(var(--rgb-brand-3));
     border-radius: 0.9rem;
     padding: 2rem;
   }

@@ -10,16 +10,18 @@ const { title } = Astro.props;
 const t = useTranslations();
 
 const links = [
-  { title: "Home", url: "/" },
-  { title: "About", url: "/" },
-  { title: "Contact", url: "/" },
+  { title: "Inicio", url: "#inicio" },
+  { title: "Clases", url: "#clases" },
+  { title: "Metodología", url: "#metodologia" },
+  { title: "Precios", url: "#precios" },
 ];
 ---
 
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Miguel Zuluaga — Experto en Inteligencia Artificial. Clases personalizadas de IA desde nivel básico hasta experto." />
     <Font cssVariable="--font-roboto-slab" preload />
     <Font cssVariable="--font-inter" preload />
     <title>{title}</title>
@@ -28,15 +30,14 @@ const links = [
     <a href="#main" class="skip-link">{t("accessibility.skip-to-content")}</a>
     <Header
       logoUrl="/"
-      logoAlt="VIIO"
+      logoAlt="sonmyd"
       links={links}
-      link1={{ title: "Login", url: "#" }}
-      link2={{ title: "Get Started", url: "#" }}
+      link2={{ title: "Reservar clase", url: "#precios" }}
     />
     <main id="main">
       <slot />
     </main>
-    <Footer logoUrl="/" logoAlt="VIIO" links={links} />
+    <Footer logoUrl="/" logoAlt="sonmyd" links={links} />
     <SmoothScroll />
   </body>
 </html>

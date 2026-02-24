@@ -1,6 +1,6 @@
 ---
 import Button from "./Button.astro";
-import Logo from "../assets/logo.svg";
+import logoImg from "../assets/img/logo.webp";
 import type { Link } from "../types";
 
 interface Props {
@@ -19,8 +19,7 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
     <div class="inner u-container">
       <div class="wrapper">
         <a class="logo" href={logoUrl}>
-          <Logo />
-          <span class="u-sr-only">{logoAlt}</span>
+          <img src={logoImg.src} alt={logoAlt} />
         </a>
 
         <div class="menu">
@@ -92,11 +91,12 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
     }
 
     &::after {
-      background: rgba(var(--rgb-brand-3), 0.7);
+      background: rgba(7, 7, 15, 0.85);
+      border-bottom: 1px solid rgba(235, 14, 56, 0.15);
       transition: transform 0.3s var(--ease-out-cubic);
       transform: scaleY(0);
       transform-origin: top;
-      backdrop-filter: blur(15px);
+      backdrop-filter: blur(20px);
     }
 
     :global(body.is-nav-small) & {
@@ -130,12 +130,10 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
     position: relative;
     z-index: 3;
 
-    svg {
-      width: 2.4rem;
-
-      :global(path) {
-        fill: currentcolor;
-      }
+    img {
+      height: 2rem;
+      width: auto;
+      display: block;
     }
   }
 
@@ -154,7 +152,7 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
       height: 100vh;
       position: fixed;
       z-index: 2;
-      background: var(--color-brand-3);
+      background: rgba(7, 7, 15, 0.97);
       top: 0;
       left: 0;
       clip-path: inset(0 0 0%);
@@ -190,7 +188,7 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
       gap: 1.3125em;
 
       @media (--mq-tablet) {
-        color: var(--color-brand-1);
+        color: var(--color-white);
       }
 
       @media (--mq-tablet) {
