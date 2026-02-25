@@ -10,6 +10,7 @@ import Introducing from "../components/Introducing.astro";
 import GL from "../components/GL.astro";
 import GLPlaces from "../components/GlPlaces.astro";
 import ContactModal from "../components/ContactModal.astro";
+import FloatingBubbles from "../components/FloatingBubbles.astro";
 
 import fotoMiguel from "../assets/img/foto_miguel.png";
 ---
@@ -23,7 +24,7 @@ import fotoMiguel from "../assets/img/foto_miguel.png";
         title: "Reserva tu primera sesión",
         url: "#precios",
       }}
-    
+
     />
     <div class="photo-inner">
       <img src={fotoMiguel.src} alt="Miguel Zuluaga — sonmyd" />
@@ -194,6 +195,7 @@ import fotoMiguel from "../assets/img/foto_miguel.png";
   <GL />
   <GLPlaces />
   <ContactModal />
+  <!-- <FloatingBubbles /> -->
 </Layout>
 
 <script>
