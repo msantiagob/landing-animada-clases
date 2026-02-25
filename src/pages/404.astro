@@ -1,0 +1,59 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button.astro";
+---
+
+<Layout title="404: Página no encontrada | sonmyd">
+  <div class="error-page">
+    <div class="u-container">
+      <div class="content">
+        <h1 class="u-heading">404</h1>
+        <p class="u-text subtitle">
+          Parece que te has perdido en el espacio latente.
+        </p>
+        <p class="u-text description">
+          La página que buscas no existe o ha sido movida.
+        </p>
+        <Button title="Volver al inicio" url="/" arrow />
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .content {
+    max-width: 30rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  h1 {
+    font-size: 8rem;
+    line-height: 1;
+    color: var(--color-brand-1);
+    margin: 0;
+    font-weight: 800;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .description {
+    color: var(--color-text-alt);
+    margin-bottom: 1rem;
+  }
+</style>
