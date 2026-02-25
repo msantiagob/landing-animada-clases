@@ -1,9 +1,15 @@
 ---
+
 ---
 
 <div id="contact-modal" class="modal" aria-hidden="true">
   <div class="modal-backdrop"></div>
-  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+  <div
+    class="modal-box"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-heading"
+  >
     <button class="modal-close" aria-label="Cerrar">&times;</button>
     <div class="modal-content">
       <h2 id="modal-heading" class="modal-title">Reserva tu sesión</h2>
@@ -67,8 +73,20 @@
           <span class="submit-loading" aria-hidden="true">Enviando…</span>
         </button>
 
-        <p class="form-success" id="modal-success" role="alert" aria-live="polite"></p>
-        <p class="form-error-global" id="modal-error" role="alert" aria-live="polite"></p>
+        <p
+          class="form-success"
+          id="modal-success"
+          role="alert"
+          aria-live="polite"
+        >
+        </p>
+        <p
+          class="form-error-global"
+          id="modal-error"
+          role="alert"
+          aria-live="polite"
+        >
+        </p>
       </form>
     </div>
   </div>
@@ -86,7 +104,9 @@
   const form = document.getElementById("contact-form") as HTMLFormElement;
   const planInput = document.getElementById("modal-plan") as HTMLInputElement;
   const planLabel = document.getElementById("modal-plan-label")!;
-  const submitBtn = document.getElementById("modal-submit") as HTMLButtonElement;
+  const submitBtn = document.getElementById(
+    "modal-submit",
+  ) as HTMLButtonElement;
   const successEl = document.getElementById("modal-success")!;
   const errorEl = document.getElementById("modal-error")!;
   const headingEl = document.getElementById("modal-heading")!;
@@ -97,9 +117,9 @@
   function sanitize(value: string): string {
     return value
       .trim()
-      .replace(/<[^>]*>/g, "")          // strip HTML tags
-      .replace(/[<>"'`;\\]/g, "")       // strip chars usados en inyecciones
-      .slice(0, 200);                    // hard limit
+      .replace(/<[^>]*>/g, "") // strip HTML tags
+      .replace(/[<>"'`;\\]/g, "") // strip chars usados en inyecciones
+      .slice(0, 200); // hard limit
   }
 
   function isValidName(v: string): boolean {
@@ -118,7 +138,7 @@
     fieldId: string,
     errorId: string,
     valid: boolean,
-    msg = ""
+    msg = "",
   ) {
     const field = document.getElementById(fieldId)!;
     const errEl = document.getElementById(errorId)!;
@@ -143,9 +163,10 @@
     const v = sanitize(nombreInput.value);
     if (!v) return clearFieldState("field-nombre", "error-nombre");
     setFieldState(
-      "field-nombre", "error-nombre",
+      "field-nombre",
+      "error-nombre",
       isValidName(v),
-      "Solo letras y espacios, mínimo 2 caracteres."
+      "Solo letras y espacios, mínimo 2 caracteres.",
     );
   });
 
@@ -153,9 +174,10 @@
     const v = sanitize(correoInput.value);
     if (!v) return clearFieldState("field-correo", "error-correo");
     setFieldState(
-      "field-correo", "error-correo",
+      "field-correo",
+      "error-correo",
       isValidEmail(v),
-      "Ingresa un correo válido (ej: tu@correo.com)."
+      "Ingresa un correo válido (ej: tu@correo.com).",
     );
   });
 
@@ -163,9 +185,10 @@
     const v = sanitize(telefonoInput.value);
     if (!v) return clearFieldState("field-telefono", "error-telefono");
     setFieldState(
-      "field-telefono", "error-telefono",
+      "field-telefono",
+      "error-telefono",
       isValidPhone(v),
-      "Solo números, +, - y espacios (6–20 caracteres)."
+      "Solo números, +, - y espacios (6–20 caracteres).",
     );
   });
 
@@ -180,11 +203,17 @@
 
   function openModal(planName: string) {
     const isFree = planName === "Sesión Gratuita";
-    headingEl.textContent = isFree ? "Reserva tu sesión gratuita" : "Reserva tu sesión";
+    headingEl.textContent = isFree
+      ? "Reserva tu sesión gratuita"
+      : "Reserva tu sesión";
     subtitleEl.textContent = isFree
       ? "30 minutos de diagnóstico sin costo. Nos conocemos, evaluamos tu nivel y definimos el plan ideal para ti."
       : "Déjanos tus datos y te contactamos para confirmar tu clase.";
-    planLabel.textContent = isFree ? "🎁 Primera sesión gratis" : planName ? `Plan: ${planName}` : "";
+    planLabel.textContent = isFree
+      ? "🎁 Primera sesión gratis"
+      : planName
+        ? `Plan: ${planName}`
+        : "";
 
     planInput.value = planName;
     modal.setAttribute("aria-hidden", "false");
@@ -198,7 +227,9 @@
     planInput.value = planName;
     // Limpiar estados visuales al abrir
     ["field-nombre", "field-correo", "field-telefono"].forEach((id) => {
-      document.getElementById(id)?.classList.remove("field--error", "field--valid");
+      document
+        .getElementById(id)
+        ?.classList.remove("field--error", "field--valid");
     });
     ["error-nombre", "error-correo", "error-telefono"].forEach((id) => {
       const el = document.getElementById(id);
@@ -234,42 +265,60 @@
     errorEl.textContent = "";
 
     // 1. Honeypot check
-    const honeypot = (form.elements.namedItem("website") as HTMLInputElement).value;
+    const honeypot = (form.elements.namedItem("website") as HTMLInputElement)
+      .value;
     if (honeypot) return; // bot detectado, silently drop
 
     // 2. Rate limiting
     const lastSubmit = Number(localStorage.getItem(RATE_LIMIT_KEY) ?? 0);
-    const remaining = Math.ceil((RATE_LIMIT_MS - (Date.now() - lastSubmit)) / 1000);
+    const remaining = Math.ceil(
+      (RATE_LIMIT_MS - (Date.now() - lastSubmit)) / 1000,
+    );
     if (Date.now() - lastSubmit < RATE_LIMIT_MS) {
       errorEl.textContent = `Espera ${remaining}s antes de volver a enviar.`;
       return;
     }
 
     // 3. Sanitize
-    const nombre   = sanitize(nombreInput.value);
-    const correo   = sanitize(correoInput.value);
+    const nombre = sanitize(nombreInput.value);
+    const correo = sanitize(correoInput.value);
     const telefono = sanitize(telefonoInput.value);
-    const plan     = sanitize(planInput.value);
+    const plan = sanitize(planInput.value);
 
     // 4. Validate all fields
     let valid = true;
 
     if (!nombre || !isValidName(nombre)) {
-      setFieldState("field-nombre", "error-nombre", false, "Solo letras y espacios, mínimo 2 caracteres.");
+      setFieldState(
+        "field-nombre",
+        "error-nombre",
+        false,
+        "Solo letras y espacios, mínimo 2 caracteres.",
+      );
       valid = false;
     } else {
       setFieldState("field-nombre", "error-nombre", true);
     }
 
     if (!correo || !isValidEmail(correo)) {
-      setFieldState("field-correo", "error-correo", false, "Ingresa un correo válido (ej: tu@correo.com).");
+      setFieldState(
+        "field-correo",
+        "error-correo",
+        false,
+        "Ingresa un correo válido (ej: tu@correo.com).",
+      );
       valid = false;
     } else {
       setFieldState("field-correo", "error-correo", true);
     }
 
     if (!telefono || !isValidPhone(telefono)) {
-      setFieldState("field-telefono", "error-telefono", false, "Solo números, +, - y espacios (6–20 caracteres).");
+      setFieldState(
+        "field-telefono",
+        "error-telefono",
+        false,
+        "Solo números, +, - y espacios (6–20 caracteres).",
+      );
       valid = false;
     } else {
       setFieldState("field-telefono", "error-telefono", true);
@@ -296,12 +345,18 @@
       if (!res.ok) throw new Error(await res.text());
 
       localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
-      successEl.textContent = "¡Listo! Te contactaremos pronto para confirmar tu sesión.";
+      successEl.textContent =
+        "¡Listo! Te contactaremos pronto para confirmar tu sesión.";
       form.reset();
       planInput.value = plan;
       ["field-nombre", "field-correo", "field-telefono"].forEach((id) => {
-        document.getElementById(id)?.classList.remove("field--error", "field--valid");
+        document
+          .getElementById(id)
+          ?.classList.remove("field--error", "field--valid");
       });
+
+      // Cerrar modal automáticamente después de un éxito (2 segundos)
+      setTimeout(closeModal, 2000);
     } catch {
       errorEl.textContent = "Ocurrió un error al enviar. Inténtalo de nuevo.";
     } finally {
@@ -445,7 +500,9 @@
       color: rgb(240, 240, 250);
       font-size: 0.9rem;
       width: 100%;
-      transition: border-color 0.2s, background 0.2s;
+      transition:
+        border-color 0.2s,
+        background 0.2s;
       outline: none;
 
       &::placeholder {
@@ -479,14 +536,16 @@
     margin-top: 0.5rem;
     width: 100%;
     padding: 0.875rem 1.5rem;
-    background: #1855CC;
+    background: #1855cc;
     color: #fff;
     font-size: 0.9rem;
     font-weight: 600;
     border: none;
     border-radius: 0.7rem;
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
+    transition:
+      opacity 0.2s,
+      transform 0.15s;
     position: relative;
 
     &:hover:not(:disabled) {
