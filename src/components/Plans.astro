@@ -58,6 +58,7 @@ const { title, subtitle, items } = Astro.props;
               <Button
                 {...item.link}
                 color={i === 0 ? "primary-alt" : "primary"}
+                modalPlan={item.title}
               />
             </div>
           </div>

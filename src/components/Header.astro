@@ -9,9 +9,10 @@ interface Props {
   links: Link[];
   link1?: Link;
   link2?: Link;
+  link2ModalPlan?: string;
 }
 
-const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
+const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
 ---
 
 <header>
@@ -42,7 +43,7 @@ const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
               </a>
             ) : null
           }
-          {link2 ? <Button {...link2} revealable={false} /> : null}
+          {link2 ? <Button {...link2} revealable={false} modalPlan={link2ModalPlan} /> : null}
 
           <button type="button" class="toggle" aria-label="">
             <span class="u-sr-only">Toggle Mobile Menu</span>

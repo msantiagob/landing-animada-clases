@@ -77,9 +77,19 @@
   const successEl = document.getElementById("modal-success")!;
   const errorEl = document.getElementById("modal-error")!;
 
+  const headingEl = document.getElementById("modal-heading")!;
+  const subtitleEl = modal.querySelector(".modal-subtitle")!;
+
   function openModal(planName: string) {
+    const isFree = planName === "Sesión Gratuita";
+
+    headingEl.textContent = isFree ? "Reserva tu sesión gratuita" : "Reserva tu sesión";
+    subtitleEl.textContent = isFree
+      ? "30 minutos de diagnóstico sin costo. Nos conocemos, evaluamos tu nivel y definimos el plan ideal para ti."
+      : "Déjanos tus datos y te contactamos para confirmar tu clase.";
+    planLabel.textContent = isFree ? "🎁 Primera sesión gratis" : planName ? `Plan: ${planName}` : "";
+
     planInput.value = planName;
-    planLabel.textContent = planName ? `Plan: ${planName}` : "";
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("is-open");
     document.body.style.overflow = "hidden";
@@ -100,13 +110,12 @@
     document.body.style.overflow = "";
   }
 
-  // Intercept plan button clicks
-  document.querySelector(".sy-plans")?.addEventListener("click", (e) => {
-    const btn = (e.target as Element).closest(".btn");
+  // Intercept any button with data-modal-plan attribute
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as Element).closest("[data-modal-plan]");
     if (!btn) return;
     e.preventDefault();
-    const plan = btn.closest("[data-plan]")?.getAttribute("data-plan") ?? "";
-    openModal(plan);
+    openModal(btn.getAttribute("data-modal-plan") ?? "");
   });
 
   closeBtn.addEventListener("click", closeModal);

@@ -6,6 +6,7 @@ interface Props {
   title: string;
   subtitle?: string;
   cta?: Link;
+  ctaModalPlan?: string;
   photo?: string;
   photoAlt?: string;
 }
@@ -14,6 +15,7 @@ const {
   title,
   subtitle,
   cta,
+  ctaModalPlan,
   photo,
   photoAlt = "Miguel Zuluaga",
 } = Astro.props;
@@ -32,7 +34,7 @@ const {
             </p>
           ) : null
         }
-        {cta ? <Button {...cta} arrow class="cta" /> : null}
+        {cta ? <Button {...cta} arrow class="cta" modalPlan={ctaModalPlan} /> : null}
       </div>
       {
         photo ? (
