@@ -39,11 +39,12 @@ const { title, subtitle, items } = Astro.props;
                 {item.title}
               </h3>
               <p class="u-heading price">
-                <span data-sy-reveal="words">{item.price.amount}</span>
-                <span class="duration u-text" data-sy-reveal="words">
+                <span data-sy-reveal="words" data-plan-amount={i}>{item.price.amount}</span>
+                <span class="duration u-text" data-sy-reveal="words" data-plan-duration={i}>
                   /{item.price.duration}
                 </span>
               </p>
+              <span class="savings-badge" data-plan-savings={i}></span>
               <ul class="u-text features">
                 {item.features.map((feat) => (
                   <li
@@ -173,6 +174,22 @@ const { title, subtitle, items } = Astro.props;
   .duration {
     --fs: var(--font-size-sm);
     padding-top: 0.5em;
+  }
+
+  .savings-badge {
+    display: none;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    color: rgb(var(--rgb-brand-1));
+    background: rgba(var(--rgb-brand-1), 0.12);
+    border: 1px solid rgba(var(--rgb-brand-1), 0.3);
+    border-radius: 999px;
+    padding: 0.2em 0.75em;
+    margin-bottom: 0.75rem;
+
+    &.visible {
+      display: inline-block;
+    }
   }
 
   .features {

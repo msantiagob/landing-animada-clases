@@ -111,10 +111,10 @@ import fotoMiguel from "../assets/img/foto_miguel.png";
       subtitle="Elige el plan que mejor se adapte a tus metas. Sin compromisos a largo plazo."
       items={[
         {
-          title: "Plan Explorador",
+          title: "Clase Individual",
           price: {
-            amount: "$49",
-            duration: "sesión",
+            amount: "$25",
+            duration: "session",
           },
           link: {
             title: "Empezar ahora",
@@ -129,17 +129,17 @@ import fotoMiguel from "../assets/img/foto_miguel.png";
           ],
         },
         {
-          title: "Plan Intensivo",
+          title: "Paquete Intensivo",
           price: {
-            amount: "$180",
-            duration: "mes",
+            amount: "$220",
+            duration: "10 hrs",
           },
           link: {
             title: "Reservar mi lugar",
             url: "#contacto",
           },
           features: [
-            { title: "4 sesiones de 90 minutos/mes" },
+            { title: "10 horas de clase" },
             { title: "Material y recursos curados" },
             { title: "Grabación de todas las clases" },
             { title: "Seguimiento y soporte continuo" },
@@ -193,6 +193,93 @@ import fotoMiguel from "../assets/img/foto_miguel.png";
   <GL />
   <GLPlaces />
 </Layout>
+
+<script>
+  const EU = new Set([
+    "ES","FR","DE","IT","PT","NL","BE","AT","CH","SE","NO","DK","FI",
+    "IE","GR","PL","CZ","HU","RO","BG","HR","SK","SI","EE","LV","LT",
+    "LU","MT","CY","IS","LI","AL","RS","BA","ME","MK","MD",
+  ]);
+
+  type PriceEntry = {
+    amount: string;
+    duration: string;
+    savings?: string;
+  };
+  type CountryPricing = {
+    individual: PriceEntry;
+    paquete: PriceEntry;
+  };
+
+  const PRICING: Record<string, CountryPricing> = {
+    DEFAULT: {
+      individual: { amount: "$25",      duration: "session" },
+      paquete:    { amount: "$220",     duration: "10 hrs",   savings: "Te ahorras $30" },
+    },
+    CO: {
+      individual: { amount: "$80.000",  duration: "sesión" },
+      paquete:    { amount: "$750.000", duration: "10 horas" },
+    },
+    EU: {
+      individual: { amount: "€25",      duration: "sesión" },
+      paquete:    { amount: "€220",     duration: "10 horas", savings: "Te ahorras €30" },
+    },
+    MX: {
+      individual: { amount: "$450",     duration: "sesión" },
+      paquete:    { amount: "$4.000",   duration: "10 horas", savings: "Te ahorras $500" },
+    },
+    CL: {
+      individual: { amount: "$20.000",  duration: "sesión" },
+      paquete:    { amount: "$180.000", duration: "10 horas", savings: "Te ahorras $20.000" },
+    },
+    PE: {
+      individual: { amount: "S/ 85",   duration: "sesión" },
+      paquete:    { amount: "S/ 750",  duration: "10 horas" },
+    },
+  };
+
+  function applyPricing(pricing: CountryPricing) {
+    const plans = [pricing.individual, pricing.paquete];
+
+    plans.forEach((plan, i) => {
+      const amountEl = document.querySelector<HTMLElement>(`[data-plan-amount="${i}"]`);
+      const durationEl = document.querySelector<HTMLElement>(`[data-plan-duration="${i}"]`);
+      const savingsEl = document.querySelector<HTMLElement>(`[data-plan-savings="${i}"]`);
+
+      if (amountEl) amountEl.textContent = plan.amount;
+      if (durationEl) durationEl.textContent = `/${plan.duration}`;
+      if (savingsEl) {
+        savingsEl.textContent = plan.savings ?? "";
+        savingsEl.classList.toggle("visible", !!plan.savings);
+      }
+    });
+  }
+
+  async function detectAndApply() {
+    let countryCode = "DEFAULT";
+
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      countryCode = data.country_code ?? "DEFAULT";
+    } catch {
+      countryCode = "DEFAULT";
+    }
+
+    let pricing: CountryPricing;
+    if (PRICING[countryCode]) {
+      pricing = PRICING[countryCode];
+    } else if (EU.has(countryCode)) {
+      pricing = PRICING.EU;
+    } else {
+      pricing = PRICING.DEFAULT;
+    }
+
+    applyPricing(pricing);
+  }
+
+  detectAndApply();
+</script>
 
 <style>
   .marquee {
