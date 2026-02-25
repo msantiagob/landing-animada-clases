@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import SmoothScroll from "../components/SmoothScroll.astro";
 import { useTranslations } from "../i18n/utils";
 import "../styles/global.css";
+import logoImg from "../assets/img/logo.webp";
 
 const { title } = Astro.props;
 const t = useTranslations();
@@ -21,10 +22,35 @@ const links = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Miguel Zuluaga — Experto en Inteligencia Artificial. Clases personalizadas de IA desde nivel básico hasta experto." />
+
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content="Clases 1 a 1 de Inteligencia Artificial con Miguel Zuluaga (sonmyd). Desde fundamentos hasta nivel avanzado: LLMs, Python para IA, Prompt Engineering, automatización y más." />
+    <meta name="author" content="Miguel Zuluaga" />
+    <meta name="keywords" content="clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, sonmyd" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#07070f" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href={logoImg.src} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="sonmyd" />
+    <meta property="og:title" content="sonmyd | Clases de IA Personalizadas — Miguel Zuluaga" />
+    <meta property="og:description" content="Clases 1 a 1 de Inteligencia Artificial diseñadas para ti. Aprende IA desde cero hasta nivel avanzado con mentoría experta." />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@sonmyd" />
+    <meta name="twitter:title" content="sonmyd | Clases de IA Personalizadas" />
+    <meta name="twitter:description" content="Clases 1 a 1 de Inteligencia Artificial diseñadas para ti. Aprende IA desde cero hasta nivel avanzado con mentoría experta." />
+    <meta name="twitter:image" content="/og-image.png" />
+
     <Font cssVariable="--font-roboto-slab" preload />
     <Font cssVariable="--font-inter" preload />
-    <title>{title}</title>
   </head>
   <body>
     <a href="#main" class="skip-link">{t("accessibility.skip-to-content")}</a>
