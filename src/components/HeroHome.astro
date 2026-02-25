@@ -10,7 +10,13 @@ interface Props {
   photoAlt?: string;
 }
 
-const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props;
+const {
+  title,
+  subtitle,
+  cta,
+  photo,
+  photoAlt = "Miguel Zuluaga",
+} = Astro.props;
 ---
 
 <div class="sy-hero-home">
@@ -30,14 +36,12 @@ const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props
       </div>
       {
         photo ? (
-          <div class="photo-wrap">
-            <div data-gl-place class="gl-place"></div>
-            <div class="photo-inner">
-              <img src={photo} alt={photoAlt} />
-            </div>
+          <div class="photo-section">
+            <div data-gl-place class="gl-place" />
+         
           </div>
         ) : (
-          <div data-gl-place></div>
+          <div data-gl-place />
         )
       }
     </div>
@@ -62,7 +66,8 @@ const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props
     }
 
     &:before {
-      background: radial-gradient(
+      background:
+        radial-gradient(
           ellipse 80% 60% at 70% 40%,
           rgba(235, 14, 56, 0.18) 0%,
           transparent 60%
@@ -92,7 +97,7 @@ const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props
     justify-content: space-between;
     padding: 9rem 0 10rem;
     position: relative;
-    z-index: 1;
+    z-index: 9;
     min-height: 100vh;
 
     @media (--mq-tablet) {
@@ -132,7 +137,7 @@ const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props
     margin-top: 2rem;
   }
 
-  .photo-wrap {
+  .photo-section {
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -146,6 +151,7 @@ const { title, subtitle, cta, photo, photoAlt = "Miguel Zuluaga" } = Astro.props
     position: absolute;
     inset: 0;
     margin: auto;
+    z-index: 1;
 
     @media (--mq-tablet) {
       --s: 22rem;
