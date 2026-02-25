@@ -75,9 +75,9 @@ const attrs =
     --fs: var(--font-size-xs);
     --fw: 600;
     --text-color: var(--btn-txt-color, var(--color-white));
-    --bg-color: var(--btn-bg-color, var(--color-brand-1));
-    --hover-bg-color: var(--btn-hover-bg-color, var(--color-white));
-    --hover-text-color: var(--btn-hover-text-color, var(--color-brand-1));
+    --bg-color: var(--btn-bg-color, #44C4FF);
+    --hover-bg-color: var(--btn-hover-bg-color, #fff);
+    --hover-text-color: var(--btn-hover-text-color, #0070CC);
 
     cursor: pointer;
     margin: 0;
@@ -90,13 +90,17 @@ const attrs =
     position: relative;
     overflow: hidden;
     border-radius: 100px;
+    box-shadow:
+      0 0 18px rgba(68, 196, 255, 0.28),
+      0 4px 14px rgba(0, 0, 0, 0.18);
+    transition: box-shadow 0.25s ease;
 
     &[data-sy-reveal] {
       clip-path: inset(0 100% 0 0 round 100px);
       transition: 0.4s var(--ease-out-cubic);
       transform: translateX(2rem);
       transform-origin: left;
-      transition-property: opacity, clip-path, transform;
+      transition-property: opacity, clip-path, transform, box-shadow;
 
       &.is-in {
         clip-path: inset(0 0% round 100px);
@@ -142,12 +146,17 @@ const attrs =
     &:global(.btn-primary-alt) {
       --text-color: var(--btn-txt-color, var(--color-white));
       --bg-color: var(--btn-bg-color, rgba(var(--rgb-brand-3), 1));
-      --hover-bg-color: var(--btn-hover-bg-color, var(--color-brand-1));
+      --hover-bg-color: var(--btn-hover-bg-color, #44C4FF);
       --hover-text-color: var(--btn-hover-text-color, var(--color-white));
+      box-shadow: none;
     }
 
     &:hover,
     &:focus {
+      box-shadow:
+        0 0 30px rgba(68, 196, 255, 0.5),
+        0 6px 22px rgba(0, 0, 0, 0.22);
+
       > span {
         > span:first-child {
           clip-path: inset(-100% 0 round 99px);
