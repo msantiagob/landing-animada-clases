@@ -18,6 +18,31 @@
       </p>
       <p class="modal-plan-label" id="modal-plan-label"></p>
 
+      <div
+        id="modal-success-view"
+        class="modal-success-view"
+        aria-hidden="true"
+      >
+        <div class="success-icon">
+          <svg viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"
+            ></circle>
+            <path
+              class="checkmark-check"
+              fill="none"
+              d="M14.1 27.2l7.1 7.2 16.7-16.8"></path>
+          </svg>
+        </div>
+        <h3 class="success-title">¡Solicitud enviada!</h3>
+        <p
+          class="form-success"
+          id="modal-success"
+          role="alert"
+          aria-live="polite"
+        >
+        </p>
+      </div>
+
       <form id="contact-form" novalidate>
         <input type="hidden" id="modal-plan" name="plan" />
 
@@ -73,13 +98,6 @@
           <span class="submit-loading" aria-hidden="true">Enviando…</span>
         </button>
 
-        <p
-          class="form-success"
-          id="modal-success"
-          role="alert"
-          aria-live="polite"
-        >
-        </p>
         <p
           class="form-error-global"
           id="modal-error"
@@ -201,6 +219,8 @@
 
   // ── Modal open / close ────────────────────────────────────────────────────
 
+  const successView = document.getElementById("modal-success-view")!;
+
   function openModal(planName: string) {
     const isFree = planName === "Sesión Gratuita";
     headingEl.textContent = isFree
@@ -219,6 +239,15 @@
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("is-open");
     document.body.style.overflow = "hidden";
+
+    // Reset view visibility
+    (form as HTMLElement).style.display = "block";
+    successView.setAttribute("aria-hidden", "true");
+    successView.classList.remove("is-visible");
+    (headingEl as HTMLElement).style.display = "block";
+    (subtitleEl as HTMLElement).style.display = "block";
+    (planLabel as HTMLElement).style.display = "inline-block";
+
     successEl.textContent = "";
     errorEl.textContent = "";
     submitBtn.disabled = false;
@@ -345,8 +374,18 @@
       if (!res.ok) throw new Error(await res.text());
 
       localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
+
+      // Mostrar estado de éxito premium
+      (form as HTMLElement).style.display = "none";
+      (headingEl as HTMLElement).style.display = "none";
+      (subtitleEl as HTMLElement).style.display = "none";
+      (planLabel as HTMLElement).style.display = "none";
+
+      successView.setAttribute("aria-hidden", "false");
+      successView.classList.add("is-visible");
       successEl.textContent =
-        "¡Listo! Te contactaremos pronto para confirmar tu sesión.";
+        "Te contactaremos pronto para confirmar tu sesión.";
+
       form.reset();
       planInput.value = plan;
       ["field-nombre", "field-correo", "field-telefono"].forEach((id) => {
@@ -355,8 +394,8 @@
           ?.classList.remove("field--error", "field--valid");
       });
 
-      // Cerrar modal automáticamente después de un éxito (2 segundos)
-      setTimeout(closeModal, 2000);
+      // Cerrar modal automáticamente después de un éxito (4 segundos para que se vea el premium feedback)
+      setTimeout(closeModal, 4000);
     } catch {
       errorEl.textContent = "Ocurrió un error al enviar. Inténtalo de nuevo.";
     } finally {
@@ -572,11 +611,11 @@
   }
 
   .form-success {
-    margin-top: 0.9rem;
-    font-size: 0.82rem;
-    color: #4ade80;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: rgba(240, 240, 250, 0.7);
     text-align: center;
-    min-height: 1.2em;
+    line-height: 1.5;
   }
 
   .form-error-global {
@@ -585,5 +624,74 @@
     color: rgb(var(--rgb-brand-1));
     text-align: center;
     min-height: 1.2em;
+  }
+
+  /* Success View Styles */
+  .modal-success-view {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0 2rem;
+    animation: fadeIn 0.4s ease forwards;
+
+    &.is-visible {
+      display: flex;
+    }
+  }
+
+  .success-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #4ade80;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+
+  .checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 4;
+    stroke: #4ade80;
+    stroke-linecap: round;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  @keyframes stroke {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
