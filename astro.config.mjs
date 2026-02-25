@@ -3,11 +3,14 @@ import {
   defineConfig,
   fontProviders,
 } from "astro/config";
-
+import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
+  // ⚠️ Cambia esto por tu dominio real antes de publicar
+  site: "https://sonmyd.co",
   scopedStyleStrategy: 'where',
+  integrations: [sitemap()],
   experimental: {
     fonts: [
       {

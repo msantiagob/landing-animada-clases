@@ -15,40 +15,51 @@
       <form id="contact-form" novalidate>
         <input type="hidden" id="modal-plan" name="plan" />
 
-        <div class="field">
+        <!-- Honeypot: invisible para humanos, los bots lo llenan -->
+        <div class="hp-field" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="field" id="field-nombre">
           <label for="modal-nombre">Nombre</label>
           <input
             type="text"
             id="modal-nombre"
             name="nombre"
             required
+            maxlength="80"
             placeholder="Tu nombre completo"
             autocomplete="name"
           />
+          <span class="field-error" id="error-nombre"></span>
         </div>
 
-        <div class="field">
+        <div class="field" id="field-correo">
           <label for="modal-correo">Correo electrónico</label>
           <input
             type="email"
             id="modal-correo"
             name="correo"
             required
+            maxlength="120"
             placeholder="tu@correo.com"
             autocomplete="email"
           />
+          <span class="field-error" id="error-correo"></span>
         </div>
 
-        <div class="field">
+        <div class="field" id="field-telefono">
           <label for="modal-telefono">Teléfono / WhatsApp</label>
           <input
             type="tel"
             id="modal-telefono"
             name="telefono"
             required
+            maxlength="20"
             placeholder="+57 300 000 0000"
             autocomplete="tel"
           />
+          <span class="field-error" id="error-telefono"></span>
         </div>
 
         <button type="submit" class="submit-btn" id="modal-submit">
@@ -57,7 +68,7 @@
         </button>
 
         <p class="form-success" id="modal-success" role="alert" aria-live="polite"></p>
-        <p class="form-error" id="modal-error" role="alert" aria-live="polite"></p>
+        <p class="form-error-global" id="modal-error" role="alert" aria-live="polite"></p>
       </form>
     </div>
   </div>
@@ -66,6 +77,8 @@
 <script>
   const SUPABASE_URL = "https://agwzcghaojhdjniuujbl.supabase.co";
   const SUPABASE_KEY = "sb_publishable_l2VskysoUrgHt1U5WX8hBg_FXPfhHVa";
+  const RATE_LIMIT_MS = 60_000; // 60 segundos entre envíos
+  const RATE_LIMIT_KEY = "contact_last_submit";
 
   const modal = document.getElementById("contact-modal")!;
   const backdrop = modal.querySelector(".modal-backdrop")!;
@@ -76,13 +89,97 @@
   const submitBtn = document.getElementById("modal-submit") as HTMLButtonElement;
   const successEl = document.getElementById("modal-success")!;
   const errorEl = document.getElementById("modal-error")!;
-
   const headingEl = document.getElementById("modal-heading")!;
   const subtitleEl = modal.querySelector(".modal-subtitle")!;
 
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  function sanitize(value: string): string {
+    return value
+      .trim()
+      .replace(/<[^>]*>/g, "")          // strip HTML tags
+      .replace(/[<>"'`;\\]/g, "")       // strip chars usados en inyecciones
+      .slice(0, 200);                    // hard limit
+  }
+
+  function isValidName(v: string): boolean {
+    return v.length >= 2 && v.length <= 80 && /^[\p{L}\s'\-\.]+$/u.test(v);
+  }
+
+  function isValidEmail(v: string): boolean {
+    return /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/.test(v);
+  }
+
+  function isValidPhone(v: string): boolean {
+    return /^[\d\s+\-().]{6,20}$/.test(v);
+  }
+
+  function setFieldState(
+    fieldId: string,
+    errorId: string,
+    valid: boolean,
+    msg = ""
+  ) {
+    const field = document.getElementById(fieldId)!;
+    const errEl = document.getElementById(errorId)!;
+    field.classList.toggle("field--error", !valid);
+    field.classList.toggle("field--valid", valid);
+    errEl.textContent = valid ? "" : msg;
+  }
+
+  function clearFieldState(fieldId: string, errorId: string) {
+    const field = document.getElementById(fieldId)!;
+    document.getElementById(errorId)!.textContent = "";
+    field.classList.remove("field--error", "field--valid");
+  }
+
+  // ── Validación en blur (al salir de cada campo) ────────────────────────────
+
+  const nombreInput = form.elements.namedItem("nombre") as HTMLInputElement;
+  const correoInput = form.elements.namedItem("correo") as HTMLInputElement;
+  const telefonoInput = form.elements.namedItem("telefono") as HTMLInputElement;
+
+  nombreInput.addEventListener("blur", () => {
+    const v = sanitize(nombreInput.value);
+    if (!v) return clearFieldState("field-nombre", "error-nombre");
+    setFieldState(
+      "field-nombre", "error-nombre",
+      isValidName(v),
+      "Solo letras y espacios, mínimo 2 caracteres."
+    );
+  });
+
+  correoInput.addEventListener("blur", () => {
+    const v = sanitize(correoInput.value);
+    if (!v) return clearFieldState("field-correo", "error-correo");
+    setFieldState(
+      "field-correo", "error-correo",
+      isValidEmail(v),
+      "Ingresa un correo válido (ej: tu@correo.com)."
+    );
+  });
+
+  telefonoInput.addEventListener("blur", () => {
+    const v = sanitize(telefonoInput.value);
+    if (!v) return clearFieldState("field-telefono", "error-telefono");
+    setFieldState(
+      "field-telefono", "error-telefono",
+      isValidPhone(v),
+      "Solo números, +, - y espacios (6–20 caracteres)."
+    );
+  });
+
+  // Limpiar estado visual al empezar a escribir
+  [nombreInput, correoInput, telefonoInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      input.closest(".field")?.classList.remove("field--error", "field--valid");
+    });
+  });
+
+  // ── Modal open / close ────────────────────────────────────────────────────
+
   function openModal(planName: string) {
     const isFree = planName === "Sesión Gratuita";
-
     headingEl.textContent = isFree ? "Reserva tu sesión gratuita" : "Reserva tu sesión";
     subtitleEl.textContent = isFree
       ? "30 minutos de diagnóstico sin costo. Nos conocemos, evaluamos tu nivel y definimos el plan ideal para ti."
@@ -99,9 +196,15 @@
     submitBtn.classList.remove("loading");
     form.reset();
     planInput.value = planName;
-    setTimeout(() => {
-      (form.querySelector("input") as HTMLInputElement)?.focus();
-    }, 100);
+    // Limpiar estados visuales al abrir
+    ["field-nombre", "field-correo", "field-telefono"].forEach((id) => {
+      document.getElementById(id)?.classList.remove("field--error", "field--valid");
+    });
+    ["error-nombre", "error-correo", "error-telefono"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "";
+    });
+    setTimeout(() => nombreInput.focus(), 100);
   }
 
   function closeModal() {
@@ -110,7 +213,6 @@
     document.body.style.overflow = "";
   }
 
-  // Intercept any button with data-modal-plan attribute
   document.addEventListener("click", (e) => {
     const btn = (e.target as Element).closest("[data-modal-plan]");
     if (!btn) return;
@@ -124,21 +226,58 @@
     if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
   });
 
+  // ── Submit ────────────────────────────────────────────────────────────────
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     successEl.textContent = "";
     errorEl.textContent = "";
 
-    const nombre = (form.elements.namedItem("nombre") as HTMLInputElement).value.trim();
-    const correo = (form.elements.namedItem("correo") as HTMLInputElement).value.trim();
-    const telefono = (form.elements.namedItem("telefono") as HTMLInputElement).value.trim();
-    const plan = planInput.value;
+    // 1. Honeypot check
+    const honeypot = (form.elements.namedItem("website") as HTMLInputElement).value;
+    if (honeypot) return; // bot detectado, silently drop
 
-    if (!nombre || !correo || !telefono) {
-      errorEl.textContent = "Por favor completa todos los campos.";
+    // 2. Rate limiting
+    const lastSubmit = Number(localStorage.getItem(RATE_LIMIT_KEY) ?? 0);
+    const remaining = Math.ceil((RATE_LIMIT_MS - (Date.now() - lastSubmit)) / 1000);
+    if (Date.now() - lastSubmit < RATE_LIMIT_MS) {
+      errorEl.textContent = `Espera ${remaining}s antes de volver a enviar.`;
       return;
     }
 
+    // 3. Sanitize
+    const nombre   = sanitize(nombreInput.value);
+    const correo   = sanitize(correoInput.value);
+    const telefono = sanitize(telefonoInput.value);
+    const plan     = sanitize(planInput.value);
+
+    // 4. Validate all fields
+    let valid = true;
+
+    if (!nombre || !isValidName(nombre)) {
+      setFieldState("field-nombre", "error-nombre", false, "Solo letras y espacios, mínimo 2 caracteres.");
+      valid = false;
+    } else {
+      setFieldState("field-nombre", "error-nombre", true);
+    }
+
+    if (!correo || !isValidEmail(correo)) {
+      setFieldState("field-correo", "error-correo", false, "Ingresa un correo válido (ej: tu@correo.com).");
+      valid = false;
+    } else {
+      setFieldState("field-correo", "error-correo", true);
+    }
+
+    if (!telefono || !isValidPhone(telefono)) {
+      setFieldState("field-telefono", "error-telefono", false, "Solo números, +, - y espacios (6–20 caracteres).");
+      valid = false;
+    } else {
+      setFieldState("field-telefono", "error-telefono", true);
+    }
+
+    if (!valid) return;
+
+    // 5. Submit
     submitBtn.disabled = true;
     submitBtn.classList.add("loading");
 
@@ -154,18 +293,18 @@
         body: JSON.stringify({ nombre, correo, telefono, plan }),
       });
 
-      if (!res.ok) {
-        const err = await res.text();
-        throw new Error(err);
-      }
+      if (!res.ok) throw new Error(await res.text());
 
+      localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
       successEl.textContent = "¡Listo! Te contactaremos pronto para confirmar tu sesión.";
       form.reset();
       planInput.value = plan;
-      submitBtn.disabled = false;
-      submitBtn.classList.remove("loading");
+      ["field-nombre", "field-correo", "field-telefono"].forEach((id) => {
+        document.getElementById(id)?.classList.remove("field--error", "field--valid");
+      });
     } catch {
       errorEl.textContent = "Ocurrió un error al enviar. Inténtalo de nuevo.";
+    } finally {
       submitBtn.disabled = false;
       submitBtn.classList.remove("loading");
     }
@@ -173,6 +312,16 @@
 </script>
 
 <style>
+  /* Ocultar honeypot de forma accesible */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+    overflow: hidden;
+  }
+
   .modal {
     position: fixed;
     inset: 0;
@@ -296,7 +445,7 @@
       color: rgb(240, 240, 250);
       font-size: 0.9rem;
       width: 100%;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
       outline: none;
 
       &::placeholder {
@@ -308,6 +457,22 @@
         background: rgba(50, 170, 255, 0.04);
       }
     }
+
+    &.field--error input {
+      border-color: rgba(235, 14, 56, 0.7);
+      background: rgba(235, 14, 56, 0.04);
+    }
+
+    &.field--valid input {
+      border-color: rgba(74, 222, 128, 0.5);
+    }
+  }
+
+  .field-error {
+    font-size: 0.75rem;
+    color: rgba(235, 14, 56, 0.9);
+    min-height: 1em;
+    line-height: 1.3;
   }
 
   .submit-btn {
@@ -355,7 +520,7 @@
     min-height: 1.2em;
   }
 
-  .form-error {
+  .form-error-global {
     margin-top: 0.9rem;
     font-size: 0.82rem;
     color: rgb(var(--rgb-brand-1));

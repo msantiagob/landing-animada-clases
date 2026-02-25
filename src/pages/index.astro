@@ -13,9 +13,83 @@ import ContactModal from "../components/ContactModal.astro";
 import FloatingBubbles from "../components/FloatingBubbles.astro";
 
 import fotoMiguel from "../assets/img/foto_miguel.png";
+
+const siteUrl = "https://sonmyd.co/";
+
+const schemaFAQ = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Necesito conocimientos previos de programación?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No es obligatorio. Tengo rutas de aprendizaje para todos los niveles: desde quienes nunca han programado hasta desarrolladores que quieren especializarse en IA. En la sesión de diagnóstico definimos el camino ideal para ti.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cómo se realizan las clases?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Las clases son 100% online vía videollamada (Google Meet o Zoom). Trabajamos con pantalla compartida, ejercicios en vivo y herramientas reales de IA durante cada sesión.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "¿Puedo cambiar mi plan después de comenzar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Puedes cambiar de plan en cualquier momento según tu disponibilidad y presupuesto. La flexibilidad es parte del servicio.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué temas cubre el programa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fundamentos de IA y Machine Learning, Python para IA, Modelos de Lenguaje (LLMs), IA Generativa, Prompt Engineering, APIs de IA, automatización con agentes, Computer Vision y más. El plan se personaliza según tus objetivos.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuánto tiempo necesito dedicar entre sesiones?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Lo que tú puedas. Diseño el plan con ejercicios que se ajustan a tu disponibilidad real, desde 30 minutos diarios hasta sesiones más intensivas si prefieres avanzar más rápido.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "¿Hay una sesión de prueba gratuita?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. La primera sesión de diagnóstico de 30 minutos es completamente gratuita. Nos conocemos, evaluamos tu nivel y definimos si hay fit antes de cualquier compromiso.",
+      },
+    },
+  ],
+};
+
+const schemaBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": siteUrl,
+    },
+  ],
+};
 ---
 
-<Layout title="sonmyd | Clases de IA Personalizadas — Miguel Zuluaga">
+<Layout title="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd">
+  <Fragment slot="head">
+    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
+    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
+  </Fragment>
   <div id="inicio">
     <HeroHome
       title="Domina la IA con mentoría experta."

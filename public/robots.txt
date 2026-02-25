@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap generado por @astrojs/sitemap
+Sitemap: https://sonmyd.co/sitemap-index.xml
