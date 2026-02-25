@@ -7,8 +7,9 @@ import { useTranslations } from "../i18n/utils";
 import "../styles/global.css";
 import logoImg from "../assets/img/logo.webp";
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 const t = useTranslations();
+const lang = "es"; // As calculated or from context
 
 const links = [
   { title: "Inicio", url: "#inicio" },
@@ -17,7 +18,10 @@ const links = [
   { title: "Precios", url: "#precios" },
 ];
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? "https://sonmyd.co").href;
+const canonicalURL = new URL(
+  Astro.url.pathname,
+  Astro.site ?? "https://sonmyd.co",
+).href;
 const siteUrl = Astro.site?.href ?? "https://sonmyd.co/";
 
 // ── JSON-LD Schemas ──────────────────────────────────────────────────────────
@@ -26,27 +30,27 @@ const schemaWebSite = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": `${siteUrl}#website`,
-  "name": "sonmyd",
-  "url": siteUrl,
-  "description": "Clases 1 a 1 de Inteligencia Artificial con Miguel Zuluaga. Desde fundamentos hasta nivel avanzado.",
-  "inLanguage": "es",
-  "author": { "@id": `${siteUrl}#person` },
+  name: "sonmyd",
+  url: siteUrl,
+  description:
+    "Clases 1 a 1 de Inteligencia Artificial con Miguel Zuluaga. Desde fundamentos hasta nivel avanzado.",
+  inLanguage: "es",
+  author: { "@id": `${siteUrl}#person` },
 };
 
 const schemaPerson = {
   "@context": "https://schema.org",
   "@type": "Person",
   "@id": `${siteUrl}#person`,
-  "name": "Miguel Zuluaga",
-  "alternateName": "sonmyd",
-  "url": siteUrl,
-  "image": `${siteUrl}foto_miguel.png`,
-  "jobTitle": "Experto en Inteligencia Artificial",
-  "description": "Especialista en IA aplicada: modelos de lenguaje, visión computacional, automatización y aprendizaje automático.",
-  "sameAs": [
-    "https://twitter.com/sonmyd",
-  ],
-  "knowsAbout": [
+  name: "Miguel Zuluaga",
+  alternateName: "sonmyd",
+  url: siteUrl,
+  image: `${siteUrl}foto_miguel.png`,
+  jobTitle: "Experto en Inteligencia Artificial",
+  description:
+    "Especialista en IA aplicada: modelos de lenguaje, visión computacional, automatización y aprendizaje automático.",
+  sameAs: ["https://twitter.com/sonmyd"],
+  knowsAbout: [
     "Inteligencia Artificial",
     "Machine Learning",
     "Deep Learning",
@@ -63,49 +67,59 @@ const schemaPerson = {
 const schemaService = {
   "@context": "https://schema.org",
   "@type": "Service",
-  "name": "Clases personalizadas de Inteligencia Artificial",
-  "url": siteUrl,
-  "description": "Mentoría 1 a 1 en IA: Machine Learning, LLMs, Python, Prompt Engineering y más. Desde principiantes hasta nivel avanzado.",
-  "serviceType": "Educación en Inteligencia Artificial",
-  "provider": { "@id": `${siteUrl}#person` },
-  "areaServed": {
+  name: "Clases personalizadas de Inteligencia Artificial",
+  url: siteUrl,
+  description:
+    "Mentoría 1 a 1 en IA: Machine Learning, LLMs, Python, Prompt Engineering y más. Desde principiantes hasta nivel avanzado.",
+  serviceType: "Educación en Inteligencia Artificial",
+  provider: { "@id": `${siteUrl}#person` },
+  areaServed: {
     "@type": "Place",
-    "name": "Online — América Latina y España",
+    name: "Online — América Latina y España",
   },
-  "availableChannel": {
+  availableChannel: {
     "@type": "ServiceChannel",
-    "serviceType": "Online",
-    "availableLanguage": { "@type": "Language", "name": "Spanish" },
+    serviceType: "Online",
+    availableLanguage: { "@type": "Language", name: "Spanish" },
   },
-  "offers": [
+  offers: [
     {
       "@type": "Offer",
-      "name": "Clase Individual",
-      "price": "25",
-      "priceCurrency": "USD",
-      "description": "Sesión de 60 minutos con material de apoyo y grabación incluida.",
+      name: "Clase Individual",
+      price: "25",
+      priceCurrency: "USD",
+      description:
+        "Sesión de 60 minutos con material de apoyo y grabación incluida.",
     },
     {
       "@type": "Offer",
-      "name": "Paquete Intensivo",
-      "price": "220",
-      "priceCurrency": "USD",
-      "description": "10 horas de clase con seguimiento continuo y proyecto real de portafolio.",
+      name: "Paquete Intensivo",
+      price: "220",
+      priceCurrency: "USD",
+      description:
+        "10 horas de clase con seguimiento continuo y proyecto real de portafolio.",
     },
   ],
 };
 ---
 
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Primary meta -->
     <title>{title}</title>
-    <meta name="description" content="Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python para IA, Prompt Engineering y más. Clases con Miguel Zuluaga desde fundamentos hasta nivel experto." />
+    <meta
+      name="description"
+      content={description ||
+        "Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python para IA, Prompt Engineering y más. Clases con Miguel Zuluaga desde fundamentos hasta nivel experto."}
+    />
     <meta name="author" content="Miguel Zuluaga" />
-    <meta name="keywords" content="clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, sonmyd, Miguel Zuluaga" />
+    <meta
+      name="keywords"
+      content="clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, sonmyd, Miguel Zuluaga"
+    />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#07070f" />
 
@@ -118,29 +132,56 @@ const schemaService = {
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="sonmyd" />
-    <meta property="og:title" content="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd" />
-    <meta property="og:description" content="Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python, Prompt Engineering y más. Desde cero hasta nivel experto." />
+    <meta
+      property="og:title"
+      content="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd"
+    />
+    <meta
+      property="og:description"
+      content="Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python, Prompt Engineering y más. Desde cero hasta nivel experto."
+    />
     <meta property="og:locale" content="es_CO" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:image" content={new URL("/og-image.png", siteUrl).href} />
+    <meta
+      property="og:image"
+      content={new URL("/og-image.png", siteUrl).href}
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="sonmyd — Clases de IA Personalizadas con Miguel Zuluaga" />
+    <meta
+      property="og:image:alt"
+      content="sonmyd — Clases de IA Personalizadas con Miguel Zuluaga"
+    />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="@sonmyd" />
     <meta name="twitter:site" content="@sonmyd" />
-    <meta name="twitter:title" content="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd" />
-    <meta name="twitter:description" content="Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python, Prompt Engineering y más." />
-    <meta name="twitter:image" content={new URL("/og-image.png", siteUrl).href} />
+    <meta
+      name="twitter:title"
+      content="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd"
+    />
+    <meta
+      name="twitter:description"
+      content="Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python, Prompt Engineering y más."
+    />
+    <meta
+      name="twitter:image"
+      content={new URL("/og-image.png", siteUrl).href}
+    />
 
     <!-- JSON-LD: WebSite -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaWebSite)}</script>`} />
+    <Fragment
+      set:html={`<script type="application/ld+json">${JSON.stringify(schemaWebSite)}</script>`}
+    />
     <!-- JSON-LD: Person -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaPerson)}</script>`} />
+    <Fragment
+      set:html={`<script type="application/ld+json">${JSON.stringify(schemaPerson)}</script>`}
+    />
     <!-- JSON-LD: Service -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaService)}</script>`} />
+    <Fragment
+      set:html={`<script type="application/ld+json">${JSON.stringify(schemaService)}</script>`}
+    />
 
     <!-- Head slot para schemas adicionales por página -->
     <slot name="head" />

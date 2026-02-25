@@ -4,6 +4,7 @@ import {
   fontProviders,
 } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,8 @@ export default defineConfig({
   site: "https://sonmyd.co",
   scopedStyleStrategy: 'where',
   integrations: [sitemap()],
+  output: 'static',
+  adapter: netlify(),
   experimental: {
     fonts: [
       {
