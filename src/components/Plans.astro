@@ -33,7 +33,7 @@ const { title, subtitle, items } = Astro.props;
     <div class="plans">
       {
         items.map((item, i) => (
-          <div class="plan">
+          <div class="plan" data-plan={item.title}>
             <div class="plan-inner">
               <h3 class="u-text plan-title" data-sy-reveal="words">
                 {item.title}

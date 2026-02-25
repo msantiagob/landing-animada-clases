@@ -1,0 +1,356 @@
+---
+---
+
+<div id="contact-modal" class="modal" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <button class="modal-close" aria-label="Cerrar">&times;</button>
+    <div class="modal-content">
+      <h2 id="modal-heading" class="modal-title">Reserva tu sesión</h2>
+      <p class="modal-subtitle">
+        Déjanos tus datos y te contactamos para confirmar tu clase.
+      </p>
+      <p class="modal-plan-label" id="modal-plan-label"></p>
+
+      <form id="contact-form" novalidate>
+        <input type="hidden" id="modal-plan" name="plan" />
+
+        <div class="field">
+          <label for="modal-nombre">Nombre</label>
+          <input
+            type="text"
+            id="modal-nombre"
+            name="nombre"
+            required
+            placeholder="Tu nombre completo"
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="field">
+          <label for="modal-correo">Correo electrónico</label>
+          <input
+            type="email"
+            id="modal-correo"
+            name="correo"
+            required
+            placeholder="tu@correo.com"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="field">
+          <label for="modal-telefono">Teléfono / WhatsApp</label>
+          <input
+            type="tel"
+            id="modal-telefono"
+            name="telefono"
+            required
+            placeholder="+57 300 000 0000"
+            autocomplete="tel"
+          />
+        </div>
+
+        <button type="submit" class="submit-btn" id="modal-submit">
+          <span class="submit-text">Enviar solicitud</span>
+          <span class="submit-loading" aria-hidden="true">Enviando…</span>
+        </button>
+
+        <p class="form-success" id="modal-success" role="alert" aria-live="polite"></p>
+        <p class="form-error" id="modal-error" role="alert" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://agwzcghaojhdjniuujbl.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_l2VskysoUrgHt1U5WX8hBg_FXPfhHVa";
+
+  const modal = document.getElementById("contact-modal")!;
+  const backdrop = modal.querySelector(".modal-backdrop")!;
+  const closeBtn = modal.querySelector(".modal-close")!;
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const planInput = document.getElementById("modal-plan") as HTMLInputElement;
+  const planLabel = document.getElementById("modal-plan-label")!;
+  const submitBtn = document.getElementById("modal-submit") as HTMLButtonElement;
+  const successEl = document.getElementById("modal-success")!;
+  const errorEl = document.getElementById("modal-error")!;
+
+  function openModal(planName: string) {
+    planInput.value = planName;
+    planLabel.textContent = planName ? `Plan: ${planName}` : "";
+    modal.setAttribute("aria-hidden", "false");
+    modal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+    successEl.textContent = "";
+    errorEl.textContent = "";
+    submitBtn.disabled = false;
+    submitBtn.classList.remove("loading");
+    form.reset();
+    planInput.value = planName;
+    setTimeout(() => {
+      (form.querySelector("input") as HTMLInputElement)?.focus();
+    }, 100);
+  }
+
+  function closeModal() {
+    modal.setAttribute("aria-hidden", "true");
+    modal.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+
+  // Intercept plan button clicks
+  document.querySelector(".sy-plans")?.addEventListener("click", (e) => {
+    const btn = (e.target as Element).closest(".btn");
+    if (!btn) return;
+    e.preventDefault();
+    const plan = btn.closest("[data-plan]")?.getAttribute("data-plan") ?? "";
+    openModal(plan);
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  backdrop.addEventListener("click", closeModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    successEl.textContent = "";
+    errorEl.textContent = "";
+
+    const nombre = (form.elements.namedItem("nombre") as HTMLInputElement).value.trim();
+    const correo = (form.elements.namedItem("correo") as HTMLInputElement).value.trim();
+    const telefono = (form.elements.namedItem("telefono") as HTMLInputElement).value.trim();
+    const plan = planInput.value;
+
+    if (!nombre || !correo || !telefono) {
+      errorEl.textContent = "Por favor completa todos los campos.";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({ nombre, correo, telefono, plan }),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err);
+      }
+
+      successEl.textContent = "¡Listo! Te contactaremos pronto para confirmar tu sesión.";
+      form.reset();
+      planInput.value = plan;
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("loading");
+    } catch {
+      errorEl.textContent = "Ocurrió un error al enviar. Inténtalo de nuevo.";
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("loading");
+    }
+  });
+</script>
+
+<style>
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+
+    &.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-box {
+    position: relative;
+    z-index: 1;
+    background: rgb(var(--rgb-brand-3));
+    border: 1px solid rgba(235, 14, 56, 0.25);
+    border-radius: 1.25rem;
+    width: 100%;
+    max-width: 26rem;
+    box-shadow:
+      0 0 60px rgba(235, 14, 56, 0.15),
+      0 0 120px rgba(50, 170, 255, 0.08),
+      0 24px 48px rgba(0, 0, 0, 0.5);
+    transform: translateY(1rem) scale(0.97);
+    transition:
+      transform 0.3s var(--ease-out-cubic, cubic-bezier(0.22, 1, 0.36, 1)),
+      opacity 0.3s ease;
+    opacity: 0;
+
+    .is-open & {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .modal-content {
+    padding: 2.5rem 2rem 2rem;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(255, 255, 255, 0.07);
+    border: none;
+    border-radius: 50%;
+    color: rgba(240, 240, 250, 0.6);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: rgb(240, 240, 250);
+    }
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(240, 240, 250);
+    margin: 0 0 0.4rem;
+  }
+
+  .modal-subtitle {
+    font-size: 0.875rem;
+    color: rgba(240, 240, 250, 0.55);
+    margin: 0 0 1.25rem;
+    line-height: 1.5;
+  }
+
+  .modal-plan-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgb(var(--rgb-brand-1));
+    background: rgba(var(--rgb-brand-1), 0.1);
+    border: 1px solid rgba(var(--rgb-brand-1), 0.25);
+    border-radius: 999px;
+    display: inline-block;
+    padding: 0.2em 0.85em;
+    margin-bottom: 1.5rem;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(240, 240, 250, 0.7);
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      color: rgb(240, 240, 250);
+      font-size: 0.9rem;
+      width: 100%;
+      transition: border-color 0.2s;
+      outline: none;
+
+      &::placeholder {
+        color: rgba(240, 240, 250, 0.3);
+      }
+
+      &:focus {
+        border-color: rgba(235, 14, 56, 0.6);
+        background: rgba(235, 14, 56, 0.04);
+      }
+    }
+  }
+
+  .submit-btn {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: rgb(var(--rgb-brand-1));
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    position: relative;
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .submit-loading {
+      display: none;
+    }
+
+    &.loading .submit-text {
+      display: none;
+    }
+
+    &.loading .submit-loading {
+      display: inline;
+    }
+  }
+
+  .form-success {
+    margin-top: 0.9rem;
+    font-size: 0.82rem;
+    color: #4ade80;
+    text-align: center;
+    min-height: 1.2em;
+  }
+
+  .form-error {
+    margin-top: 0.9rem;
+    font-size: 0.82rem;
+    color: rgb(var(--rgb-brand-1));
+    text-align: center;
+    min-height: 1.2em;
+  }
+</style>
