@@ -10,7 +10,6 @@ see https://www.joshwcomeau.com/css/custom-css-reset/
 }
 
 html {
-  scroll-behavior: smooth;
 
   /* 3. Enable keyword animations */
   interpolate-size: allow-keywords;

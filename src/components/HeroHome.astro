@@ -127,7 +127,7 @@ const {
     padding: 9rem 0 10rem;
     position: relative;
     z-index: 9;
-    min-height: 100vh;
+    min-height: 100dvh;
 
     @media (--mq-tablet) {
       flex-direction: column;
@@ -185,7 +185,9 @@ const {
     padding: 0.75em 1.25em;
     text-decoration: none;
     font-weight: 500;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
 
     &:hover,
     &:focus {

@@ -43,7 +43,15 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
               </a>
             ) : null
           }
-          {link2 ? <Button {...link2} revealable={false} modalPlan={link2ModalPlan} /> : null}
+          {
+            link2 ? (
+              <Button
+                {...link2}
+                revealable={false}
+                modalPlan={link2ModalPlan}
+              />
+            ) : null
+          }
 
           <button type="button" class="toggle" aria-label="">
             <span class="u-sr-only">Toggle Mobile Menu</span>
@@ -71,6 +79,7 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
     color: var(--color-text);
     margin: 0 auto;
     transition: transform 0.3s var(--ease-out-cubic);
+    will-change: transform;
 
     :global(body.is-nav-hidden) & {
       transform: translateY(-100%);
@@ -150,7 +159,7 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
       align-items: center;
       justify-content: center;
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       position: fixed;
       z-index: 2;
       background: rgba(7, 7, 15, 0.97);
@@ -158,6 +167,7 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
       left: 0;
       clip-path: inset(0 0 0%);
       transition: clip-path 0.5s var(--ease-out-expo);
+      will-change: clip-path;
 
       :global(body:not(.is-nav-opened)) & {
         clip-path: inset(0 0 100%);
@@ -399,8 +409,11 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
     }
 
     onScroll(y: number) {
-      const isDown = y > this.prevY ? true : false;
-      this.prevY = y;
+      if (y < 0) return; // Ignore overscroll on iOS
+
+      const diff = y - this.prevY;
+      const isDown = diff > 0;
+      const threshold = 5;
 
       const classList = document.body.classList;
 
@@ -411,12 +424,17 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links } = Astro.props;
         classList.toggle("is-nav-small", shouldBeSmall);
       }
 
-      const shouldBeHidden = y > this.hiddenThreshold && isDown;
-      const isHidden = classList.contains("is-nav-hidden");
+      // Only toggle hidden state if we've scrolled more than the threshold
+      if (Math.abs(diff) > threshold || y <= 0) {
+        const shouldBeHidden = y > this.hiddenThreshold && isDown;
+        const isHidden = classList.contains("is-nav-hidden");
 
-      if (shouldBeHidden !== isHidden) {
-        classList.toggle("is-nav-hidden", shouldBeHidden);
+        if (shouldBeHidden !== isHidden) {
+          classList.toggle("is-nav-hidden", shouldBeHidden);
+        }
       }
+
+      this.prevY = y;
     }
 
     toggleNav = () => {
