@@ -130,6 +130,8 @@
   const headingEl = document.getElementById("modal-heading")!;
   const subtitleEl = modal.querySelector(".modal-subtitle")!;
 
+  let formSubmittedSuccessfully = false;
+
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   function sanitize(value: string): string {
@@ -236,6 +238,7 @@
         : "";
 
     planInput.value = planName;
+    formSubmittedSuccessfully = false;
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("is-open");
     document.body.style.overflow = "hidden";
@@ -267,7 +270,28 @@
     setTimeout(() => nombreInput.focus(), 100);
   }
 
+  function capturePartialLead() {
+    const correo = sanitize(correoInput.value);
+    if (!isValidEmail(correo)) return;
+
+    const nombre = sanitize(nombreInput.value);
+    const telefono = sanitize(telefonoInput.value);
+    const plan = sanitize(planInput.value);
+
+    fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({ nombre, correo, telefono, plan, completado: false }),
+    }).catch(() => {});
+  }
+
   function closeModal() {
+    if (!formSubmittedSuccessfully) capturePartialLead();
     modal.setAttribute("aria-hidden", "true");
     modal.classList.remove("is-open");
     document.body.style.overflow = "";
@@ -368,12 +392,13 @@
           Authorization: `Bearer ${SUPABASE_KEY}`,
           Prefer: "return=minimal",
         },
-        body: JSON.stringify({ nombre, correo, telefono, plan }),
+        body: JSON.stringify({ nombre, correo, telefono, plan, completado: true }),
       });
 
       if (!res.ok) throw new Error(await res.text());
 
       localStorage.setItem(RATE_LIMIT_KEY, String(Date.now()));
+      formSubmittedSuccessfully = true;
 
       // Mostrar estado de éxito premium
       (form as HTMLElement).style.display = "none";
