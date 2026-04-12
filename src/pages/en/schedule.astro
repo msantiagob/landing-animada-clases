@@ -101,39 +101,41 @@ const datesJson = JSON.stringify(dates);
   </div>
 </LayoutPage>
 
-<script define:vars={{ slotsJson, datesJson }}>
-  const WEEKLY_SLOTS = JSON.parse(slotsJson);
-  const DATES = JSON.parse(datesJson);
+<!-- Expose server data as globals (inline — no module) -->
+<script define:vars={{ slotsJson, datesJson }} is:inline>
+  window.__BOOK_SLOTS__ = JSON.parse(slotsJson);
+  window.__BOOK_DATES__ = JSON.parse(datesJson);
+</script>
+
+<!-- Main logic — Vite module, supports static imports -->
+<script>
+  import { auth, db, googleProvider } from '../../lib/firebase.ts';
+  import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+  import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+
+  const WEEKLY_SLOTS: Record<number, string[]> = (window as any).__BOOK_SLOTS__;
+  const DATES: string[] = (window as any).__BOOK_DATES__;
   let selectedDate = '', selectedTime = '';
 
-  async function getFirebase() {
-    const { auth, db, googleProvider } = await import('/src/lib/firebase.ts');
-    return { auth, db, googleProvider };
-  }
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    const { auth, googleProvider } = await getFirebase();
-    const { onAuthStateChanged, signInWithPopup, signOut } = await import('firebase/auth');
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) showWidget(user);
-      else {
-        document.getElementById('auth-gate').style.display = '';
-        document.getElementById('booking-widget').style.display = 'none';
-      }
-    });
-
-    document.getElementById('btn-google-login')?.addEventListener('click', async () => {
-      try { await signInWithPopup(auth, googleProvider); } catch(e) { console.error(e); }
-    });
-    document.getElementById('btn-logout')?.addEventListener('click', async () => {
-      const { signOut } = await import('firebase/auth');
-      signOut(auth);
-    });
-    document.getElementById('btn-back-date')?.addEventListener('click', () => showStep('date'));
-    document.getElementById('btn-back-time')?.addEventListener('click', () => showStep('time'));
-    document.getElementById('btn-confirm')?.addEventListener('click', confirmBooking);
+  onAuthStateChanged(auth, (user) => {
+    if (user) showWidget(user);
+    else {
+      const gate = document.getElementById('auth-gate');
+      const widget = document.getElementById('booking-widget');
+      if (gate) gate.style.display = '';
+      if (widget) widget.style.display = 'none';
+    }
   });
+
+  document.getElementById('btn-google-login')?.addEventListener('click', async () => {
+    try { await signInWithPopup(auth, googleProvider); } catch(e: any) {
+      if (e?.code !== 'auth/popup-closed-by-user') console.error(e);
+    }
+  });
+  document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth));
+  document.getElementById('btn-back-date')?.addEventListener('click', () => showStep('date'));
+  document.getElementById('btn-back-time')?.addEventListener('click', () => showStep('time'));
+  document.getElementById('btn-confirm')?.addEventListener('click', confirmBooking);
 
   function showWidget(user) {
     document.getElementById('auth-gate').style.display = 'none';
@@ -170,11 +172,9 @@ const datesJson = JSON.stringify(dates);
     loadSlots(iso);
   }
 
-  async function loadSlots(iso) {
-    const grid = document.getElementById('slots-grid');
+  async function loadSlots(iso: string) {
+    const grid = document.getElementById('slots-grid')!;
     grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:0.85rem">Loading availability...</p>';
-    const { db } = await getFirebase();
-    const { collection, query, where, getDocs } = await import('firebase/firestore');
     const q = query(collection(db, 'bookings'), where('date', '==', iso), where('status', '!=', 'cancelled'));
     const snap = await getDocs(q);
     const booked = new Set(snap.docs.map(d => d.data().time));
@@ -209,8 +209,6 @@ const datesJson = JSON.stringify(dates);
   }
 
   async function confirmBooking() {
-    const { auth, db } = await getFirebase();
-    const { collection, addDoc, serverTimestamp, query, where, getDocs } = await import('firebase/firestore');
     const user = auth.currentUser;
     if (!user) return;
     const btn = document.getElementById('btn-confirm');

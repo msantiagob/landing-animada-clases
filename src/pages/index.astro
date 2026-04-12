@@ -89,47 +89,6 @@ const schemaBreadcrumb = {
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
-  <!-- APP IDENTITY NOTICE — siempre en el HTML (Google lo lee sin JS).
-       El usuario puede descartarlo; se guarda en localStorage.           -->
-  <section class="app-id" id="app-id-notice" aria-labelledby="app-id-title">
-    <div class="u-container app-id__inner">
-      <div class="app-id__body">
-        <div class="app-id__brand">
-          <span class="app-id__name" id="app-id-title">Sonmyd</span>
-          <span class="app-id__sep" aria-hidden="true">·</span>
-          <span class="app-id__tagline">Plataforma de automatización con IA</span>
-        </div>
-        <p class="app-id__purpose">
-          <strong>Sonmyd</strong> accede a <strong>Google Calendar</strong> a través de OAuth para crear y gestionar citas automáticamente. También integra <strong>WhatsApp Business</strong> para responder clientes 24/7 y construye sitios web profesionales para tu negocio. <a href="/privacidad">Política de Privacidad</a> · <a href="/terminos">Términos de Uso</a>
-        </p>
-      </div>
-      <button class="app-id__accept" id="app-id-accept" aria-label="Cerrar aviso">
-        Aceptar
-      </button>
-    </div>
-  </section>
-
-  <script>
-    const NOTICE_KEY = "sonmyd-notice-v1";
-    const notice = document.getElementById("app-id-notice");
-    const btn = document.getElementById("app-id-accept");
-
-    if (notice) {
-      // Si ya fue descartado, ocultar sin animación
-      if (localStorage.getItem(NOTICE_KEY)) {
-        notice.classList.add("is-hidden");
-      }
-
-      btn?.addEventListener("click", () => {
-        notice.classList.add("is-hiding");
-        notice.addEventListener("transitionend", () => {
-          notice.classList.add("is-hidden");
-        }, { once: true });
-        localStorage.setItem(NOTICE_KEY, "1");
-      });
-    }
-  </script>
-
   <div id="inicio">
     <HeroHome
       title="Sonmyd: automatiza tu negocio con IA."
@@ -274,10 +233,50 @@ const schemaBreadcrumb = {
     </nav>
   </div>
 
+  <!-- APP IDENTITY NOTICE — siempre en el HTML (Google lo lee sin JS).
+       El usuario puede descartarlo; se guarda en localStorage.           -->
+  <section class="app-id" id="app-id-notice" aria-labelledby="app-id-title">
+    <div class="u-container app-id__inner">
+      <div class="app-id__body">
+        <div class="app-id__brand">
+          <span class="app-id__name" id="app-id-title">Sonmyd</span>
+          <span class="app-id__sep" aria-hidden="true">·</span>
+          <span class="app-id__tagline">Plataforma de automatización con IA</span>
+        </div>
+        <p class="app-id__purpose">
+          <strong>Sonmyd</strong> accede a <strong>Google Calendar</strong> a través de OAuth para crear y gestionar citas automáticamente. También integra <strong>WhatsApp Business</strong> para responder clientes 24/7 y construye sitios web profesionales para tu negocio. <a href="/privacidad">Política de Privacidad</a> · <a href="/terminos">Términos de Uso</a>
+        </p>
+      </div>
+      <button class="app-id__accept" id="app-id-accept" aria-label="Cerrar aviso">
+        Aceptar
+      </button>
+    </div>
+  </section>
+
   <GL />
   <GLPlaces />
   <ContactModal />
 </Layout>
+
+<script>
+  // ── App notice dismiss ────────────────────────────────────────────────────
+  const NOTICE_KEY = "sonmyd-notice-v1";
+  const notice = document.getElementById("app-id-notice");
+  const btn = document.getElementById("app-id-accept");
+
+  if (notice) {
+    if (localStorage.getItem(NOTICE_KEY)) {
+      notice.classList.add("is-hidden");
+    }
+    btn?.addEventListener("click", () => {
+      notice.classList.add("is-hiding");
+      notice.addEventListener("transitionend", () => {
+        notice.classList.add("is-hidden");
+      }, { once: true });
+      localStorage.setItem(NOTICE_KEY, "1");
+    });
+  }
+</script>
 
 <script>
   const EU = new Set([
@@ -382,11 +381,10 @@ const schemaBreadcrumb = {
   .app-id {
     overflow: hidden;
     max-height: 12rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(10, 10, 22, 0.85);
     backdrop-filter: blur(8px);
-    /* padding-top empuja el contenido debajo del header fijo */
-    padding: 5.5rem 0 0.875rem;
+    padding: 1.5rem 0;
     opacity: 1;
     transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
 
