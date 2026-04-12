@@ -297,11 +297,24 @@
     document.body.style.overflow = "";
   }
 
+  const WHATSAPP_NUMBER = "573106041144";
+
   document.addEventListener("click", (e) => {
     const btn = (e.target as Element).closest("[data-modal-plan]");
     if (!btn) return;
     e.preventDefault();
-    openModal(btn.getAttribute("data-modal-plan") ?? "");
+    const plan = btn.getAttribute("data-modal-plan") ?? "";
+    const msg =
+      plan === "Sesión Gratuita"
+        ? "Hola! Quiero reservar mi sesión gratuita de diagnóstico."
+        : plan
+          ? `Hola! Quiero información sobre el plan: ${plan}.`
+          : "Hola! Quiero reservar una sesión.";
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   });
 
   closeBtn.addEventListener("click", closeModal);
