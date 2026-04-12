@@ -1,0 +1,547 @@
+---
+import LayoutPage from "../layouts/LayoutPage.astro";
+import { getBookableDates, formatDate, WEEKLY_SLOTS } from "../lib/schedule";
+
+const dates = getBookableDates(28);
+const slotsJson = JSON.stringify(WEEKLY_SLOTS);
+const datesJson = JSON.stringify(dates);
+---
+
+<LayoutPage
+  title="Agendar reunión | Sonmyd — Miguel Zuluaga"
+  description="Agenda una reunión con Miguel Zuluaga de Sonmyd. Sesión de diagnóstico gratuita para evaluar tu proyecto de automatización con IA."
+>
+  <div class="book-page">
+
+    <!-- AUTH GATE -->
+    <div id="auth-gate" class="auth-gate">
+      <div class="u-container auth-gate__inner">
+        <span class="auth-gate__icon">📅</span>
+        <h1 class="u-heading auth-gate__title">Agenda una reunión</h1>
+        <p class="u-text auth-gate__sub">
+          Inicia sesión con tu cuenta de Google para reservar un espacio conmigo. La primera sesión de diagnóstico es gratuita.
+        </p>
+        <button id="btn-google-login" class="btn-google">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continuar con Google
+        </button>
+      </div>
+    </div>
+
+    <!-- BOOKING WIDGET (oculto hasta auth) -->
+    <div id="booking-widget" class="booking-widget" style="display:none">
+      <div class="u-container">
+
+        <!-- User info bar -->
+        <div class="user-bar">
+          <img id="user-photo" src="" alt="" class="user-bar__photo" />
+          <span id="user-name" class="user-bar__name"></span>
+          <button id="btn-logout" class="user-bar__logout">Salir</button>
+        </div>
+
+        <div class="book-grid">
+
+          <!-- Left: info -->
+          <aside class="book-info">
+            <div class="book-info__avatar">
+              <img src="/foto_miguel.png" alt="Miguel Zuluaga" onerror="this.style.display='none'" />
+            </div>
+            <h1 class="u-heading book-info__name">Miguel Zuluaga</h1>
+            <p class="u-text book-info__role">Fundador de Sonmyd · Experto en IA</p>
+            <ul class="book-info__details">
+              <li><span>⏱</span> 30 minutos</li>
+              <li><span>🎥</span> Google Meet / Zoom</li>
+              <li><span>🌎</span> Hora Colombia (UTC-5)</li>
+            </ul>
+            <p class="book-info__desc">
+              Primera sesión de diagnóstico gratuita. Analizamos tu proyecto, identificamos qué automatizar y diseñamos un plan concreto.
+            </p>
+          </aside>
+
+          <!-- Right: picker -->
+          <div class="book-picker">
+
+            <!-- Step 1: date -->
+            <div id="step-date" class="step">
+              <h2 class="step__title">Selecciona una fecha</h2>
+              <div class="date-strip" id="date-strip">
+                <!-- generado por JS -->
+              </div>
+            </div>
+
+            <!-- Step 2: time (oculto hasta elegir fecha) -->
+            <div id="step-time" class="step" style="display:none">
+              <h2 class="step__title">Elige un horario
+                <button id="btn-back-date" class="step__back">← Cambiar fecha</button>
+              </h2>
+              <div id="slots-grid" class="slots-grid">
+                <!-- generado por JS -->
+              </div>
+            </div>
+
+            <!-- Step 3: confirm -->
+            <div id="step-confirm" class="step" style="display:none">
+              <h2 class="step__title">Confirma tu reserva</h2>
+              <div class="confirm-card">
+                <div class="confirm-card__row">
+                  <span>📅</span>
+                  <span id="confirm-date-text"></span>
+                </div>
+                <div class="confirm-card__row">
+                  <span>🕐</span>
+                  <span id="confirm-time-text"></span>
+                </div>
+                <div class="confirm-card__row">
+                  <span>⏱</span>
+                  <span>30 minutos · Hora Colombia</span>
+                </div>
+              </div>
+              <label class="notes-label">
+                ¿De qué quieres hablar? <span class="notes-optional">(opcional)</span>
+                <textarea id="notes-input" class="notes-input" rows="3" placeholder="Ej: Quiero automatizar el agendamiento de mi clínica con Google Calendar..."></textarea>
+              </label>
+              <button id="btn-back-time" class="step__back" style="margin-bottom:1rem">← Cambiar horario</button>
+              <button id="btn-confirm" class="btn-confirm">Confirmar reserva</button>
+            </div>
+
+            <!-- Step 4: success -->
+            <div id="step-success" class="step step--success" style="display:none">
+              <div class="success-icon">✅</div>
+              <h2 class="u-heading">¡Reserva confirmada!</h2>
+              <p class="u-text" id="success-text"></p>
+              <p class="u-text" style="color: rgba(255,255,255,0.5); font-size:0.85rem; margin-top:0.5rem">
+                Recibirás confirmación en tu correo de Google. Miguel se pondrá en contacto contigo pronto.
+              </p>
+              <a href="/" class="btn-confirm" style="text-decoration:none; display:inline-block; margin-top:1.5rem">Volver al inicio</a>
+            </div>
+
+          </div><!-- /book-picker -->
+        </div><!-- /book-grid -->
+      </div>
+    </div><!-- /booking-widget -->
+
+  </div>
+</LayoutPage>
+
+<script define:vars={{ slotsJson, datesJson }}>
+  const WEEKLY_SLOTS = JSON.parse(slotsJson);
+  const DATES = JSON.parse(datesJson);
+
+  let selectedDate = '';
+  let selectedTime = '';
+
+  // ── Firebase (dynamic import — browser only) ──────────────────────────────
+  async function getFirebase() {
+    const { auth, db, googleProvider } = await import('/src/lib/firebase.ts');
+    return { auth, db, googleProvider };
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', async () => {
+    const { auth, googleProvider } = await getFirebase();
+    const { onAuthStateChanged, signInWithPopup, signOut } = await import('firebase/auth');
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        showWidget(user);
+      } else {
+        document.getElementById('auth-gate').style.display = '';
+        document.getElementById('booking-widget').style.display = 'none';
+      }
+    });
+
+    document.getElementById('btn-google-login')?.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+
+    document.getElementById('btn-logout')?.addEventListener('click', () => {
+      signOut(auth);
+    });
+  });
+
+  function showWidget(user) {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('booking-widget').style.display = '';
+    document.getElementById('user-name').textContent = user.displayName ?? user.email;
+    const photo = document.getElementById('user-photo');
+    if (user.photoURL) { photo.src = user.photoURL; photo.alt = user.displayName; }
+    else { photo.style.display = 'none'; }
+    buildDateStrip();
+  }
+
+  // ── Date strip ────────────────────────────────────────────────────────────
+  function buildDateStrip() {
+    const strip = document.getElementById('date-strip');
+    strip.innerHTML = '';
+    DATES.forEach(iso => {
+      const [y, m, d] = iso.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      const dow = date.getDay();
+      const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+      const btn = document.createElement('button');
+      btn.className = 'date-btn';
+      btn.dataset.iso = iso;
+      btn.innerHTML = `<span class="date-btn__dow">${days[dow]}</span><span class="date-btn__day">${d}</span><span class="date-btn__month">${months[m-1]}</span>`;
+      btn.addEventListener('click', () => selectDate(iso, btn));
+      strip.appendChild(btn);
+    });
+  }
+
+  function selectDate(iso, btn) {
+    selectedDate = iso;
+    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('is-selected'));
+    btn.classList.add('is-selected');
+    showStep('time');
+    loadSlots(iso);
+  }
+
+  // ── Time slots ────────────────────────────────────────────────────────────
+  async function loadSlots(iso) {
+    const grid = document.getElementById('slots-grid');
+    grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:0.85rem">Cargando disponibilidad...</p>';
+
+    const { db } = await getFirebase();
+    const { collection, query, where, getDocs } = await import('firebase/firestore');
+
+    const q = query(
+      collection(db, 'bookings'),
+      where('date', '==', iso),
+      where('status', '!=', 'cancelled')
+    );
+    const snap = await getDocs(q);
+    const booked = new Set(snap.docs.map(d => d.data().time));
+
+    const [y, m, day] = iso.split('-').map(Number);
+    const dow = new Date(y, m - 1, day).getDay();
+    const slots = WEEKLY_SLOTS[dow] ?? [];
+
+    grid.innerHTML = '';
+    slots.forEach(time => {
+      const taken = booked.has(time);
+      const btn = document.createElement('button');
+      btn.className = 'slot-btn' + (taken ? ' is-taken' : '');
+      btn.textContent = time + ' COT';
+      btn.disabled = taken;
+      btn.addEventListener('click', () => selectTime(time, btn));
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectTime(time, btn) {
+    selectedTime = time;
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('is-selected'));
+    btn.classList.add('is-selected');
+    fillConfirm();
+    showStep('confirm');
+  }
+
+  // ── Confirm ───────────────────────────────────────────────────────────────
+  function fillConfirm() {
+    const [y, m, d] = selectedDate.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    const fmt = date.toLocaleDateString('es-CO', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('confirm-date-text').textContent = fmt.charAt(0).toUpperCase() + fmt.slice(1);
+    document.getElementById('confirm-time-text').textContent = selectedTime + ' (Hora Colombia)';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btn-back-date')?.addEventListener('click', () => showStep('date'));
+    document.getElementById('btn-back-time')?.addEventListener('click', () => showStep('time'));
+    document.getElementById('btn-confirm')?.addEventListener('click', confirmBooking);
+  });
+
+  async function confirmBooking() {
+    const { auth, db } = await getFirebase();
+    const { collection, addDoc, serverTimestamp, query, where, getDocs } = await import('firebase/firestore');
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const btn = document.getElementById('btn-confirm');
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+
+    try {
+      // Verificar que el slot siga disponible
+      const slotKey = `${selectedDate}_${selectedTime}`;
+      const q = query(
+        collection(db, 'bookings'),
+        where('slotKey', '==', slotKey),
+        where('status', '!=', 'cancelled')
+      );
+      const existing = await getDocs(q);
+      if (!existing.empty) {
+        alert('Este horario acaba de ser reservado por otra persona. Por favor elige otro.');
+        showStep('time');
+        loadSlots(selectedDate);
+        return;
+      }
+
+      const notes = document.getElementById('notes-input').value.trim();
+      await addDoc(collection(db, 'bookings'), {
+        userId:    user.uid,
+        userEmail: user.email,
+        userName:  user.displayName ?? user.email,
+        userPhoto: user.photoURL ?? '',
+        date:      selectedDate,
+        time:      selectedTime,
+        slotKey,
+        status:    'pending',
+        lang:      'es',
+        notes,
+        createdAt: serverTimestamp(),
+      });
+
+      const [y, m, d] = selectedDate.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      const fmt = dateObj.toLocaleDateString('es-CO', { weekday:'long', day:'numeric', month:'long' });
+      document.getElementById('success-text').textContent =
+        `Tu reunión del ${fmt} a las ${selectedTime} COT está confirmada.`;
+      showStep('success');
+
+    } catch (e) {
+      console.error(e);
+      alert('Ocurrió un error. Inténtalo de nuevo.');
+      btn.disabled = false;
+      btn.textContent = 'Confirmar reserva';
+    }
+  }
+
+  // ── Step navigation ───────────────────────────────────────────────────────
+  function showStep(name) {
+    ['date','time','confirm','success'].forEach(s => {
+      document.getElementById(`step-${s}`).style.display = s === name ? '' : 'none';
+    });
+  }
+</script>
+
+<style>
+  .book-page {
+    min-height: 100dvh;
+    padding-bottom: 4rem;
+  }
+
+  /* ── Auth gate ── */
+  .auth-gate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 2rem;
+  }
+  .auth-gate__inner {
+    max-width: 28rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .auth-gate__icon { font-size: 3rem; }
+  .auth-gate__title { --fs: 2.5rem; }
+  .auth-gate__sub { color: var(--color-text-alt); }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #fff;
+    color: #1f1f1f;
+    border: none;
+    border-radius: 0.625rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+    svg { width: 1.25rem; height: 1.25rem; }
+    &:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  }
+
+  /* ── User bar ── */
+  .user-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 5rem 0 1.5rem;
+  }
+  .user-bar__photo {
+    width: 2rem; height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .user-bar__name { font-size: 0.9rem; color: var(--color-text-alt); flex: 1; }
+  .user-bar__logout {
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 0.4rem; color: rgba(255,255,255,0.45);
+    font-size: 0.78rem; padding: 0.2rem 0.7rem; cursor: pointer;
+    &:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
+  }
+
+  /* ── Book grid ── */
+  .book-grid {
+    display: grid;
+    grid-template-columns: 18rem 1fr;
+    gap: 3rem;
+    align-items: start;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* ── Left panel ── */
+  .book-info {
+    position: sticky;
+    top: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+  }
+  .book-info__avatar img {
+    width: 4rem; height: 4rem;
+    border-radius: 50%; object-fit: cover;
+  }
+  .book-info__name { --fs: 1.25rem; }
+  .book-info__role { font-size: 0.82rem; color: var(--color-text-alt); margin: 0; }
+  .book-info__details {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 0.4rem;
+    font-size: 0.82rem; color: var(--color-text-alt);
+    li { display: flex; align-items: center; gap: 0.5rem; }
+  }
+  .book-info__desc { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin: 0; }
+
+  /* ── Step ── */
+  .step__title {
+    font-size: 1rem; font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .step__back {
+    background: none; border: none;
+    font-size: 0.8rem; color: rgba(50,170,255,0.75);
+    cursor: pointer; padding: 0;
+    &:hover { color: #32aaff; }
+  }
+
+  /* ── Date strip ── */
+  .date-strip {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .date-btn {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    color: var(--color-text);
+    &:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+    &.is-selected {
+      background: rgba(50,170,255,0.15);
+      border-color: rgba(50,170,255,0.5);
+      color: #32aaff;
+    }
+  }
+  .date-btn__dow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; }
+  .date-btn__day { font-size: 1.25rem; font-weight: 700; line-height: 1; }
+  .date-btn__month { font-size: 0.65rem; opacity: 0.6; }
+
+  /* ── Slots grid ── */
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: 0.5rem;
+  }
+  .slot-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.625rem;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.6rem;
+    transition: background 0.15s, border-color 0.15s;
+    &:hover:not(:disabled) { background: rgba(50,170,255,0.12); border-color: rgba(50,170,255,0.4); }
+    &.is-selected { background: rgba(50,170,255,0.18); border-color: #32aaff; color: #32aaff; }
+    &.is-taken { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+  }
+
+  /* ── Confirm card ── */
+  .confirm-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.875rem;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .confirm-card__row {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  /* ── Notes ── */
+  .notes-label { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
+  .notes-optional { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+  .notes-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.625rem;
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 0.75rem;
+    resize: vertical;
+    width: 100%;
+    &:focus { outline: none; border-color: rgba(50,170,255,0.4); }
+  }
+
+  /* ── Confirm button ── */
+  .btn-confirm {
+    width: 100%;
+    background: var(--color-brand-1);
+    border: none;
+    border-radius: 0.75rem;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.875rem;
+    transition: opacity 0.15s;
+    &:hover { opacity: 0.85; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  /* ── Success ── */
+  .step--success {
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    padding: 2rem 0;
+  }
+  .success-icon { font-size: 4rem; }
+</style>

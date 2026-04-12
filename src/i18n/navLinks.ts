@@ -39,6 +39,7 @@ export function getNavLinks(lang: Lang) {
         { title: 'Privacy Policy', url: '/en/privacy' },
       ],
       ctaLink: { title: "Let's Talk", url: 'https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+learning+more+about+the+AI+classes.' },
+      scheduleLink: { title: 'Schedule a meeting', url: '/en/schedule' },
     };
   }
 
@@ -80,5 +81,6 @@ export function getNavLinks(lang: Lang) {
       { title: 'Política de privacidad', url: '/privacidad' },
     ],
     ctaLink: { title: 'Hablemos', url: 'https://wa.me/573106041144?text=Hola%2C+quiero+m%C3%A1s+informaci%C3%B3n+sobre+las+clases+de+IA.' },
+    scheduleLink: { title: 'Agendar reunión', url: '/agendar' },
   };
 }

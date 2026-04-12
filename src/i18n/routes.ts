@@ -28,6 +28,8 @@ export const pathAliases: Record<string, LangPaths> = {
   '/en/terms':                       { es: '/terminos',                       en: '/en/terms' },
   '/privacidad':                     { es: '/privacidad',                     en: '/en/privacy' },
   '/en/privacy':                     { es: '/privacidad',                     en: '/en/privacy' },
+  '/agendar':                        { es: '/agendar',                        en: '/en/schedule' },
+  '/en/schedule':                    { es: '/agendar',                        en: '/en/schedule' },
 };
 
 export function getAlternates(pathname: string, siteBase: string): { es: string; en: string } | null {

@@ -17,7 +17,7 @@ const t = useTranslations(lang);
 const isEn = lang === 'en';
 
 // ── Nav links (language-aware) ────────────────────────────────────────────────
-const { main: links, legalLinks, ctaLink } = getNavLinks(lang);
+const { main: links, legalLinks, ctaLink, scheduleLink } = getNavLinks(lang);
 
 // ── SEO base URLs ─────────────────────────────────────────────────────────────
 const siteUrl = (Astro.site?.href ?? "https://sonmyd.co/").replace(/\/$/, '');
@@ -215,6 +215,7 @@ const schemaService = {
       logoUrl={isEn ? "/en" : "/"}
       logoAlt="Sonmyd"
       links={links}
+      link1={scheduleLink}
       link2={ctaLink}
       langSwitcher={langSwitcher}
     />
