@@ -20,8 +20,9 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links, langSwitcher } = 
   <sy-head>
     <div class="inner u-container">
       <div class="wrapper">
-        <a class="logo" href={logoUrl}>
-          <img src={logoImg.src} alt={logoAlt} />
+        <a class="logo" href={logoUrl} aria-label={logoAlt}>
+          <img src={logoImg.src} alt="" aria-hidden="true" />
+          <span class="logo-name">Sonmyd</span>
         </a>
 
         <div class="menu">
@@ -183,12 +184,30 @@ const { logoUrl, logoAlt, link1, link2, link2ModalPlan, links, langSwitcher } = 
     position: relative;
     z-index: 3;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
 
     img {
       height: 1.875rem;
       width: auto;
       display: block;
+      flex-shrink: 0;
     }
+  }
+
+  /* Visible text next to logo — required for Google OAuth verification
+     so the brand name "Sonmyd" appears as DOM text, not only as image alt */
+  .logo-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    opacity: 1 !important;
+    visibility: visible !important;
+    white-space: nowrap;
+    line-height: 1;
   }
 
   /* ── Nav menu ── */

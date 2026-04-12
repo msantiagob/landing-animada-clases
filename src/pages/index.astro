@@ -89,6 +89,29 @@ const schemaBreadcrumb = {
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
+  <!-- ══════════════════════════════════════════════════════════════════════
+       APP IDENTITY — sección siempre visible, sin animaciones, sin JS.
+       Google OAuth verification requiere que el nombre y propósito de la
+       app sean visibles en texto plano, sin depender de JavaScript.
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section class="app-id" aria-labelledby="app-id-title">
+    <div class="u-container app-id__inner">
+      <div class="app-id__brand">
+        <span class="app-id__name" id="app-id-title">Sonmyd</span>
+        <span class="app-id__sep" aria-hidden="true">·</span>
+        <span class="app-id__tagline">Plataforma de automatización con IA</span>
+      </div>
+      <p class="app-id__purpose">
+        <strong>Sonmyd</strong> accede a <strong>Google Calendar</strong> a través de OAuth para crear y gestionar citas automáticamente. También integra <strong>WhatsApp Business</strong> para responder clientes 24/7 y construye sitios web profesionales para tu negocio.
+      </p>
+      <nav class="app-id__links" aria-label="Legal">
+        <a href="/privacidad">Política de Privacidad</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terminos">Términos de Uso</a>
+      </nav>
+    </div>
+  </section>
+
   <div id="inicio">
     <HeroHome
       title="Sonmyd: automatiza tu negocio con IA."
@@ -337,6 +360,76 @@ const schemaBreadcrumb = {
 </script>
 
 <style>
+  /* ── App Identity ── siempre visible, sin animaciones ── */
+  .app-id {
+    position: relative;
+    z-index: 20;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem 0;
+    /* Garantizado visible: opacity:1 explícito para anular cualquier herencia */
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .app-id__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    opacity: 1 !important;
+  }
+  .app-id__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    opacity: 1 !important;
+  }
+  .app-id__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fff;
+    opacity: 1 !important;
+  }
+  .app-id__sep {
+    color: rgba(255, 255, 255, 0.3);
+  }
+  .app-id__tagline {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+    opacity: 1 !important;
+  }
+  .app-id__purpose {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.5;
+    max-width: 56rem;
+    margin: 0;
+    opacity: 1 !important;
+
+    strong {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+    }
+  }
+  .app-id__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.3);
+    opacity: 1 !important;
+  }
+  .app-id__links a {
+    color: rgba(50, 170, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 1 !important;
+  }
+  .app-id__links a:hover {
+    color: #32aaff;
+  }
+
   .app-info {
     padding: 3rem 0 2rem;
     text-align: center;

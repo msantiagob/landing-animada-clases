@@ -88,6 +88,29 @@ const schemaBreadcrumb = {
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
+  <!-- ══════════════════════════════════════════════════════════════════════
+       APP IDENTITY — always visible section, no animations, no JS required.
+       Google OAuth verification requires the app name and purpose to be
+       visible as plain text, without relying on JavaScript.
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section class="app-id" aria-labelledby="app-id-title">
+    <div class="u-container app-id__inner">
+      <div class="app-id__brand">
+        <span class="app-id__name" id="app-id-title">Sonmyd</span>
+        <span class="app-id__sep" aria-hidden="true">·</span>
+        <span class="app-id__tagline">AI automation platform</span>
+      </div>
+      <p class="app-id__purpose">
+        <strong>Sonmyd</strong> connects to <strong>Google Calendar</strong> via OAuth to automatically create and manage appointments. It also integrates <strong>WhatsApp Business</strong> to respond to clients 24/7 and builds professional websites for your business.
+      </p>
+      <nav class="app-id__links" aria-label="Legal">
+        <a href="/en/privacy">Privacy Policy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/en/terms">Terms of Use</a>
+      </nav>
+    </div>
+  </section>
+
   <div id="inicio">
     <HeroHome
       title="Sonmyd: automate your business with AI."
@@ -320,6 +343,75 @@ const schemaBreadcrumb = {
 </script>
 
 <style>
+  /* ── App Identity ── always visible, no animations ── */
+  .app-id {
+    position: relative;
+    z-index: 20;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem 0;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .app-id__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    opacity: 1 !important;
+  }
+  .app-id__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    opacity: 1 !important;
+  }
+  .app-id__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fff;
+    opacity: 1 !important;
+  }
+  .app-id__sep {
+    color: rgba(255, 255, 255, 0.3);
+  }
+  .app-id__tagline {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+    opacity: 1 !important;
+  }
+  .app-id__purpose {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.5;
+    max-width: 56rem;
+    margin: 0;
+    opacity: 1 !important;
+
+    strong {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+    }
+  }
+  .app-id__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.3);
+    opacity: 1 !important;
+  }
+  .app-id__links a {
+    color: rgba(50, 170, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 1 !important;
+  }
+  .app-id__links a:hover {
+    color: #32aaff;
+  }
+
   .app-info {
     padding: 3rem 0 2rem;
     text-align: center;
