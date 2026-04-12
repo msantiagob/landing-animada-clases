@@ -21,50 +21,50 @@ const schemaFAQ = {
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "¿Necesito conocimientos previos de programación?",
+      "name": "¿Qué puede automatizar sonmyd en mi negocio?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No es obligatorio. Tengo rutas de aprendizaje para todos los niveles: desde quienes nunca han programado hasta desarrolladores que quieren especializarse en IA. En la sesión de diagnóstico definimos el camino ideal para ti.",
+        "text": "sonmyd automatiza Google Calendar (citas, recordatorios y agendamiento), WhatsApp Business (respuestas automáticas, notificaciones y chatbots), creación y mantenimiento de sitios web, y cualquier flujo repetitivo de tu empresa usando inteligencia artificial.",
       },
     },
     {
       "@type": "Question",
-      "name": "¿Cómo se realizan las clases?",
+      "name": "¿Cómo funciona la integración con Google Calendar?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Las clases son 100% online vía videollamada (Google Meet o Zoom). Trabajamos con pantalla compartida, ejercicios en vivo y herramientas reales de IA durante cada sesión.",
+        "text": "Conectamos tu Google Calendar para agendar citas automáticamente, enviar recordatorios a tus clientes, bloquear horarios disponibles y sincronizar con tus herramientas existentes. Sin intervención manual.",
       },
     },
     {
       "@type": "Question",
-      "name": "¿Puedo cambiar mi plan después de comenzar?",
+      "name": "¿Qué tipo de automatizaciones hace sonmyd con WhatsApp?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí. Puedes cambiar de plan en cualquier momento según tu disponibilidad y presupuesto. La flexibilidad es parte del servicio.",
+        "text": "Implementamos chatbots inteligentes, respuestas automáticas 24/7, notificaciones de citas y pedidos, calificación de leads y escalado a humanos. Todo integrado con WhatsApp Business API.",
       },
     },
     {
       "@type": "Question",
-      "name": "¿Qué temas cubre el programa?",
+      "name": "¿Necesito conocimientos técnicos para usar sonmyd?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Fundamentos de IA y Machine Learning, Python para IA, Modelos de Lenguaje (LLMs), IA Generativa, Prompt Engineering, APIs de IA, automatización con agentes, Computer Vision y más. El plan se personaliza según tus objetivos.",
+        "text": "No. sonmyd se encarga de toda la parte técnica. Tú defines qué quieres automatizar y nosotros construimos e implementamos la solución. Solo necesitas tener claros tus procesos de negocio.",
       },
     },
     {
       "@type": "Question",
-      "name": "¿Cuánto tiempo necesito dedicar entre sesiones?",
+      "name": "¿Cuánto tiempo tarda en estar lista mi automatización?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Lo que tú puedas. Diseño el plan con ejercicios que se ajustan a tu disponibilidad real, desde 30 minutos diarios hasta sesiones más intensivas si prefieres avanzar más rápido.",
+        "text": "Depende del alcance. Una automatización básica de WhatsApp o Calendar puede estar lista en pocos días. Un sitio web completo con automatizaciones integradas puede tomar una a tres semanas.",
       },
     },
     {
       "@type": "Question",
-      "name": "¿Hay una sesión de prueba gratuita?",
+      "name": "¿Hay una sesión gratuita para evaluar mi proyecto?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí. La primera sesión de diagnóstico de 30 minutos es completamente gratuita. Nos conocemos, evaluamos tu nivel y definimos si hay fit antes de cualquier compromiso.",
+        "text": "Sí. La primera sesión de diagnóstico es completamente gratuita. Analizamos tus procesos, identificamos qué automatizar y te presentamos un plan concreto sin ningún compromiso.",
       },
     },
   ],
@@ -84,17 +84,17 @@ const schemaBreadcrumb = {
 };
 ---
 
-<Layout title="Clases de IA Personalizadas | Miguel Zuluaga — sonmyd">
+<Layout title="sonmyd — Automatizaciones con IA: WhatsApp, Google Calendar y Sitios Web">
   <Fragment slot="head">
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
   <div id="inicio">
     <HeroHome
-      title="Domina la IA con mentoría experta."
-      subtitle="Clases 1 a 1 de Inteligencia Artificial diseñadas para ti, desde fundamentos hasta nivel avanzado. Aprende con quien vive y respira IA."
+      title="Automatiza tu negocio con IA."
+      subtitle="sonmyd conecta Google Calendar, gestiona WhatsApp, crea tu sitio web y elimina el trabajo repetitivo. Tecnología que trabaja por ti, 24/7."
       cta={{
-        title: "Reserva tu primera sesión",
+        title: "Empieza gratis",
         url: "#contacto",
       }}
       ctaModalPlan="Sesión Gratuita"
@@ -107,11 +107,11 @@ const schemaBreadcrumb = {
 
   <div id="clases">
     <Introducing
-      title="Soy Miguel Zuluaga, experto en Inteligencia Artificial"
-      text="Llevo años trabajando con IA aplicada: modelos de lenguaje, visión computacional, automatización y más. Mi misión es que tú también puedas dominar estas herramientas con un aprendizaje claro, práctico y a tu ritmo."
+      title="sonmyd es tu equipo de automatización con IA"
+      text="Construimos integraciones inteligentes entre tus herramientas: agenda citas sola con Google Calendar, responde clientes en WhatsApp las 24 horas, publica tu sitio web en días. Todo con IA, sin código, sin complicaciones."
       cta={{
-        title: "Conoce mi metodología",
-        url: "#metodologia",
+        title: "Ver todos los servicios",
+        url: "/servicios",
       }}
     />
   </div>
@@ -119,34 +119,34 @@ const schemaBreadcrumb = {
   <TextMarquee
     class="marquee"
     texts={[
-      "Inteligencia Artificial",
-      "Machine Learning",
-      "IA Generativa",
-      "Prompt Engineering",
-      "Automatización con IA",
-      "Computer Vision",
+      "Google Calendar",
+      "WhatsApp Business",
+      "Sitios Web",
+      "Automatización IA",
+      "Chatbots",
+      "Integraciones",
     ]}
   />
 
   <div id="metodologia">
     <StepsTimeline
-      title="Cómo funciona"
+      title="Cómo funciona sonmyd"
       items={[
         {
-          title: "Diagnóstico personalizado",
-          text: "Comenzamos con una sesión gratuita para conocer tu nivel actual, tus objetivos y definir el camino de aprendizaje perfecto para ti.",
+          title: "Diagnóstico de procesos",
+          text: "Analizamos juntos qué tareas consumen tu tiempo: agendar citas, responder mensajes, actualizar tu web. Identificamos los puntos de mayor impacto.",
         },
         {
-          title: "Clases a tu medida",
-          text: "Sesiones 1 a 1 adaptadas a tu ritmo, tu horario y tu estilo de aprendizaje. Teoría y práctica en equilibrio perfecto.",
+          title: "Diseño de la automatización",
+          text: "Construimos flujos a medida: Calendar conectado a tu negocio, WhatsApp que responde solo, formularios que se convierten en acciones automáticas.",
         },
         {
-          title: "Proyectos reales",
-          text: "Aplicamos cada concepto a casos de uso concretos y proyectos reales. Construyes portafolio mientras aprendes.",
+          title: "Implementación y pruebas",
+          text: "Ponemos todo en marcha, hacemos pruebas reales y ajustamos hasta que funcione perfecto. Tú lo apruebas antes de salir en vivo.",
         },
         {
-          title: "Seguimiento continuo",
-          text: "Monitoreo constante de tu progreso, ajuste del plan y soporte entre sesiones para que nunca te quedes atascado.",
+          title: "Monitoreo y soporte",
+          text: "Una vez activo, monitoreamos que todo funcione. Si algo cambia en tu negocio, ajustamos la automatización para que siempre esté al día.",
         },
       ]}
     />
@@ -155,16 +155,16 @@ const schemaBreadcrumb = {
   <Statements
     items={[
       {
-        title: "Desde cero hasta IA avanzada",
-        text: "No importa tu punto de partida. Tengo rutas de aprendizaje para principiantes absolutos y para quienes ya tienen bases técnicas.",
+        title: "Google Calendar que agenda solo",
+        text: "Tus clientes reservan citas, reciben recordatorios automáticos y tú no mueves un dedo. Sin llamadas perdidas, sin dobles reservas.",
       },
       {
-        title: "Práctica real desde el primer día",
-        text: "Nada de teoría sin aplicación. Desde la primera clase trabajamos con herramientas y casos de uso del mundo real.",
+        title: "WhatsApp que trabaja las 24 horas",
+        text: "Un asistente inteligente responde, califica y atiende a tus clientes en WhatsApp mientras tú duermes. Escala a humanos cuando sea necesario.",
       },
       {
-        title: "Tu ritmo, tu agenda",
-        text: "Las clases se adaptan a tu disponibilidad. Tú eliges cuándo y con qué frecuencia aprender.",
+        title: "Tu sitio web, listo en días",
+        text: "Creamos tu presencia digital profesional: rápida, optimizada para Google y conectada a tus automatizaciones desde el primer día.",
       },
     ]}
   />
@@ -172,12 +172,12 @@ const schemaBreadcrumb = {
   <TextMarquee
     class="marquee"
     texts={[
-      "ChatGPT & LLMs",
-      "Python para IA",
-      "Automatización",
-      "APIs de IA",
-      "Fine-tuning",
-      "RAG & Embeddings",
+      "Agendamiento automático",
+      "Chatbots con IA",
+      "Formularios inteligentes",
+      "Notificaciones automáticas",
+      "Sitios web rápidos",
+      "Integraciones API",
     ]}
   />
 
@@ -185,40 +185,52 @@ const schemaBreadcrumb = {
     <Faqs
       title="Preguntas Frecuentes"
       mobileTitle="FAQs"
-      subtitle="Todo lo que necesitas saber antes de empezar."
+      subtitle="Lo que necesitas saber sobre sonmyd y sus automatizaciones."
       items={[
         {
-          question: "¿Necesito conocimientos previos de programación?",
+          question: "¿Qué puede automatizar sonmyd en mi negocio?",
           answer:
-            "No es obligatorio. Tengo rutas de aprendizaje para todos los niveles: desde quienes nunca han programado hasta desarrolladores que quieren especializarse en IA. En la sesión de diagnóstico definimos el camino ideal para ti.",
+            "sonmyd automatiza Google Calendar (citas, recordatorios y agendamiento), WhatsApp Business (respuestas automáticas, notificaciones y chatbots), creación y mantenimiento de sitios web, y cualquier flujo repetitivo de tu empresa usando inteligencia artificial.",
         },
         {
-          question: "¿Cómo se realizan las clases?",
+          question: "¿Cómo funciona la integración con Google Calendar?",
           answer:
-            "Las clases son 100% online vía videollamada (Google Meet o Zoom). Trabajamos con pantalla compartida, ejercicios en vivo y herramientas reales de IA durante cada sesión.",
+            "Conectamos tu Google Calendar para agendar citas automáticamente, enviar recordatorios a tus clientes, bloquear horarios disponibles y sincronizar con tus herramientas existentes. Sin intervención manual.",
         },
         {
-          question: "¿Puedo cambiar mi plan después de comenzar?",
+          question: "¿Qué tipo de automatizaciones hace sonmyd con WhatsApp?",
           answer:
-            "Sí. Puedes cambiar de plan en cualquier momento según tu disponibilidad y presupuesto. La flexibilidad es parte del servicio.",
+            "Implementamos chatbots inteligentes, respuestas automáticas 24/7, notificaciones de citas y pedidos, calificación de leads y escalado a humanos. Todo integrado con WhatsApp Business API.",
         },
         {
-          question: "¿Qué temas cubre el programa?",
+          question: "¿Necesito conocimientos técnicos para usar sonmyd?",
           answer:
-            "Fundamentos de IA y Machine Learning, Python para IA, Modelos de Lenguaje (LLMs), IA Generativa, Prompt Engineering, APIs de IA, automatización con agentes, Computer Vision y más. El plan se personaliza según tus objetivos.",
+            "No. sonmyd se encarga de toda la parte técnica. Tú defines qué quieres automatizar y nosotros construimos e implementamos la solución. Solo necesitas tener claros tus procesos de negocio.",
         },
         {
-          question: "¿Cuánto tiempo necesito dedicar entre sesiones?",
+          question: "¿Cuánto tiempo tarda en estar lista mi automatización?",
           answer:
-            "Lo que tú puedas. Diseño el plan con ejercicios que se ajustan a tu disponibilidad real, desde 30 minutos diarios hasta sesiones más intensivas si prefieres avanzar más rápido.",
+            "Depende del alcance. Una automatización básica de WhatsApp o Calendar puede estar lista en pocos días. Un sitio web completo con automatizaciones integradas puede tomar una a tres semanas.",
         },
         {
-          question: "¿Hay una sesión de prueba gratuita?",
+          question: "¿Hay una sesión gratuita para evaluar mi proyecto?",
           answer:
-            "Sí. La primera sesión de diagnóstico de 30 minutos es completamente gratuita. Nos conocemos, evaluamos tu nivel y definimos si hay fit antes de cualquier compromiso.",
+            "Sí. La primera sesión de diagnóstico es completamente gratuita. Analizamos tus procesos, identificamos qué automatizar y te presentamos un plan concreto sin ningún compromiso.",
         },
       ]}
     />
+  </div>
+
+  <div class="app-info u-container">
+    <p class="app-info__brand">sonmyd</p>
+    <p class="app-info__desc">
+      Plataforma de automatización con inteligencia artificial: integraciones con Google Calendar, WhatsApp Business, creación de sitios web y automatización de procesos empresariales. Este sitio utiliza Google Analytics (a través de Google Tag Manager) para medir el tráfico web de forma anónima.
+    </p>
+    <nav class="app-info__links" aria-label="Legal">
+      <a href="/privacidad">Política de Privacidad</a>
+      <span aria-hidden="true">·</span>
+      <a href="/terminos">Términos de Uso</a>
+    </nav>
   </div>
 
   <GL />
@@ -325,6 +337,43 @@ const schemaBreadcrumb = {
 </script>
 
 <style>
+  .app-info {
+    padding: 3rem 0 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .app-info__brand {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .app-info__desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    max-width: 46rem;
+    line-height: 1.6;
+  }
+  .app-info__links {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+  }
+  .app-info__links a {
+    color: rgba(255,255,255,0.45);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .app-info__links a:hover {
+    color: rgba(255,255,255,0.75);
+  }
+
   .marquee {
     padding: 2rem 0;
     z-index: 9;

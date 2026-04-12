@@ -20,50 +20,50 @@ const schemaFAQ = {
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Do I need prior programming knowledge?",
+      "name": "What can sonmyd automate in my business?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It's not required. I have learning paths for all levels: from those who have never programmed to developers who want to specialize in AI. In the diagnosis session we define the ideal path for you.",
+        "text": "sonmyd automates Google Calendar (appointments, reminders and scheduling), WhatsApp Business (automatic replies, notifications and chatbots), website creation and maintenance, and any repetitive workflow in your business using artificial intelligence.",
       },
     },
     {
       "@type": "Question",
-      "name": "How are the classes conducted?",
+      "name": "How does the Google Calendar integration work?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Classes are 100% online via video call (Google Meet or Zoom). We work with screen sharing, live exercises and real AI tools during each session.",
+        "text": "We connect your Google Calendar to automatically schedule appointments, send reminders to your clients, block available time slots and sync with your existing tools. No manual intervention needed.",
       },
     },
     {
       "@type": "Question",
-      "name": "Can I change my plan after starting?",
+      "name": "What kind of WhatsApp automations does sonmyd build?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. You can change plans at any time according to your availability and budget. Flexibility is part of the service.",
+        "text": "We implement intelligent chatbots, 24/7 automatic replies, appointment and order notifications, lead qualification and human escalation. All integrated with WhatsApp Business API.",
       },
     },
     {
       "@type": "Question",
-      "name": "What topics does the program cover?",
+      "name": "Do I need technical knowledge to use sonmyd?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "AI and Machine Learning fundamentals, Python for AI, Large Language Models (LLMs), Generative AI, Prompt Engineering, AI APIs, agent automation, Computer Vision and more. The plan is customized to your goals.",
+        "text": "No. sonmyd handles all the technical side. You define what you want to automate and we build and deploy the solution. You just need to know your business processes.",
       },
     },
     {
       "@type": "Question",
-      "name": "How much time do I need to dedicate between sessions?",
+      "name": "How long does it take to have my automation ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Whatever you can. I design the plan with exercises that fit your real availability, from 30 minutes daily to more intensive sessions if you prefer to advance faster.",
+        "text": "It depends on scope. A basic WhatsApp or Calendar automation can be ready in a few days. A full website with integrated automations may take one to three weeks.",
       },
     },
     {
       "@type": "Question",
-      "name": "Is there a free trial session?",
+      "name": "Is there a free session to evaluate my project?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. The first 30-minute diagnosis session is completely free. We meet, assess your level and determine fit before any commitment.",
+        "text": "Yes. The first diagnosis session is completely free. We analyze your processes, identify what to automate and present a concrete plan with no commitment.",
       },
     },
   ],
@@ -83,21 +83,21 @@ const schemaBreadcrumb = {
 };
 ---
 
-<Layout title="Personalized AI Classes | Miguel Zuluaga — sonmyd">
+<Layout title="sonmyd — AI Automations: WhatsApp, Google Calendar and Websites">
   <Fragment slot="head">
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
   <div id="inicio">
     <HeroHome
-      title="Master AI with expert mentorship."
-      subtitle="1-on-1 AI classes designed for you, from fundamentals to advanced level. Learn with someone who lives and breathes AI."
+      title="Automate your business with AI."
+      subtitle="sonmyd connects Google Calendar, manages WhatsApp, builds your website and eliminates repetitive work. Technology that works for you, 24/7."
       cta={{
-        title: "Book your first session",
+        title: "Start for free",
         url: "#contacto",
       }}
       ctaModalPlan="Free Session"
-      whatsappUrl="https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+booking+a+free+AI+diagnosis+session."
+      whatsappUrl="https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+automating+my+business+with+sonmyd."
     />
     <div class="photo-inner">
       <img src={fotoMiguel.src} alt="Miguel Zuluaga — sonmyd" />
@@ -106,11 +106,11 @@ const schemaBreadcrumb = {
 
   <div id="clases">
     <Introducing
-      title="I'm Miguel Zuluaga, AI expert"
-      text="I've been working with applied AI for years: language models, computer vision, automation and more. My mission is to help you master these tools with clear, practical, self-paced learning."
+      title="sonmyd is your AI automation team"
+      text="We build smart integrations between your tools: auto-schedule appointments with Google Calendar, respond to clients on WhatsApp around the clock, launch your professional website in days. All with AI, no code, no complexity."
       cta={{
-        title: "See my methodology",
-        url: "#metodologia",
+        title: "See all services",
+        url: "/en/services",
       }}
     />
   </div>
@@ -118,34 +118,34 @@ const schemaBreadcrumb = {
   <TextMarquee
     class="marquee"
     texts={[
-      "Artificial Intelligence",
-      "Machine Learning",
-      "Generative AI",
-      "Prompt Engineering",
+      "Google Calendar",
+      "WhatsApp Business",
+      "Websites",
       "AI Automation",
-      "Computer Vision",
+      "Chatbots",
+      "Integrations",
     ]}
   />
 
   <div id="metodologia">
     <StepsTimeline
-      title="How it works"
+      title="How sonmyd works"
       items={[
         {
-          title: "Personalized diagnosis",
-          text: "We start with a free session to understand your current level, goals and define the perfect learning path for you.",
+          title: "Process diagnosis",
+          text: "We analyze together which tasks consume your time: scheduling appointments, replying to messages, updating your site. We identify the highest-impact points.",
         },
         {
-          title: "Tailored classes",
-          text: "1-on-1 sessions adapted to your pace, schedule and learning style. Theory and practice in perfect balance.",
+          title: "Automation design",
+          text: "We build custom flows: Calendar connected to your business, WhatsApp that replies on its own, forms that trigger automatic actions.",
         },
         {
-          title: "Real projects",
-          text: "We apply every concept to concrete use cases and real projects. You build portfolio while you learn.",
+          title: "Implementation & testing",
+          text: "We deploy everything, run real tests and fine-tune until it works perfectly. You approve before going live.",
         },
         {
-          title: "Continuous follow-up",
-          text: "Constant monitoring of your progress, plan adjustments and support between sessions so you never get stuck.",
+          title: "Monitoring & support",
+          text: "Once live, we monitor that everything runs smoothly. If your business changes, we update the automation to keep it aligned.",
         },
       ]}
     />
@@ -154,16 +154,16 @@ const schemaBreadcrumb = {
   <Statements
     items={[
       {
-        title: "From zero to advanced AI",
-        text: "No matter where you start. I have learning paths for absolute beginners and for those who already have technical foundations.",
+        title: "Google Calendar that schedules itself",
+        text: "Your clients book appointments, receive automatic reminders and you don't lift a finger. No missed calls, no double bookings.",
       },
       {
-        title: "Real practice from day one",
-        text: "No theory without application. From the first class we work with real-world tools and use cases.",
+        title: "WhatsApp working around the clock",
+        text: "An intelligent assistant responds, qualifies and serves your clients on WhatsApp while you sleep. Escalates to humans when needed.",
       },
       {
-        title: "Your pace, your schedule",
-        text: "Classes adapt to your availability. You choose when and how often to learn.",
+        title: "Your website, ready in days",
+        text: "We create your professional digital presence: fast, optimized for Google and connected to your automations from day one.",
       },
     ]}
   />
@@ -171,12 +171,12 @@ const schemaBreadcrumb = {
   <TextMarquee
     class="marquee"
     texts={[
-      "ChatGPT & LLMs",
-      "Python for AI",
-      "Automation",
-      "AI APIs",
-      "Fine-tuning",
-      "RAG & Embeddings",
+      "Automatic scheduling",
+      "AI-powered chatbots",
+      "Smart forms",
+      "Automatic notifications",
+      "Fast websites",
+      "API integrations",
     ]}
   />
 
@@ -184,40 +184,52 @@ const schemaBreadcrumb = {
     <Faqs
       title="Frequently Asked Questions"
       mobileTitle="FAQs"
-      subtitle="Everything you need to know before starting."
+      subtitle="Everything you need to know about sonmyd and its automations."
       items={[
         {
-          question: "Do I need prior programming knowledge?",
+          question: "What can sonmyd automate in my business?",
           answer:
-            "It's not required. I have learning paths for all levels: from those who have never programmed to developers who want to specialize in AI. In the diagnosis session we define the ideal path for you.",
+            "sonmyd automates Google Calendar (appointments, reminders and scheduling), WhatsApp Business (automatic replies, notifications and chatbots), website creation and maintenance, and any repetitive workflow in your business using artificial intelligence.",
         },
         {
-          question: "How are the classes conducted?",
+          question: "How does the Google Calendar integration work?",
           answer:
-            "Classes are 100% online via video call (Google Meet or Zoom). We work with screen sharing, live exercises and real AI tools during each session.",
+            "We connect your Google Calendar to automatically schedule appointments, send reminders to your clients, block available time slots and sync with your existing tools. No manual intervention needed.",
         },
         {
-          question: "Can I change my plan after starting?",
+          question: "What kind of WhatsApp automations does sonmyd build?",
           answer:
-            "Yes. You can change plans at any time according to your availability and budget. Flexibility is part of the service.",
+            "We implement intelligent chatbots, 24/7 automatic replies, appointment and order notifications, lead qualification and human escalation. All integrated with WhatsApp Business API.",
         },
         {
-          question: "What topics does the program cover?",
+          question: "Do I need technical knowledge to use sonmyd?",
           answer:
-            "AI and Machine Learning fundamentals, Python for AI, Large Language Models (LLMs), Generative AI, Prompt Engineering, AI APIs, agent automation, Computer Vision and more. The plan is customized to your goals.",
+            "No. sonmyd handles all the technical side. You define what you want to automate and we build and deploy the solution. You just need to know your business processes.",
         },
         {
-          question: "How much time do I need to dedicate between sessions?",
+          question: "How long does it take to have my automation ready?",
           answer:
-            "Whatever you can. I design the plan with exercises that fit your real availability, from 30 minutes daily to more intensive sessions if you prefer to advance faster.",
+            "It depends on scope. A basic WhatsApp or Calendar automation can be ready in a few days. A full website with integrated automations may take one to three weeks.",
         },
         {
-          question: "Is there a free trial session?",
+          question: "Is there a free session to evaluate my project?",
           answer:
-            "Yes. The first 30-minute diagnosis session is completely free. We meet, assess your level and determine fit before any commitment.",
+            "Yes. The first diagnosis session is completely free. We analyze your processes, identify what to automate and present a concrete plan with no commitment.",
         },
       ]}
     />
+  </div>
+
+  <div class="app-info u-container">
+    <p class="app-info__brand">sonmyd</p>
+    <p class="app-info__desc">
+      AI automation platform: integrations with Google Calendar, WhatsApp Business, website creation and business process automation. This site uses Google Analytics (via Google Tag Manager) to measure web traffic anonymously.
+    </p>
+    <nav class="app-info__links" aria-label="Legal">
+      <a href="/en/privacy">Privacy Policy</a>
+      <span aria-hidden="true">·</span>
+      <a href="/en/terms">Terms of Use</a>
+    </nav>
   </div>
 
   <GL />
@@ -308,6 +320,43 @@ const schemaBreadcrumb = {
 </script>
 
 <style>
+  .app-info {
+    padding: 3rem 0 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .app-info__brand {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .app-info__desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    max-width: 46rem;
+    line-height: 1.6;
+  }
+  .app-info__links {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+  }
+  .app-info__links a {
+    color: rgba(255,255,255,0.45);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .app-info__links a:hover {
+    color: rgba(255,255,255,0.75);
+  }
+
   .marquee {
     padding: 2rem 0;
     z-index: 9;
