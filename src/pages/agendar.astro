@@ -106,7 +106,22 @@ const datesJson = JSON.stringify(dates);
           <!-- Step 1: date -->
           <div id="step-date" class="step">
             <h2 class="step__title">Selecciona una fecha</h2>
-            <div class="date-strip" id="date-strip"></div>
+            <!-- Calendar widget -->
+            <div class="cal">
+              <div class="cal__nav">
+                <button class="cal__nav-btn" id="cal-prev" aria-label="Mes anterior">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <span class="cal__month-label" id="cal-month-label"></span>
+                <button class="cal__nav-btn" id="cal-next" aria-label="Mes siguiente">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+              <div class="cal__weekdays" aria-hidden="true">
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+              </div>
+              <div class="cal__days" id="cal-days"></div>
+            </div>
           </div>
 
           <!-- Step 2: time -->
@@ -215,40 +230,101 @@ const datesJson = JSON.stringify(dates);
     signOut(auth);
   });
 
-  function showWidget(user) {
-    document.getElementById('auth-gate').style.display = 'none';
-    document.getElementById('booking-widget').style.display = '';
-    document.getElementById('user-name').textContent = user.displayName ?? user.email;
-    const photo = document.getElementById('user-photo');
+  function showWidget(user: any) {
+    document.getElementById('auth-gate')!.style.display = 'none';
+    document.getElementById('booking-widget')!.style.display = '';
+    document.getElementById('user-name')!.textContent = user.displayName ?? user.email;
+    const photo = document.getElementById('user-photo') as HTMLImageElement;
     if (user.photoURL) { photo.src = user.photoURL; photo.alt = user.displayName; }
     else { photo.style.display = 'none'; }
-    buildDateStrip();
+    initCalendar();
   }
 
-  // ── Date strip ────────────────────────────────────────────────────────────
-  function buildDateStrip() {
-    const strip = document.getElementById('date-strip');
-    strip.innerHTML = '';
-    DATES.forEach(iso => {
-      const [y, m, d] = iso.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      const dow = date.getDay();
-      const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-      const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  // ── Calendar ───────────────────────────────────────────────────────────────
+  const BOOKABLE = new Set(DATES);
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-      const btn = document.createElement('button');
-      btn.className = 'date-btn';
-      btn.dataset.iso = iso;
-      btn.innerHTML = `<span class="date-btn__dow">${days[dow]}</span><span class="date-btn__day">${d}</span><span class="date-btn__month">${months[m-1]}</span>`;
-      btn.addEventListener('click', () => selectDate(iso, btn));
-      strip.appendChild(btn);
+  // Start at the month of the first available date
+  const [fy, fm] = DATES[0].split('-').map(Number);
+  let calYear = fy;
+  let calMonth = fm - 1; // 0-indexed
+
+  const [ly, lm] = DATES[DATES.length - 1].split('-').map(Number);
+  const minMonth = { year: fy, month: fm - 1 };
+  const maxMonth = { year: ly, month: lm - 1 };
+
+  function initCalendar() {
+    renderCalendar();
+    document.getElementById('cal-prev')!.addEventListener('click', () => {
+      if (calYear > minMonth.year || calMonth > minMonth.month) {
+        calMonth--;
+        if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderCalendar();
+      }
+    });
+    document.getElementById('cal-next')!.addEventListener('click', () => {
+      if (calYear < maxMonth.year || calMonth < maxMonth.month) {
+        calMonth++;
+        if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalendar();
+      }
     });
   }
 
-  function selectDate(iso, btn) {
+  function renderCalendar() {
+    const label = document.getElementById('cal-month-label')!;
+    const grid  = document.getElementById('cal-days')!;
+    const prevBtn = document.getElementById('cal-prev') as HTMLButtonElement;
+    const nextBtn = document.getElementById('cal-next') as HTMLButtonElement;
+
+    label.textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    prevBtn.disabled = calYear === minMonth.year && calMonth === minMonth.month;
+    nextBtn.disabled = calYear === maxMonth.year && calMonth === maxMonth.month;
+
+    grid.innerHTML = '';
+
+    // First weekday of month (Mon=0 … Sun=6)
+    const firstDow = new Date(calYear, calMonth, 1).getDay();
+    const offset = firstDow === 0 ? 6 : firstDow - 1;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const todayIso = new Date().toISOString().slice(0, 10);
+
+    // Empty leading cells
+    for (let i = 0; i < offset; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'cal-day cal-day--empty';
+      grid.appendChild(empty);
+    }
+
+    // Day cells
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = `${calYear}-${String(calMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isAvail   = BOOKABLE.has(iso);
+      const isSelected = iso === selectedDate;
+      const isToday   = iso === todayIso;
+
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.textContent = String(d);
+      cell.className = [
+        'cal-day',
+        isAvail   ? 'cal-day--avail'    : 'cal-day--off',
+        isSelected ? 'cal-day--selected' : '',
+        isToday   ? 'cal-day--today'    : '',
+      ].filter(Boolean).join(' ');
+      cell.disabled = !isAvail;
+      cell.setAttribute('aria-label', iso);
+
+      if (isAvail) {
+        cell.addEventListener('click', () => selectDate(iso));
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  function selectDate(iso: string) {
     selectedDate = iso;
-    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('is-selected'));
-    btn.classList.add('is-selected');
+    renderCalendar(); // re-render to update selected highlight
     showStep('time');
     loadSlots(iso);
   }
@@ -778,66 +854,130 @@ const datesJson = JSON.stringify(dates);
     &:hover { background: rgba(255,255,255,0.09); color: rgba(240,240,250,0.9); }
   }
 
-  /* ── Date strip ── */
-  .date-strip {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.08) transparent;
+  /* ── Calendar widget ── */
+  .cal {
+    user-select: none;
   }
 
-  .date-btn {
-    flex-shrink: 0;
+  .cal__nav {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.2rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 0.875rem;
-    padding: 0.65rem 0.9rem;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, transform 0.1s;
-    color: #fff;
-    min-width: 3.5rem;
-
-    &:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.18);
-      transform: translateY(-1px);
-    }
-
-    &.is-selected {
-      background: rgba(50,170,255,0.15);
-      border-color: rgba(50,170,255,0.5);
-      color: rgb(50,170,255);
-      box-shadow: 0 0 0 1px rgba(50,170,255,0.2);
-    }
+    justify-content: space-between;
+    margin-bottom: 1rem;
   }
 
-  .date-btn__dow {
-    font-size: 0.6rem;
+  .cal__month-label {
+    font-size: 0.9rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: inherit;
-    opacity: 0.55;
+    color: rgba(240,240,250,0.9);
+    letter-spacing: 0.01em;
   }
 
-  .date-btn__day {
-    font-size: 1.2rem;
-    font-weight: 800;
-    line-height: 1;
-    color: inherit;
+  .cal__nav-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 0.5rem;
+    color: rgba(240,240,250,0.6);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    svg { width: 0.875rem; height: 0.875rem; }
+
+    &:hover:not(:disabled) {
+      background: rgba(255,255,255,0.1);
+      color: rgba(240,240,250,0.95);
+    }
+
+    &:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
   }
 
-  .date-btn__month {
-    font-size: 0.6rem;
+  .cal__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 0.25rem;
+
+    span {
+      text-align: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(240,240,250,0.3);
+      padding: 0.25rem 0;
+    }
+  }
+
+  .cal__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.82rem;
     font-weight: 500;
-    color: inherit;
-    opacity: 0.55;
+    border: none;
+    background: transparent;
+    cursor: default;
+    transition: background 0.12s, color 0.12s, transform 0.1s;
+    position: relative;
+    color: rgba(240,240,250,0.85);
+
+    &.cal-day--empty {
+      pointer-events: none;
+    }
+
+    &.cal-day--off {
+      color: rgba(240,240,250,0.2);
+      cursor: not-allowed;
+    }
+
+    &.cal-day--avail {
+      cursor: pointer;
+      font-weight: 600;
+      color: rgba(240,240,250,0.9);
+
+      &:hover {
+        background: rgba(50,170,255,0.15);
+        color: rgb(50,170,255);
+        transform: scale(1.1);
+      }
+    }
+
+    &.cal-day--today:not(.cal-day--selected) {
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(50,170,255,0.6);
+      }
+    }
+
+    &.cal-day--selected {
+      background: rgb(50,170,255) !important;
+      color: #fff !important;
+      font-weight: 700;
+      box-shadow: 0 2px 12px rgba(50,170,255,0.4);
+      transform: scale(1.1);
+    }
   }
 
   /* ── Slots grid ── */
