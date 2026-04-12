@@ -363,11 +363,11 @@ const schemaBreadcrumb = {
   /* ── App Identity ── siempre visible, sin animaciones ── */
   .app-id {
     position: relative;
-    z-index: 20;
+    z-index: 1;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
-    padding: 1rem 0;
-    /* Garantizado visible: opacity:1 explícito para anular cualquier herencia */
+    /* padding-top empuja el contenido debajo del header fijo (~4.5rem alto) */
+    padding: 5.5rem 0 1rem;
     opacity: 1 !important;
     visibility: visible !important;
   }
