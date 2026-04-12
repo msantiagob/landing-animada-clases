@@ -15,114 +15,159 @@ const datesJson = JSON.stringify(dates);
 
     <!-- AUTH GATE -->
     <div id="auth-gate" class="auth-gate">
-      <div class="u-container auth-gate__inner">
-        <span class="auth-gate__icon">📅</span>
-        <h1 class="u-heading auth-gate__title">Agenda una reunión</h1>
-        <p class="u-text auth-gate__sub">
-          Inicia sesión con tu cuenta de Google para reservar un espacio conmigo. La primera sesión de diagnóstico es gratuita.
-        </p>
-        <button id="btn-google-login" class="btn-google">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Continuar con Google
-        </button>
+      <div class="auth-card">
+        <div class="auth-card__left">
+          <div class="auth-avatar">MZ</div>
+          <div class="auth-card__info">
+            <span class="auth-badge">Sesión gratuita</span>
+            <h1 class="auth-name">Miguel Zuluaga</h1>
+            <p class="auth-role">Fundador de Sonmyd · Experto en IA</p>
+            <ul class="auth-meta">
+              <li>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5v3.75l2.25 2.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                30 minutos
+              </li>
+              <li>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3.5" width="13" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 7h13" stroke="currentColor" stroke-width="1.5"/></svg>
+                Google Meet / Zoom
+              </li>
+              <li>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5C8 1.5 5.5 5 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 5 10.5 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.5"/></svg>
+                Hora Colombia (UTC-5)
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="auth-card__right">
+          <p class="auth-title">Reserva tu espacio</p>
+          <p class="auth-sub">Primera sesión de diagnóstico sin costo. Analizamos tu proyecto e identificamos cómo automatizarlo.</p>
+          <button id="btn-google-login" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continuar con Google
+          </button>
+          <p class="auth-disclaimer">Al continuar aceptas nuestra <a href="/privacidad">Política de Privacidad</a>.</p>
+        </div>
       </div>
     </div>
 
     <!-- BOOKING WIDGET (oculto hasta auth) -->
     <div id="booking-widget" class="booking-widget" style="display:none">
-      <div class="u-container">
+      <div class="book-wrap">
 
-        <!-- User info bar -->
-        <div class="user-bar">
-          <img id="user-photo" src="" alt="" class="user-bar__photo" />
-          <span id="user-name" class="user-bar__name"></span>
-          <button id="btn-logout" class="user-bar__logout">Salir</button>
-        </div>
-
-        <div class="book-grid">
-
-          <!-- Left: info -->
-          <aside class="book-info">
-            <div class="book-info__avatar">
-              <img src="/foto_miguel.png" alt="Miguel Zuluaga" onerror="this.style.display='none'" />
+        <!-- Left panel -->
+        <aside class="book-info">
+          <div class="book-info__top">
+            <div class="book-avatar">MZ</div>
+            <div>
+              <p class="book-info__org">Sonmyd</p>
+              <h1 class="book-info__name">Miguel Zuluaga</h1>
             </div>
-            <h1 class="u-heading book-info__name">Miguel Zuluaga</h1>
-            <p class="u-text book-info__role">Fundador de Sonmyd · Experto en IA</p>
-            <ul class="book-info__details">
-              <li><span>⏱</span> 30 minutos</li>
-              <li><span>🎥</span> Google Meet / Zoom</li>
-              <li><span>🌎</span> Hora Colombia (UTC-5)</li>
-            </ul>
-            <p class="book-info__desc">
-              Primera sesión de diagnóstico gratuita. Analizamos tu proyecto, identificamos qué automatizar y diseñamos un plan concreto.
-            </p>
-          </aside>
+          </div>
 
-          <!-- Right: picker -->
-          <div class="book-picker">
+          <div class="book-info__badge">Sesión de diagnóstico · Gratis</div>
 
-            <!-- Step 1: date -->
-            <div id="step-date" class="step">
-              <h2 class="step__title">Selecciona una fecha</h2>
-              <div class="date-strip" id="date-strip">
-                <!-- generado por JS -->
-              </div>
+          <ul class="book-info__meta">
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.5v3.75l2.25 2.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              30 minutos
+            </li>
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="3.5" width="13" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 7h13" stroke="currentColor" stroke-width="1.5"/></svg>
+              Google Meet / Zoom
+            </li>
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5C8 1.5 5.5 5 5.5 8s2.5 6.5 2.5 6.5M8 1.5C8 1.5 10.5 5 10.5 8S8 14.5 8 14.5M1.5 8h13" stroke="currentColor" stroke-width="1.5"/></svg>
+              Hora Colombia (UTC-5)
+            </li>
+          </ul>
+
+          <p class="book-info__desc">
+            Analizamos tu proyecto, identificamos qué automatizar y diseñamos un plan concreto. Sin compromiso.
+          </p>
+
+          <div class="book-info__user">
+            <img id="user-photo" src="" alt="" class="user-photo" />
+            <span id="user-name" class="user-name-text"></span>
+            <button id="btn-logout" class="btn-logout">Salir</button>
+          </div>
+        </aside>
+
+        <!-- Divider -->
+        <div class="book-divider" aria-hidden="true"></div>
+
+        <!-- Right panel: steps -->
+        <div class="book-picker">
+
+          <!-- Step 1: date -->
+          <div id="step-date" class="step">
+            <h2 class="step__title">Selecciona una fecha</h2>
+            <div class="date-strip" id="date-strip"></div>
+          </div>
+
+          <!-- Step 2: time -->
+          <div id="step-time" class="step" style="display:none">
+            <div class="step__header">
+              <button id="btn-back-date" class="btn-back">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Volver
+              </button>
+              <h2 class="step__title">Elige un horario</h2>
             </div>
+            <div id="slots-grid" class="slots-grid"></div>
+          </div>
 
-            <!-- Step 2: time (oculto hasta elegir fecha) -->
-            <div id="step-time" class="step" style="display:none">
-              <h2 class="step__title">Elige un horario
-                <button id="btn-back-date" class="step__back">← Cambiar fecha</button>
-              </h2>
-              <div id="slots-grid" class="slots-grid">
-                <!-- generado por JS -->
-              </div>
-            </div>
-
-            <!-- Step 3: confirm -->
-            <div id="step-confirm" class="step" style="display:none">
+          <!-- Step 3: confirm -->
+          <div id="step-confirm" class="step" style="display:none">
+            <div class="step__header">
+              <button id="btn-back-time" class="btn-back">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Volver
+              </button>
               <h2 class="step__title">Confirma tu reserva</h2>
-              <div class="confirm-card">
-                <div class="confirm-card__row">
-                  <span>📅</span>
-                  <span id="confirm-date-text"></span>
-                </div>
-                <div class="confirm-card__row">
-                  <span>🕐</span>
-                  <span id="confirm-time-text"></span>
-                </div>
-                <div class="confirm-card__row">
-                  <span>⏱</span>
-                  <span>30 minutos · Hora Colombia</span>
-                </div>
+            </div>
+            <div class="confirm-card">
+              <div class="confirm-row">
+                <span class="confirm-icon">📅</span>
+                <div><span class="confirm-label">Fecha</span><span id="confirm-date-text" class="confirm-value"></span></div>
               </div>
-              <label class="notes-label">
-                ¿De qué quieres hablar? <span class="notes-optional">(opcional)</span>
-                <textarea id="notes-input" class="notes-input" rows="3" placeholder="Ej: Quiero automatizar el agendamiento de mi clínica con Google Calendar..."></textarea>
-              </label>
-              <button id="btn-back-time" class="step__back" style="margin-bottom:1rem">← Cambiar horario</button>
-              <button id="btn-confirm" class="btn-confirm">Confirmar reserva</button>
+              <div class="confirm-row">
+                <span class="confirm-icon">🕐</span>
+                <div><span class="confirm-label">Hora</span><span id="confirm-time-text" class="confirm-value"></span></div>
+              </div>
+              <div class="confirm-row">
+                <span class="confirm-icon">⏱</span>
+                <div><span class="confirm-label">Duración</span><span class="confirm-value">30 minutos</span></div>
+              </div>
             </div>
+            <label class="notes-label">
+              ¿De qué quieres hablar?
+              <span class="notes-optional">Opcional</span>
+              <textarea id="notes-input" class="notes-input" rows="3" placeholder="Ej: Quiero automatizar el agendamiento de mi clínica con Google Calendar..."></textarea>
+            </label>
+            <button id="btn-confirm" class="btn-confirm">Confirmar reserva</button>
+          </div>
 
-            <!-- Step 4: success -->
-            <div id="step-success" class="step step--success" style="display:none">
-              <div class="success-icon">✅</div>
-              <h2 class="u-heading">¡Reserva confirmada!</h2>
-              <p class="u-text" id="success-text"></p>
-              <p class="u-text" style="color: rgba(255,255,255,0.5); font-size:0.85rem; margin-top:0.5rem">
-                Recibirás confirmación en tu correo de Google. Miguel se pondrá en contacto contigo pronto.
-              </p>
-              <a href="/" class="btn-confirm" style="text-decoration:none; display:inline-block; margin-top:1.5rem">Volver al inicio</a>
+          <!-- Step 4: success -->
+          <div id="step-success" class="step step--success" style="display:none">
+            <div class="success-check">
+              <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                <circle cx="24" cy="24" r="23" stroke="rgb(52,211,153)" stroke-width="2"/>
+                <path d="M14 24l7 7 13-14" stroke="rgb(52,211,153)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
+            <h2 class="success-title">¡Reserva confirmada!</h2>
+            <p class="success-text" id="success-text"></p>
+            <p class="success-sub">Recibirás confirmación en tu correo. Miguel se pondrá en contacto pronto.</p>
+            <a href="/" class="btn-confirm btn-confirm--outline">Volver al inicio</a>
+          </div>
 
-          </div><!-- /book-picker -->
-        </div><!-- /book-grid -->
-      </div>
+        </div><!-- /book-picker -->
+      </div><!-- /book-wrap -->
     </div><!-- /booking-widget -->
 
   </div>
@@ -321,118 +366,416 @@ const datesJson = JSON.stringify(dates);
 </script>
 
 <style>
+  /* ── Page shell ── */
   .book-page {
     min-height: 100dvh;
-    padding-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
   }
 
-  /* ── Auth gate ── */
+  /* ════════════════════════════════════════
+     AUTH GATE
+  ════════════════════════════════════════ */
   .auth-gate {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100dvh;
-    padding: 2rem;
+    padding: 6rem 1.5rem 3rem;
   }
-  .auth-gate__inner {
-    max-width: 28rem;
-    text-align: center;
+
+  .auth-card {
+    display: flex;
+    background: rgba(13, 13, 26, 0.9);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    max-width: 56rem;
+    width: 100%;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3);
+
+    @media (max-width: 680px) {
+      flex-direction: column;
+    }
+  }
+
+  .auth-card__left {
+    padding: 2.5rem 2rem;
+    background: rgba(50,170,255,0.04);
+    border-right: 1px solid rgba(255,255,255,0.07);
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1.25rem;
+    min-width: 20rem;
+
+    @media (max-width: 680px) {
+      border-right: none;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      min-width: 0;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
   }
-  .auth-gate__icon { font-size: 3rem; }
-  .auth-gate__title { --fs: 2.5rem; }
-  .auth-gate__sub { color: var(--color-text-alt); }
+
+  .auth-avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgb(50,170,255) 0%, rgb(120,80,255) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+
+  .auth-badge {
+    display: inline-block;
+    background: rgba(52,211,153,0.12);
+    border: 1px solid rgba(52,211,153,0.25);
+    color: rgb(52,211,153);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .auth-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0.25rem 0 0.1rem;
+    line-height: 1.2;
+  }
+
+  .auth-role {
+    font-size: 0.8rem;
+    color: rgba(240,240,250,0.45);
+    margin: 0;
+  }
+
+  .auth-meta {
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: rgba(240,240,250,0.6);
+
+      svg {
+        width: 0.9rem;
+        height: 0.9rem;
+        flex-shrink: 0;
+        color: rgba(50,170,255,0.7);
+      }
+    }
+  }
+
+  .auth-card__right {
+    flex: 1;
+    padding: 2.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+
+    @media (max-width: 680px) {
+      padding: 1.5rem;
+    }
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .auth-sub {
+    font-size: 0.875rem;
+    color: rgba(240,240,250,0.5);
+    line-height: 1.6;
+    margin: 0;
+  }
 
   .btn-google {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem;
     background: #fff;
     color: #1f1f1f;
     border: none;
-    border-radius: 0.625rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 0.95rem;
+    border-radius: 999px;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: box-shadow 0.15s;
-    svg { width: 1.25rem; height: 1.25rem; }
-    &:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+    transition: box-shadow 0.15s, transform 0.15s;
+    width: 100%;
+
+    &:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transform: translateY(-1px);
+    }
+
+    &:active { transform: translateY(0); }
+    &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   }
 
-  /* ── User bar ── */
-  .user-bar {
+  .auth-disclaimer {
+    font-size: 0.72rem;
+    color: rgba(240,240,250,0.3);
+    text-align: center;
+    margin: 0;
+
+    a { color: rgba(50,170,255,0.7); text-decoration: underline; }
+    a:hover { color: #32aaff; }
+  }
+
+  /* ════════════════════════════════════════
+     BOOKING WIDGET
+  ════════════════════════════════════════ */
+  .booking-widget {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 5rem 0 1.5rem;
-  }
-  .user-bar__photo {
-    width: 2rem; height: 2rem;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .user-bar__name { font-size: 0.9rem; color: var(--color-text-alt); flex: 1; }
-  .user-bar__logout {
-    background: none; border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 0.4rem; color: rgba(255,255,255,0.45);
-    font-size: 0.78rem; padding: 0.2rem 0.7rem; cursor: pointer;
-    &:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
+    align-items: flex-start;
+    justify-content: center;
+    padding: 5.5rem 1.5rem 4rem;
   }
 
-  /* ── Book grid ── */
-  .book-grid {
-    display: grid;
-    grid-template-columns: 18rem 1fr;
-    gap: 3rem;
-    align-items: start;
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      gap: 2rem;
+  .book-wrap {
+    display: flex;
+    background: rgba(13,13,26,0.9);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    max-width: 860px;
+    width: 100%;
+    min-height: 500px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.3);
+
+    @media (max-width: 700px) {
+      flex-direction: column;
+      min-height: unset;
     }
   }
 
-  /* ── Left panel ── */
+  /* ── Left info panel ── */
   .book-info {
-    position: sticky;
-    top: 5rem;
+    width: 240px;
+    flex-shrink: 0;
+    padding: 2rem 1.5rem;
+    background: rgba(50,170,255,0.03);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 1.25rem;
-    padding: 1.5rem;
-  }
-  .book-info__avatar img {
-    width: 4rem; height: 4rem;
-    border-radius: 50%; object-fit: cover;
-  }
-  .book-info__name { --fs: 1.25rem; }
-  .book-info__role { font-size: 0.82rem; color: var(--color-text-alt); margin: 0; }
-  .book-info__details {
-    list-style: none; padding: 0; margin: 0;
-    display: flex; flex-direction: column; gap: 0.4rem;
-    font-size: 0.82rem; color: var(--color-text-alt);
-    li { display: flex; align-items: center; gap: 0.5rem; }
-  }
-  .book-info__desc { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin: 0; }
+    gap: 1rem;
 
-  /* ── Step ── */
-  .step__title {
-    font-size: 1rem; font-weight: 600;
-    color: rgba(255,255,255,0.85);
-    margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    @media (max-width: 700px) {
+      width: 100%;
+      padding: 1.5rem;
+    }
   }
-  .step__back {
-    background: none; border: none;
-    font-size: 0.8rem; color: rgba(50,170,255,0.75);
-    cursor: pointer; padding: 0;
-    &:hover { color: #32aaff; }
+
+  .book-info__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .book-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgb(50,170,255) 0%, rgb(120,80,255) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .book-info__org {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(50,170,255,0.7);
+    margin: 0;
+  }
+
+  .book-info__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .book-info__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    color: rgb(52,211,153);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    width: fit-content;
+  }
+
+  .book-info__meta {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(240,240,250,0.55);
+
+      svg {
+        width: 0.875rem;
+        height: 0.875rem;
+        flex-shrink: 0;
+        color: rgba(50,170,255,0.6);
+      }
+    }
+  }
+
+  .book-info__desc {
+    font-size: 0.78rem;
+    color: rgba(240,240,250,0.35);
+    line-height: 1.6;
+    margin: 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .book-info__user {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .user-photo {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .user-name-text {
+    flex: 1;
+    font-size: 0.75rem;
+    color: rgba(240,240,250,0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-logout {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.4rem;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+
+    &:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.65); }
+  }
+
+  /* ── Divider ── */
+  .book-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.07);
+    flex-shrink: 0;
+
+    @media (max-width: 700px) {
+      width: 100%;
+      height: 1px;
+    }
+  }
+
+  /* ── Right picker ── */
+  .book-picker {
+    flex: 1;
+    padding: 2rem 1.75rem;
+    min-width: 0;
+
+    @media (max-width: 700px) {
+      padding: 1.5rem;
+    }
+  }
+
+  /* ── Steps ── */
+  .step__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .step__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(240,240,250,0.9);
+    margin: 0 0 1.25rem;
+    line-height: 1.3;
+
+    .step__header & {
+      margin: 0;
+    }
+  }
+
+  .btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.5rem;
+    color: rgba(240,240,250,0.6);
+    font-size: 0.78rem;
+    padding: 0.3rem 0.65rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+
+    svg { width: 0.8rem; height: 0.8rem; }
+
+    &:hover { background: rgba(255,255,255,0.09); color: rgba(240,240,250,0.9); }
   }
 
   /* ── Date strip ── */
@@ -440,102 +783,250 @@ const datesJson = JSON.stringify(dates);
     display: flex;
     gap: 0.5rem;
     overflow-x: auto;
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.1) transparent;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
   }
+
   .date-btn {
     flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 0.75rem;
-    padding: 0.6rem 0.85rem;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 0.875rem;
+    padding: 0.65rem 0.9rem;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-    color: var(--color-text);
-    &:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    color: #fff;
+    min-width: 3.5rem;
+
+    &:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-1px);
+    }
+
     &.is-selected {
       background: rgba(50,170,255,0.15);
       border-color: rgba(50,170,255,0.5);
-      color: #32aaff;
+      color: rgb(50,170,255);
+      box-shadow: 0 0 0 1px rgba(50,170,255,0.2);
     }
   }
-  .date-btn__dow { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.6; }
-  .date-btn__day { font-size: 1.25rem; font-weight: 700; line-height: 1; }
-  .date-btn__month { font-size: 0.65rem; opacity: 0.6; }
+
+  .date-btn__dow {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: inherit;
+    opacity: 0.55;
+  }
+
+  .date-btn__day {
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: inherit;
+  }
+
+  .date-btn__month {
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: inherit;
+    opacity: 0.55;
+  }
 
   /* ── Slots grid ── */
   .slots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
     gap: 0.5rem;
   }
+
   .slot-btn {
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.09);
     border-radius: 0.625rem;
-    color: var(--color-text);
+    color: rgba(240,240,250,0.85);
     cursor: pointer;
     font-size: 0.85rem;
-    padding: 0.6rem;
-    transition: background 0.15s, border-color 0.15s;
-    &:hover:not(:disabled) { background: rgba(50,170,255,0.12); border-color: rgba(50,170,255,0.4); }
-    &.is-selected { background: rgba(50,170,255,0.18); border-color: #32aaff; color: #32aaff; }
-    &.is-taken { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+    font-weight: 500;
+    padding: 0.65rem 0.5rem;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.15s;
+    text-align: center;
+
+    &:hover:not(:disabled) {
+      background: rgba(50,170,255,0.1);
+      border-color: rgba(50,170,255,0.35);
+      color: rgb(50,170,255);
+      transform: translateY(-1px);
+    }
+
+    &.is-selected {
+      background: rgba(50,170,255,0.18);
+      border-color: rgba(50,170,255,0.6);
+      color: rgb(50,170,255);
+      box-shadow: 0 0 0 1px rgba(50,170,255,0.15);
+    }
+
+    &.is-taken {
+      opacity: 0.25;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
   }
 
-  /* ── Confirm card ── */
+  /* ── Confirm step ── */
   .confirm-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 0.875rem;
-    padding: 1.25rem;
+    padding: 1.125rem 1.25rem;
     margin-bottom: 1.25rem;
-    display: flex; flex-direction: column; gap: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
-  .confirm-card__row {
-    display: flex; align-items: center; gap: 0.75rem;
-    font-size: 0.9rem;
+
+  .confirm-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.875rem;
+
+    &:last-child { border-bottom: none; }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+  }
+
+  .confirm-icon { font-size: 1rem; width: 1.5rem; text-align: center; }
+
+  .confirm-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: rgba(240,240,250,0.35);
+    display: block;
+  }
+
+  .confirm-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(240,240,250,0.85);
+    display: block;
   }
 
   /* ── Notes ── */
-  .notes-label { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
-  .notes-optional { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+  .notes-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(240,240,250,0.6);
+    margin-bottom: 1rem;
+  }
+
+  .notes-optional {
+    font-size: 0.7rem;
+    color: rgba(240,240,250,0.3);
+    font-weight: 400;
+    margin-left: 0.3rem;
+  }
+
   .notes-input {
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.09);
     border-radius: 0.625rem;
-    color: var(--color-text);
+    color: rgba(240,240,250,0.85);
     font-family: inherit;
     font-size: 0.85rem;
     padding: 0.75rem;
     resize: vertical;
     width: 100%;
+    transition: border-color 0.15s;
+    margin-top: 0.25rem;
+
+    &::placeholder { color: rgba(240,240,250,0.2); }
     &:focus { outline: none; border-color: rgba(50,170,255,0.4); }
   }
 
   /* ── Confirm button ── */
   .btn-confirm {
     width: 100%;
-    background: var(--color-brand-1);
+    background: rgb(50,170,255);
     border: none;
     border-radius: 0.75rem;
     color: #fff;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 700;
     padding: 0.875rem;
-    transition: opacity 0.15s;
-    &:hover { opacity: 0.85; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    transition: opacity 0.15s, transform 0.15s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+
+    &:hover { opacity: 0.88; transform: translateY(-1px); }
+    &:active { transform: translateY(0); }
+    &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   }
 
-  /* ── Success ── */
-  .step--success {
-    text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 1rem;
-    padding: 2rem 0;
+  .btn-confirm--outline {
+    background: transparent;
+    border: 1px solid rgba(50,170,255,0.4);
+    color: rgb(50,170,255);
+    margin-top: 0.5rem;
+
+    &:hover { background: rgba(50,170,255,0.08); opacity: 1; }
   }
-  .success-icon { font-size: 4rem; }
+
+  /* ── Success step ── */
+  .step--success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 2rem 1rem;
+  }
+
+  .success-check {
+    svg {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  .success-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+
+  .success-text {
+    font-size: 0.9rem;
+    color: rgba(240,240,250,0.65);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .success-sub {
+    font-size: 0.78rem;
+    color: rgba(240,240,250,0.35);
+    margin: 0;
+    line-height: 1.6;
+  }
 </style>
