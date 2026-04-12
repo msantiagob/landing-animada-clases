@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+automatizaciones.";
+---
+
+<LayoutPage
+  title="Automatizaciones | sonmyd — Miguel Zuluaga"
+  description="Automatiza procesos repetitivos de tu negocio con flujos inteligentes, integraciones entre herramientas y bots que trabajan por ti."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🔄 No-code · Low-code · Custom</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Auto&shy;matizaciones</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Conecta tus herramientas, elimina trabajo manual y deja que los flujos automáticos hagan el trabajo pesado. Desde integraciones simples hasta pipelines complejos con IA.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Hablemos de tu proceso
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué automatizamos?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Flujos de trabajo entre apps", d: "Conectamos Gmail, Notion, Slack, HubSpot, Google Sheets y cientos de herramientas más para que la información fluya sola." },
+          { n: "02", t: "Procesamiento de datos con IA", d: "Pipelines que reciben documentos, los analizan con LLMs y generan reportes, respuestas o acciones automáticas." },
+          { n: "03", t: "Bots y asistentes automatizados", d: "Chatbots para WhatsApp, Slack o web que responden, clasifican y escalan consultas sin intervención humana." },
+          { n: "04", t: "Scraping & monitoreo", d: "Extracción automatizada de datos de la web, monitoreo de precios, competidores o publicaciones con alertas en tiempo real." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Herramientas que usamos</h2>
+        <ul class="topics-list u-text">
+          <li>n8n / Make (Integromat)</li>
+          <li>Zapier</li>
+          <li>Python scripts personalizados</li>
+          <li>LangChain / CrewAI</li>
+          <li>WhatsApp Business API</li>
+          <li>Playwright / Puppeteer</li>
+          <li>Google Apps Script</li>
+          <li>Webhooks & REST APIs</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Negocios que pierden horas en tareas manuales y repetitivas.</li>
+        <li>Equipos de ventas o marketing que quieren flujos de seguimiento automáticos.</li>
+        <li>Empresas que reciben muchos documentos y quieren procesarlos con IA.</li>
+        <li>Emprendedores que quieren escalar sin contratar más personas.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Qué proceso quieres automatizar?</h2>
+      <p class="u-text cta-text">Cuéntame el problema y diseñamos la solución más simple y efectiva.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

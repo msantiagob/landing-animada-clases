@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+Automatizaci%C3%B3n+con+Agentes+de+IA.";
+---
+
+<LayoutPage
+  title="Automatización con Agentes de IA | sonmyd — Miguel Zuluaga"
+  description="Aprende a construir agentes autónomos de IA con LangChain, CrewAI y herramientas modernas. Automatiza procesos reales con inteligencia artificial."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">⚙️ Nivel: avanzado</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Automatización<br />con Agentes IA</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Construye sistemas que piensan, deciden y actúan solos. El siguiente nivel después de los LLMs: agentes autónomos que resuelven tareas complejas.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Empezar ahora
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué aprenderás?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Fundamentos de agentes IA", d: "Qué son, cómo razonan (ReAct, Chain-of-Thought) y cuándo usarlos. Diferencia entre pipelines simples y agentes reales." },
+          { n: "02", t: "LangChain & LangGraph", d: "Construcción de cadenas, herramientas (tools), memoria y flujos de trabajo con grafos para agentes más complejos." },
+          { n: "03", t: "CrewAI & multi-agentes", d: "Sistemas donde múltiples agentes colaboran: investigadores, redactores, revisores. Proyectos de automatización de equipos." },
+          { n: "04", t: "Proyectos de automatización real", d: "Agentes que navegan la web, leen documentos, envían emails, interactúan con APIs externas y ejecutan código." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Herramientas que usarás</h2>
+        <ul class="topics-list u-text">
+          <li>LangChain & LangGraph</li>
+          <li>CrewAI</li>
+          <li>OpenAI / Anthropic APIs</li>
+          <li>Tavily (web search)</li>
+          <li>Browser tools (Playwright)</li>
+          <li>n8n / Make (no-code)</li>
+          <li>FastAPI (endpoints para agentes)</li>
+          <li>Docker (básico)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Ya sabes Python y LLMs básicos y quieres construir sistemas autónomos.</li>
+        <li>Quieres automatizar procesos de tu empresa o negocio con IA.</li>
+        <li>Buscas crear productos o servicios basados en agentes de IA.</li>
+        <li>Te interesa el estado del arte en IA aplicada y agentes autónomos.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Listo para construir agentes?</h2>
+      <p class="u-text cta-text">Primero hacemos una sesión gratuita para definir qué quieres automatizar y diseñamos el plan.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

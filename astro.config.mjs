@@ -8,10 +8,27 @@ import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
-  // ⚠️ Cambia esto por tu dominio real antes de publicar
   site: "https://sonmyd.co",
   scopedStyleStrategy: 'where',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // Include all locale variants in the sitemap
+      i18n: {
+        defaultLocale: 'es',
+        locales: {
+          es: 'es',
+          en: 'en',
+        },
+      },
+    }),
+  ],
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   output: 'static',
   adapter: netlify(),
   experimental: {

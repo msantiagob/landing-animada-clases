@@ -1,0 +1,90 @@
+---
+import LayoutPage from "../../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+import { getServicesPath } from "../../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+the+Python+for+AI+service.";
+---
+
+<LayoutPage
+  title="Python for AI | sonmyd — Miguel Zuluaga"
+  description="Learn Python focused on Artificial Intelligence: from fundamentals to real projects with NumPy, Pandas, scikit-learn and more."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🐍 Level: from scratch</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Python<br />for AI</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          The foundation of all modern AI. Learn Python with a real focus on artificial intelligence projects — no unnecessary detours or theory.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Start now
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">What will you learn?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Python fundamentals", d: "Variables, data structures, functions, error handling and best practices. All oriented toward AI scripts." },
+          { n: "02", t: "NumPy & Pandas", d: "Efficient manipulation of numerical and tabular data. The backbone of any ML project." },
+          { n: "03", t: "Data visualization", d: "Matplotlib and Seaborn to explore and communicate your data before modeling." },
+          { n: "04", t: "ML preprocessing", d: "Data cleaning, normalization, variable encoding and proper train/test splits." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Tools you'll use</h2>
+        <ul class="topics-list u-text">
+          <li>Python 3.x</li>
+          <li>Jupyter Notebooks / VS Code</li>
+          <li>NumPy</li>
+          <li>Pandas</li>
+          <li>Matplotlib & Seaborn</li>
+          <li>scikit-learn (intro)</li>
+          <li>Google Colab</li>
+          <li>pip and virtual environments</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">Who is it for?</h2>
+      <ul class="for-list u-text">
+        <li>People with no programming experience who want to learn AI.</li>
+        <li>Professionals from other fields (finance, health, marketing) who want to automate with Python.</li>
+        <li>Those who already know Python basics but want to focus on the AI stack.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">Ready to learn Python for AI?</h2>
+      <p class="u-text cta-text">Start with a free diagnosis session and we advance from where you are.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Talk via WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../../styles/_service-page.css";
+</style>

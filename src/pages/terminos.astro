@@ -1,0 +1,232 @@
+---
+import LayoutPage from "../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../i18n/utils";
+import { getHomePath } from "../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const lastUpdated = "12 de abril de 2025";
+---
+
+<LayoutPage
+  title="Términos y Condiciones | sonmyd — Miguel Zuluaga"
+  description="Términos y condiciones del servicio de mentoría en Inteligencia Artificial de Miguel Zuluaga (sonmyd)."
+>
+  <div class="page-wrap">
+    <div class="u-container content">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+        </svg>
+        {lang === "en" ? "Back to home" : "Volver al inicio"}
+      </a>
+
+      <h1 class="u-heading page-title">Términos y Condiciones</h1>
+      <p class="meta u-text">Última actualización: {lastUpdated}</p>
+
+      <div class="prose u-text">
+        <p>
+          Estos Términos y Condiciones regulan la contratación y uso de los servicios de mentoría en Inteligencia
+          Artificial ofrecidos por <strong>Miguel Zuluaga</strong> bajo la marca <strong>sonmyd</strong>
+          (en adelante, "el Prestador"). Al reservar o contratar cualquier servicio, el usuario (en adelante,
+          "el Cliente") acepta íntegramente estos términos.
+        </p>
+
+        <h2>1. Descripción del servicio</h2>
+        <p>
+          sonmyd ofrece clases de Inteligencia Artificial en modalidad 1 a 1, de forma completamente online mediante
+          videollamada (Google Meet o Zoom). Los servicios disponibles son:
+        </p>
+        <ul>
+          <li><strong>Sesión de diagnóstico gratuita:</strong> una sesión inicial de 30 minutos, sin costo, para
+            evaluar el nivel del Cliente y definir el plan más adecuado.</li>
+          <li><strong>Clase Individual:</strong> sesión de 60 minutos, con material de apoyo y grabación de la clase incluidos.</li>
+          <li><strong>Paquete Intensivo:</strong> 10 horas de clase distribuidas en múltiples sesiones, con material
+            curado, grabación de todas las clases, seguimiento continuo y proyecto real de portafolio.</li>
+        </ul>
+
+        <h2>2. Reserva y confirmación</h2>
+        <p>
+          La reserva de cualquier servicio se realiza a través de los canales habilitados en el sitio web (formulario
+          de contacto o WhatsApp). El servicio se considera reservado únicamente una vez que el Prestador confirme
+          la disponibilidad y, cuando aplique, se reciba el pago correspondiente.
+        </p>
+        <p>
+          La sesión de diagnóstico gratuita es de carácter introductorio y no implica obligación de contratar ningún
+          plan posterior.
+        </p>
+
+        <h2>3. Tarifas y pagos</h2>
+        <p>
+          Las tarifas vigentes se publican en el sitio web <a href="https://sonmyd.co">sonmyd.co</a> y pueden
+          actualizarse en cualquier momento. El precio aplicable es el vigente al momento de la confirmación de la
+          reserva.
+        </p>
+        <p>
+          El pago se acuerda directamente con el Prestador a través de los métodos disponibles (transferencia
+          bancaria, Nequi, PayPal u otros acordados). El Paquete Intensivo puede requerir el pago total o parcial
+          por adelantado según lo acordado.
+        </p>
+
+        <h2>4. Cancelaciones y reembolsos</h2>
+        <ul>
+          <li>
+            <strong>Cancelación con más de 24 horas de anticipación:</strong> el Cliente puede reprogramar la sesión
+            sin costo alguno.
+          </li>
+          <li>
+            <strong>Cancelación con menos de 24 horas:</strong> la sesión se considerará consumida, salvo causa de
+            fuerza mayor debidamente comunicada.
+          </li>
+          <li>
+            <strong>Reembolsos en el Paquete Intensivo:</strong> si el Cliente desiste antes de completar la mitad
+            de las sesiones, se reembolsará el valor proporcional de las sesiones no realizadas, descontando una
+            tarifa administrativa del 10%. No se aplican reembolsos una vez completada la mitad del paquete.
+          </li>
+          <li>
+            <strong>Cancelación por parte del Prestador:</strong> si el Prestador cancela una sesión confirmada
+            sin reagendarla en un plazo razonable, se procederá al reembolso total del valor pagado por dicha sesión.
+          </li>
+        </ul>
+
+        <h2>5. Uso del material</h2>
+        <p>
+          Los materiales, presentaciones, ejercicios y recursos compartidos durante las clases son de uso exclusivo
+          del Cliente para su aprendizaje personal. Queda prohibida su reproducción, distribución, venta o
+          publicación sin autorización expresa y por escrito del Prestador.
+        </p>
+        <p>
+          Las grabaciones de las clases son de uso personal del Cliente. No pueden ser compartidas, publicadas ni
+          utilizadas con fines comerciales.
+        </p>
+
+        <h2>6. Conducta del Cliente</h2>
+        <p>
+          El Cliente se compromete a mantener una comunicación respetuosa durante todas las sesiones. El Prestador
+          se reserva el derecho de dar por terminada la relación de servicios sin reembolso en caso de conducta
+          irrespetuosa o uso indebido del servicio.
+        </p>
+
+        <h2>7. Limitación de responsabilidad</h2>
+        <p>
+          El Prestador no garantiza resultados específicos (empleo, ingresos, certificaciones) como consecuencia
+          directa de las clases. Los resultados dependen del esfuerzo, dedicación y contexto particular de cada
+          Cliente. El servicio consiste en educación y orientación personalizada en IA.
+        </p>
+
+        <h2>8. Modificación de los términos</h2>
+        <p>
+          El Prestador podrá actualizar estos Términos y Condiciones en cualquier momento. Los cambios se publicarán
+          en esta página con la fecha de actualización. El uso continuado del servicio tras la publicación de
+          cambios implica la aceptación de los nuevos términos.
+        </p>
+
+        <h2>9. Ley aplicable y jurisdicción</h2>
+        <p>
+          Estos términos se rigen por las leyes de la República de Colombia. Cualquier controversia que no pueda
+          resolverse de manera amistosa se someterá a la jurisdicción de los tribunales competentes de la ciudad
+          de Medellín, Colombia.
+        </p>
+
+        <h2>10. Contacto</h2>
+        <p>
+          Para cualquier consulta relacionada con estos términos, puedes escribirnos a través de
+          <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</LayoutPage>
+
+<style>
+  .page-wrap {
+    padding: 9rem 0 8rem;
+    min-height: 80vh;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.5);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    &:hover {
+      color: rgba(240, 240, 250, 0.9);
+    }
+  }
+
+  .content {
+    max-width: 48rem;
+  }
+
+  .page-title {
+    --fs: 3rem;
+    margin-bottom: 0.5rem;
+
+    @media (--mq-phone) {
+      --fs: 2.2rem;
+    }
+  }
+
+  .meta {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: 3rem;
+  }
+
+  .prose {
+    --fs: var(--font-size-sm);
+    line-height: 1.8;
+    color: rgba(240, 240, 250, 0.8);
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    h2 {
+      font-family: var(--font-roboto-slab);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: rgb(var(--rgb-text));
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(50, 170, 255, 0.15);
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+      }
+    }
+
+    strong {
+      color: rgb(var(--rgb-text));
+      font-weight: 600;
+    }
+
+    a {
+      color: rgb(var(--rgb-brand-2));
+      text-decoration: underline;
+      text-decoration-color: rgba(50, 170, 255, 0.4);
+      transition: text-decoration-color 0.2s;
+
+      &:hover {
+        text-decoration-color: rgba(50, 170, 255, 1);
+      }
+    }
+  }
+</style>

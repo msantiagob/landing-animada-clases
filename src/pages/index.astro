@@ -4,7 +4,6 @@ import HeroHome from "../components/HeroHome.astro";
 import TextMarquee from "../components/TextMarquee.astro";
 import Faqs from "../components/Faqs.astro";
 import StepsTimeline from "../components/StepsTimeline.astro";
-import Plans from "../components/Plans.astro";
 import Statements from "../components/Statements.astro";
 import Introducing from "../components/Introducing.astro";
 import GL from "../components/GL.astro";
@@ -96,7 +95,7 @@ const schemaBreadcrumb = {
       subtitle="Clases 1 a 1 de Inteligencia Artificial diseñadas para ti, desde fundamentos hasta nivel avanzado. Aprende con quien vive y respira IA."
       cta={{
         title: "Reserva tu primera sesión",
-        url: "#precios",
+        url: "#contacto",
       }}
       ctaModalPlan="Sesión Gratuita"
       whatsappUrl="https://wa.me/573106041144"
@@ -181,51 +180,6 @@ const schemaBreadcrumb = {
       "RAG & Embeddings",
     ]}
   />
-
-  <div id="precios">
-    <Plans
-      title="Planes & Precios"
-      subtitle="Elige el plan que mejor se adapte a tus metas. Sin compromisos a largo plazo."
-      items={[
-        {
-          title: "Clase Individual",
-          price: {
-            amount: "$25",
-            duration: "session",
-          },
-          link: {
-            title: "Empezar ahora",
-            url: "#contacto",
-          },
-          features: [
-            { title: "Sesión de 60 minutos" },
-            { title: "Material de apoyo incluido" },
-            { title: "Grabación de la clase" },
-            { title: "Sesiones de seguimiento", disabled: true },
-            { title: "Proyecto personalizado", disabled: true },
-          ],
-        },
-        {
-          title: "Paquete Intensivo",
-          price: {
-            amount: "$220",
-            duration: "10 hrs",
-          },
-          link: {
-            title: "Reservar mi lugar",
-            url: "#contacto",
-          },
-          features: [
-            { title: "10 horas de clase" },
-            { title: "Material y recursos curados" },
-            { title: "Grabación de todas las clases" },
-            { title: "Seguimiento y soporte continuo" },
-            { title: "Proyecto real de portafolio" },
-          ],
-        },
-      ]}
-    />
-  </div>
 
   <div id="contacto">
     <Faqs

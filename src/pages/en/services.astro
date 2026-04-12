@@ -1,0 +1,281 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getHomePath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const WHATSAPP_FREE = "https://wa.me/573106041144?text=Hi%2C+I%27d+like+to+book+my+free+diagnosis+session.";
+
+const services = [
+  {
+    icon: "🎁",
+    title: "Free Diagnosis",
+    desc: "30 free minutes to assess your level, define your goals and map out the ideal learning path for you.",
+    url: "/en/services/diagnosis",
+    badge: "Free",
+  },
+  {
+    icon: "🐍",
+    title: "Python for AI",
+    desc: "Learn Python with a total focus on AI: NumPy, Pandas, visualization and data preprocessing for real projects.",
+    url: "/en/services/python-for-ai",
+    badge: "From scratch",
+  },
+  {
+    icon: "🤖",
+    title: "Machine Learning",
+    desc: "Supervised and unsupervised algorithms, model evaluation and real projects with scikit-learn.",
+    url: "/en/services/machine-learning",
+    badge: "Intermediate",
+  },
+  {
+    icon: "🧠",
+    title: "LLMs & Generative AI",
+    desc: "GPT, Claude, Llama, Prompt Engineering, RAG and AI APIs integrated into real applications.",
+    url: "/en/services/llms-generative-ai",
+    badge: "Intermediate · Advanced",
+  },
+  {
+    icon: "⚙️",
+    title: "Agent Automation",
+    desc: "Build autonomous agents with LangChain and CrewAI that reason, decide and execute complex tasks.",
+    url: "/en/services/agent-automation",
+    badge: "Advanced",
+  },
+  {
+    icon: "🌐",
+    title: "Web Applications",
+    desc: "Modern, fast and scalable web app development. From landing pages to full platforms with backend and AI.",
+    url: "/en/services/web-applications",
+    badge: "Full Stack",
+  },
+  {
+    icon: "🔄",
+    title: "Automations",
+    desc: "Automated flows that connect your tools, eliminate manual work and scale your business without hiring more people.",
+    url: "/en/services/automations",
+    badge: "No-code · Custom",
+  },
+  {
+    icon: "☁️",
+    title: "Cloud Solutions",
+    desc: "Scalable and secure infrastructure on AWS, GCP or Azure. Deployment, containers, serverless and production architectures.",
+    url: "/en/services/cloud-solutions",
+    badge: "AWS · GCP · Azure",
+  },
+  {
+    icon: "📱",
+    title: "Native Apps",
+    desc: "iOS and Android mobile apps and native desktop applications with maximum performance and embedded AI.",
+    url: "/en/services/native-apps",
+    badge: "iOS · Android · Desktop",
+  },
+];
+---
+
+<LayoutPage
+  title="AI Services | sonmyd — Miguel Zuluaga"
+  description="1-on-1 AI mentorship: Python for AI, Machine Learning, LLMs, Generative AI and Agent Automation. Personalized online classes."
+>
+  <section class="page-hero">
+    <div class="hero-bg"></div>
+    <div class="u-container">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+        {lang === "en" ? "Home" : "Inicio"}
+      </a>
+      <h1 class="u-heading page-title" data-sy-reveal="words">AI Mentorship<br />Services</h1>
+      <p class="page-sub u-text" data-sy-reveal="lines">
+        1-on-1 classes, fully online. Choose the area that interests you most or start with the free diagnosis so we can design your path together.
+      </p>
+    </div>
+  </section>
+
+  <section class="services-grid u-container">
+    {services.map((s) => (
+      <a href={s.url} class="service-card">
+        <div class="card-head">
+          <span class="card-icon" aria-hidden="true">{s.icon}</span>
+          <span class="card-badge u-text">{s.badge}</span>
+        </div>
+        <h2 class="u-text card-title">{s.title}</h2>
+        <p class="u-text card-desc">{s.desc}</p>
+        <span class="card-arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </section>
+
+  <section class="cta-sec u-container">
+    <h2 class="u-heading cta-title" data-sy-reveal="words">Not sure where to start?</h2>
+    <p class="u-text cta-text">The diagnosis session is free. We talk for 30 minutes and define the ideal path for you.</p>
+    <a href={WHATSAPP_FREE} target="_blank" rel="noopener noreferrer" class="cta-btn">
+      Book your free session →
+    </a>
+  </section>
+</LayoutPage>
+
+<style>
+  .page-hero {
+    position: relative;
+    padding: 9rem 0 5rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 75% 30%, rgba(235, 14, 56, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 25% 65%, rgba(50, 170, 255, 0.14) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(50, 170, 255, 0.09) 0%, transparent 50%);
+    mask: linear-gradient(180deg, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 100%);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.45);
+    font-size: 0.82rem;
+    margin-bottom: 1.75rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+
+    svg { width: 1em; height: 1em; }
+    &:hover { color: rgba(240, 240, 250, 0.85); }
+  }
+
+  .page-title {
+    --fs: 3.75rem;
+    --lh: 1.05;
+    position: relative;
+
+    @media (--mq-phone) { --fs: 2.5rem; }
+  }
+
+  .page-sub {
+    --fs: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 36em;
+    margin-top: 1.25rem;
+    line-height: 1.65;
+    position: relative;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 4rem 0 5rem;
+
+    @media (--mq-tablet) { grid-template-columns: repeat(2, 1fr); }
+    @media (--mq-phone) { grid-template-columns: 1fr; }
+  }
+
+  .service-card {
+    background: rgba(var(--rgb-brand-3), 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+
+    &:hover {
+      border-color: rgba(50, 170, 255, 0.25);
+      background: rgba(var(--rgb-brand-3), 1);
+      transform: translateY(-3px);
+    }
+
+    &:first-child {
+      border-color: rgba(50, 170, 255, 0.18);
+      background: rgba(var(--rgb-brand-3), 0.9);
+    }
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .card-icon { font-size: 2rem; line-height: 1; }
+
+  .card-badge {
+    --fs: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: rgb(var(--rgb-brand-2));
+    border: 1px solid rgba(50, 170, 255, 0.25);
+    border-radius: 999px;
+    padding: 0.2em 0.75em;
+    background: rgba(50, 170, 255, 0.06);
+  }
+
+  .card-title {
+    --fs: 1.05rem;
+    font-weight: 600;
+    color: rgb(var(--rgb-text));
+    margin-bottom: 0.5rem;
+  }
+
+  .card-desc {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-arrow {
+    display: block;
+    margin-top: 1.25rem;
+    color: rgb(var(--rgb-brand-2));
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+
+    .service-card:hover & { transform: translateX(4px); }
+  }
+
+  .cta-sec {
+    text-align: center;
+    padding-bottom: 9rem;
+  }
+
+  .cta-title {
+    --fs: 2.25rem;
+    margin-bottom: 0.85rem;
+
+    @media (--mq-phone) { --fs: 1.75rem; }
+  }
+
+  .cta-text {
+    --fs: var(--font-size-lg);
+    color: var(--color-text-alt);
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 1rem 2.25rem;
+    background: #1855cc;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 0 24px rgba(24, 85, 204, 0.4);
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 1.75rem;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(24, 85, 204, 0.55);
+    }
+  }
+</style>

@@ -6,9 +6,10 @@ interface Props {
   logoUrl: string;
   logoAlt: string;
   links: Link[];
+  legalLinks?: Link[];
 }
 
-const { logoUrl, logoAlt, links } = Astro.props;
+const { logoUrl, logoAlt, links, legalLinks } = Astro.props;
 ---
 
 <sy-footer>
@@ -32,6 +33,15 @@ const { logoUrl, logoAlt, links } = Astro.props;
         </div>
         <p class="cp">© {new Date().getFullYear()} {logoAlt}</p>
       </div>
+      {
+        legalLinks && legalLinks.length > 0 && (
+          <div class="legal">
+            {legalLinks.map((l) => (
+              <a href={l.url}>{l.title}</a>
+            ))}
+          </div>
+        )
+      }
     </div>
   </footer>
 </sy-footer>
@@ -121,6 +131,27 @@ const { logoUrl, logoAlt, links } = Astro.props;
 
     @media (--mq-tablet) {
       flex-direction: column;
+    }
+  }
+
+  .legal {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    margin-top: 1rem;
+    flex-wrap: wrap;
+
+    a {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.7);
+      }
     }
   }
 </style>

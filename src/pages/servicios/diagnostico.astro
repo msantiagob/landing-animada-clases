@@ -1,0 +1,81 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+quiero+reservar+mi+sesi%C3%B3n+gratuita+de+diagn%C3%B3stico.";
+---
+
+<LayoutPage
+  title="Diagnóstico Gratuito de IA | sonmyd — Miguel Zuluaga"
+  description="Sesión gratuita de 30 minutos para evaluar tu nivel de IA, definir tus objetivos y trazar el camino de aprendizaje ideal para ti."
+>
+  <div class="page">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🎁 Sin costo · Sin compromiso</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Sesión de<br />Diagnóstico Gratuita</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          30 minutos para conocernos, evaluar tu nivel y definir exactamente qué aprender y cómo. Sin presión, sin compromiso.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Reservar mi sesión gratuita
+        </a>
+      </div>
+    </section>
+
+    <!-- Qué hacemos -->
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué cubrimos en 30 minutos?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Evaluamos tu punto de partida", d: "¿Tienes bases de programación? ¿Ya usas herramientas de IA? ¿Tienes un proyecto en mente? Partimos de donde estás tú." },
+          { n: "02", t: "Definimos tus objetivos", d: "Automatizar procesos, cambiar de carrera, construir proyectos propios, aprender para tu trabajo actual. Clarificamos qué quieres lograr." },
+          { n: "03", t: "Trazamos el camino ideal", d: "Con base en tu nivel y metas, diseñamos el temario, el ritmo y el formato de clases que mejor funciona para ti." },
+          { n: "04", t: "Respondemos tus dudas", d: "Cualquier pregunta sobre el proceso, los temas, las herramientas o cómo funcionan las clases. Sin letra pequeña." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Para quién -->
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es esta sesión?</h2>
+        <ul class="for-list u-text">
+          <li>Nunca has programado y quieres saber si la IA es para ti.</li>
+          <li>Ya tienes bases técnicas pero no sabes por dónde arrancar con IA.</li>
+          <li>Estás evaluando si las clases son lo que necesitas antes de invertir.</li>
+          <li>Tienes un proyecto o idea concreta y quieres saber si es viable.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section u-container cta-sec">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">Agenda tu sesión ahora</h2>
+      <p class="u-text cta-text">Es completamente gratis. Solo necesitas 30 minutos y ganas de aprender.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Reservar por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

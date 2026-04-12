@@ -1,0 +1,305 @@
+---
+import LayoutPage from "../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../i18n/utils";
+import { getHomePath } from "../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const WHATSAPP_FREE = "https://wa.me/573106041144?text=Hola%2C+quiero+reservar+mi+sesi%C3%B3n+gratuita+de+diagn%C3%B3stico.";
+
+const services = [
+  {
+    icon: "🎁",
+    title: "Diagnóstico Gratuito",
+    desc: "30 minutos sin costo para evaluar tu nivel, definir tus metas y trazar el camino de aprendizaje ideal para ti.",
+    url: "/servicios/diagnostico",
+    badge: "Gratis",
+  },
+  {
+    icon: "🐍",
+    title: "Python para IA",
+    desc: "Aprende Python con foco total en IA: NumPy, Pandas, visualización y preprocesamiento de datos para proyectos reales.",
+    url: "/servicios/python-para-ia",
+    badge: "Desde cero",
+  },
+  {
+    icon: "🤖",
+    title: "Machine Learning",
+    desc: "Algoritmos supervisados y no supervisados, evaluación de modelos y proyectos reales con scikit-learn.",
+    url: "/servicios/machine-learning",
+    badge: "Intermedio",
+  },
+  {
+    icon: "🧠",
+    title: "LLMs & IA Generativa",
+    desc: "GPT, Claude, Llama, Prompt Engineering, RAG y APIs de IA integradas en aplicaciones reales.",
+    url: "/servicios/llms-ia-generativa",
+    badge: "Intermedio · Avanzado",
+  },
+  {
+    icon: "⚙️",
+    title: "Automatización con Agentes",
+    desc: "Construye agentes autónomos con LangChain y CrewAI que razonan, deciden y ejecutan tareas complejas.",
+    url: "/servicios/automatizacion-agentes",
+    badge: "Avanzado",
+  },
+  {
+    icon: "🌐",
+    title: "Aplicaciones Web",
+    desc: "Desarrollo de apps web modernas, rápidas y escalables. Desde landing pages hasta plataformas completas con backend e IA.",
+    url: "/servicios/aplicaciones-web",
+    badge: "Full Stack",
+  },
+  {
+    icon: "🔄",
+    title: "Automatizaciones",
+    desc: "Flujos automáticos que conectan tus herramientas, eliminan trabajo manual y escalan tu negocio sin contratar más personas.",
+    url: "/servicios/automatizaciones",
+    badge: "No-code · Custom",
+  },
+  {
+    icon: "☁️",
+    title: "Soluciones Cloud",
+    desc: "Infraestructura escalable y segura en AWS, GCP o Azure. Deploy, contenedores, serverless y arquitecturas de producción.",
+    url: "/servicios/soluciones-cloud",
+    badge: "AWS · GCP · Azure",
+  },
+  {
+    icon: "📱",
+    title: "Aplicaciones Nativas",
+    desc: "Apps móviles iOS y Android y aplicaciones de escritorio nativas con rendimiento máximo y IA embebida.",
+    url: "/servicios/aplicaciones-nativas",
+    badge: "iOS · Android · Desktop",
+  },
+];
+---
+
+<LayoutPage
+  title="Servicios de IA | sonmyd — Miguel Zuluaga"
+  description="Mentoría 1 a 1 en Inteligencia Artificial: Python para IA, Machine Learning, LLMs, IA Generativa y Automatización con Agentes. Clases online personalizadas."
+>
+  <section class="page-hero">
+    <div class="hero-bg"></div>
+    <div class="u-container">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+        {lang === "en" ? "Home" : "Inicio"}
+      </a>
+      <h1 class="u-heading page-title" data-sy-reveal="words">Servicios de<br />Mentoría en IA</h1>
+      <p class="page-sub u-text" data-sy-reveal="lines">
+        Clases 1 a 1, completamente online. Elige el área que más te interesa o empieza con el diagnóstico gratuito para que diseñemos tu camino juntos.
+      </p>
+    </div>
+  </section>
+
+  <section class="services-grid u-container">
+    {services.map((s) => (
+      <a href={s.url} class="service-card">
+        <div class="card-head">
+          <span class="card-icon" aria-hidden="true">{s.icon}</span>
+          <span class="card-badge u-text">{s.badge}</span>
+        </div>
+        <h2 class="u-text card-title">{s.title}</h2>
+        <p class="u-text card-desc">{s.desc}</p>
+        <span class="card-arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </section>
+
+  <section class="cta-sec u-container">
+    <h2 class="u-heading cta-title" data-sy-reveal="words">¿No sabes por dónde empezar?</h2>
+    <p class="u-text cta-text">La sesión de diagnóstico es gratis. Hablamos 30 minutos y definimos el camino ideal para ti.</p>
+    <a href={WHATSAPP_FREE} target="_blank" rel="noopener noreferrer" class="cta-btn">
+      Reserva tu sesión gratuita →
+    </a>
+  </section>
+</LayoutPage>
+
+<style>
+  /* Hero */
+  .page-hero {
+    position: relative;
+    padding: 9rem 0 5rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 75% 30%, rgba(235, 14, 56, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 25% 65%, rgba(50, 170, 255, 0.14) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(50, 170, 255, 0.09) 0%, transparent 50%);
+    mask: linear-gradient(180deg, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 100%);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.45);
+    font-size: 0.82rem;
+    margin-bottom: 1.75rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    &:hover {
+      color: rgba(240, 240, 250, 0.85);
+    }
+  }
+
+  .page-title {
+    --fs: 3.75rem;
+    --lh: 1.05;
+    position: relative;
+
+    @media (--mq-phone) {
+      --fs: 2.5rem;
+    }
+  }
+
+  .page-sub {
+    --fs: var(--font-size-lg);
+    color: var(--color-text-alt);
+    max-width: 36em;
+    margin-top: 1.25rem;
+    line-height: 1.65;
+    position: relative;
+  }
+
+  /* Services grid */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 4rem 0 5rem;
+
+    @media (--mq-tablet) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (--mq-phone) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .service-card {
+    background: rgba(var(--rgb-brand-3), 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+
+    &:hover {
+      border-color: rgba(50, 170, 255, 0.25);
+      background: rgba(var(--rgb-brand-3), 1);
+      transform: translateY(-3px);
+    }
+
+    /* First card (free session) gets a subtle highlight */
+    &:first-child {
+      border-color: rgba(50, 170, 255, 0.18);
+      background: rgba(var(--rgb-brand-3), 0.9);
+    }
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .card-badge {
+    --fs: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: rgb(var(--rgb-brand-2));
+    border: 1px solid rgba(50, 170, 255, 0.25);
+    border-radius: 999px;
+    padding: 0.2em 0.75em;
+    background: rgba(50, 170, 255, 0.06);
+  }
+
+  .card-title {
+    --fs: 1.05rem;
+    font-weight: 600;
+    color: rgb(var(--rgb-text));
+    margin-bottom: 0.5rem;
+  }
+
+  .card-desc {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-arrow {
+    display: block;
+    margin-top: 1.25rem;
+    color: rgb(var(--rgb-brand-2));
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+
+    .service-card:hover & {
+      transform: translateX(4px);
+    }
+  }
+
+  /* CTA */
+  .cta-sec {
+    text-align: center;
+    padding-bottom: 9rem;
+  }
+
+  .cta-title {
+    --fs: 2.25rem;
+    margin-bottom: 0.85rem;
+
+    @media (--mq-phone) {
+      --fs: 1.75rem;
+    }
+  }
+
+  .cta-text {
+    --fs: var(--font-size-lg);
+    color: var(--color-text-alt);
+  }
+
+  .cta-btn {
+    display: inline-block;
+    padding: 1rem 2.25rem;
+    background: #1855cc;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 0 24px rgba(24, 85, 204, 0.4);
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 1.75rem;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(24, 85, 204, 0.55);
+    }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+Python+para+IA.";
+---
+
+<LayoutPage
+  title="Python para IA | sonmyd — Miguel Zuluaga"
+  description="Aprende Python enfocado en Inteligencia Artificial: desde los fundamentos hasta proyectos reales con NumPy, Pandas, scikit-learn y más."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🐍 Nivel: desde cero</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Python<br />para IA</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          El lenguaje base de toda la IA moderna. Aprende Python con foco real en proyectos de inteligencia artificial, sin rodeos ni teoría innecesaria.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Empezar ahora
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué aprenderás?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Fundamentos de Python", d: "Variables, estructuras de datos, funciones, manejo de errores y buenas prácticas. Todo orientado a scripts de IA." },
+          { n: "02", t: "NumPy & Pandas", d: "Manipulación eficiente de datos numéricos y tabulares. Columna vertebral de cualquier proyecto de ML." },
+          { n: "03", t: "Visualización de datos", d: "Matplotlib y Seaborn para explorar y comunicar tus datos antes de modelar." },
+          { n: "04", t: "Preprocesamiento para ML", d: "Limpieza, normalización, encoding de variables y splits de train/test correctamente." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Herramientas que usarás</h2>
+        <ul class="topics-list u-text">
+          <li>Python 3.x</li>
+          <li>Jupyter Notebooks / VS Code</li>
+          <li>NumPy</li>
+          <li>Pandas</li>
+          <li>Matplotlib & Seaborn</li>
+          <li>scikit-learn (intro)</li>
+          <li>Google Colab</li>
+          <li>pip y entornos virtuales</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Personas sin experiencia en programación que quieren aprender IA.</li>
+        <li>Profesionales de otras áreas (finanzas, salud, marketing) que quieren automatizar con Python.</li>
+        <li>Quienes ya saben lo básico de Python pero quieren enfocarse en el stack de IA.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Listo para aprender Python para IA?</h2>
+      <p class="u-text cta-text">Empieza con una sesión gratuita de diagnóstico y avanzamos desde donde estás.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

@@ -1,0 +1,347 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroHome from "../../components/HeroHome.astro";
+import TextMarquee from "../../components/TextMarquee.astro";
+import Faqs from "../../components/Faqs.astro";
+import StepsTimeline from "../../components/StepsTimeline.astro";
+import Statements from "../../components/Statements.astro";
+import Introducing from "../../components/Introducing.astro";
+import GL from "../../components/GL.astro";
+import GLPlaces from "../../components/GlPlaces.astro";
+import ContactModal from "../../components/ContactModal.astro";
+
+import fotoMiguel from "../../assets/img/foto_miguel.png";
+
+const siteUrl = "https://sonmyd.co/";
+
+const schemaFAQ = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need prior programming knowledge?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It's not required. I have learning paths for all levels: from those who have never programmed to developers who want to specialize in AI. In the diagnosis session we define the ideal path for you.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "How are the classes conducted?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Classes are 100% online via video call (Google Meet or Zoom). We work with screen sharing, live exercises and real AI tools during each session.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "Can I change my plan after starting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. You can change plans at any time according to your availability and budget. Flexibility is part of the service.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "What topics does the program cover?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI and Machine Learning fundamentals, Python for AI, Large Language Models (LLMs), Generative AI, Prompt Engineering, AI APIs, agent automation, Computer Vision and more. The plan is customized to your goals.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "How much time do I need to dedicate between sessions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Whatever you can. I design the plan with exercises that fit your real availability, from 30 minutes daily to more intensive sessions if you prefer to advance faster.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a free trial session?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The first 30-minute diagnosis session is completely free. We meet, assess your level and determine fit before any commitment.",
+      },
+    },
+  ],
+};
+
+const schemaBreadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": `${siteUrl}en`,
+    },
+  ],
+};
+---
+
+<Layout title="Personalized AI Classes | Miguel Zuluaga — sonmyd">
+  <Fragment slot="head">
+    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
+    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
+  </Fragment>
+  <div id="inicio">
+    <HeroHome
+      title="Master AI with expert mentorship."
+      subtitle="1-on-1 AI classes designed for you, from fundamentals to advanced level. Learn with someone who lives and breathes AI."
+      cta={{
+        title: "Book your first session",
+        url: "#contacto",
+      }}
+      ctaModalPlan="Free Session"
+      whatsappUrl="https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+booking+a+free+AI+diagnosis+session."
+    />
+    <div class="photo-inner">
+      <img src={fotoMiguel.src} alt="Miguel Zuluaga — sonmyd" />
+    </div>
+  </div>
+
+  <div id="clases">
+    <Introducing
+      title="I'm Miguel Zuluaga, AI expert"
+      text="I've been working with applied AI for years: language models, computer vision, automation and more. My mission is to help you master these tools with clear, practical, self-paced learning."
+      cta={{
+        title: "See my methodology",
+        url: "#metodologia",
+      }}
+    />
+  </div>
+
+  <TextMarquee
+    class="marquee"
+    texts={[
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Generative AI",
+      "Prompt Engineering",
+      "AI Automation",
+      "Computer Vision",
+    ]}
+  />
+
+  <div id="metodologia">
+    <StepsTimeline
+      title="How it works"
+      items={[
+        {
+          title: "Personalized diagnosis",
+          text: "We start with a free session to understand your current level, goals and define the perfect learning path for you.",
+        },
+        {
+          title: "Tailored classes",
+          text: "1-on-1 sessions adapted to your pace, schedule and learning style. Theory and practice in perfect balance.",
+        },
+        {
+          title: "Real projects",
+          text: "We apply every concept to concrete use cases and real projects. You build portfolio while you learn.",
+        },
+        {
+          title: "Continuous follow-up",
+          text: "Constant monitoring of your progress, plan adjustments and support between sessions so you never get stuck.",
+        },
+      ]}
+    />
+  </div>
+
+  <Statements
+    items={[
+      {
+        title: "From zero to advanced AI",
+        text: "No matter where you start. I have learning paths for absolute beginners and for those who already have technical foundations.",
+      },
+      {
+        title: "Real practice from day one",
+        text: "No theory without application. From the first class we work with real-world tools and use cases.",
+      },
+      {
+        title: "Your pace, your schedule",
+        text: "Classes adapt to your availability. You choose when and how often to learn.",
+      },
+    ]}
+  />
+
+  <TextMarquee
+    class="marquee"
+    texts={[
+      "ChatGPT & LLMs",
+      "Python for AI",
+      "Automation",
+      "AI APIs",
+      "Fine-tuning",
+      "RAG & Embeddings",
+    ]}
+  />
+
+  <div id="contacto">
+    <Faqs
+      title="Frequently Asked Questions"
+      mobileTitle="FAQs"
+      subtitle="Everything you need to know before starting."
+      items={[
+        {
+          question: "Do I need prior programming knowledge?",
+          answer:
+            "It's not required. I have learning paths for all levels: from those who have never programmed to developers who want to specialize in AI. In the diagnosis session we define the ideal path for you.",
+        },
+        {
+          question: "How are the classes conducted?",
+          answer:
+            "Classes are 100% online via video call (Google Meet or Zoom). We work with screen sharing, live exercises and real AI tools during each session.",
+        },
+        {
+          question: "Can I change my plan after starting?",
+          answer:
+            "Yes. You can change plans at any time according to your availability and budget. Flexibility is part of the service.",
+        },
+        {
+          question: "What topics does the program cover?",
+          answer:
+            "AI and Machine Learning fundamentals, Python for AI, Large Language Models (LLMs), Generative AI, Prompt Engineering, AI APIs, agent automation, Computer Vision and more. The plan is customized to your goals.",
+        },
+        {
+          question: "How much time do I need to dedicate between sessions?",
+          answer:
+            "Whatever you can. I design the plan with exercises that fit your real availability, from 30 minutes daily to more intensive sessions if you prefer to advance faster.",
+        },
+        {
+          question: "Is there a free trial session?",
+          answer:
+            "Yes. The first 30-minute diagnosis session is completely free. We meet, assess your level and determine fit before any commitment.",
+        },
+      ]}
+    />
+  </div>
+
+  <GL />
+  <GLPlaces />
+  <ContactModal />
+</Layout>
+
+<script>
+  const EU = new Set([
+    "ES","FR","DE","IT","PT","NL","BE","AT","CH","SE","NO","DK","FI",
+    "IE","GR","PL","CZ","HU","RO","BG","HR","SK","SI","EE","LV","LT",
+    "LU","MT","CY","IS","LI","AL","RS","BA","ME","MK","MD",
+  ]);
+
+  type PriceEntry = {
+    amount: string;
+    duration: string;
+    savings?: string;
+  };
+  type CountryPricing = {
+    individual: PriceEntry;
+    paquete: PriceEntry;
+  };
+
+  const PRICING: Record<string, CountryPricing> = {
+    DEFAULT: {
+      individual: { amount: "$25",      duration: "session" },
+      paquete:    { amount: "$220",     duration: "10 hrs",   savings: "Save $30" },
+    },
+    CO: {
+      individual: { amount: "$80.000",  duration: "session" },
+      paquete:    { amount: "$750.000", duration: "10 hours" },
+    },
+    EU: {
+      individual: { amount: "€25",      duration: "session" },
+      paquete:    { amount: "€220",     duration: "10 hours", savings: "Save €30" },
+    },
+    MX: {
+      individual: { amount: "$450",     duration: "session" },
+      paquete:    { amount: "$4.000",   duration: "10 hours", savings: "Save $500" },
+    },
+  };
+
+  function applyPricing(pricing: CountryPricing) {
+    const plans = [pricing.individual, pricing.paquete];
+    plans.forEach((plan, i) => {
+      const amountEl = document.querySelector<HTMLElement>(`[data-plan-amount="${i}"]`);
+      const durationEl = document.querySelector<HTMLElement>(`[data-plan-duration="${i}"]`);
+      const savingsEl = document.querySelector<HTMLElement>(`[data-plan-savings="${i}"]`);
+      if (amountEl) amountEl.textContent = plan.amount;
+      if (durationEl) durationEl.textContent = `/${plan.duration}`;
+      if (savingsEl) {
+        savingsEl.textContent = plan.savings ?? "";
+        savingsEl.classList.toggle("visible", !!plan.savings);
+      }
+    });
+  }
+
+  async function getCountryCode(): Promise<string> {
+    try {
+      const res = await fetch("https://cloudflare.com/cdn-cgi/trace");
+      const text = await res.text();
+      const match = text.match(/^loc=([A-Z]{2})$/m);
+      if (match?.[1]) return match[1];
+    } catch { /* fall through */ }
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      if (data.country_code) return data.country_code;
+    } catch { /* fall through */ }
+    return "DEFAULT";
+  }
+
+  async function detectAndApply() {
+    const countryCode = await getCountryCode();
+    let pricing: CountryPricing;
+    if (PRICING[countryCode]) {
+      pricing = PRICING[countryCode];
+    } else if (EU.has(countryCode)) {
+      pricing = PRICING.EU;
+    } else {
+      pricing = PRICING.DEFAULT;
+    }
+    applyPricing(pricing);
+  }
+
+  detectAndApply();
+</script>
+
+<style>
+  .marquee {
+    padding: 2rem 0;
+    z-index: 9;
+  }
+
+  .photo-inner {
+    margin: auto;
+    position: relative;
+    z-index: 9;
+    width: 22rem;
+    height: 26rem;
+    border-radius: 2rem;
+    overflow: hidden;
+    border: 1.5px solid rgba(50, 170, 255, 0.5);
+    box-shadow:
+      0 0 60px rgba(50, 170, 255, 0.25),
+      0 0 120px rgba(235, 14, 56, 0.08),
+      inset 0 0 30px rgba(0, 0, 0, 0.5);
+
+    @media (--mq-tablet) {
+      width: 18rem;
+      height: 22rem;
+    }
+
+    @media (--mq-phone) {
+      width: 14rem;
+      height: 17rem;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+  }
+</style>

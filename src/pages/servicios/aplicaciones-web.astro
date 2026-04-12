@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+desarrollo+de+aplicaciones+web.";
+---
+
+<LayoutPage
+  title="Aplicaciones Web | sonmyd — Miguel Zuluaga"
+  description="Desarrollo de aplicaciones web modernas, rápidas y escalables. Desde landing pages hasta plataformas completas con las tecnologías más demandadas."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🌐 Web · Full Stack</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Aplicaciones<br />Web</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Desarrollo web moderno, rápido y escalable. Desde una landing page de alto impacto hasta plataformas completas con backend, APIs y base de datos.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Hablemos de tu proyecto
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué construimos?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Landing pages & sitios web", d: "Sitios rápidos, optimizados para SEO y conversión. Animaciones, diseño responsivo y rendimiento de primer nivel." },
+          { n: "02", t: "Aplicaciones web full stack", d: "Plataformas con autenticación, base de datos, APIs REST o GraphQL y paneles de administración." },
+          { n: "03", t: "Integraciones con IA", d: "Apps web que consumen LLMs, procesan documentos, generan contenido o automatizan decisiones usando IA." },
+          { n: "04", t: "Dashboards & herramientas internas", d: "Paneles de análisis, CRMs ligeros y herramientas a medida para equipos y empresas." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Stack tecnológico</h2>
+        <ul class="topics-list u-text">
+          <li>Astro / Next.js / React</li>
+          <li>TypeScript</li>
+          <li>Node.js / Python (FastAPI)</li>
+          <li>PostgreSQL / Supabase</li>
+          <li>Tailwind CSS</li>
+          <li>REST & GraphQL APIs</li>
+          <li>Vercel / Netlify</li>
+          <li>Stripe (pagos)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Emprendedores y startups que necesitan su primera plataforma web.</li>
+        <li>Empresas que quieren digitalizar o automatizar procesos internos.</li>
+        <li>Negocios que necesitan integrar IA en su producto web existente.</li>
+        <li>Profesionales que necesitan una presencia digital de alto impacto.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Tienes un proyecto en mente?</h2>
+      <p class="u-text cta-text">Cuéntame qué necesitas y te doy una propuesta clara sin rodeos.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

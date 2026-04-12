@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+import { getServicesPath } from "../../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+the+cloud+solutions+service.";
+---
+
+<LayoutPage
+  title="Cloud Solutions | sonmyd — Miguel Zuluaga"
+  description="Scalable and secure cloud infrastructure on AWS, GCP or Azure. Deployments, databases, serverless, containers and modern architectures for your project."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">☁️ AWS · GCP · Azure</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Cloud<br />Solutions</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Scalable, secure and efficient cloud infrastructure. From the first deployment to robust production architectures that grow with your business.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Let's talk about your infrastructure
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">What do we build?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Deploy & CI/CD", d: "Continuous integration and deployment pipelines with GitHub Actions, Cloud Build or CodePipeline. Zero downtime." },
+          { n: "02", t: "Serverless architectures", d: "Functions as a Service (Lambda, Cloud Functions, Azure Functions) to scale without managing servers." },
+          { n: "03", t: "Containers & Kubernetes", d: "Application Dockerization, orchestration with Kubernetes (EKS, GKE, AKS) and microservices management." },
+          { n: "04", t: "Databases & storage", d: "Configuration of RDS, Cloud SQL, DynamoDB, Firestore, S3 and caching systems (Redis, Memcached)." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Technologies & platforms</h2>
+        <ul class="topics-list u-text">
+          <li>AWS (EC2, Lambda, S3, RDS)</li>
+          <li>Google Cloud Platform</li>
+          <li>Microsoft Azure</li>
+          <li>Docker & Kubernetes</li>
+          <li>Terraform (IaC)</li>
+          <li>GitHub Actions / GitLab CI</li>
+          <li>Supabase / Firebase</li>
+          <li>Cloudflare (CDN, Workers)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">Who is it for?</h2>
+      <ul class="for-list u-text">
+        <li>Startups that need to take their app to production professionally.</li>
+        <li>Technical teams that want to improve their current infrastructure.</li>
+        <li>AI projects that need to scale processing on demand.</li>
+        <li>Companies that want to migrate from own servers to the cloud.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">Ready to scale?</h2>
+      <p class="u-text cta-text">Tell me where you are and where you want to go. We design the architecture together.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Talk via WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../../styles/_service-page.css";
+</style>

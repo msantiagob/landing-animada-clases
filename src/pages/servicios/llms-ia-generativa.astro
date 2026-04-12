@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+LLMs+e+IA+Generativa.";
+---
+
+<LayoutPage
+  title="LLMs & IA Generativa | sonmyd — Miguel Zuluaga"
+  description="Aprende a trabajar con modelos de lenguaje grandes: GPT, Claude, Llama, RAG, embeddings, prompt engineering y APIs de IA en proyectos reales."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🧠 Nivel: intermedio · avanzado</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">LLMs &<br />IA Generativa</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          El área más demandada de la IA hoy. Aprende a integrar y potenciar GPT, Claude, Llama y modelos de imagen en proyectos reales.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Empezar ahora
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué aprenderás?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Prompt Engineering avanzado", d: "Zero-shot, few-shot, chain-of-thought, role prompting, self-consistency. Técnicas para sacarle el máximo a cualquier LLM." },
+          { n: "02", t: "APIs de IA (OpenAI, Anthropic, HF)", d: "Integración real en código Python: completions, chat, embeddings, function calling y manejo de tokens." },
+          { n: "03", t: "RAG & Embeddings", d: "Retrieval-Augmented Generation: bases de datos vectoriales (Pinecone, Chroma), búsqueda semántica y sistemas Q&A sobre documentos propios." },
+          { n: "04", t: "Fine-tuning & modelos locales", d: "Cuándo y cómo ajustar modelos. Correr Llama, Mistral o Phi localmente con Ollama u otras herramientas." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Herramientas que usarás</h2>
+        <ul class="topics-list u-text">
+          <li>OpenAI API (GPT-4o)</li>
+          <li>Anthropic API (Claude)</li>
+          <li>Hugging Face Transformers</li>
+          <li>LangChain</li>
+          <li>Pinecone / ChromaDB</li>
+          <li>Ollama (modelos locales)</li>
+          <li>Llama, Mistral, Phi</li>
+          <li>Streamlit / Gradio (demos)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Tienes bases de Python y quieres construir aplicaciones con IA generativa.</li>
+        <li>Quieres integrar LLMs en productos, startups o proyectos profesionales.</li>
+        <li>Necesitas construir un sistema de Q&A o chatbot sobre documentos propios.</li>
+        <li>Te interesa el campo de los modelos de lenguaje a nivel técnico profundo.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Listo para dominar los LLMs?</h2>
+      <p class="u-text cta-text">Empezamos con una sesión gratuita para definir exactamente qué construir y cómo.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

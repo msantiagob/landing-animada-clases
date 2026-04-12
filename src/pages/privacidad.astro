@@ -1,0 +1,261 @@
+---
+import LayoutPage from "../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../i18n/utils";
+import { getHomePath } from "../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const lastUpdated = "12 de abril de 2025";
+---
+
+<LayoutPage
+  title="Política de Privacidad | sonmyd — Miguel Zuluaga"
+  description="Política de privacidad y tratamiento de datos personales de sonmyd, conforme a la Ley 1581 de 2012 de Colombia."
+>
+  <div class="page-wrap">
+    <div class="u-container content">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+        </svg>
+        {lang === "en" ? "Back to home" : "Volver al inicio"}
+      </a>
+
+      <h1 class="u-heading page-title">Política de Privacidad</h1>
+      <p class="meta u-text">Última actualización: {lastUpdated}</p>
+
+      <div class="prose u-text">
+        <p>
+          En <strong>sonmyd</strong> (operado por Miguel Zuluaga) nos comprometemos a proteger tu privacidad y
+          tratar tus datos personales de conformidad con la <strong>Ley 1581 de 2012</strong> y el
+          <strong>Decreto 1377 de 2013</strong> de la República de Colombia, y cuando aplique, con el
+          Reglamento General de Protección de Datos (RGPD) de la Unión Europea.
+        </p>
+        <p>
+          Al utilizar nuestro sitio web <a href="https://sonmyd.co">sonmyd.co</a> o al contactarnos, aceptas
+          las prácticas descritas en esta política.
+        </p>
+
+        <h2>1. Responsable del tratamiento</h2>
+        <p>
+          <strong>Nombre:</strong> Miguel Zuluaga<br />
+          <strong>Marca:</strong> sonmyd<br />
+          <strong>Sitio web:</strong> <a href="https://sonmyd.co">sonmyd.co</a><br />
+          <strong>Contacto:</strong> <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </p>
+
+        <h2>2. Datos que recopilamos</h2>
+        <p>Recopilamos los siguientes datos personales cuando los proporcionas voluntariamente:</p>
+        <ul>
+          <li><strong>Nombre completo</strong></li>
+          <li><strong>Correo electrónico</strong></li>
+          <li><strong>Número de teléfono / WhatsApp</strong></li>
+          <li><strong>Plan de interés</strong> (información sobre el servicio que te interesa)</li>
+        </ul>
+        <p>
+          Adicionalmente, recopilamos de forma automática datos técnicos como la dirección IP, el tipo de
+          navegador, páginas visitadas y tiempo de permanencia, a través de herramientas de análisis de terceros.
+        </p>
+
+        <h2>3. Finalidades del tratamiento</h2>
+        <p>Utilizamos tus datos para:</p>
+        <ul>
+          <li>Contactarte para confirmar reservas y brindar el servicio solicitado.</li>
+          <li>Enviarte información relevante sobre los servicios de mentoría en IA.</li>
+          <li>Mejorar la experiencia en el sitio web y personalizar los contenidos.</li>
+          <li>Analizar el tráfico y el rendimiento del sitio mediante Google Analytics / Google Tag Manager.</li>
+          <li>Prevenir actividades fraudulentas (honeypot y rate limiting en formularios).</li>
+        </ul>
+
+        <h2>4. Base legal</h2>
+        <p>
+          El tratamiento de tus datos se realiza con base en:
+        </p>
+        <ul>
+          <li><strong>Tu consentimiento explícito</strong> al enviar el formulario de contacto o al escribirnos
+            directamente.</li>
+          <li><strong>La ejecución del contrato de servicios</strong> que has solicitado.</li>
+          <li><strong>El interés legítimo</strong> en mejorar y proteger el sitio web.</li>
+        </ul>
+
+        <h2>5. Almacenamiento de datos</h2>
+        <p>
+          Los datos del formulario de contacto se almacenan de forma segura en <strong>Supabase</strong>,
+          una plataforma de base de datos alojada en servidores con certificación SOC 2. Solo el Prestador
+          tiene acceso a estos datos.
+        </p>
+        <p>
+          Conservamos tus datos mientras exista una relación comercial activa o mientras sean necesarios para
+          los fines indicados. Puedes solicitar su eliminación en cualquier momento.
+        </p>
+
+        <h2>6. Cookies y tecnologías de seguimiento</h2>
+        <p>
+          Utilizamos <strong>Google Tag Manager</strong> y <strong>Google Analytics</strong> para recopilar
+          datos de uso anónimos y estadísticos sobre las visitas al sitio. Estas herramientas pueden utilizar
+          cookies propias y de terceros.
+        </p>
+        <p>
+          Puedes gestionar tus preferencias de cookies desde la configuración de tu navegador. Ten en cuenta
+          que deshabilitar ciertas cookies puede afectar la funcionalidad del sitio.
+        </p>
+
+        <h2>7. Compartición con terceros</h2>
+        <p>
+          No vendemos ni cedemos tus datos personales a terceros con fines comerciales. Los datos pueden
+          ser procesados por los siguientes proveedores de servicios de confianza, bajo estrictas obligaciones
+          de confidencialidad:
+        </p>
+        <ul>
+          <li><strong>Supabase</strong> — almacenamiento de datos del formulario.</li>
+          <li><strong>Google (Analytics / Tag Manager)</strong> — análisis de tráfico web.</li>
+        </ul>
+
+        <h2>8. Transferencias internacionales</h2>
+        <p>
+          Algunos proveedores listados operan fuera de Colombia. En tales casos, nos aseguramos de que existan
+          garantías adecuadas de protección conforme a la normativa vigente.
+        </p>
+
+        <h2>9. Tus derechos</h2>
+        <p>
+          De conformidad con la Ley 1581 de 2012 y, cuando aplique, el RGPD, tienes derecho a:
+        </p>
+        <ul>
+          <li><strong>Acceder</strong> a los datos personales que tenemos sobre ti.</li>
+          <li><strong>Rectificar</strong> datos incorrectos o desactualizados.</li>
+          <li><strong>Suprimir</strong> tus datos cuando ya no sean necesarios para los fines indicados.</li>
+          <li><strong>Oponerte</strong> al tratamiento de tus datos para fines de marketing.</li>
+          <li><strong>Revocar</strong> tu consentimiento en cualquier momento, sin que ello afecte la licitud
+            del tratamiento previo.</li>
+          <li><strong>Presentar una queja</strong> ante la Superintendencia de Industria y Comercio (SIC)
+            de Colombia.</li>
+        </ul>
+        <p>
+          Para ejercer cualquiera de estos derechos, escríbenos por
+          <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+          Responderemos en un plazo máximo de 15 días hábiles.
+        </p>
+
+        <h2>10. Seguridad</h2>
+        <p>
+          Implementamos medidas técnicas y organizativas razonables para proteger tus datos frente al acceso
+          no autorizado, pérdida o alteración. Sin embargo, ninguna transmisión por internet es completamente
+          segura; usamos los datos bajo tu responsabilidad al compartirlos con nosotros.
+        </p>
+
+        <h2>11. Menores de edad</h2>
+        <p>
+          Nuestros servicios están dirigidos a personas mayores de 18 años. No recopilamos intencionalmente
+          datos de menores. Si detectamos que un menor nos ha proporcionado datos sin consentimiento de sus
+          padres o tutores, procederemos a eliminarlos de inmediato.
+        </p>
+
+        <h2>12. Cambios en esta política</h2>
+        <p>
+          Podemos actualizar esta política en cualquier momento. Los cambios se publicarán en esta página con
+          la nueva fecha de actualización. Te recomendamos revisarla periódicamente.
+        </p>
+
+        <h2>13. Contacto</h2>
+        <p>
+          Para cualquier consulta, duda o solicitud relacionada con esta política de privacidad, contáctanos
+          a través de <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</LayoutPage>
+
+<style>
+  .page-wrap {
+    padding: 9rem 0 8rem;
+    min-height: 80vh;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.5);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    svg {
+      width: 1em;
+      height: 1em;
+    }
+
+    &:hover {
+      color: rgba(240, 240, 250, 0.9);
+    }
+  }
+
+  .content {
+    max-width: 48rem;
+  }
+
+  .page-title {
+    --fs: 3rem;
+    margin-bottom: 0.5rem;
+
+    @media (--mq-phone) {
+      --fs: 2.2rem;
+    }
+  }
+
+  .meta {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: 3rem;
+  }
+
+  .prose {
+    --fs: var(--font-size-sm);
+    line-height: 1.8;
+    color: rgba(240, 240, 250, 0.8);
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    h2 {
+      font-family: var(--font-roboto-slab);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: rgb(var(--rgb-text));
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(50, 170, 255, 0.15);
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.7;
+      }
+    }
+
+    strong {
+      color: rgb(var(--rgb-text));
+      font-weight: 600;
+    }
+
+    a {
+      color: rgb(var(--rgb-brand-2));
+      text-decoration: underline;
+      text-decoration-color: rgba(50, 170, 255, 0.4);
+      transition: text-decoration-color 0.2s;
+
+      &:hover {
+        text-decoration-color: rgba(50, 170, 255, 1);
+      }
+    }
+  }
+</style>

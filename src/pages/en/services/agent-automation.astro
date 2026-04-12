@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+import { getServicesPath } from "../../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hi%2C+I%27m+interested+in+the+AI+Agent+Automation+service.";
+---
+
+<LayoutPage
+  title="AI Agent Automation | sonmyd — Miguel Zuluaga"
+  description="Learn to build autonomous AI agents with LangChain, CrewAI and modern tools. Automate real processes with artificial intelligence."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">⚙️ Level: advanced</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Agent<br />Automation</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Build systems that think, decide and act autonomously. The next level after LLMs: autonomous agents that solve complex tasks.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Start now
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">What will you learn?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "AI agent fundamentals", d: "What they are, how they reason (ReAct, Chain-of-Thought) and when to use them. Difference between simple pipelines and real agents." },
+          { n: "02", t: "LangChain & LangGraph", d: "Building chains, tools, memory and graph-based workflows for more complex agents." },
+          { n: "03", t: "CrewAI & multi-agents", d: "Systems where multiple agents collaborate: researchers, writers, reviewers. Team automation projects." },
+          { n: "04", t: "Real automation projects", d: "Agents that browse the web, read documents, send emails, interact with external APIs and execute code." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Tools you'll use</h2>
+        <ul class="topics-list u-text">
+          <li>LangChain & LangGraph</li>
+          <li>CrewAI</li>
+          <li>OpenAI / Anthropic APIs</li>
+          <li>Tavily (web search)</li>
+          <li>Browser tools (Playwright)</li>
+          <li>n8n / Make (no-code)</li>
+          <li>FastAPI (agent endpoints)</li>
+          <li>Docker (basics)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">Who is it for?</h2>
+      <ul class="for-list u-text">
+        <li>You know Python and basic LLMs and want to build autonomous systems.</li>
+        <li>You want to automate your company or business processes with AI.</li>
+        <li>You're looking to create AI agent-based products or services.</li>
+        <li>You're interested in the state of the art in applied AI and autonomous agents.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">Ready to build agents?</h2>
+      <p class="u-text cta-text">First we have a free session to define what you want to automate and design the plan.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Talk via WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../../styles/_service-page.css";
+</style>

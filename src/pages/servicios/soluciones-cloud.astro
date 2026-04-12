@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+soluciones+cloud.";
+---
+
+<LayoutPage
+  title="Soluciones Cloud | sonmyd — Miguel Zuluaga"
+  description="Infraestructura cloud escalable y segura en AWS, GCP o Azure. Deploys, bases de datos, serverless, contenedores y arquitecturas modernas para tu proyecto."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">☁️ AWS · GCP · Azure</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Soluciones<br />Cloud</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Infraestructura escalable, segura y eficiente en la nube. Desde el primer deploy hasta arquitecturas de producción robustas que crecen con tu negocio.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Hablemos de tu infraestructura
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué construimos?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Deploy & CI/CD", d: "Pipelines de integración y despliegue continuo con GitHub Actions, Cloud Build o CodePipeline. Cero tiempo de inactividad." },
+          { n: "02", t: "Arquitecturas serverless", d: "Functions as a Service (Lambda, Cloud Functions, Azure Functions) para escalar sin administrar servidores." },
+          { n: "03", t: "Contenedores & Kubernetes", d: "Dockerización de aplicaciones, orquestación con Kubernetes (EKS, GKE, AKS) y gestión de microservicios." },
+          { n: "04", t: "Bases de datos & almacenamiento", d: "Configuración de RDS, Cloud SQL, DynamoDB, Firestore, S3 y sistemas de caché (Redis, Memcached)." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Tecnologías y plataformas</h2>
+        <ul class="topics-list u-text">
+          <li>AWS (EC2, Lambda, S3, RDS)</li>
+          <li>Google Cloud Platform</li>
+          <li>Microsoft Azure</li>
+          <li>Docker & Kubernetes</li>
+          <li>Terraform (IaC)</li>
+          <li>GitHub Actions / GitLab CI</li>
+          <li>Supabase / Firebase</li>
+          <li>Cloudflare (CDN, Workers)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Startups que necesitan llevar su app a producción de forma profesional.</li>
+        <li>Equipos técnicos que quieren mejorar su infraestructura actual.</li>
+        <li>Proyectos con IA que requieren escalar el procesamiento bajo demanda.</li>
+        <li>Empresas que quieren migrar de servidores propios a la nube.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Tu app lista para escalar?</h2>
+      <p class="u-text cta-text">Cuéntame dónde estás y a dónde quieres llegar. Diseñamos la arquitectura juntos.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

@@ -1,0 +1,77 @@
+---
+import LayoutPage from "../../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../../i18n/utils";
+import { getServicesPath } from "../../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hi%2C+I%27d+like+to+book+my+free+AI+diagnosis+session.";
+---
+
+<LayoutPage
+  title="Free AI Diagnosis Session | sonmyd — Miguel Zuluaga"
+  description="Free 30-minute session to assess your AI level, define your goals and map out the ideal learning path for you."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🎁 No cost · No commitment</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Free<br />Diagnosis Session</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          30 minutes to get to know each other, assess your level and define exactly what to learn and how. No pressure, no commitment.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Book my free session
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">What do we cover in 30 minutes?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "We assess your starting point", d: "Do you have programming foundations? Do you already use AI tools? Do you have a project in mind? We start from where you are." },
+          { n: "02", t: "We define your goals", d: "Automate processes, change careers, build your own projects, learn for your current job. We clarify what you want to achieve." },
+          { n: "03", t: "We map the ideal path", d: "Based on your level and goals, we design the curriculum, pace and class format that works best for you." },
+          { n: "04", t: "We answer your questions", d: "Any questions about the process, topics, tools or how classes work. No fine print." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Who is this session for?</h2>
+        <ul class="for-list u-text">
+          <li>You've never programmed and want to know if AI is for you.</li>
+          <li>You have technical foundations but don't know where to start with AI.</li>
+          <li>You're evaluating whether classes are what you need before investing.</li>
+          <li>You have a specific project or idea and want to know if it's viable.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container cta-sec">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">Schedule your session now</h2>
+      <p class="u-text cta-text">It's completely free. You just need 30 minutes and a desire to learn.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Book via WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../../styles/_service-page.css";
+</style>

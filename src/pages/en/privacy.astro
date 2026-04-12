@@ -1,0 +1,234 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getHomePath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const lastUpdated = "April 12, 2025";
+---
+
+<LayoutPage
+  title="Privacy Policy | sonmyd — Miguel Zuluaga"
+  description="Privacy policy and personal data processing at sonmyd, in accordance with Colombian Law 1581 of 2012 and GDPR."
+>
+  <div class="page-wrap">
+    <div class="u-container content">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+        </svg>
+        {lang === "en" ? "Back to home" : "Volver al inicio"}
+      </a>
+
+      <h1 class="u-heading page-title">Privacy Policy</h1>
+      <p class="meta u-text">Last updated: {lastUpdated}</p>
+
+      <div class="prose u-text">
+        <p>
+          At <strong>sonmyd</strong> (operated by Miguel Zuluaga) we are committed to protecting your privacy and
+          processing your personal data in accordance with <strong>Colombian Law 1581 of 2012</strong> and
+          <strong>Decree 1377 of 2013</strong>, and where applicable, the European Union's General Data Protection
+          Regulation (GDPR).
+        </p>
+        <p>
+          By using our website <a href="https://sonmyd.co">sonmyd.co</a> or contacting us, you accept
+          the practices described in this policy.
+        </p>
+
+        <h2>1. Data controller</h2>
+        <p>
+          <strong>Name:</strong> Miguel Zuluaga<br />
+          <strong>Brand:</strong> sonmyd<br />
+          <strong>Website:</strong> <a href="https://sonmyd.co">sonmyd.co</a><br />
+          <strong>Contact:</strong> <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </p>
+
+        <h2>2. Data we collect</h2>
+        <p>We collect the following personal data when you voluntarily provide it:</p>
+        <ul>
+          <li><strong>Full name</strong></li>
+          <li><strong>Email address</strong></li>
+          <li><strong>Phone number / WhatsApp</strong></li>
+          <li><strong>Plan of interest</strong> (information about the service you're interested in)</li>
+        </ul>
+        <p>
+          Additionally, we automatically collect technical data such as IP address, browser type,
+          pages visited and time spent, through third-party analytics tools.
+        </p>
+
+        <h2>3. Processing purposes</h2>
+        <p>We use your data to:</p>
+        <ul>
+          <li>Contact you to confirm bookings and provide the requested service.</li>
+          <li>Send you relevant information about AI mentorship services.</li>
+          <li>Improve the website experience and personalize content.</li>
+          <li>Analyze traffic and site performance via Google Analytics / Google Tag Manager.</li>
+          <li>Prevent fraudulent activity (honeypot and rate limiting on forms).</li>
+        </ul>
+
+        <h2>4. Legal basis</h2>
+        <p>Data processing is carried out based on:</p>
+        <ul>
+          <li><strong>Your explicit consent</strong> when submitting the contact form or contacting us directly.</li>
+          <li><strong>Performance of the service contract</strong> you have requested.</li>
+          <li><strong>Legitimate interest</strong> in improving and protecting the website.</li>
+        </ul>
+
+        <h2>5. Data storage</h2>
+        <p>
+          Contact form data is securely stored in <strong>Supabase</strong>,
+          a database platform hosted on SOC 2 certified servers. Only the Provider has access to this data.
+        </p>
+        <p>
+          We retain your data as long as an active business relationship exists or as long as necessary
+          for the stated purposes. You can request deletion at any time.
+        </p>
+
+        <h2>6. Cookies and tracking technologies</h2>
+        <p>
+          We use <strong>Google Tag Manager</strong> and <strong>Google Analytics</strong> to collect
+          anonymous statistical usage data about site visits. These tools may use first-party and third-party cookies.
+        </p>
+        <p>
+          You can manage your cookie preferences from your browser settings. Note that disabling certain cookies
+          may affect site functionality.
+        </p>
+
+        <h2>7. Third-party sharing</h2>
+        <p>
+          We do not sell or transfer your personal data to third parties for commercial purposes. Data may be
+          processed by the following trusted service providers, under strict confidentiality obligations:
+        </p>
+        <ul>
+          <li><strong>Supabase</strong> — form data storage.</li>
+          <li><strong>Google (Analytics / Tag Manager)</strong> — web traffic analysis.</li>
+        </ul>
+
+        <h2>8. International transfers</h2>
+        <p>
+          Some listed providers operate outside Colombia. In such cases, we ensure that adequate protection
+          guarantees are in place in accordance with current regulations.
+        </p>
+
+        <h2>9. Your rights</h2>
+        <p>
+          Under Law 1581 of 2012 and, where applicable, the GDPR, you have the right to:
+        </p>
+        <ul>
+          <li><strong>Access</strong> the personal data we hold about you.</li>
+          <li><strong>Rectify</strong> incorrect or outdated data.</li>
+          <li><strong>Delete</strong> your data when no longer necessary for the stated purposes.</li>
+          <li><strong>Object</strong> to the processing of your data for marketing purposes.</li>
+          <li><strong>Revoke</strong> your consent at any time, without affecting the lawfulness of prior processing.</li>
+          <li><strong>Lodge a complaint</strong> with the Colombian Superintendency of Industry and Commerce (SIC)
+            or your national data protection authority.</li>
+        </ul>
+        <p>
+          To exercise any of these rights, contact us via
+          <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+          We will respond within a maximum of 15 business days.
+        </p>
+
+        <h2>10. Security</h2>
+        <p>
+          We implement reasonable technical and organizational measures to protect your data from unauthorized
+          access, loss or alteration. However, no internet transmission is completely secure; data is used
+          under your responsibility when shared with us.
+        </p>
+
+        <h2>11. Minors</h2>
+        <p>
+          Our services are intended for people over 18 years of age. We do not intentionally collect
+          data from minors. If we detect that a minor has provided us data without parental consent,
+          we will delete it immediately.
+        </p>
+
+        <h2>12. Changes to this policy</h2>
+        <p>
+          We may update this policy at any time. Changes will be published on this page with the
+          new update date. We recommend reviewing it periodically.
+        </p>
+
+        <h2>13. Contact</h2>
+        <p>
+          For any inquiries, questions or requests related to this privacy policy, contact us via
+          <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</LayoutPage>
+
+<style>
+  .page-wrap {
+    padding: 9rem 0 8rem;
+    min-height: 80vh;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.5);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    svg { width: 1em; height: 1em; }
+    &:hover { color: rgba(240, 240, 250, 0.9); }
+  }
+
+  .content { max-width: 48rem; }
+
+  .page-title {
+    --fs: 3rem;
+    margin-bottom: 0.5rem;
+
+    @media (--mq-phone) { --fs: 2.2rem; }
+  }
+
+  .meta {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: 3rem;
+  }
+
+  .prose {
+    --fs: var(--font-size-sm);
+    line-height: 1.8;
+    color: rgba(240, 240, 250, 0.8);
+
+    p { margin-bottom: 1.25rem; }
+
+    h2 {
+      font-family: var(--font-roboto-slab);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: rgb(var(--rgb-text));
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(50, 170, 255, 0.15);
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+
+      li { margin-bottom: 0.5rem; line-height: 1.7; }
+    }
+
+    strong { color: rgb(var(--rgb-text)); font-weight: 600; }
+
+    a {
+      color: rgb(var(--rgb-brand-2));
+      text-decoration: underline;
+      text-decoration-color: rgba(50, 170, 255, 0.4);
+      transition: text-decoration-color 0.2s;
+
+      &:hover { text-decoration-color: rgba(50, 170, 255, 1); }
+    }
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getServicesPath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const servicesHref = getServicesPath(lang);
+
+const WA = "https://wa.me/573106041144?text=Hola%2C+me+interesa+el+servicio+de+Machine+Learning.";
+---
+
+<LayoutPage
+  title="Machine Learning | sonmyd — Miguel Zuluaga"
+  description="Aprende Machine Learning aplicado: algoritmos supervisados y no supervisados, evaluación de modelos y proyectos reales con scikit-learn y Python."
+>
+  <div class="page">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="u-container">
+        <a href={servicesHref} class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
+          {lang === "en" ? "Services" : "Servicios"}
+        </a>
+        <div class="badge u-text">🤖 Nivel: intermedio</div>
+        <h1 class="u-heading hero-title" data-sy-reveal="words">Machine<br />Learning</h1>
+        <p class="u-text hero-sub" data-sy-reveal="lines">
+          Del dato al modelo. Aprende a construir, evaluar y desplegar modelos de ML con casos de uso reales, no solo teoría.
+        </p>
+        <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+          Empezar ahora
+        </a>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Qué aprenderás?</h2>
+      <div class="cards">
+        {[
+          { n: "01", t: "Aprendizaje supervisado", d: "Regresión, clasificación, árboles de decisión, Random Forest, SVM y más. Con ejemplos reales y métricas de evaluación claras." },
+          { n: "02", t: "Aprendizaje no supervisado", d: "Clustering (K-Means, DBSCAN), reducción de dimensionalidad (PCA) y detección de anomalías." },
+          { n: "03", t: "Evaluación de modelos", d: "Cross-validation, matrices de confusión, precisión, recall, F1-score, curvas ROC. Cómo elegir el modelo correcto." },
+          { n: "04", t: "Proyecto de portafolio", d: "Construimos juntos un proyecto completo de ML con datos reales para que puedas mostrarlo en tu perfil profesional." },
+        ].map((c) => (
+          <div class="card">
+            <span class="card-n">{c.n}</span>
+            <h3 class="u-text card-title">{c.t}</h3>
+            <p class="u-text card-desc">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="u-container">
+        <h2 class="u-heading sec-title" data-sy-reveal="words">Herramientas que usarás</h2>
+        <ul class="topics-list u-text">
+          <li>Python + scikit-learn</li>
+          <li>Pandas & NumPy</li>
+          <li>Matplotlib & Seaborn</li>
+          <li>XGBoost / LightGBM</li>
+          <li>Jupyter Notebooks</li>
+          <li>MLflow (intro)</li>
+          <li>Datasets reales (Kaggle, UCI)</li>
+          <li>Google Colab</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section u-container">
+      <h2 class="u-heading sec-title" data-sy-reveal="words">¿Para quién es?</h2>
+      <ul class="for-list u-text">
+        <li>Tienes bases de Python y quieres dar el salto a construir modelos predictivos.</li>
+        <li>Analistas de datos que quieren incorporar ML a su flujo de trabajo.</li>
+        <li>Desarrolladores que quieren especializarse en IA y datos.</li>
+        <li>Quienes quieren un proyecto de ML sólido para su portafolio.</li>
+      </ul>
+    </section>
+
+    <section class="section cta-sec u-container">
+      <h2 class="u-heading cta-title" data-sy-reveal="words">¿Listo para construir modelos reales?</h2>
+      <p class="u-text cta-text">Empezamos con una sesión gratuita para evaluar tu nivel y diseñar el plan ideal.</p>
+      <a href={WA} target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Hablemos por WhatsApp →
+      </a>
+    </section>
+  </div>
+</LayoutPage>
+
+<style>
+  @import "../../styles/_service-page.css";
+</style>

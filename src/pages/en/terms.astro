@@ -1,0 +1,212 @@
+---
+import LayoutPage from "../../layouts/LayoutPage.astro";
+import { getLangFromUrl } from "../../i18n/utils";
+import { getHomePath } from "../../i18n/paths";
+
+const lang = getLangFromUrl(Astro.url);
+const homeHref = getHomePath(lang);
+
+const lastUpdated = "April 12, 2025";
+---
+
+<LayoutPage
+  title="Terms & Conditions | sonmyd — Miguel Zuluaga"
+  description="Terms and conditions for the Artificial Intelligence mentorship service by Miguel Zuluaga (sonmyd)."
+>
+  <div class="page-wrap">
+    <div class="u-container content">
+      <a href={homeHref} class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+        </svg>
+        {lang === "en" ? "Back to home" : "Volver al inicio"}
+      </a>
+
+      <h1 class="u-heading page-title">Terms & Conditions</h1>
+      <p class="meta u-text">Last updated: {lastUpdated}</p>
+
+      <div class="prose u-text">
+        <p>
+          These Terms and Conditions govern the contracting and use of AI mentorship services offered by
+          <strong>Miguel Zuluaga</strong> under the brand <strong>sonmyd</strong>
+          (hereinafter, "the Provider"). By booking or contracting any service, the user (hereinafter,
+          "the Client") fully accepts these terms.
+        </p>
+
+        <h2>1. Service description</h2>
+        <p>
+          sonmyd offers 1-on-1 Artificial Intelligence classes, fully online via video call
+          (Google Meet or Zoom). The available services are:
+        </p>
+        <ul>
+          <li><strong>Free diagnosis session:</strong> an initial 30-minute session, at no cost, to
+            assess the Client's level and define the most suitable plan.</li>
+          <li><strong>Individual Session:</strong> 60-minute session, with support material and class recording included.</li>
+          <li><strong>Intensive Package:</strong> 10 hours of classes distributed across multiple sessions, with curated
+            materials, recordings of all classes, continuous follow-up and a real portfolio project.</li>
+        </ul>
+
+        <h2>2. Booking and confirmation</h2>
+        <p>
+          Booking any service is done through the channels enabled on the website (contact form
+          or WhatsApp). The service is considered booked only once the Provider confirms
+          availability and, when applicable, payment is received.
+        </p>
+        <p>
+          The free diagnosis session is introductory in nature and implies no obligation to contract
+          any subsequent plan.
+        </p>
+
+        <h2>3. Fees and payments</h2>
+        <p>
+          Current rates are published at <a href="https://sonmyd.co">sonmyd.co</a> and may be
+          updated at any time. The applicable price is the one in effect at the time of booking confirmation.
+        </p>
+        <p>
+          Payment is arranged directly with the Provider through available methods (bank transfer,
+          PayPal or others agreed upon). The Intensive Package may require full or partial advance payment
+          as agreed.
+        </p>
+
+        <h2>4. Cancellations and refunds</h2>
+        <ul>
+          <li>
+            <strong>Cancellation with more than 24 hours notice:</strong> the Client may reschedule the session
+            at no cost.
+          </li>
+          <li>
+            <strong>Cancellation with less than 24 hours:</strong> the session will be considered consumed, unless
+            a force majeure event is duly communicated.
+          </li>
+          <li>
+            <strong>Refunds for the Intensive Package:</strong> if the Client withdraws before completing half
+            the sessions, a proportional refund of unused sessions will be provided, minus a 10%
+            administrative fee. No refunds apply once half the package is completed.
+          </li>
+          <li>
+            <strong>Cancellation by the Provider:</strong> if the Provider cancels a confirmed session
+            without rescheduling within a reasonable timeframe, a full refund of the paid amount for that session
+            will be processed.
+          </li>
+        </ul>
+
+        <h2>5. Use of materials</h2>
+        <p>
+          Materials, presentations, exercises and resources shared during classes are for the Client's
+          exclusive personal use for learning. Reproduction, distribution, sale or publication without
+          express written authorization from the Provider is prohibited.
+        </p>
+        <p>
+          Class recordings are for the Client's personal use. They may not be shared, published or
+          used for commercial purposes.
+        </p>
+
+        <h2>6. Client conduct</h2>
+        <p>
+          The Client agrees to maintain respectful communication during all sessions. The Provider
+          reserves the right to terminate the service relationship without refund in case of
+          disrespectful conduct or misuse of the service.
+        </p>
+
+        <h2>7. Limitation of liability</h2>
+        <p>
+          The Provider does not guarantee specific results (employment, income, certifications) as a direct
+          consequence of the classes. Results depend on the effort, dedication and particular context of each
+          Client. The service consists of personalized education and guidance in AI.
+        </p>
+
+        <h2>8. Modification of terms</h2>
+        <p>
+          The Provider may update these Terms and Conditions at any time. Changes will be published
+          on this page with the update date. Continued use of the service after publication of
+          changes implies acceptance of the new terms.
+        </p>
+
+        <h2>9. Applicable law and jurisdiction</h2>
+        <p>
+          These terms are governed by the laws of the Republic of Colombia. Any dispute that cannot
+          be resolved amicably will be submitted to the jurisdiction of the competent courts of the city
+          of Medellín, Colombia.
+        </p>
+
+        <h2>10. Contact</h2>
+        <p>
+          For any inquiries related to these terms, you can contact us via
+          <a href="https://wa.me/573106041144" target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</LayoutPage>
+
+<style>
+  .page-wrap {
+    padding: 9rem 0 8rem;
+    min-height: 80vh;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    color: rgba(240, 240, 250, 0.5);
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    svg { width: 1em; height: 1em; }
+    &:hover { color: rgba(240, 240, 250, 0.9); }
+  }
+
+  .content { max-width: 48rem; }
+
+  .page-title {
+    --fs: 3rem;
+    margin-bottom: 0.5rem;
+
+    @media (--mq-phone) { --fs: 2.2rem; }
+  }
+
+  .meta {
+    --fs: var(--font-size-sm);
+    color: var(--color-text-alt);
+    margin-bottom: 3rem;
+  }
+
+  .prose {
+    --fs: var(--font-size-sm);
+    line-height: 1.8;
+    color: rgba(240, 240, 250, 0.8);
+
+    p { margin-bottom: 1.25rem; }
+
+    h2 {
+      font-family: var(--font-roboto-slab);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: rgb(var(--rgb-text));
+      margin: 2.5rem 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(50, 170, 255, 0.15);
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1.25rem;
+
+      li { margin-bottom: 0.5rem; line-height: 1.7; }
+    }
+
+    strong { color: rgb(var(--rgb-text)); font-weight: 600; }
+
+    a {
+      color: rgb(var(--rgb-brand-2));
+      text-decoration: underline;
+      text-decoration-color: rgba(50, 170, 255, 0.4);
+      transition: text-decoration-color 0.2s;
+
+      &:hover { text-decoration-color: rgba(50, 170, 255, 1); }
+    }
+  }
+</style>

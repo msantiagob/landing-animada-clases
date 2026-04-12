@@ -9,6 +9,11 @@ import { getAlternates } from "../i18n/routes";
 import "../styles/global.css";
 import logoImg from "../assets/img/logo.webp";
 
+interface Props {
+  title: string;
+  description?: string;
+}
+
 const { title, description } = Astro.props;
 
 // ── Language detection ────────────────────────────────────────────────────────
@@ -17,7 +22,7 @@ const t = useTranslations(lang);
 const isEn = lang === 'en';
 
 // ── Nav links (language-aware) ────────────────────────────────────────────────
-const { main: links, legalLinks, ctaLink } = getNavLinks(lang);
+const { main: navLinks, legalLinks, ctaLink } = getNavLinks(lang);
 
 // ── SEO base URLs ─────────────────────────────────────────────────────────────
 const siteUrl = (Astro.site?.href ?? "https://sonmyd.co/").replace(/\/$/, '');
@@ -38,86 +43,7 @@ const defaultDescription = isEn
 
 const metaDescription = description || defaultDescription;
 
-// ── OG locale / keywords ─────────────────────────────────────────────────────
 const ogLocale = isEn ? "en_US" : "es_CO";
-const metaKeywords = isEn
-  ? "AI classes, AI mentorship, learn AI, machine learning, Python AI, LLMs, prompt engineering, generative AI, online AI classes, sonmyd, Miguel Zuluaga"
-  : "clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, sonmyd, Miguel Zuluaga";
-
-// ── JSON-LD Schemas (language-aware) ─────────────────────────────────────────
-const schemaWebSite = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": `${siteUrl}#website`,
-  name: "sonmyd",
-  url: siteUrl,
-  description: isEn
-    ? "1-on-1 AI classes with Miguel Zuluaga. From fundamentals to advanced level."
-    : "Clases 1 a 1 de Inteligencia Artificial con Miguel Zuluaga. Desde fundamentos hasta nivel avanzado.",
-  inLanguage: isEn ? "en" : "es",
-  author: { "@id": `${siteUrl}#person` },
-};
-
-const schemaPerson = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "@id": `${siteUrl}#person`,
-  name: "Miguel Zuluaga",
-  alternateName: "sonmyd",
-  url: siteUrl,
-  image: `${siteUrl}/foto_miguel.png`,
-  jobTitle: isEn ? "Artificial Intelligence Expert" : "Experto en Inteligencia Artificial",
-  description: isEn
-    ? "AI applied specialist: language models, computer vision, automation and machine learning."
-    : "Especialista en IA aplicada: modelos de lenguaje, visión computacional, automatización y aprendizaje automático.",
-  sameAs: ["https://twitter.com/sonmyd"],
-  knowsAbout: isEn
-    ? ["Artificial Intelligence", "Machine Learning", "Deep Learning", "Large Language Models (LLMs)", "Generative AI", "Prompt Engineering", "Python for AI", "Computer Vision", "RAG and Embeddings", "AI Automation"]
-    : ["Inteligencia Artificial", "Machine Learning", "Deep Learning", "Modelos de Lenguaje (LLMs)", "IA Generativa", "Prompt Engineering", "Python para IA", "Computer Vision", "RAG y Embeddings", "Automatización con IA"],
-};
-
-const schemaService = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  name: isEn ? "Personalized AI Classes" : "Clases personalizadas de Inteligencia Artificial",
-  url: siteUrl,
-  description: isEn
-    ? "1-on-1 AI mentorship: Machine Learning, LLMs, Python, Prompt Engineering and more. From beginners to advanced level."
-    : "Mentoría 1 a 1 en IA: Machine Learning, LLMs, Python, Prompt Engineering y más. Desde principiantes hasta nivel avanzado.",
-  serviceType: isEn ? "Artificial Intelligence Education" : "Educación en Inteligencia Artificial",
-  provider: { "@id": `${siteUrl}#person` },
-  areaServed: {
-    "@type": "Place",
-    name: isEn ? "Online — Latin America, Spain & United States" : "Online — América Latina y España",
-  },
-  availableChannel: {
-    "@type": "ServiceChannel",
-    serviceType: "Online",
-    availableLanguage: isEn
-      ? [{ "@type": "Language", name: "English" }, { "@type": "Language", name: "Spanish" }]
-      : { "@type": "Language", name: "Spanish" },
-  },
-  offers: [
-    {
-      "@type": "Offer",
-      name: isEn ? "Individual Session" : "Clase Individual",
-      price: "25",
-      priceCurrency: "USD",
-      description: isEn
-        ? "60-minute session with support material and recording included."
-        : "Sesión de 60 minutos con material de apoyo y grabación incluida.",
-    },
-    {
-      "@type": "Offer",
-      name: isEn ? "Intensive Package" : "Paquete Intensivo",
-      price: "220",
-      priceCurrency: "USD",
-      description: isEn
-        ? "10 hours of classes with continuous follow-up and a real portfolio project."
-        : "10 horas de clase con seguimiento continuo y proyecto real de portafolio.",
-    },
-  ],
-};
 ---
 
 <html lang={lang}>
@@ -139,11 +65,9 @@ const schemaService = {
     </script>
     <!-- End Google Tag Manager -->
 
-    <!-- Primary meta -->
     <title>{title}</title>
     <meta name="description" content={metaDescription} />
     <meta name="author" content="Miguel Zuluaga" />
-    <meta name="keywords" content={metaKeywords} />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#07070f" />
 
@@ -159,7 +83,6 @@ const schemaService = {
       </>
     )}
 
-    <!-- Favicon -->
     <link rel="icon" type="image/webp" href={logoImg.src} />
 
     <!-- Open Graph -->
@@ -175,9 +98,6 @@ const schemaService = {
     )}
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={`${siteUrl}/og-image.png`} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={isEn ? "sonmyd — Personalized AI Classes with Miguel Zuluaga" : "sonmyd — Clases de IA Personalizadas con Miguel Zuluaga"} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -187,14 +107,7 @@ const schemaService = {
     <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
 
-    <!-- JSON-LD: WebSite -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaWebSite)}</script>`} />
-    <!-- JSON-LD: Person -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaPerson)}</script>`} />
-    <!-- JSON-LD: Service -->
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaService)}</script>`} />
-
-    <!-- Head slot para schemas adicionales por página -->
+    <!-- Slot for extra head content per page -->
     <slot name="head" />
 
     <Font cssVariable="--font-roboto-slab" preload />
@@ -210,11 +123,12 @@ const schemaService = {
         style="display:none;visibility:hidden"></iframe></noscript
     >
     <!-- End Google Tag Manager (noscript) -->
+
     <a href="#main" class="skip-link">{t("accessibility.skip-to-content")}</a>
     <Header
       logoUrl={isEn ? "/en" : "/"}
       logoAlt="sonmyd"
-      links={links}
+      links={navLinks}
       link2={ctaLink}
       langSwitcher={langSwitcher}
     />
@@ -224,7 +138,7 @@ const schemaService = {
     <Footer
       logoUrl={isEn ? "/en" : "/"}
       logoAlt="sonmyd"
-      links={links.flatMap(l => l.groups?.flatMap(g => g.items) ?? [{ title: l.title, url: l.url ?? '/' }])}
+      links={navLinks.flatMap(l => l.groups?.flatMap(g => g.items) ?? [{ title: l.title, url: l.url ?? '/' }])}
       legalLinks={legalLinks}
     />
     <SmoothScroll />
@@ -232,6 +146,10 @@ const schemaService = {
 </html>
 
 <style>
+  body {
+    background: var(--color-bg);
+  }
+
   .skip-link {
     background: var(--color-brand-1);
     left: 0;
