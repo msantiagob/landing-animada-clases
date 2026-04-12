@@ -33,23 +33,23 @@ const langSwitcher = alternates
 
 // ── Descriptions ─────────────────────────────────────────────────────────────
 const defaultDescription = isEn
-  ? "Learn AI with 1-on-1 mentorship: Machine Learning, LLMs, Python for AI, Prompt Engineering and more. Classes with Miguel Zuluaga from fundamentals to expert level."
-  : "Aprende IA con mentoría 1 a 1: Machine Learning, LLMs, Python para IA, Prompt Engineering y más. Clases con Miguel Zuluaga desde fundamentos hasta nivel experto.";
+  ? "Sonmyd: AI automation platform. Google Calendar scheduling, WhatsApp chatbots, website creation and business process automation by Miguel Zuluaga."
+  : "Sonmyd: plataforma de automatización con IA. Agendamiento con Google Calendar, chatbots en WhatsApp, creación de sitios web y automatización de procesos empresariales.";
 
 const metaDescription = description || defaultDescription;
 
 // ── OG locale / keywords ─────────────────────────────────────────────────────
 const ogLocale = isEn ? "en_US" : "es_CO";
 const metaKeywords = isEn
-  ? "AI classes, AI mentorship, learn AI, machine learning, Python AI, LLMs, prompt engineering, generative AI, online AI classes, sonmyd, Miguel Zuluaga"
-  : "clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, sonmyd, Miguel Zuluaga";
+  ? "AI classes, AI mentorship, learn AI, machine learning, Python AI, LLMs, prompt engineering, generative AI, online AI classes, Sonmyd, Miguel Zuluaga"
+  : "clases inteligencia artificial, mentoría IA, aprender IA, machine learning, Python IA, LLMs, prompt engineering, IA generativa, clases online IA, Sonmyd, Miguel Zuluaga";
 
 // ── JSON-LD Schemas (language-aware) ─────────────────────────────────────────
 const schemaWebSite = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": `${siteUrl}#website`,
-  name: "sonmyd",
+  name: "Sonmyd",
   url: siteUrl,
   description: isEn
     ? "1-on-1 AI classes with Miguel Zuluaga. From fundamentals to advanced level."
@@ -63,7 +63,7 @@ const schemaPerson = {
   "@type": "Person",
   "@id": `${siteUrl}#person`,
   name: "Miguel Zuluaga",
-  alternateName: "sonmyd",
+  alternateName: "Sonmyd",
   url: siteUrl,
   image: `${siteUrl}/foto_miguel.png`,
   jobTitle: isEn ? "Artificial Intelligence Expert" : "Experto en Inteligencia Artificial",
@@ -164,7 +164,7 @@ const schemaService = {
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="sonmyd" />
+    <meta property="og:site_name" content="Sonmyd" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:locale" content={ogLocale} />
@@ -177,7 +177,7 @@ const schemaService = {
     <meta property="og:image" content={`${siteUrl}/og-image.png`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={isEn ? "sonmyd — Personalized AI Classes with Miguel Zuluaga" : "sonmyd — Clases de IA Personalizadas con Miguel Zuluaga"} />
+    <meta property="og:image:alt" content={isEn ? "Sonmyd — Personalized AI Classes with Miguel Zuluaga" : "Sonmyd — Clases de IA Personalizadas con Miguel Zuluaga"} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -213,7 +213,7 @@ const schemaService = {
     <a href="#main" class="skip-link">{t("accessibility.skip-to-content")}</a>
     <Header
       logoUrl={isEn ? "/en" : "/"}
-      logoAlt="sonmyd"
+      logoAlt="Sonmyd"
       links={links}
       link2={ctaLink}
       langSwitcher={langSwitcher}
@@ -223,7 +223,7 @@ const schemaService = {
     </main>
     <Footer
       logoUrl={isEn ? "/en" : "/"}
-      logoAlt="sonmyd"
+      logoAlt="Sonmyd"
       links={links.flatMap(l => l.groups?.flatMap(g => g.items) ?? [{ title: l.title, url: l.url ?? '/' }])}
       legalLinks={legalLinks}
     />
