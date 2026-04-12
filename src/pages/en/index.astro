@@ -88,28 +88,45 @@ const schemaBreadcrumb = {
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
     <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
   </Fragment>
-  <!-- ══════════════════════════════════════════════════════════════════════
-       APP IDENTITY — always visible section, no animations, no JS required.
-       Google OAuth verification requires the app name and purpose to be
-       visible as plain text, without relying on JavaScript.
-       ══════════════════════════════════════════════════════════════════════ -->
-  <section class="app-id" aria-labelledby="app-id-title">
+  <!-- APP IDENTITY NOTICE — always in HTML (Google reads it without JS).
+       User can dismiss it; stored in localStorage.                       -->
+  <section class="app-id" id="app-id-notice" aria-labelledby="app-id-title">
     <div class="u-container app-id__inner">
-      <div class="app-id__brand">
-        <span class="app-id__name" id="app-id-title">Sonmyd</span>
-        <span class="app-id__sep" aria-hidden="true">·</span>
-        <span class="app-id__tagline">AI automation platform</span>
+      <div class="app-id__body">
+        <div class="app-id__brand">
+          <span class="app-id__name" id="app-id-title">Sonmyd</span>
+          <span class="app-id__sep" aria-hidden="true">·</span>
+          <span class="app-id__tagline">AI automation platform</span>
+        </div>
+        <p class="app-id__purpose">
+          <strong>Sonmyd</strong> connects to <strong>Google Calendar</strong> via OAuth to automatically create and manage appointments. It also integrates <strong>WhatsApp Business</strong> to respond to clients 24/7 and builds professional websites. <a href="/en/privacy">Privacy Policy</a> · <a href="/en/terms">Terms of Use</a>
+        </p>
       </div>
-      <p class="app-id__purpose">
-        <strong>Sonmyd</strong> connects to <strong>Google Calendar</strong> via OAuth to automatically create and manage appointments. It also integrates <strong>WhatsApp Business</strong> to respond to clients 24/7 and builds professional websites for your business.
-      </p>
-      <nav class="app-id__links" aria-label="Legal">
-        <a href="/en/privacy">Privacy Policy</a>
-        <span aria-hidden="true">·</span>
-        <a href="/en/terms">Terms of Use</a>
-      </nav>
+      <button class="app-id__accept" id="app-id-accept" aria-label="Dismiss notice">
+        Got it
+      </button>
     </div>
   </section>
+
+  <script>
+    const NOTICE_KEY = "sonmyd-notice-v1";
+    const notice = document.getElementById("app-id-notice");
+    const btn = document.getElementById("app-id-accept");
+
+    if (notice) {
+      if (localStorage.getItem(NOTICE_KEY)) {
+        notice.classList.add("is-hidden");
+      }
+
+      btn?.addEventListener("click", () => {
+        notice.classList.add("is-hiding");
+        notice.addEventListener("transitionend", () => {
+          notice.classList.add("is-hidden");
+        }, { once: true });
+        localStorage.setItem(NOTICE_KEY, "1");
+      });
+    }
+  </script>
 
   <div id="inicio">
     <HeroHome
@@ -343,73 +360,89 @@ const schemaBreadcrumb = {
 </script>
 
 <style>
-  /* ── App Identity ── always visible, no animations ── */
+  /* ── App Identity Notice ── */
   .app-id {
-    position: relative;
-    z-index: 1;
+    overflow: hidden;
+    max-height: 12rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
-    padding: 5.5rem 0 1rem;
-    opacity: 1 !important;
-    visibility: visible !important;
+    background: rgba(10, 10, 22, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 5.5rem 0 0.875rem;
+    opacity: 1;
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
+
+    &.is-hiding {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    &.is-hidden {
+      display: none;
+    }
   }
   .app-id__inner {
     display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .app-id__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    opacity: 1 !important;
+    gap: 0.25rem;
   }
   .app-id__brand {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
-    opacity: 1 !important;
   }
   .app-id__name {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     color: #fff;
-    opacity: 1 !important;
   }
   .app-id__sep {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 0.75rem;
   }
   .app-id__tagline {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.55);
-    opacity: 1 !important;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
   }
   .app-id__purpose {
-    font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.55);
-    line-height: 1.5;
-    max-width: 56rem;
-    margin: 0;
-    opacity: 1 !important;
-
-    strong {
-      color: rgba(255, 255, 255, 0.8);
-      font-weight: 600;
-    }
-  }
-  .app-id__links {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.3);
-    opacity: 1 !important;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.5;
+    margin: 0;
+
+    strong { color: rgba(255, 255, 255, 0.75); font-weight: 600; }
+    a { color: rgba(50, 170, 255, 0.75); text-decoration: underline; text-underline-offset: 2px; }
+    a:hover { color: #32aaff; }
   }
-  .app-id__links a {
-    color: rgba(50, 170, 255, 0.7);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    opacity: 1 !important;
-  }
-  .app-id__links a:hover {
-    color: #32aaff;
+  .app-id__accept {
+    flex-shrink: 0;
+    background: rgba(50, 170, 255, 0.12);
+    border: 1px solid rgba(50, 170, 255, 0.3);
+    border-radius: 0.5rem;
+    color: rgba(50, 170, 255, 0.9);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(50, 170, 255, 0.2);
+      border-color: rgba(50, 170, 255, 0.6);
+      color: #fff;
+    }
   }
 
   .app-info {
