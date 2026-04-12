@@ -346,13 +346,29 @@ const datesJson = JSON.stringify(dates);
     const dow = new Date(y, m - 1, day).getDay();
     const slots = WEEKLY_SLOTS[dow] ?? [];
 
+    if (slots.length === 0) {
+      grid.innerHTML = '<p class="slots-empty">Sin horarios disponibles para este día.</p>';
+      return;
+    }
+
     grid.innerHTML = '';
     slots.forEach(time => {
       const taken = booked.has(time);
+      const [hStr, minStr] = time.split(':');
+      const h = Number(hStr);
+      const ampm = h < 12 ? 'AM' : 'PM';
+      const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+      const label = `${h12}:${minStr}`;
+
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'slot-btn' + (taken ? ' is-taken' : '');
-      btn.textContent = time + ' COT';
       btn.disabled = taken;
+      btn.innerHTML = `
+        <span class="slot-btn__time">${label}</span>
+        <span class="slot-btn__ampm">${ampm} · COT</span>
+        ${taken ? '<span class="slot-btn__taken-label">Ocupado</span>' : ''}
+      `;
       btn.addEventListener('click', () => selectTime(time, btn));
       grid.appendChild(btn);
     });
@@ -983,41 +999,94 @@ const datesJson = JSON.stringify(dates);
   /* ── Slots grid ── */
   .slots-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 0.625rem;
+  }
+
+  .slots-empty {
+    color: rgba(240,240,250,0.35);
+    font-size: 0.82rem;
+    padding: 1rem 0;
+    margin: 0;
   }
 
   .slot-btn {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 0.625rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.75rem;
     color: rgba(240,240,250,0.85);
     cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.65rem 0.5rem;
-    transition: background 0.15s, border-color 0.15s, transform 0.1s, color 0.15s;
-    text-align: center;
+    padding: 0.75rem 0.875rem;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    position: relative;
+    overflow: hidden;
+
+    /* left accent bar */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: rgba(50,170,255,0);
+      border-radius: 3px 0 0 3px;
+      transition: background 0.15s;
+    }
 
     &:hover:not(:disabled) {
-      background: rgba(50,170,255,0.1);
-      border-color: rgba(50,170,255,0.35);
-      color: rgb(50,170,255);
-      transform: translateY(-1px);
+      background: rgba(50,170,255,0.07);
+      border-color: rgba(50,170,255,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(50,170,255,0.12);
+
+      &::before { background: rgb(50,170,255); }
+      .slot-btn__time { color: rgb(50,170,255); }
+      .slot-btn__ampm { color: rgba(50,170,255,0.7); }
     }
 
     &.is-selected {
-      background: rgba(50,170,255,0.18);
-      border-color: rgba(50,170,255,0.6);
-      color: rgb(50,170,255);
-      box-shadow: 0 0 0 1px rgba(50,170,255,0.15);
+      background: rgba(50,170,255,0.12);
+      border-color: rgba(50,170,255,0.5);
+      box-shadow: 0 4px 20px rgba(50,170,255,0.18);
+
+      &::before { background: rgb(50,170,255); }
+      .slot-btn__time { color: rgb(50,170,255); }
+      .slot-btn__ampm { color: rgba(50,170,255,0.65); }
     }
 
     &.is-taken {
-      opacity: 0.25;
+      opacity: 0.3;
       cursor: not-allowed;
-      text-decoration: line-through;
+
+      &::before { background: rgba(248,113,113,0.4); }
     }
+  }
+
+  .slot-btn__time {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(240,240,250,0.9);
+    line-height: 1;
+    transition: color 0.15s;
+  }
+
+  .slot-btn__ampm {
+    font-size: 0.67rem;
+    font-weight: 500;
+    color: rgba(240,240,250,0.35);
+    letter-spacing: 0.04em;
+    transition: color 0.15s;
+  }
+
+  .slot-btn__taken-label {
+    font-size: 0.65rem;
+    color: rgba(248,113,113,0.6);
+    margin-top: 0.1rem;
   }
 
   /* ── Confirm step ── */
