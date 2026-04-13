@@ -60,7 +60,21 @@ const datesJson = JSON.stringify(dates);
           <div class="book-picker">
             <div id="step-date" class="step">
               <h2 class="step__title">Select a date</h2>
-              <div class="date-strip" id="date-strip"></div>
+              <div class="cal">
+                <div class="cal__nav">
+                  <button class="cal__nav-btn" id="cal-prev" aria-label="Previous month">
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <span class="cal__month-label" id="cal-month-label"></span>
+                  <button class="cal__nav-btn" id="cal-next" aria-label="Next month">
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+                <div class="cal__weekdays" aria-hidden="true">
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+                <div class="cal__days" id="cal-days"></div>
+              </div>
             </div>
 
             <div id="step-time" class="step" style="display:none">
@@ -137,37 +151,95 @@ const datesJson = JSON.stringify(dates);
   document.getElementById('btn-back-time')?.addEventListener('click', () => showStep('time'));
   document.getElementById('btn-confirm')?.addEventListener('click', confirmBooking);
 
-  function showWidget(user) {
-    document.getElementById('auth-gate').style.display = 'none';
-    document.getElementById('booking-widget').style.display = '';
-    document.getElementById('user-name').textContent = user.displayName ?? user.email;
-    const photo = document.getElementById('user-photo');
+  function showWidget(user: any) {
+    document.getElementById('auth-gate')!.style.display = 'none';
+    document.getElementById('booking-widget')!.style.display = '';
+    document.getElementById('user-name')!.textContent = user.displayName ?? user.email;
+    const photo = document.getElementById('user-photo') as HTMLImageElement;
     if (user.photoURL) { photo.src = user.photoURL; photo.alt = user.displayName; }
     else { photo.style.display = 'none'; }
-    buildDateStrip();
+    initCalendar();
   }
 
-  function buildDateStrip() {
-    const strip = document.getElementById('date-strip');
-    strip.innerHTML = '';
-    DATES.forEach(iso => {
-      const [y, m, d] = iso.split('-').map(Number);
-      const date = new Date(y, m - 1, d);
-      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const btn = document.createElement('button');
-      btn.className = 'date-btn';
-      btn.dataset.iso = iso;
-      btn.innerHTML = `<span class="date-btn__dow">${days[date.getDay()]}</span><span class="date-btn__day">${d}</span><span class="date-btn__month">${months[m-1]}</span>`;
-      btn.addEventListener('click', () => selectDate(iso, btn));
-      strip.appendChild(btn);
+  // ── Calendar ───────────────────────────────────────────────────────────────
+  const BOOKABLE = new Set(DATES);
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  const [fy, fm] = DATES[0].split('-').map(Number);
+  let calYear = fy;
+  let calMonth = fm - 1;
+
+  const [ly, lm] = DATES[DATES.length - 1].split('-').map(Number);
+  const minMonth = { year: fy, month: fm - 1 };
+  const maxMonth = { year: ly, month: lm - 1 };
+
+  function initCalendar() {
+    renderCalendar();
+    document.getElementById('cal-prev')!.addEventListener('click', () => {
+      if (calYear > minMonth.year || calMonth > minMonth.month) {
+        calMonth--;
+        if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderCalendar();
+      }
+    });
+    document.getElementById('cal-next')!.addEventListener('click', () => {
+      if (calYear < maxMonth.year || calMonth < maxMonth.month) {
+        calMonth++;
+        if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalendar();
+      }
     });
   }
 
-  function selectDate(iso, btn) {
+  function renderCalendar() {
+    const label   = document.getElementById('cal-month-label')!;
+    const grid    = document.getElementById('cal-days')!;
+    const prevBtn = document.getElementById('cal-prev') as HTMLButtonElement;
+    const nextBtn = document.getElementById('cal-next') as HTMLButtonElement;
+
+    label.textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+    prevBtn.disabled = calYear === minMonth.year && calMonth === minMonth.month;
+    nextBtn.disabled = calYear === maxMonth.year && calMonth === maxMonth.month;
+
+    grid.innerHTML = '';
+
+    const firstDow = new Date(calYear, calMonth, 1).getDay();
+    const offset = firstDow === 0 ? 6 : firstDow - 1;
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const todayIso = new Date().toISOString().slice(0, 10);
+
+    for (let i = 0; i < offset; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'cal-day cal-day--empty';
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = `${calYear}-${String(calMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isAvail    = BOOKABLE.has(iso);
+      const isSelected = iso === selectedDate;
+      const isToday    = iso === todayIso;
+
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.textContent = String(d);
+      cell.className = [
+        'cal-day',
+        isAvail    ? 'cal-day--avail'    : 'cal-day--off',
+        isSelected ? 'cal-day--selected' : '',
+        isToday    ? 'cal-day--today'    : '',
+      ].filter(Boolean).join(' ');
+      cell.disabled = !isAvail;
+      cell.setAttribute('aria-label', iso);
+
+      if (isAvail) cell.addEventListener('click', () => selectDate(iso));
+      grid.appendChild(cell);
+    }
+  }
+
+  function selectDate(iso: string) {
     selectedDate = iso;
-    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('is-selected'));
-    btn.classList.add('is-selected');
+    renderCalendar();
     showStep('time');
     loadSlots(iso);
   }
@@ -181,13 +253,28 @@ const datesJson = JSON.stringify(dates);
     const [y, m, day] = iso.split('-').map(Number);
     const dow = new Date(y, m - 1, day).getDay();
     const slots = WEEKLY_SLOTS[dow] ?? [];
+    if (slots.length === 0) {
+      grid.innerHTML = '<p class="slots-empty">No slots available for this day.</p>';
+      return;
+    }
+
     grid.innerHTML = '';
     slots.forEach(time => {
       const taken = booked.has(time);
+      const [hStr, minStr] = time.split(':');
+      const h = Number(hStr);
+      const ampm = h < 12 ? 'AM' : 'PM';
+      const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'slot-btn' + (taken ? ' is-taken' : '');
-      btn.textContent = time + ' COT';
       btn.disabled = taken;
+      btn.innerHTML = `
+        <span class="slot-btn__time">${h12}:${minStr}</span>
+        <span class="slot-btn__ampm">${ampm} · COT</span>
+        ${taken ? '<span class="slot-btn__taken-label">Taken</span>' : ''}
+      `;
       btn.addEventListener('click', () => selectTime(time, btn));
       grid.appendChild(btn);
     });
@@ -249,39 +336,50 @@ const datesJson = JSON.stringify(dates);
 <style>@import "../../styles/_service-page.css";</style>
 
 <style>
-  .book-page { min-height: 100dvh; padding-bottom: 4rem; }
-  .auth-gate { display:flex; align-items:center; justify-content:center; min-height:100dvh; padding:2rem; }
-  .auth-gate__inner { max-width:28rem; text-align:center; display:flex; flex-direction:column; align-items:center; gap:1.25rem; }
-  .auth-gate__icon { font-size:3rem; }
-  .auth-gate__title { --fs:2.5rem; }
-  .auth-gate__sub { color:var(--color-text-alt); }
-  .btn-google { display:flex; align-items:center; gap:0.75rem; background:#fff; color:#1f1f1f; border:none; border-radius:0.625rem; padding:0.75rem 1.5rem; font-size:0.95rem; font-weight:600; cursor:pointer; transition:box-shadow 0.15s; svg{width:1.25rem;height:1.25rem;} &:hover{box-shadow:0 2px 12px rgba(0,0,0,0.3);} }
-  .user-bar { display:flex; align-items:center; gap:0.75rem; padding:5rem 0 1.5rem; }
-  .user-bar__photo { width:2rem; height:2rem; border-radius:50%; object-fit:cover; }
-  .user-bar__name { font-size:0.9rem; color:var(--color-text-alt); flex:1; }
-  .user-bar__logout { background:none; border:1px solid rgba(255,255,255,0.15); border-radius:0.4rem; color:rgba(255,255,255,0.45); font-size:0.78rem; padding:0.2rem 0.7rem; cursor:pointer; &:hover{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);} }
-  .book-grid { display:grid; grid-template-columns:18rem 1fr; gap:3rem; align-items:start; @media(max-width:768px){grid-template-columns:1fr;gap:2rem;} }
-  .book-info { position:sticky; top:5rem; display:flex; flex-direction:column; gap:0.75rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:1.25rem; padding:1.5rem; }
-  .book-info__avatar img { width:4rem; height:4rem; border-radius:50%; object-fit:cover; }
-  .book-info__name { --fs:1.25rem; }
-  .book-info__role { font-size:0.82rem; color:var(--color-text-alt); margin:0; }
-  .book-info__details { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.4rem; font-size:0.82rem; color:var(--color-text-alt); li{display:flex;align-items:center;gap:0.5rem;} }
-  .book-info__desc { font-size:0.82rem; color:rgba(255,255,255,0.4); margin:0; }
-  .step__title { font-size:1rem; font-weight:600; color:rgba(255,255,255,0.85); margin-bottom:1rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
-  .step__back { background:none; border:none; font-size:0.8rem; color:rgba(50,170,255,0.75); cursor:pointer; padding:0; &:hover{color:#32aaff;} }
-  .date-strip { display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.75rem; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.1) transparent; }
-  .date-btn { flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:0.15rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:0.75rem; padding:0.6rem 0.85rem; cursor:pointer; transition:background 0.15s,border-color 0.15s; color:var(--color-text); &:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);} &.is-selected{background:rgba(50,170,255,0.15);border-color:rgba(50,170,255,0.5);color:#32aaff;} }
-  .date-btn__dow { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.05em; opacity:0.6; }
-  .date-btn__day { font-size:1.25rem; font-weight:700; line-height:1; }
-  .date-btn__month { font-size:0.65rem; opacity:0.6; }
-  .slots-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(8rem,1fr)); gap:0.5rem; }
-  .slot-btn { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:0.625rem; color:var(--color-text); cursor:pointer; font-size:0.85rem; padding:0.6rem; transition:background 0.15s,border-color 0.15s; &:hover:not(:disabled){background:rgba(50,170,255,0.12);border-color:rgba(50,170,255,0.4);} &.is-selected{background:rgba(50,170,255,0.18);border-color:#32aaff;color:#32aaff;} &.is-taken{opacity:0.3;cursor:not-allowed;text-decoration:line-through;} }
-  .confirm-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:0.875rem; padding:1.25rem; margin-bottom:1.25rem; display:flex; flex-direction:column; gap:0.6rem; }
-  .confirm-card__row { display:flex; align-items:center; gap:0.75rem; font-size:0.9rem; }
-  .notes-label { display:flex; flex-direction:column; gap:0.4rem; font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:1rem; }
-  .notes-optional { font-size:0.75rem; color:rgba(255,255,255,0.3); }
-  .notes-input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:0.625rem; color:var(--color-text); font-family:inherit; font-size:0.85rem; padding:0.75rem; resize:vertical; width:100%; &:focus{outline:none;border-color:rgba(50,170,255,0.4);} }
-  .btn-confirm { width:100%; background:var(--color-brand-1); border:none; border-radius:0.75rem; color:#fff; cursor:pointer; font-size:1rem; font-weight:700; padding:0.875rem; transition:opacity 0.15s; text-align:center; &:hover{opacity:0.85;} &:disabled{opacity:0.5;cursor:not-allowed;} }
-  .step--success { text-align:center; display:flex; flex-direction:column; align-items:center; gap:1rem; padding:2rem 0; }
-  .success-icon { font-size:4rem; }
+  /* shared with /agendar — same design tokens */
+  .cal { user-select: none; }
+  .cal__nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; gap:0.5rem; }
+  .cal__month-label { font-size:0.95rem; font-weight:700; color:#fff; flex:1; text-align:center; }
+  .cal__nav-btn { width:2.25rem; height:2.25rem; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid rgba(255,255,255,0.12); border-radius:50%; color:rgba(240,240,250,0.55); cursor:pointer; transition:background 0.15s,border-color 0.15s,color 0.15s; flex-shrink:0; svg{width:0.8rem;height:0.8rem;} &:hover:not(:disabled){background:rgba(50,170,255,0.12);border-color:rgba(50,170,255,0.4);color:rgb(50,170,255);} &:disabled{opacity:0.2;cursor:not-allowed;} }
+  .cal__weekdays { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:0.5rem; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.5rem; span{text-align:center;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(240,240,250,0.25);padding:0.2rem 0;} }
+  .cal__days { display:grid; grid-template-columns:repeat(7,1fr); gap:0.125rem; }
+  .cal-day { all:unset; box-sizing:border-box; display:flex; align-items:center; justify-content:center; aspect-ratio:1; border-radius:50%; font-size:0.8rem; font-weight:500; cursor:default; position:relative; transition:background 0.13s,color 0.13s,transform 0.12s,box-shadow 0.13s; background:transparent; color:transparent; }
+  .cal-day--empty { pointer-events:none; }
+  .cal-day--off { color:rgba(240,240,250,0.15); cursor:not-allowed; }
+  .cal-day--avail { color:rgba(240,240,250,0.85); font-weight:600; cursor:pointer; &::before{content:'';position:absolute;top:18%;right:18%;width:5px;height:5px;border-radius:50%;background:rgba(50,170,255,0.5);transition:opacity 0.12s;} &:hover{background:rgba(50,170,255,0.14);color:rgb(50,170,255);transform:scale(1.12);box-shadow:0 2px 12px rgba(50,170,255,0.2);&::before{opacity:0;}} }
+  .cal-day--today:not(.cal-day--selected) { border:1.5px solid rgba(50,170,255,0.4); color:rgb(50,170,255); font-weight:700; &::before{opacity:0;} }
+  .cal-day--selected { background:rgb(50,170,255)!important; color:#fff!important; font-weight:700; box-shadow:0 4px 16px rgba(50,170,255,0.45); transform:scale(1.12); &::before{opacity:0!important;} }
+
+  .slots-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr)); gap:0.625rem; }
+  .slots-empty { color:rgba(240,240,250,0.35); font-size:0.82rem; padding:1rem 0; margin:0; }
+  .slot-btn { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:0.75rem; color:rgba(240,240,250,0.85); cursor:pointer; padding:0.75rem 0.875rem; transition:background 0.15s,border-color 0.15s,transform 0.12s,box-shadow 0.15s; text-align:left; display:flex; flex-direction:column; gap:0.15rem; position:relative; overflow:hidden; &::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(50,170,255,0);border-radius:3px 0 0 3px;transition:background 0.15s;} &:hover:not(:disabled){background:rgba(50,170,255,0.07);border-color:rgba(50,170,255,0.3);transform:translateY(-2px);box-shadow:0 4px 16px rgba(50,170,255,0.12);&::before{background:rgb(50,170,255);}} &.is-selected{background:rgba(50,170,255,0.12);border-color:rgba(50,170,255,0.5);box-shadow:0 4px 20px rgba(50,170,255,0.18);&::before{background:rgb(50,170,255);}} &.is-taken{opacity:0.3;cursor:not-allowed;&::before{background:rgba(248,113,113,0.4);}} }
+  .slot-btn__time { font-size:1rem; font-weight:700; color:rgba(240,240,250,0.9); line-height:1; }
+  .slot-btn__ampm { font-size:0.67rem; font-weight:500; color:rgba(240,240,250,0.35); letter-spacing:0.04em; }
+  .slot-btn__taken-label { font-size:0.65rem; color:rgba(248,113,113,0.6); margin-top:0.1rem; }
+  .slot-btn:hover:not(:disabled) .slot-btn__time { color:rgb(50,170,255); }
+  .slot-btn:hover:not(:disabled) .slot-btn__ampm { color:rgba(50,170,255,0.7); }
+  .slot-btn.is-selected .slot-btn__time { color:rgb(50,170,255); }
+  .slot-btn.is-selected .slot-btn__ampm { color:rgba(50,170,255,0.65); }
+
+  .step__title { font-size:1rem; font-weight:600; color:rgba(255,255,255,0.9); margin:0 0 1.25rem; }
+  .step__header { display:flex; align-items:center; gap:0.75rem; margin-bottom:1.25rem; .step__title{margin:0;} }
+  .step__back { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:0.5rem; color:rgba(240,240,250,0.6); font-size:0.78rem; padding:0.3rem 0.65rem; cursor:pointer; transition:background 0.15s,color 0.15s; &:hover{background:rgba(255,255,255,0.09);color:rgba(240,240,250,0.9);} }
+
+  .confirm-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:0.875rem; padding:1.125rem 1.25rem; margin-bottom:1.25rem; display:flex; flex-direction:column; }
+  .confirm-row { display:flex; align-items:center; gap:0.875rem; padding:0.65rem 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.875rem; &:last-child{border-bottom:none;} > div{display:flex;flex-direction:column;gap:0.1rem;} }
+  .confirm-icon { font-size:1rem; width:1.5rem; text-align:center; }
+  .confirm-label { font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:rgba(240,240,250,0.35); display:block; }
+  .confirm-value { font-size:0.875rem; font-weight:500; color:rgba(240,240,250,0.85); display:block; }
+
+  .notes-label { display:flex; flex-direction:column; gap:0.3rem; font-size:0.82rem; font-weight:500; color:rgba(240,240,250,0.6); margin-bottom:1rem; }
+  .notes-optional { font-size:0.7rem; color:rgba(240,240,250,0.3); font-weight:400; margin-left:0.3rem; }
+  .notes-input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:0.625rem; color:rgba(240,240,250,0.85); font-family:inherit; font-size:0.85rem; padding:0.75rem; resize:vertical; width:100%; margin-top:0.25rem; &::placeholder{color:rgba(240,240,250,0.2);} &:focus{outline:none;border-color:rgba(50,170,255,0.4);} }
+
+  .btn-confirm { width:100%; background:rgb(50,170,255); border:none; border-radius:0.75rem; color:#fff; cursor:pointer; font-size:0.9rem; font-weight:700; padding:0.875rem; transition:opacity 0.15s,transform 0.15s; text-align:center; text-decoration:none; display:block; &:hover{opacity:0.88;transform:translateY(-1px);} &:disabled{opacity:0.4;cursor:not-allowed;transform:none;} }
+
+  .step--success { display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.75rem; padding:2rem 1rem; }
+  .success-check svg { width:3.5rem; height:3.5rem; }
+  .success-title { font-size:1.25rem; font-weight:700; color:#fff; margin:0; }
+  .success-text { font-size:0.9rem; color:rgba(240,240,250,0.65); margin:0; line-height:1.5; }
+  .success-sub { font-size:0.78rem; color:rgba(240,240,250,0.35); margin:0; line-height:1.6; }
 </style>
