@@ -220,8 +220,7 @@ const datesJson = JSON.stringify(dates);
       const isSelected = iso === selectedDate;
       const isToday    = iso === todayIso;
 
-      const cell = document.createElement('button');
-      cell.type = 'button';
+      const cell = document.createElement('div');
       cell.textContent = String(d);
       cell.className = [
         'cal-day',
@@ -229,10 +228,16 @@ const datesJson = JSON.stringify(dates);
         isSelected ? 'cal-day--selected' : '',
         isToday    ? 'cal-day--today'    : '',
       ].filter(Boolean).join(' ');
-      cell.disabled = !isAvail;
-      cell.setAttribute('aria-label', iso);
 
-      if (isAvail) cell.addEventListener('click', () => selectDate(iso));
+      if (isAvail) {
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('tabindex', '0');
+        cell.setAttribute('aria-label', `Select ${iso}`);
+        cell.addEventListener('click', () => selectDate(iso));
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDate(iso); }
+        });
+      }
       grid.appendChild(cell);
     }
   }
@@ -343,7 +348,7 @@ const datesJson = JSON.stringify(dates);
   .cal__nav-btn { width:2.25rem; height:2.25rem; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid rgba(255,255,255,0.12); border-radius:50%; color:rgba(240,240,250,0.55); cursor:pointer; transition:background 0.15s,border-color 0.15s,color 0.15s; flex-shrink:0; svg{width:0.8rem;height:0.8rem;} &:hover:not(:disabled){background:rgba(50,170,255,0.12);border-color:rgba(50,170,255,0.4);color:rgb(50,170,255);} &:disabled{opacity:0.2;cursor:not-allowed;} }
   .cal__weekdays { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:0.5rem; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.5rem; span{text-align:center;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(240,240,250,0.25);padding:0.2rem 0;} }
   .cal__days { display:grid; grid-template-columns:repeat(7,1fr); gap:0.125rem; }
-  .cal-day { all:unset; box-sizing:border-box; display:flex; align-items:center; justify-content:center; aspect-ratio:1; border-radius:50%; font-size:0.8rem; font-weight:500; cursor:default; position:relative; transition:background 0.13s,color 0.13s,transform 0.12s,box-shadow 0.13s; background:transparent; color:transparent; }
+  .cal-day { display:flex; align-items:center; justify-content:center; aspect-ratio:1; border-radius:50%; font-size:0.82rem; font-weight:500; cursor:default; position:relative; transition:background 0.13s,color 0.13s,transform 0.12s,box-shadow 0.13s; background:transparent; border:none; color:transparent; line-height:1; }
   .cal-day--empty { pointer-events:none; }
   .cal-day--off { color:rgba(240,240,250,0.15); cursor:not-allowed; }
   .cal-day--avail { color:rgba(240,240,250,0.85); font-weight:600; cursor:pointer; &::before{content:'';position:absolute;top:18%;right:18%;width:5px;height:5px;border-radius:50%;background:rgba(50,170,255,0.5);transition:opacity 0.12s;} &:hover{background:rgba(50,170,255,0.14);color:rgb(50,170,255);transform:scale(1.12);box-shadow:0 2px 12px rgba(50,170,255,0.2);&::before{opacity:0;}} }

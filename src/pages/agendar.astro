@@ -296,27 +296,30 @@ const datesJson = JSON.stringify(dates);
       grid.appendChild(empty);
     }
 
-    // Day cells
+    // Day cells — use <div> to avoid browser button default styles
     for (let d = 1; d <= daysInMonth; d++) {
       const iso = `${calYear}-${String(calMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      const isAvail   = BOOKABLE.has(iso);
+      const isAvail    = BOOKABLE.has(iso);
       const isSelected = iso === selectedDate;
-      const isToday   = iso === todayIso;
+      const isToday    = iso === todayIso;
 
-      const cell = document.createElement('button');
-      cell.type = 'button';
+      const cell = document.createElement('div');
       cell.textContent = String(d);
       cell.className = [
         'cal-day',
-        isAvail   ? 'cal-day--avail'    : 'cal-day--off',
+        isAvail    ? 'cal-day--avail'    : 'cal-day--off',
         isSelected ? 'cal-day--selected' : '',
-        isToday   ? 'cal-day--today'    : '',
+        isToday    ? 'cal-day--today'    : '',
       ].filter(Boolean).join(' ');
-      cell.disabled = !isAvail;
-      cell.setAttribute('aria-label', iso);
 
       if (isAvail) {
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('tabindex', '0');
+        cell.setAttribute('aria-label', `Seleccionar ${iso}`);
         cell.addEventListener('click', () => selectDate(iso));
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDate(iso); }
+        });
       }
       grid.appendChild(cell);
     }
@@ -947,23 +950,22 @@ const datesJson = JSON.stringify(dates);
     gap: 0.125rem;
   }
 
-  /* Base day cell — reset ALL browser button styles */
+  /* Base day cell — <div> has no browser default styles */
   .cal-day {
-    all: unset;
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
     border-radius: 50%;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 500;
     cursor: default;
     position: relative;
     transition: background 0.13s, color 0.13s, transform 0.12s, box-shadow 0.13s;
-    /* No background, no border by default */
     background: transparent;
-    color: transparent; /* hidden unless overridden */
+    border: none;
+    color: transparent;
+    line-height: 1;
   }
 
   /* Empty padding cell */
