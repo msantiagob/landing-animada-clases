@@ -96,8 +96,7 @@ export const footerData = {
     { text: 'Política de privacidad', href: getPermalink('/privacy') },
   ],
   socialLinks: [{ ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') }],
-  footNote: `
-      <span class="float-left rtl:float-right mr-1.5 rtl:mr-0 rtl:ml-1.5">© ${new Date().getFullYear()}</span>
-      <a class="text-blue-600 underline dark:text-muted" href="/">Sonmyd</a> · Inteligencia artificial aplicada a tu negocio.
-  `,
+  description:
+    'Formación y automatización con inteligencia artificial para empresas: clases de IA, asistentes de WhatsApp y agentes de voz para llamadas.',
+  footNote: `© ${new Date().getFullYear()} Sonmyd. Todos los derechos reservados.`,
 };

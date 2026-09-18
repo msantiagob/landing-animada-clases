@@ -31,7 +31,7 @@ const metadata = {
         text: 'Consulta Gratuita',
         href: '/contact',
         target: '_self',
-        icon: 'tabler:download',
+        icon: 'tabler:calendar-plus',
       },
       { text: 'Nuestros Servicios', href: '/servicios', variant: 'tertiary' },
     ]}
@@ -53,6 +53,13 @@ const metadata = {
       <span class="block mb-1 sm:hidden font-bold text-blue-600">Sonmyd: Innovación que transforma.</span>
       Especializados en capacitaciones tecnológicas, desarrollo de aplicaciones multiplataforma y automatización de procesos
       empresariales.
+    </Fragment>
+    <Fragment slot="trust">
+      <span>Consulta inicial sin costo</span>
+      <span>·</span>
+      <span>Atención en español</span>
+      <span>·</span>
+      <span>Implementación en semanas, no en meses</span>
     </Fragment>
   </Hero>
 
@@ -183,7 +190,7 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
   </Content>
 
@@ -193,72 +200,39 @@ const metadata = {
     isAfterContent
     items={[
       {
-        title: 'Alto Nivel de Personalización',
-        description: `Adaptamos cada solución a la identidad de tu marca y requisitos específicos, creando aplicaciones únicas que se destacan en el mercado.`,
+        title: 'Empezás con un caso, no con un contrato anual',
+        description:
+          'Arrancamos por el proceso que más te duele y lo ponemos a funcionar. Si no da resultado medible, no seguimos.',
       },
       {
-        title: 'Múltiples Posibilidades de Diseño',
+        title: 'Todo queda documentado y auditable',
         description:
-          'Exploramos diversas opciones de layout para encontrar la estructura que mejor presente tu contenido, mejorando la experiencia del usuario.',
+          'Conversaciones, llamadas y decisiones quedan registradas. Podés revisar qué respondió la IA y por qué.',
       },
       {
-        title: 'Diseño Completamente Responsive',
+        title: 'Tu equipo aprende a operarlo',
         description:
-          'Garantizamos el rendimiento óptimo de tu sitio web en diversos dispositivos y tamaños de pantalla, proporcionando una experiencia consistente.',
+          'No te dejamos dependiendo de nosotros: capacitamos a tu gente para que ajuste y mantenga lo implementado.',
       },
       {
-        title: 'Integración de Medios Avanzada',
+        title: 'Integrado a lo que ya usás',
         description:
-          'Incorporamos imágenes, videos y elementos multimedia que enriquecen tu contenido y cautivan a tus visitantes de manera efectiva.',
+          'CRM, calendario, planillas y centralita actual. No hay que migrar nada ni cambiar el número de teléfono.',
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2194&q=80',
-      alt: 'Blueprint Image',
+      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Equipo de Sonmyd trabajando en una implementación de inteligencia artificial',
     }}
   >
-    <Fragment slot="content">Transformamos tus ideas en soluciones tecnológicas que generan valor real.</Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">Cómo trabajamos</h2>
+      La inteligencia artificial solo sirve si baja a un proceso concreto. Por eso no vendemos licencias: implementamos una
+      solución, la medimos y te enseñamos a operarla.
     </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    isAfterContent
-    items={[
-      {
-        title: 'Mayor Engagement del Usuario',
-        description:
-          'Cautivamos a tu audiencia con elementos interactivos, navegación intuitiva y diseños visualmente atractivos que fomentan visitas más largas.',
-      },
-      {
-        title: 'Mejora Continua',
-        description:
-          'Mantenemos tu sitio web alineado con las últimas tendencias y tecnologías a través de actualizaciones y mejoras regulares.',
-      },
-      {
-        title: 'Eficiencia de Tiempo y Recursos',
-        description:
-          'Evitamos el proceso largo de crear un sitio web desde cero, lanzando tu presencia online más rápido con soluciones probadas.',
-      },
-      {
-        title: 'Soporte Especializado',
-        description: `Únete a nuestra comunidad de clientes para obtener insights, recursos y asistencia continua en tu jornada de transformación digital.`,
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1611462985358-60d3498e0364?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Astronauts Image',
-    }}
-  >
-    <Fragment slot="content">Potenciamos tu negocio con herramientas que escalan contigo.</Fragment>
 
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
   </Content>
 
@@ -357,7 +331,7 @@ const metadata = {
     ]}
   >
     <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+      <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
   </Features2>
 
@@ -432,7 +406,7 @@ const metadata = {
         text: 'Consulta Gratuita',
         href: '/contact',
         target: '_self',
-        icon: 'tabler:download',
+        icon: 'tabler:calendar-plus',
       },
     ]}
   >

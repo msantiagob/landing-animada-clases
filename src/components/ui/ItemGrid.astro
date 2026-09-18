@@ -35,7 +35,7 @@ const {
       {items.map(({ title, description, icon, callToAction, classes: itemClasses = {} }) => (
         <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
           <div class={twMerge('flex flex-row max-w-md', panelClass, itemClasses?.panel)}>
-            <div class="flex justify-center">
+            <div class="flex shrink-0">
               {(icon || defaultIcon) && (
                 <Icon
                   name={icon || defaultIcon}
@@ -53,7 +53,7 @@ const {
               )}
               {callToAction && (
                 <div class={twMerge(`${title || description ? 'mt-3' : ''}`, actionClass, itemClasses?.actionClass)}>
-                  <Button variant="link" {...callToAction} />
+                  <Button variant="link" class="font-medium text-primary" {...callToAction} />
                 </div>
               )}
             </div>

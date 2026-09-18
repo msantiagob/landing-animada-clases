@@ -25,9 +25,11 @@ const {
     columns={columns}
     defaultIcon="tabler:chevron-right"
     classes={{
-      container: `${columns === 1 ? 'max-w-4xl' : ''} gap-y-8 md:gap-y-12`,
-      panel: 'max-w-none',
-      icon: 'flex-shrink-0 mt-1 w-6 h-6 text-primary',
+      container: `${columns === 1 ? 'max-w-4xl' : ''} gap-6 md:gap-6`,
+      panel: 'card max-w-none h-full items-start',
+      title: 'text-base md:text-lg text-heading',
+      description: 'text-[0.95rem] leading-relaxed',
+      icon: 'flex-shrink-0 mt-1 w-5 h-5 text-primary mr-3 rtl:ml-3 rtl:mr-0',
     }}
   />
 </WidgetWrapper>

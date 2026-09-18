@@ -13,7 +13,10 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
   </div>
   <!-- Messages -->
-  <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+  <div
+    id="successMessage"
+    class="hidden mb-6 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+  >
     <div class="flex">
       <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
         <path
@@ -25,7 +28,10 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
     </div>
   </div>
 
-  <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+  <div
+    id="errorMessage"
+    class="hidden mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+  >
     <div class="flex">
       <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
         <path
@@ -44,7 +50,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
           name && (
             <div class="mb-6">
               {label && (
-                <label for={name} class="block text-sm font-medium">
+                <label for={name} class="field-label">
                   {label}
                 </label>
               )}
@@ -55,7 +61,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
                 autocomplete={autocomplete}
                 placeholder={placeholder}
                 required={name === 'name' || name === 'email'}
-                class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                class="field"
               />
             </div>
           )
@@ -64,7 +70,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
 
   {
     textarea && (
-      <div class="mb-6">
+      <div class="mb-5">
         <label for="textarea" class="block text-sm font-medium">
           {textarea.label}
         </label>
@@ -103,7 +109,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
 
   {
     button && (
-      <div class="mt-10 grid">
+      <div class="mt-8 grid">
         <Button variant="primary" type="submit" id="submitBtn">
           {button}
         </Button>

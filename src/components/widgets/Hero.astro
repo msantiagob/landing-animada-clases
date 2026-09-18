@@ -12,6 +12,9 @@ const {
   content = await Astro.slots.render('content'),
   actions = await Astro.slots.render('actions'),
   image = await Astro.slots.render('image'),
+  // Franja de confianza opcional bajo las llamadas a la acción: garantías,
+  // cifras o condiciones. En un sitio comercial es lo que sostiene el clic.
+  trust = await Astro.slots.render('trust'),
 
   id,
   bg = await Astro.slots.render('bg'),
@@ -26,40 +29,19 @@ const {
   </div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
     <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
-    <div class="py-12 md:py-20">
-      <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto">
-        {
-          tagline && (
-            <p
-              class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-              set:html={tagline}
-            />
-          )
-        }
-        {
-          title && (
-            <h1
-              class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-              set:html={title}
-            />
-          )
-        }
-        <div class="max-w-3xl mx-auto">
-          {
-            subtitle && (
-              <p
-                class="text-xl text-muted mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-                set:html={subtitle}
-              />
-            )
-          }
+    <div class="pt-12 pb-14 md:pt-16 md:pb-20">
+      <div class="text-center pb-10 md:pb-12 max-w-4xl mx-auto">
+        {tagline && <p class="eyebrow mb-4" set:html={tagline} />}
+        {title && <h1 class="text-4xl sm:text-5xl font-bold leading-[1.1] mb-6 font-heading" set:html={title} />}
+        <div class="max-w-2xl mx-auto">
+          {subtitle && <p class="text-lg sm:text-xl text-muted leading-relaxed mb-8" set:html={subtitle} />}
           {
             actions && (
-              <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+              <div class="flex flex-col sm:flex-row sm:justify-center gap-3">
                 {Array.isArray(actions) ? (
                   actions.map((action) => (
                     <div class="flex w-full sm:w-auto">
-                      <Button {...(action || {})} class="w-full sm:mb-0 " />
+                      <Button {...(action || {})} class="w-full sm:w-auto" />
                     </div>
                   ))
                 ) : (
@@ -68,12 +50,17 @@ const {
               </div>
             )
           }
+          {
+            trust && (
+              <div class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted">
+                <Fragment set:html={trust} />
+              </div>
+            )
+          }
         </div>
         {content && <Fragment set:html={content} />}
       </div>
-      <div
-        class="intersect-once intercept-no-queue intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-      >
+      <div>
         {
           image && (
             <div class="relative m-auto max-w-5xl">
@@ -81,7 +68,7 @@ const {
                 <Fragment set:html={image} />
               ) : (
                 <Image
-                  class="mx-auto rounded-md w-full"
+                  class="mx-auto w-full rounded-2xl border border-line shadow-card-lg"
                   widths={[400, 768, 1024, 2040]}
                   sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
                   loading="eager"

@@ -217,6 +217,8 @@ export interface Hero extends Omit<Headline, 'classes'>, Omit<Widget, 'isDark' |
   content?: string;
   actions?: string | CallToAction[];
   image?: string | unknown;
+  /** Señales de confianza bajo las llamadas a la acción (garantías, plazos, condiciones). */
+  trust?: string;
 }
 
 export interface Team extends Omit<Headline, 'classes'>, Widget {
