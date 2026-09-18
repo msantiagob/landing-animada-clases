@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# El panel y la API no aportan nada a un buscador y consumen presupuesto de rastreo.
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://sonmyd.com/sitemap-index.xml

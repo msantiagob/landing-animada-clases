@@ -1,45 +1,42 @@
 import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 
+/**
+ * El enlazado interno es una señal directa de SEO: las páginas que apuntamos
+ * desde el header y el footer son las que Google entiende como prioritarias.
+ * Por eso los cuatro servicios objetivo están en el primer nivel del menú.
+ */
 export const headerData = {
   links: [
     {
-      text: 'Soluciones',
+      text: 'Servicios de IA',
       links: [
         {
-          text: 'Inteligencia Artificial',
-          href: getPermalink('/servicios#servicios'),
+          text: 'Asistente de WhatsApp con IA',
+          href: getPermalink('/asistente-de-whatsapp'),
         },
         {
-          text: 'Desarrollo Web',
-          href: getPermalink('/servicios#servicios'),
+          text: 'Llamadas de marketing con IA',
+          href: getPermalink('/llamadas-de-marketing'),
         },
         {
-          text: 'Apps Multiplataforma',
-          href: getPermalink('/servicios#servicios'),
+          text: 'Gestor de llamadas',
+          href: getPermalink('/gestor-de-llamadas'),
         },
         {
-          text: 'Automatizaciones',
-          href: getPermalink('/servicios#servicios'),
+          text: 'Todos los servicios',
+          href: getPermalink('/servicios'),
         },
       ],
     },
     {
-      text: 'Capacitaciones',
+      text: 'Clases de IA',
       links: [
         {
-          text: 'Cursos de IA',
-          href: getPermalink('/capacitaciones'),
+          text: 'Clases particulares de IA',
+          href: getPermalink('/clases-de-ia'),
         },
         {
-          text: 'Desarrollo Web',
-          href: getPermalink('/capacitaciones'),
-        },
-        {
-          text: 'Programación',
-          href: getPermalink('/capacitaciones'),
-        },
-        {
-          text: 'Certificaciones',
+          text: 'Capacitaciones para empresas',
           href: getPermalink('/capacitaciones'),
         },
       ],
@@ -52,41 +49,8 @@ export const headerData = {
           href: getPermalink('/about'),
         },
         {
-          text: 'Nuestro equipo',
-          href: getPermalink('/about#equipo'),
-        },
-        {
-          text: 'Casos de éxito',
-          href: getPermalink('/casos-exito'),
-        },
-        {
           text: 'Blog',
           href: getBlogPermalink(),
-        },
-      ],
-    },
-    {
-      text: 'Blog',
-      links: [
-        {
-          text: 'Lista de Blog',
-          href: getBlogPermalink(),
-        },
-        {
-          text: 'Artículo',
-          href: getPermalink('get-started-website-with-astro-tailwind-css', 'post'),
-        },
-        {
-          text: 'Artículo (con MDX)',
-          href: getPermalink('markdown-elements-demo-post', 'post'),
-        },
-        {
-          text: 'Página de Categoría',
-          href: getPermalink('tutorials', 'category'),
-        },
-        {
-          text: 'Página de Etiqueta',
-          href: getPermalink('astro', 'tag'),
         },
       ],
     },
@@ -95,74 +59,45 @@ export const headerData = {
       href: getPermalink('/contact'),
     },
   ],
-  actions: [{ text: 'Consulta Gratuita', href: getPermalink('/contact'), target: '_self' }],
+  actions: [{ text: 'Consulta gratuita', href: getPermalink('/booking'), target: '_self' }],
 };
 
 export const footerData = {
   links: [
     {
-      title: 'Producto',
+      title: 'Servicios de IA',
       links: [
-        { text: 'Características', href: '#' },
-        { text: 'Seguridad', href: '#' },
-        { text: 'Equipo', href: '#' },
-        { text: 'Empresa', href: '#' },
-        { text: 'Historias de clientes', href: '#' },
-        { text: 'Precios', href: '#' },
-        { text: 'Recursos', href: '#' },
+        { text: 'Asistente de WhatsApp con IA', href: getPermalink('/asistente-de-whatsapp') },
+        { text: 'Llamadas de marketing con IA', href: getPermalink('/llamadas-de-marketing') },
+        { text: 'Gestor de llamadas', href: getPermalink('/gestor-de-llamadas') },
+        { text: 'Automatización de procesos', href: getPermalink('/servicios') },
       ],
     },
     {
-      title: 'Plataforma',
+      title: 'Formación',
       links: [
-        { text: 'API de Desarrollador', href: '#' },
-        { text: 'Socios', href: '#' },
-        { text: 'Atom', href: '#' },
-        { text: 'Electron', href: '#' },
-        { text: 'AstroWind Desktop', href: '#' },
+        { text: 'Clases de IA', href: getPermalink('/clases-de-ia') },
+        { text: 'Profesor de IA particular', href: getPermalink('/clases-de-ia') },
+        { text: 'Capacitaciones para empresas', href: getPermalink('/capacitaciones') },
       ],
     },
     {
-      title: 'Soporte',
+      title: 'Empresa',
       links: [
-        { text: 'Documentación', href: '#' },
-        { text: 'Foro de la Comunidad', href: '#' },
-        { text: 'Servicios Profesionales', href: '#' },
-        { text: 'Habilidades', href: '#' },
-        { text: 'Estado', href: '#' },
-      ],
-    },
-    {
-      title: 'Compañía',
-      links: [
-        { text: 'Acerca de', href: '#' },
-        { text: 'Blog', href: '#' },
-        { text: 'Carreras', href: '#' },
-        { text: 'Prensa', href: '#' },
-        { text: 'Inclusión', href: '#' },
-        { text: 'Impacto Social', href: '#' },
-        { text: 'Tienda', href: '#' },
+        { text: 'Acerca de nosotros', href: getPermalink('/about') },
+        { text: 'Blog', href: getBlogPermalink() },
+        { text: 'Contacto', href: getPermalink('/contact') },
+        { text: 'Agendar una reunión', href: getPermalink('/booking') },
       ],
     },
   ],
   secondaryLinks: [
     { text: 'Términos', href: getPermalink('/terms') },
-    { text: 'Política de Privacidad', href: getPermalink('/privacy') },
+    { text: 'Política de privacidad', href: getPermalink('/privacy') },
   ],
-  socialLinks: [
-    { ariaLabel: 'X', icon: 'tabler:brand-x', href: '#' },
-    { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: '#' },
-    { ariaLabel: 'Facebook', icon: 'tabler:brand-facebook', href: '#' },
-    { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
-    { ariaLabel: 'Github', icon: 'tabler:brand-github', href: 'https://github.com/onwidget/astrowind' },
-  ],
+  socialLinks: [{ ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') }],
   footNote: `
-      <img
-          class='w-5 h-5 md:w-6 md:h-6 md:-mt-0.5 bg-cover mr-1.5 rtl:mr-0 rtl:ml-1.5 float-left rtl:float-right rounded-sm'
-          src="./src/assets/favicons/favicon-96x96.png"
-          alt='sonmyd logo'
-          loading='lazy'
-        />
-      Made by <a class="text-blue-600 underline dark:text-muted" href="https://sonmyd.com/"> Sonmyd</a> · All rights reserved.
+      <span class="float-left rtl:float-right mr-1.5 rtl:mr-0 rtl:ml-1.5">© ${new Date().getFullYear()}</span>
+      <a class="text-blue-600 underline dark:text-muted" href="/">Sonmyd</a> · Inteligencia artificial aplicada a tu negocio.
   `,
 };

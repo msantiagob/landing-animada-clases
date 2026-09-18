@@ -1,0 +1,224 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/gestor-de-llamadas';
+
+const metadata = {
+  title: 'Gestor de llamadas con IA | Recepcionista virtual 24/7',
+  description:
+    'Gestor de llamadas con inteligencia artificial que atiende, clasifica y deriva cada llamada entrante. Recepcionista virtual 24/7 en español: agenda turnos, toma mensajes y no deja una llamada sin atender.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Qué es un gestor de llamadas con IA?',
+    answer:
+      'Es un sistema que atiende las llamadas entrantes de tu empresa con un agente de voz con inteligencia artificial. Saluda, entiende el motivo de la llamada, responde las consultas habituales, agenda turnos, toma mensajes y deriva al área o a la persona correcta.',
+  },
+  {
+    question: '¿En qué se diferencia de un contestador o un IVR?',
+    answer:
+      'Un IVR obliga al cliente a navegar un menú de números y casi nunca resuelve el caso. El gestor con IA entiende lo que la persona dice con sus propias palabras y resuelve en la misma llamada, sin hacerla esperar ni repetir.',
+  },
+  {
+    question: '¿Puede agendar turnos o citas?',
+    answer:
+      'Sí. Se conecta a tu calendario o a tu sistema de turnos, consulta la disponibilidad real y confirma la cita durante la llamada, con recordatorio posterior por WhatsApp o email.',
+  },
+  {
+    question: '¿Qué pasa fuera del horario de atención?',
+    answer:
+      'Ahí es donde más se nota. El gestor atiende igual: informa, agenda para el próximo día hábil o toma el mensaje con todos los datos, en lugar de que el cliente escuche un tono ocupado.',
+  },
+  {
+    question: '¿Puedo conservar mi número de teléfono?',
+    answer:
+      'Sí. Se integra con tu central telefónica o con tu número actual. Tus clientes siguen llamando adonde llamaron siempre.',
+  },
+  {
+    question: '¿Qué reportes entrega?',
+    answer:
+      'Volumen de llamadas por franja horaria, motivos más frecuentes, tasa de resolución sin intervención humana, derivaciones por área, turnos agendados y la transcripción de cada llamada.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Gestor de llamadas con inteligencia artificial',
+        description:
+          'Recepcionista virtual con IA para llamadas entrantes: atención 24/7, clasificación del motivo de llamada, agendamiento de turnos, toma de mensajes y derivación inteligente.',
+        path: PATH,
+        serviceType: 'Gestión automatizada de llamadas entrantes',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Gestor de llamadas', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Gestor de llamadas"
+    actions={[
+      { variant: 'primary', text: 'Probar el gestor', href: '/booking', icon: 'tabler:phone-incoming' },
+      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Gestor de llamadas con inteligencia artificial atendiendo llamadas entrantes',
+    }}
+  >
+    <Fragment slot="title">
+      Un <span class="text-accent">gestor de llamadas</span> que nunca te deja el teléfono sonando
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Atiende todas las llamadas entrantes, entiende el motivo, resuelve lo que puede resolver, agenda turnos y deriva
+      el resto a la persona correcta. Las 24 horas, en español, con tu número de siempre.
+    </Fragment>
+  </Hero>
+
+  <Features
+    id="capacidades"
+    tagline="Qué hace"
+    title="Cada llamada atendida, clasificada y resuelta"
+    subtitle="Sin menús de opciones, sin música de espera y sin llamadas perdidas."
+    items={[
+      {
+        title: 'Atiende al primer tono',
+        description: 'Cero espera, cero cola. Todas las llamadas simultáneas se atienden al mismo tiempo.',
+        icon: 'tabler:phone-incoming',
+      },
+      {
+        title: 'Entiende el motivo de la llamada',
+        description:
+          'La persona explica con sus palabras qué necesita y el gestor lo clasifica. Nadie marca 1 para ventas.',
+        icon: 'tabler:ear',
+      },
+      {
+        title: 'Resuelve las consultas frecuentes',
+        description: 'Horarios, ubicación, estado de un pedido, precios, requisitos. Todo sin molestar a tu equipo.',
+        icon: 'tabler:circle-check',
+      },
+      {
+        title: 'Agenda turnos en tu calendario',
+        description: 'Consulta la disponibilidad real y confirma la cita durante la llamada, con recordatorio después.',
+        icon: 'tabler:calendar-check',
+      },
+      {
+        title: 'Deriva con contexto',
+        description: 'Cuando hace falta una persona, le pasa la llamada junto con el resumen de lo que ya se conversó.',
+        icon: 'tabler:arrows-transfer-up',
+      },
+      {
+        title: 'Toma mensajes completos',
+        description:
+          'Nombre, teléfono, motivo y urgencia. El mensaje llega a tu equipo por email o WhatsApp al instante.',
+        icon: 'tabler:mail-forward',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="El costo invisible"
+    title="Cada llamada perdida es un cliente que llamó a otro"
+    items={[
+      {
+        title: 'Nadie deja mensaje en el contestador',
+        description: 'La mayoría corta y llama al siguiente resultado de Google. Esa llamada no vuelve.',
+      },
+      {
+        title: 'La recepción se satura en los picos',
+        description: 'Una persona atiende una llamada por vez. En el pico del mediodía, el resto suena y se pierde.',
+      },
+      {
+        title: 'Interrumpir al equipo cuesta caro',
+        description: 'Cada consulta trivial que corta el trabajo de alguien tiene un costo que nadie mide.',
+      },
+      {
+        title: 'Fuera de horario no existe atención',
+        description: 'Noches, fines de semana y feriados son horas enteras sin una sola llamada atendida.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=2074&q=80',
+      alt: 'Teléfono de oficina sonando sin ser atendido',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        ¿Cuántas llamadas perdiste ayer? No lo sabés
+      </h2>
+      Y ese es exactamente el problema: es la métrica que nadie mira porque nadie la registra. El primer mes de gestor con
+      IA suele ser el momento en que un negocio descubre cuánto estaba dejando sobre la mesa.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-slate-800"></div>
+    </Fragment>
+  </Content>
+
+  <Steps
+    title="Cómo se pone en marcha"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Mapa de llamadas</span>',
+        description: 'Relevamos los motivos reales por los que te llaman y cómo se resuelve hoy cada uno.',
+        icon: 'tabler:sitemap',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Flujos y derivaciones</span>',
+        description: 'Definimos qué resuelve el gestor, qué deriva y a quién, con el tono de tu empresa.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Integración telefónica</span>',
+        description: 'Lo conectamos a tu número o central actual y a tu calendario. Tus clientes no cambian nada.',
+        icon: 'tabler:plug-connected',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Monitoreo y ajuste</span>',
+        description: 'Escuchamos llamadas reales las primeras semanas y afinamos respuestas y derivaciones.',
+        icon: 'tabler:adjustments',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2069&q=80',
+      alt: 'Oficina con el sistema de gestión de llamadas integrado',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el gestor de llamadas"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Probar el gestor', href: '/booking', icon: 'tabler:phone-incoming' },
+      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
+    ]}
+  >
+    <Fragment slot="title">Llamá y escuchá cómo atiende</Fragment>
+    <Fragment slot="subtitle">
+      Te damos un número de prueba configurado para tu rubro. Hacé la llamada que haría tu cliente y sacá conclusiones.
+    </Fragment>
+  </CallToAction>
+</Layout>

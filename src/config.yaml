@@ -9,9 +9,9 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: Sonmyd - Soluciones Tecnológicas e IA
-    template: '%s — Sonmyd'
-  description: "\U0001F680 Transformamos tu negocio con IA, desarrollo web, apps multiplataforma y automatizaciones. Capacitaciones especializadas y soluciones tecnológicas de vanguardia."
+    default: Clases de IA, Asistente de WhatsApp y Gestor de Llamadas | Sonmyd
+    template: '%s | Sonmyd'
+  description: 'Clases de inteligencia artificial con profesor especializado, asistentes de WhatsApp con IA, llamadas de marketing automatizadas y gestor de llamadas para empresas. Formación y automatización en español.'
   robots:
     index: true
     follow: true
@@ -23,8 +23,8 @@ metadata:
         height: 628
     type: website
   twitter:
-    handle: '@onwidget'
-    site: '@onwidget'
+    handle: '@sonmyd'
+    site: '@sonmyd'
     cardType: summary_large_image
 
 i18n:

@@ -13,7 +13,8 @@ import Pricing from '~/components/widgets/Pricing.astro';
 
 const metadata = {
   title: 'Servicios - Sonmyd | Soluciones Tecnológicas e IA',
-  description: 'Descubre nuestros servicios especializados en Inteligencia Artificial, desarrollo web, capacitaciones tecnológicas y automatización empresarial.',
+  description:
+    'Descubre nuestros servicios especializados en Inteligencia Artificial, desarrollo web, capacitaciones tecnológicas y automatización empresarial.',
 };
 ---
 
@@ -28,22 +29,21 @@ const metadata = {
         href: '/contact',
         icon: 'tabler:send',
       },
-      { text: 'Ver Portfolio', href: '/portfolio', variant: 'tertiary' },
+      { text: 'Agendar una reunión', href: '/booking', variant: 'tertiary' },
     ]}
-    image={{ 
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', 
-      alt: 'Servicios de Tecnología e IA' 
+    image={{
+      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Servicios de Tecnología e IA',
     }}
   >
     <Fragment slot="title">
-      Soluciones <span class="text-accent">Tecnológicas</span> 
+      Soluciones <span class="text-accent">Tecnológicas</span>
       <span class="hidden lg:inline">que Transforman</span> tu Negocio
     </Fragment>
 
     <Fragment slot="subtitle">
-      Ofrecemos servicios especializados en <span class="font-semibold">Inteligencia Artificial</span>, 
-      desarrollo web avanzado, capacitaciones tecnológicas y automatización empresarial. 
-      Más de 500 proyectos exitosos nos respaldan.
+      Ofrecemos servicios especializados en <span class="font-semibold">Inteligencia Artificial</span>, desarrollo web
+      avanzado, capacitaciones tecnológicas y automatización empresarial. Más de 500 proyectos exitosos nos respaldan.
     </Fragment>
   </Hero>
 
@@ -66,32 +66,38 @@ const metadata = {
     items={[
       {
         title: 'Desarrollo de Aplicaciones con IA',
-        description: 'Creamos aplicaciones inteligentes que aprenden y se adaptan. Desde chatbots avanzados hasta sistemas de recomendación personalizados.',
+        description:
+          'Creamos aplicaciones inteligentes que aprenden y se adaptan. Desde chatbots avanzados hasta sistemas de recomendación personalizados.',
         icon: 'tabler:brain',
       },
       {
         title: 'Desarrollo Web y Móvil',
-        description: 'Aplicaciones web responsivas y apps móviles nativas. Tecnologías modernas como React, Vue, Flutter y más.',
+        description:
+          'Aplicaciones web responsivas y apps móviles nativas. Tecnologías modernas como React, Vue, Flutter y más.',
         icon: 'tabler:device-desktop',
       },
       {
         title: 'Automatización de Procesos (RPA)',
-        description: 'Automatizamos tareas repetitivas y procesos empresariales. Reducimos costos operativos hasta un 60%.',
+        description:
+          'Automatizamos tareas repetitivas y procesos empresariales. Reducimos costos operativos hasta un 60%.',
         icon: 'tabler:robot',
       },
       {
         title: 'Capacitación Tecnológica',
-        description: 'Programas de formación personalizados para tu equipo. Certificaciones en IA, desarrollo web, DevOps y más.',
+        description:
+          'Programas de formación personalizados para tu equipo. Certificaciones en IA, desarrollo web, DevOps y más.',
         icon: 'tabler:school',
       },
       {
         title: 'Consultoría en Transformación Digital',
-        description: 'Analizamos tu negocio y diseñamos estrategias tecnológicas para optimizar procesos y aumentar productividad.',
+        description:
+          'Analizamos tu negocio y diseñamos estrategias tecnológicas para optimizar procesos y aumentar productividad.',
         icon: 'tabler:chart-line',
       },
       {
         title: 'Soporte y Mantenimiento',
-        description: 'Soporte técnico 24/7, actualizaciones de software y mantenimiento preventivo para garantizar óptimo funcionamiento.',
+        description:
+          'Soporte técnico 24/7, actualizaciones de software y mantenimiento preventivo para garantizar óptimo funcionamiento.',
         icon: 'tabler:headset',
       },
     ]}
@@ -126,11 +132,9 @@ const metadata = {
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Potencia tu Negocio con IA
-      </h3>
-      Implementamos soluciones de inteligencia artificial que transforman datos en insights accionables, 
-      optimizan procesos y crean experiencias personalizadas para tus clientes.
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Potencia tu Negocio con IA</h3>
+      Implementamos soluciones de inteligencia artificial que transforman datos en insights accionables, optimizan procesos
+      y crean experiencias personalizadas para tus clientes.
     </Fragment>
 
     <Fragment slot="bg">
@@ -170,8 +174,7 @@ const metadata = {
       <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
         Desarrollo Web de Última Generación
       </h3>
-      Creamos aplicaciones web escalables, seguras y de alto rendimiento utilizando las tecnologías 
-      más avanzadas del mercado.
+      Creamos aplicaciones web escalables, seguras y de alto rendimiento utilizando las tecnologías más avanzadas del mercado.
     </Fragment>
   </Content>
 
@@ -353,7 +356,10 @@ const metadata = {
   />
 
   <!-- Note Widget ******************* -->
-  <Note title="¿Necesitas algo personalizado?" description="Contáctanos para discutir tu proyecto específico. Ofrecemos consultorías gratuitas de 30 minutos." />
+  <Note
+    title="¿Necesitas algo personalizado?"
+    description="Contáctanos para discutir tu proyecto específico. Ofrecemos consultorías gratuitas de 30 minutos."
+  />
 
   <!-- CallToAction Widget *********** -->
   <CallToAction
@@ -371,8 +377,8 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="subtitle">
-      Agenda una consultoría gratuita de 30 minutos con nuestros expertos. 
-      Analizaremos tu situación actual y te mostraremos cómo la tecnología puede impulsar tu crecimiento.
+      Agenda una consultoría gratuita de 30 minutos con nuestros expertos. Analizaremos tu situación actual y te
+      mostraremos cómo la tecnología puede impulsar tu crecimiento.
     </Fragment>
   </CallToAction>
 </Layout>

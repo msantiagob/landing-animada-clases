@@ -1,0 +1,265 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const PATH = '/clases-de-ia';
+
+const metadata = {
+  title: 'Clases de IA | Profesor de Inteligencia Artificial en español',
+  description:
+    'Clases de IA particulares y para empresas con un profesor de inteligencia artificial en español. Aprendé ChatGPT, prompt engineering, automatizaciones y agentes desde cero. Online o presencial.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para tomar clases de IA?',
+    answer:
+      'No. El itinerario inicial está pensado para personas sin experiencia técnica: trabajamos con herramientas de IA, prompt engineering y automatizaciones sin escribir código. Si ya programás, existe un itinerario avanzado con APIs, RAG y agentes.',
+  },
+  {
+    question: '¿Las clases son particulares o grupales?',
+    answer:
+      'Ofrecemos ambas. Las clases particulares con profesor de IA dedicado se adaptan a tu ritmo y a tu caso real de trabajo. Las capacitaciones grupales están diseñadas para equipos de empresa, con ejercicios sobre los procesos propios de la compañía.',
+  },
+  {
+    question: '¿Las clases son online o presenciales?',
+    answer:
+      'Las clases se dictan online en vivo para toda Latinoamérica y España. Para empresas también dictamos capacitaciones presenciales según la ubicación, coordinadas previamente.',
+  },
+  {
+    question: '¿Cuánto dura el programa de clases de IA?',
+    answer:
+      'El programa base son 16 horas repartidas en 8 encuentros. Para equipos armamos planes a medida, desde talleres intensivos de un día hasta acompañamientos mensuales.',
+  },
+  {
+    question: '¿Qué herramientas de inteligencia artificial voy a aprender?',
+    answer:
+      'Modelos de lenguaje como Claude y ChatGPT, generación de imágenes, automatizaciones con n8n y Make, asistentes conversacionales sobre WhatsApp y agentes de voz. Siempre aplicados a un caso real tuyo.',
+  },
+  {
+    question: '¿Entregan certificado al finalizar?',
+    answer:
+      'Sí. Al completar el programa entregamos un certificado de finalización de Sonmyd, con el detalle de los contenidos y la carga horaria.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: 'Clases de Inteligencia Artificial aplicada',
+        description:
+          'Programa de clases de IA en español para personas y equipos: prompt engineering, automatizaciones, asistentes y agentes aplicados a casos reales de trabajo.',
+        path: PATH,
+        modes: ['online', 'onsite'],
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Clases de IA', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Clases de IA"
+    actions={[
+      { variant: 'primary', text: 'Reservar clase de prueba', href: '/booking', icon: 'tabler:calendar-plus' },
+      { text: 'Hablar con el profesor', href: '/contact', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Clases de inteligencia artificial con profesor en español',
+    }}
+  >
+    <Fragment slot="title">
+      Clases de IA con un <span class="text-accent">profesor de inteligencia artificial</span> que te acompaña de verdad
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Clases particulares y capacitaciones para empresas, en español y en vivo. Sin teoría vacía: aprendés sobre tu
+      propio trabajo, con ejercicios que resuelven un problema real de tu día a día desde la primera clase.
+    </Fragment>
+  </Hero>
+
+  <Features
+    id="programa"
+    tagline="Qué vas a aprender"
+    title="Un programa de IA que se aplica el mismo día"
+    subtitle="Seis bloques que van de lo fundamental a lo que hoy usan los equipos que trabajan con inteligencia artificial."
+    items={[
+      {
+        title: 'Fundamentos de IA sin humo',
+        description:
+          'Qué es realmente un modelo de lenguaje, qué puede y qué NO puede hacer, y por qué entender esto te evita el 90% de las frustraciones.',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Prompt engineering en serio',
+        description:
+          'Estructura de instrucciones, contexto, ejemplos y verificación. La diferencia entre pedirle cosas a la IA y obtener resultados que sirvan.',
+        icon: 'tabler:message-chatbot',
+      },
+      {
+        title: 'Automatizaciones sin escribir código',
+        description:
+          'Conectá tus herramientas con n8n y Make para que las tareas repetitivas se resuelvan solas mientras vos hacés otra cosa.',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Asistentes conversacionales',
+        description:
+          'Cómo se diseña un asistente que atiende clientes por WhatsApp: base de conocimiento, tono, límites y escalado a una persona.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Agentes y llamadas con IA',
+        description:
+          'Agentes de voz que llaman, califican y agendan. Cómo se arman, cuánto cuestan y en qué casos conviene (y en cuáles no).',
+        icon: 'tabler:phone-call',
+      },
+      {
+        title: 'Criterio y ética profesional',
+        description:
+          'Datos sensibles, alucinaciones, sesgos y verificación. Usar IA bien es saber cuándo desconfiar de lo que te responde.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Clases particulares"
+    title="Un profesor de IA dedicado a tu caso"
+    items={[
+      {
+        title: 'Diagnóstico inicial gratuito',
+        description: 'Antes de la primera clase revisamos tu nivel real y qué querés resolver. El plan sale de ahí.',
+      },
+      {
+        title: 'Ritmo y horario propios',
+        description: 'Vos elegís la frecuencia. Si una semana no podés, se reprograma sin perder la clase.',
+      },
+      {
+        title: 'Material y grabación de cada encuentro',
+        description: 'Te quedás con las grabaciones, los ejercicios resueltos y las plantillas que armamos juntos.',
+      },
+      {
+        title: 'Soporte entre clases',
+        description:
+          'Canal directo para consultas mientras aplicás lo visto. Aprender solo frente a la pantalla no sirve.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2071&q=80',
+      alt: 'Profesor de IA dando una clase particular online',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Clases de IA particulares, uno a uno
+      </h2>
+      La mayoría de los cursos de inteligencia artificial te dan video grabado y te dejan solo. Acá hay una persona del otro
+      lado que corrige lo que hacés, te frena cuando vas por el camino equivocado y te empuja cuando podés dar más.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-slate-800"></div>
+    </Fragment>
+  </Content>
+
+  <Content
+    tagline="Para empresas"
+    title="Capacitaciones de IA para equipos"
+    items={[
+      {
+        title: 'Relevamiento previo de procesos',
+        description: 'Entrevistamos al equipo para detectar dónde la IA realmente ahorra horas, y dónde es puro ruido.',
+      },
+      {
+        title: 'Ejercicios con datos de la empresa',
+        description: 'Nada de ejemplos genéricos: se practica sobre los documentos y flujos reales de la compañía.',
+      },
+      {
+        title: 'Plan de adopción posterior',
+        description: 'La capacitación termina con un documento de qué automatizar primero y con qué retorno esperado.',
+      },
+      {
+        title: 'Modalidad online o presencial',
+        description: 'Online para equipos distribuidos, presencial cuando conviene juntar a todos en una sala.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Capacitación de inteligencia artificial para un equipo de empresa',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Que tu equipo deje de improvisar con la IA
+      </h2>
+      El problema no es que tu gente no use inteligencia artificial. Es que la usa sin criterio: sin verificar, sin entender
+      los límites y, a veces, pegando información confidencial en una herramienta pública.
+    </Fragment>
+  </Content>
+
+  <Steps
+    title="Cómo empezamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Clase de prueba</span>',
+        description:
+          'Una sesión sin costo para medir tu nivel y entender qué querés lograr. Si no encaja, te lo decimos.',
+        icon: 'tabler:calendar-plus',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Plan personalizado</span>',
+        description: 'Armamos el itinerario según tu punto de partida, tu objetivo y el tiempo del que disponés.',
+        icon: 'tabler:map',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Clases en vivo</span>',
+        description: 'Encuentros con práctica guiada, ejercicios sobre tu caso real y corrección personalizada.',
+        icon: 'tabler:school',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Aplicación y certificado</span>',
+        description: 'Cerrás con un proyecto propio funcionando y el certificado de finalización.',
+        icon: 'tabler:certificate',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Estudiante aplicando lo aprendido en clases de IA',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre las clases de IA"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Reservar clase de prueba', href: '/booking', icon: 'tabler:calendar-plus' },
+      { text: 'Escribinos', href: '/contact', variant: 'tertiary' },
+    ]}
+  >
+    <Fragment slot="title">Tu primera clase de IA es gratis</Fragment>
+    <Fragment slot="subtitle">
+      Una sesión para ver si te sirve. Sin compromiso y sin venderte humo: si creemos que no es para vos, te lo decimos.
+    </Fragment>
+  </CallToAction>
+</Layout>

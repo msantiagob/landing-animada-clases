@@ -1,0 +1,21 @@
+---
+/**
+ * Renderiza JSON-LD (schema.org). Es lo que permite que Google entienda QUÉ es
+ * cada página y muestre rich results: FAQs desplegables, cursos, servicios.
+ * Sin esto el buscador solo ve texto plano.
+ */
+export interface Props {
+  schema: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { schema } = Astro.props;
+
+const payload = Array.isArray(schema)
+  ? { '@context': 'https://schema.org', '@graph': schema }
+  : { '@context': 'https://schema.org', ...schema };
+
+// Cierra cualquier intento de romper el <script> desde un string interpolado.
+const serialized = JSON.stringify(payload).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={serialized} />

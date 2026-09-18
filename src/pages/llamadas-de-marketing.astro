@@ -1,0 +1,229 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/llamadas-de-marketing';
+
+const metadata = {
+  title: 'Llamadas de marketing con IA | Campañas de voz automatizadas',
+  description:
+    'Llamadas de marketing automatizadas con agentes de voz con IA: contactan tu base, califican interesados y agendan reuniones en español natural. Campañas medibles y a escala, sin call center.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Qué son las llamadas de marketing con IA?',
+    answer:
+      'Son campañas de llamadas salientes ejecutadas por un agente de voz con inteligencia artificial. El agente marca, conversa en español natural, presenta la propuesta, responde objeciones frecuentes, califica al contacto y agenda una reunión o deriva a un vendedor.',
+  },
+  {
+    question: '¿Se nota que es una IA?',
+    answer:
+      'La voz es natural y maneja interrupciones y silencios. Aun así, nuestra recomendación es declarar desde el inicio que se trata de un asistente automático: es lo correcto y, en la práctica, mejora la conversión porque baja la desconfianza.',
+  },
+  {
+    question: '¿Es legal llamar a una base de contactos?',
+    answer:
+      'Depende del país y del origen de la base. Trabajamos solo con bases con consentimiento, respetamos los registros de "no llamar" y configuramos horarios permitidos y límite de reintentos. La responsabilidad sobre el origen de los datos es del cliente y lo dejamos por escrito.',
+  },
+  {
+    question: '¿Cuántas llamadas puede hacer por día?',
+    answer:
+      'Miles en paralelo, sin la limitación de agenda de un equipo humano. En la práctica el volumen lo define tu capacidad de atender los interesados que la campaña genera, no el sistema.',
+  },
+  {
+    question: '¿Qué métricas obtengo de la campaña?',
+    answer:
+      'Llamadas realizadas, contactos efectivos, duración media, motivos de rechazo, objeciones más repetidas, reuniones agendadas y costo por reunión. Además queda la transcripción de cada conversación.',
+  },
+  {
+    question: '¿Puede integrarse con mi CRM?',
+    answer:
+      'Sí. El agente toma los contactos desde tu CRM y devuelve el resultado de cada llamada, la transcripción y el estado del contacto, para que el seguimiento continúe donde ya trabajás.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Llamadas de marketing con agentes de voz con IA',
+        description:
+          'Campañas de llamadas salientes automatizadas con inteligencia artificial: contacto masivo, calificación de interesados, agendamiento de reuniones y métricas por campaña.',
+        path: PATH,
+        serviceType: 'Marketing telefónico automatizado con IA',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Llamadas de marketing', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Llamadas de marketing"
+    actions={[
+      { variant: 'primary', text: 'Escuchar una llamada de ejemplo', href: '/booking', icon: 'tabler:phone-call' },
+      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1556745753-b2904692b3cd?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Campaña de llamadas de marketing con inteligencia artificial',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Llamadas de marketing</span> que se hacen solas y llegan a toda tu base
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Agentes de voz con IA que contactan tu base en español natural, presentan tu propuesta, responden las objeciones
+      de siempre y agendan reuniones con quienes realmente tienen interés. Sin montar un call center.
+    </Fragment>
+  </Hero>
+
+  <Features
+    id="capacidades"
+    tagline="Qué hace la campaña"
+    title="De la base de datos a la reunión agendada"
+    subtitle="El agente no lee un guion rígido: conversa, escucha la respuesta y decide el siguiente paso."
+    items={[
+      {
+        title: 'Conversación real, no un audio grabado',
+        description:
+          'Entiende respuestas, maneja interrupciones y adapta el discurso. Nada que ver con una locución pregrabada.',
+        icon: 'tabler:microphone',
+      },
+      {
+        title: 'Responde las objeciones de siempre',
+        description:
+          '"Es caro", "ya trabajo con otro", "mandame un mail". Las preparamos de antemano con tus mejores respuestas.',
+        icon: 'tabler:message-circle-question',
+      },
+      {
+        title: 'Califica antes de pasar el contacto',
+        description:
+          'Presupuesto, plazo y decisión de compra. Tu vendedor recibe interesados reales, no una lista de teléfonos.',
+        icon: 'tabler:filter-check',
+      },
+      {
+        title: 'Agenda en el momento',
+        description: 'Consulta la agenda del vendedor y cierra la reunión durante la misma llamada.',
+        icon: 'tabler:calendar-check',
+      },
+      {
+        title: 'Transcribe y registra todo',
+        description: 'Cada llamada queda transcripta y clasificada. Podés auditar qué se dijo y por qué se perdió.',
+        icon: 'tabler:file-text',
+      },
+      {
+        title: 'Escala sin contratar gente',
+        description:
+          'Cien llamadas o diez mil cuestan lo mismo por unidad. El volumen deja de ser un problema de nómina.',
+        icon: 'tabler:trending-up',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Por qué funciona"
+    title="El telemarketing tradicional se rompe por el mismo lado siempre"
+    items={[
+      {
+        title: 'La rotación se come la capacitación',
+        description: 'Entrenás a un vendedor tres meses y se va. El agente de IA no renuncia ni tiene un mal día.',
+      },
+      {
+        title: 'El guion se degrada con el cansancio',
+        description: 'La llamada número ochenta no suena como la primera. La IA sostiene la misma calidad siempre.',
+      },
+      {
+        title: 'Las bases grandes nunca se terminan de llamar',
+        description: 'Un equipo humano llega a una fracción. El agente recorre la base completa en días.',
+      },
+      {
+        title: 'Sin datos no se puede optimizar',
+        description:
+          'Con transcripción de todas las llamadas sabés qué objeción mata la venta y podés corregir el pitch.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Análisis de métricas de una campaña de llamadas de marketing',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Mismo pitch, misma energía, llamada mil
+      </h2>
+      No se trata de reemplazar a tus vendedores. Se trata de que dejen de quemar horas marcando números y solo hablen con
+      quien ya mostró interés.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-slate-800"></div>
+    </Fragment>
+  </Content>
+
+  <Steps
+    title="Cómo armamos tu campaña"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Objetivo y base</span>',
+        description:
+          'Definimos qué cuenta como éxito y revisamos el origen y la calidad de la base de contactos antes de marcar.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Guion y objeciones</span>',
+        description:
+          'Escribimos el discurso con tu equipo comercial y cargamos las respuestas a las objeciones reales.',
+        icon: 'tabler:script',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Prueba piloto</span>',
+        description: 'Arrancamos con una muestra chica, escuchamos las grabaciones y ajustamos antes de escalar.',
+        icon: 'tabler:test-pipe',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Escala y medición</span>',
+        description: 'Se libera el volumen completo con reportes de conversión y costo por reunión agendada.',
+        icon: 'tabler:chart-line',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Planificación de una campaña de llamadas con IA',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre llamadas de marketing con IA"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Escuchar un ejemplo', href: '/booking', icon: 'tabler:phone-call' },
+      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
+    ]}
+  >
+    <Fragment slot="title">Escuchá una llamada antes de contratar</Fragment>
+    <Fragment slot="subtitle">
+      Te hacemos una llamada de demostración con el guion de tu rubro. Juzgá vos mismo si suena bien.
+    </Fragment>
+  </CallToAction>
+</Layout>

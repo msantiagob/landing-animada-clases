@@ -13,8 +13,11 @@ import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const metadata = {
-  title: 'Sonmyd - Soluciones Tecnológicas e IA | Transformamos tu Negocio',
+  title: 'Clases de IA, Asistente de WhatsApp y Gestor de Llamadas | Sonmyd',
+  description:
+    'Clases de inteligencia artificial con profesor especializado, asistentes de WhatsApp con IA, llamadas de marketing automatizadas y gestor de llamadas 24/7 para empresas. En español.',
   ignoreTitleTemplate: true,
+  canonical: '/',
 };
 ---
 
@@ -37,17 +40,17 @@ const metadata = {
       alt: 'Tecnología e Inteligencia Artificial',
     }}
   >
-    <Fragment slot='title'>
-      Transformamos tu negocio con <span class='hidden xl:inline'>soluciones tecnológicas de</span>
-      <span class='text-accent'> Inteligencia Artificial</span> y desarrollo avanzado
+    <Fragment slot="title">
+      Transformamos tu negocio con <span class="hidden xl:inline">soluciones tecnológicas de</span>
+      <span class="text-accent"> Inteligencia Artificial</span> y desarrollo avanzado
     </Fragment>
 
-    <Fragment slot='subtitle'>
-      <span class='hidden sm:inline'>
-        <span class='font-semibold'>Sonmyd</span> lidera la innovación tecnológica con soluciones de IA, desarrollo web y
+    <Fragment slot="subtitle">
+      <span class="hidden sm:inline">
+        <span class="font-semibold">Sonmyd</span> lidera la innovación tecnológica con soluciones de IA, desarrollo web y
         automatizaciones empresariales.</span
       >
-      <span class='block mb-1 sm:hidden font-bold text-blue-600'>Sonmyd: Innovación que transforma.</span>
+      <span class="block mb-1 sm:hidden font-bold text-blue-600">Sonmyd: Innovación que transforma.</span>
       Especializados en capacitaciones tecnológicas, desarrollo de aplicaciones multiplataforma y automatización de procesos
       empresariales.
     </Fragment>
@@ -55,15 +58,55 @@ const metadata = {
 
   <!-- Note Widget ******************* -->
 
-  <Note title='Nuestra Visión:' description='Innovación, Excelencia Técnica y Resultados Transformadores' />
+  <Note title="Nuestra Visión:" description="Innovación, Excelencia Técnica y Resultados Transformadores" />
+
+  <!-- Servicios principales: enlazado interno hacia las páginas que queremos posicionar -->
+
+  <Features
+    id="servicios-ia"
+    tagline="Servicios de IA"
+    title="Inteligencia artificial que trabaja para tu negocio"
+    subtitle="Cuatro soluciones concretas, en español y funcionando desde el primer mes."
+    columns={2}
+    items={[
+      {
+        title: 'Clases de IA con profesor dedicado',
+        description:
+          'Clases particulares y capacitaciones para empresas. Aprendés inteligencia artificial aplicada a tu trabajo real, con un profesor que te corrige y te acompaña.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver las clases de IA', href: '/clases-de-ia' },
+      },
+      {
+        title: 'Asistente de WhatsApp con IA',
+        description:
+          'Responde, califica interesados y agenda reuniones las 24 horas sobre la API oficial de WhatsApp Business, integrado a tu CRM.',
+        icon: 'tabler:brand-whatsapp',
+        callToAction: { text: 'Ver el asistente de WhatsApp', href: '/asistente-de-whatsapp' },
+      },
+      {
+        title: 'Llamadas de marketing con IA',
+        description:
+          'Campañas de llamadas salientes con agentes de voz que conversan en español natural, manejan objeciones y agendan reuniones a escala.',
+        icon: 'tabler:phone-call',
+        callToAction: { text: 'Ver las llamadas de marketing', href: '/llamadas-de-marketing' },
+      },
+      {
+        title: 'Gestor de llamadas 24/7',
+        description:
+          'Recepcionista virtual que atiende cada llamada entrante, entiende el motivo, agenda turnos y deriva al área correcta. Ninguna llamada perdida.',
+        icon: 'tabler:phone-incoming',
+        callToAction: { text: 'Ver el gestor de llamadas', href: '/gestor-de-llamadas' },
+      },
+    ]}
+  />
 
   <!-- Features Widget *************** -->
 
   <Features
-    id='features'
-    tagline='Por qué elegirnos'
-    title='Lo que obtienes con Sonmyd'
-    subtitle='Somos líderes en soluciones tecnológicas empresariales. Expertos certificados con más de 500 proyectos exitosos y capacitaciones especializadas en las últimas tecnologías.'
+    id="features"
+    tagline="Por qué elegirnos"
+    title="Lo que obtienes con Sonmyd"
+    subtitle="Somos líderes en soluciones tecnológicas empresariales. Expertos certificados con más de 500 proyectos exitosos y capacitaciones especializadas en las últimas tecnologías."
     items={[
       {
         title: 'Soluciones de Inteligencia Artificial',
@@ -108,8 +151,8 @@ const metadata = {
 
   <Content
     isReversed
-    tagline='Nuestro enfoque'
-    title='Metodología Sonmyd: ¡Donde la Innovación se Encuentra con Resultados!'
+    tagline="Nuestro enfoque"
+    title="Metodología Sonmyd: ¡Donde la Innovación se Encuentra con Resultados!"
     items={[
       {
         title: 'Tecnologías de Vanguardia',
@@ -132,15 +175,15 @@ const metadata = {
       alt: 'Colorful Image',
     }}
   >
-    <Fragment slot='content'>
-      <h3 class='text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2'>
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
         Innovación que impulsa resultados
       </h3>
       Obtén una ventaja competitiva con tecnologías de última generación y expertise comprobado
     </Fragment>
 
-    <Fragment slot='bg'>
-      <div class='absolute inset-0 bg-blue-50 dark:bg-transparent'></div>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
 
@@ -174,10 +217,10 @@ const metadata = {
       alt: 'Blueprint Image',
     }}
   >
-    <Fragment slot='content'>Transformamos tus ideas en soluciones tecnológicas que generan valor real.</Fragment>
+    <Fragment slot="content">Transformamos tus ideas en soluciones tecnológicas que generan valor real.</Fragment>
 
-    <Fragment slot='bg'>
-      <div class='absolute inset-0 bg-blue-50 dark:bg-transparent'></div>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
 
@@ -212,17 +255,17 @@ const metadata = {
       alt: 'Astronauts Image',
     }}
   >
-    <Fragment slot='content'>Potenciamos tu negocio con herramientas que escalan contigo.</Fragment>
+    <Fragment slot="content">Potenciamos tu negocio con herramientas que escalan contigo.</Fragment>
 
-    <Fragment slot='bg'>
-      <div class='absolute inset-0 bg-blue-50 dark:bg-transparent'></div>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
 
   <!-- Steps Widget ****************** -->
 
   <Steps
-    title='Transforma tu negocio en 4 pasos simples con Sonmyd.'
+    title="Transforma tu negocio en 4 pasos simples con Sonmyd."
     items={[
       {
         title: 'Paso 1: <span class="font-medium">Consulta</span>',
@@ -257,9 +300,9 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title='Nuestros Servicios Principales'
-    subtitle='Soluciones tecnológicas especializadas que transforman tu negocio y potencian tu crecimiento empresarial'
-    tagline='Servicios'
+    title="Nuestros Servicios Principales"
+    subtitle="Soluciones tecnológicas especializadas que transforman tu negocio y potencian tu crecimiento empresarial"
+    tagline="Servicios"
     items={[
       {
         title: 'Inteligencia Artificial',
@@ -313,15 +356,15 @@ const metadata = {
       },
     ]}
   >
-    <Fragment slot='bg'>
-      <div class='absolute inset-0 bg-blue-50 dark:bg-transparent'></div>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Features2>
 
   <!-- HighlightedPosts Widget ******* -->
 
   <BlogLatestPosts
-    title='Insights y Tendencias Tecnológicas'
+    title="Insights y Tendencias Tecnológicas"
     information={`Nuestro blog comparte las últimas tendencias en inteligencia artificial, desarrollo web y transformación digital.
                         Cada artículo es una guía práctica que te ayudará a entender cómo implementar tecnologías avanzadas en tu negocio.
                         Mantente actualizado con insights de nuestros expertos certificados.
@@ -331,9 +374,9 @@ const metadata = {
   <!-- FAQs Widget ******************* -->
 
   <FAQs
-    title='Preguntas Frecuentes'
-    subtitle='Explora las siguientes preguntas para obtener información sobre las poderosas soluciones que ofrece Sonmyd y cómo podemos transformar tu negocio con tecnología de vanguardia.'
-    tagline='Preguntas Frecuentes'
+    title="Preguntas Frecuentes"
+    subtitle="Explora las siguientes preguntas para obtener información sobre las poderosas soluciones que ofrece Sonmyd y cómo podemos transformar tu negocio con tecnología de vanguardia."
+    tagline="Preguntas Frecuentes"
     classes={{ container: 'max-w-6xl' }}
     items={[
       {
@@ -393,13 +436,13 @@ const metadata = {
       },
     ]}
   >
-    <Fragment slot='title'>
-      Sonmyd&nbsp;+&nbsp;<br class='block sm:hidden' /><span class='sm:whitespace-nowrap'>Tu Éxito</span>
+    <Fragment slot="title">
+      Sonmyd&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tu Éxito</span>
     </Fragment>
 
-    <Fragment slot='subtitle'>
+    <Fragment slot="subtitle">
       Únete a las empresas líderes que ya transformaron su negocio con nuestras soluciones. <br
-        class='hidden md:inline'
+        class="hidden md:inline"
       />No dejes que la competencia te adelante. ¡Actúa ahora!
     </Fragment>
   </CallToAction>
