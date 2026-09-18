@@ -26,23 +26,23 @@ const sizeClasses = {
   md: 'max-w-2xl',
   lg: 'max-w-4xl',
   xl: 'max-w-6xl',
-  full: 'max-w-full mx-4'
+  full: 'max-w-full mx-4',
 };
 
 const positionClasses = {
   center: 'items-center',
   top: 'items-start pt-16',
-  bottom: 'items-end pb-16'
+  bottom: 'items-end pb-16',
 };
 
 const animationClasses = {
   fade: 'animate-fade-in',
   slide: 'animate-slide-down',
-  zoom: 'animate-zoom-in'
+  zoom: 'animate-zoom-in',
 };
 ---
 
-<div 
+<div
   id={id}
   class={`fixed inset-0 z-50 hidden ${backdrop ? 'bg-black/50' : ''} backdrop-blur-sm`}
   role="dialog"
@@ -50,32 +50,36 @@ const animationClasses = {
   aria-labelledby={title ? `${id}-title` : undefined}
 >
   <div class={`flex ${positionClasses[position]} justify-center min-h-full p-4`}>
-    <div class={`
+    <div
+      class={`
       relative w-full ${sizeClasses[size]} bg-white dark:bg-gray-900
       rounded-2xl shadow-2xl ${animationClasses[animation]}
       border border-gray-200 dark:border-gray-700
       ${className}
-    `}>
-      {title && (
-        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 id={`${id}-title`} class="text-xl font-semibold text-gray-900 dark:text-white">
-            {title}
-          </h3>
-          {closable && (
-            <button
-              type="button"
-              class="modal-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 
+    `}
+    >
+      {
+        title && (
+          <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 id={`${id}-title`} class="text-xl font-semibold text-gray-900 dark:text-white">
+              {title}
+            </h3>
+            {closable && (
+              <button
+                type="button"
+                class="modal-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 
                      transition-colors p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-              data-modal={id}
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          )}
-        </div>
-      )}
-      
+                data-modal={id}
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )
+      }
+
       <div class="p-6">
         <slot />
       </div>
@@ -92,20 +96,21 @@ const animationClasses = {
     const closeButtons = modal.querySelectorAll('.modal-close');
     const backdrop = modal;
 
-    // Close modal function
-    function closeModal() {
+    // Arrow functions, no declaraciones: una `function` se hoistea y TypeScript
+    // asume que podría ejecutarse antes del `if (!modal) return`, por lo que
+    // pierde el estrechamiento del tipo y marca `modal` como posiblemente null.
+    const closeModal = () => {
       modal.classList.add('hidden');
       document.body.classList.remove('overflow-hidden');
-    }
+    };
 
-    // Open modal function
-    function openModal() {
+    const openModal = () => {
       modal.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
-    }
+    };
 
     // Close button handlers
-    closeButtons.forEach(button => {
+    closeButtons.forEach((button) => {
       button.addEventListener('click', closeModal);
     });
 
@@ -124,8 +129,9 @@ const animationClasses = {
     });
 
     // Expose functions globally
-    (window as any)[`open${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`] = openModal;
-    (window as any)[`close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`] = closeModal;
+    const globalScope = window as unknown as Record<string, () => void>;
+    globalScope[`open${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`] = openModal;
+    globalScope[`close${modalId.charAt(0).toUpperCase() + modalId.slice(1)}`] = closeModal;
   }
 
   // Initialize modal when DOM is ready
@@ -151,27 +157,31 @@ const animationClasses = {
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes slideDown {
-    from { 
+    from {
       opacity: 0;
       transform: translateY(-20px);
     }
-    to { 
+    to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
   @keyframes zoomIn {
-    from { 
+    from {
       opacity: 0;
       transform: scale(0.95);
     }
-    to { 
+    to {
       opacity: 1;
       transform: scale(1);
     }

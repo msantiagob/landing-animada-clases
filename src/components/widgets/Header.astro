@@ -6,6 +6,9 @@ import ToggleMenu from '~/components/common/ToggleMenu.astro';
 import Button from '~/components/ui/Button.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
+// getAsset se usa dentro de una expresión de plantilla más abajo; el parser de
+// ESLint para Astro no inspecciona esas expresiones y lo da por no usado.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { trimSlash, getAsset } from '~/utils/permalinks';
 import type { CallToAction } from '~/types';
 
@@ -40,6 +43,7 @@ const {
   isDark = false,
   isFullWidth = false,
   showToggleTheme = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- usado en la plantilla
   showRssFeed = false,
   position = 'center',
 } = Astro.props;

@@ -6,11 +6,20 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
 ---
 
 <form id="contactForm" method="post" action="/api/contact">
+  <!-- Honeypot: invisible para personas, irresistible para bots. El backend
+       descarta en silencio cualquier envío que lo traiga completo. -->
+  <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+    <label for="website">No completar este campo</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+  </div>
   <!-- Messages -->
   <div id="successMessage" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
     <div class="flex">
       <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+          clip-rule="evenodd"></path>
       </svg>
       <span id="successText">¡Formulario enviado correctamente! Te contactaremos pronto.</span>
     </div>
@@ -19,7 +28,10 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
   <div id="errorMessage" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
     <div class="flex">
       <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        <path
+          fill-rule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clip-rule="evenodd"></path>
       </svg>
       <span id="errorText">Error al enviar el formulario. Inténtalo más tarde.</span>
     </div>
@@ -63,7 +75,7 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
           placeholder={textarea.placeholder}
           required
           class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        ></textarea>
+        />
       </div>
     )
   }
@@ -109,20 +121,22 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
 </form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contactForm');
-    const submitBtn = document.getElementById('submitBtn');
+  document.addEventListener('DOMContentLoaded', function () {
+    // Los scripts inline de Astro pasan por astro check. Tipar la consulta al
+    // DOM una sola vez evita arrastrar decenas de "possibly null" más abajo.
+    const form = document.getElementById('contactForm') as HTMLFormElement | null;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
     const successMessage = document.getElementById('successMessage');
     const errorMessage = document.getElementById('errorMessage');
     const successText = document.getElementById('successText');
     const errorText = document.getElementById('errorText');
 
-    if (!form) return;
+    if (!form || !submitBtn || !successMessage || !errorMessage || !successText || !errorText) return;
 
     // Prevenir envíos duplicados
     let isSubmitting = false;
 
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       // Prevenir envíos duplicados
@@ -139,8 +153,6 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
       successMessage.classList.add('hidden');
       errorMessage.classList.add('hidden');
 
-      isSubmitting = true;
-
       // Get form data
       const formData = new FormData(form);
       const data = {
@@ -148,15 +160,20 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
         email: formData.get('email'),
         phone: formData.get('phone') || null,
         company: formData.get('company') || null,
-        message: formData.get('message')
+        message: formData.get('message'),
+        website: formData.get('website') || '',
       };
 
-      // Validate required fields
+      // Validate required fields. Ojo: el flag de envío se marca DESPUÉS de
+      // validar; si se marcaba antes, este return dejaba el formulario
+      // bloqueado para siempre.
       if (!data.name || !data.email || !data.message) {
         errorText.textContent = 'Por favor completa todos los campos obligatorios.';
         errorMessage.classList.remove('hidden');
         return;
       }
+
+      isSubmitting = true;
 
       // Loading state
       const originalText = submitBtn.textContent;
@@ -170,21 +187,18 @@ const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' 
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
 
-        // Verificar que la respuesta es válida
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        // El backend devuelve el motivo en el cuerpo también con 400 o 429.
+        // Cortar por !response.ok escondía ese mensaje tras un error genérico.
         const result = await response.json();
 
         if (result.success) {
           successText.textContent = result.message;
           successMessage.classList.remove('hidden');
           form.reset();
-          
+
           // Scroll to success message
           successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
