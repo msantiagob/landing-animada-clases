@@ -1,184 +1,121 @@
 import type { APIRoute } from 'astro';
+import { addHours, isBefore, isValid, parse } from 'date-fns';
 import { dbHelpers } from '../../lib/database';
 import { emailHelpers } from '../../lib/email';
-import { format, parse, isValid, isBefore, addHours } from 'date-fns';
+import {
+  EMAIL_REGEX,
+  asOptionalString,
+  asTrimmedString,
+  badRequest,
+  conflict,
+  getClientIp,
+  ok,
+  parseBody,
+  rateLimit,
+  serverError,
+  tooManyRequests,
+} from '../../lib/http';
+
+export const prerender = false;
+
+const OPENING_HOUR = 9;
+const CLOSING_HOUR = 18;
+const MIN_LEAD_TIME_HOURS = 2;
+const DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_FORMAT = /^\d{2}:\d{2}$/;
+
+export const buildDaySlots = (): string[] =>
+  Array.from(
+    { length: CLOSING_HOUR - OPENING_HOUR + 1 },
+    (_, index) => `${(OPENING_HOUR + index).toString().padStart(2, '0')}:00`
+  );
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
-    const { name, email, phone, company, serviceType, date, time, timezone, duration, message } = body;
+    const body = await parseBody(request);
 
-    // Validaciones básicas
+    if (asTrimmedString(body.website) !== '') return ok({ message: 'Cita agendada correctamente.' });
+
+    const ip = getClientIp(request);
+    if (!rateLimit({ key: `appointments:${ip}`, limit: 5, windowMs: 60 * 60 * 1000 })) return tooManyRequests();
+
+    const name = asTrimmedString(body.name);
+    const email = asTrimmedString(body.email).toLowerCase();
+    const serviceType = asTrimmedString(body.serviceType);
+    const date = asTrimmedString(body.date);
+    const time = asTrimmedString(body.time);
+
     if (!name || !email || !serviceType || !date || !time) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Nombre, email, tipo de servicio, fecha y hora son obligatorios'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return badRequest('Nombre, email, tipo de servicio, fecha y hora son obligatorios');
     }
 
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Formato de email inválido'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (!EMAIL_REGEX.test(email)) return badRequest('Formato de email inválido');
+    if (!DATE_FORMAT.test(date) || !TIME_FORMAT.test(time)) return badRequest('Formato de fecha u hora inválido');
 
-    // Validar formato de fecha y hora
     const appointmentDateTime = parse(`${date} ${time}`, 'yyyy-MM-dd HH:mm', new Date());
-    if (!isValid(appointmentDateTime)) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Formato de fecha u hora inválido'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (!isValid(appointmentDateTime)) return badRequest('Formato de fecha u hora inválido');
+
+    if (isBefore(appointmentDateTime, addHours(new Date(), MIN_LEAD_TIME_HOURS))) {
+      return badRequest(`La cita debe agendarse con al menos ${MIN_LEAD_TIME_HOURS} horas de anticipación`);
     }
 
-    // Validar que la fecha sea futura (al menos 2 horas desde ahora)
-    const minDate = addHours(new Date(), 2);
-    if (isBefore(appointmentDateTime, minDate)) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'La cita debe ser programada con al menos 2 horas de anticipación'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    if (!buildDaySlots().includes(time)) {
+      return badRequest(`El horario de atención es de ${OPENING_HOUR}:00 a ${CLOSING_HOUR}:00`);
     }
 
-    // Verificar disponibilidad (no permitir citas en el mismo horario)
-    const existingAppointments = dbHelpers.getAppointmentsByDate(date);
-    const isTimeSlotTaken = existingAppointments.some(apt => 
-      apt.time === time && apt.status !== 'cancelled'
-    );
+    const isTaken = dbHelpers
+      .getAppointmentsByDate(date)
+      .some((appointment) => appointment.time === time && appointment.status !== 'cancelled');
 
-    if (isTimeSlotTaken) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Lo sentimos, ese horario ya no está disponible. Por favor selecciona otro.'
-      }), {
-        status: 409,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (isTaken) return conflict('Ese horario ya no está disponible. Elegí otro, por favor.');
 
-    // Preparar datos para insertar
     const appointmentData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone?.trim() || null,
-      company: company?.trim() || null,
-      serviceType: serviceType.trim(),
+      name,
+      email,
+      phone: asOptionalString(body.phone),
+      company: asOptionalString(body.company),
+      serviceType,
       date,
       time,
-      timezone: timezone || 'America/Bogota',
-      duration: duration || 60,
-      message: message?.trim() || null
+      timezone: asTrimmedString(body.timezone) || 'America/Bogota',
+      duration: Number.parseInt(asTrimmedString(body.duration), 10) || 60,
+      message: asOptionalString(body.message),
     };
 
-    // Insertar en base de datos
     const result = dbHelpers.insertAppointment(appointmentData);
 
-    if (result.lastInsertRowid) {
-      // Enviar emails de confirmación de forma asíncrona
-      Promise.all([
-        emailHelpers.sendAppointmentConfirmation(appointmentData),
-        emailHelpers.sendAppointmentNotification(appointmentData)
-      ]).catch(error => {
-        console.error('Error enviando emails de confirmación:', error);
-      });
+    void emailHelpers.sendAppointmentConfirmation(appointmentData);
+    void emailHelpers.sendAppointmentNotification(appointmentData);
 
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Cita agendada correctamente. Recibirás un email de confirmación.',
-        appointment: {
-          id: result.lastInsertRowid,
-          date,
-          time,
-          duration: appointmentData.duration
-        }
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } else {
-      throw new Error('Error insertando cita en base de datos');
-    }
-
-  } catch (error) {
-    console.error('Error procesando cita:', error);
-    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Error interno del servidor. Inténtalo más tarde.',
-      debug: process.env.NODE_ENV === 'development' ? error.message : undefined
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
+    return ok({
+      message: 'Cita agendada correctamente. Vas a recibir un email de confirmación.',
+      appointment: { id: result.lastInsertRowid, date, time, duration: appointmentData.duration },
     });
+  } catch (error) {
+    console.error('[api/appointments] Error procesando cita:', error);
+    return serverError();
   }
 };
 
 export const GET: APIRoute = async ({ url }) => {
   try {
-    const searchParams = url.searchParams;
-    const date = searchParams.get('date');
+    const date = url.searchParams.get('date');
 
-    if (!date) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Fecha es requerida'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (!date) return badRequest('La fecha es requerida');
+    if (!DATE_FORMAT.test(date)) return badRequest('Formato de fecha inválido');
 
-    // Obtener citas existentes para la fecha
-    const appointments = dbHelpers.getAppointmentsByDate(date);
-    
-    // Horarios disponibles (9:00 AM a 6:00 PM, cada hora)
-    const availableSlots = [];
-    for (let hour = 9; hour <= 18; hour++) {
-      const timeSlot = `${hour.toString().padStart(2, '0')}:00`;
-      const isBooked = appointments.some(apt => 
-        apt.time === timeSlot && apt.status !== 'cancelled'
-      );
-      
-      if (!isBooked) {
-        availableSlots.push(timeSlot);
-      }
-    }
+    const bookedSlots = dbHelpers
+      .getAppointmentsByDate(date)
+      .filter((appointment) => appointment.status !== 'cancelled')
+      .map((appointment) => appointment.time);
 
-    return new Response(JSON.stringify({
-      success: true,
+    return ok({
       date,
-      availableSlots,
-      bookedSlots: appointments.filter(apt => apt.status !== 'cancelled').map(apt => apt.time)
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      availableSlots: buildDaySlots().filter((slot) => !bookedSlots.includes(slot)),
+      bookedSlots,
     });
-
   } catch (error) {
-    console.error('Error obteniendo disponibilidad:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Error interno del servidor'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.error('[api/appointments] Error obteniendo disponibilidad:', error);
+    return serverError();
   }
 };

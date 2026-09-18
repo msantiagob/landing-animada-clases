@@ -1,88 +1,63 @@
 import type { APIRoute } from 'astro';
 import { dbHelpers } from '../../lib/database';
 import { emailHelpers } from '../../lib/email';
+import {
+  EMAIL_REGEX,
+  asOptionalString,
+  asTrimmedString,
+  badRequest,
+  getClientIp,
+  ok,
+  parseBody,
+  rateLimit,
+  serverError,
+  tooManyRequests,
+} from '../../lib/http';
+
+export const prerender = false;
+
+const MAX_MESSAGE_LENGTH = 5000;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
-    const { name, email, message, phone, company } = body;
+    const body = await parseBody(request);
 
-    console.log('📧 Datos recibidos en /api/contact:', body);
+    // Honeypot: un campo oculto que solo un bot completa.
+    if (asTrimmedString(body.website) !== '') return ok({ message: 'Formulario enviado correctamente.' });
 
-    // Validaciones básicas
-    if (!name || !email || !message) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Nombre, email y mensaje son obligatorios'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    const ip = getClientIp(request);
+    if (!rateLimit({ key: `contact:${ip}`, limit: 5, windowMs: 10 * 60 * 1000 })) return tooManyRequests();
 
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Formato de email inválido'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    const name = asTrimmedString(body.name);
+    const email = asTrimmedString(body.email).toLowerCase();
+    const message = asTrimmedString(body.message);
 
-    // Obtener información adicional de la request
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
-               'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
-    const referer = request.headers.get('referer') || 'direct';
+    if (!name || !email || !message) return badRequest('Nombre, email y mensaje son obligatorios');
+    if (!EMAIL_REGEX.test(email)) return badRequest('Formato de email inválido');
+    if (message.length > MAX_MESSAGE_LENGTH) return badRequest('El mensaje es demasiado largo');
 
-    // Preparar datos para insertar
     const formData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      message: message.trim(),
-      phone: phone?.trim() || null,
-      company: company?.trim() || null,
+      name,
+      email,
+      message,
+      phone: asOptionalString(body.phone),
+      company: asOptionalString(body.company),
       ip,
-      userAgent,
-      sourcePage: referer
+      userAgent: request.headers.get('user-agent'),
+      sourcePage: request.headers.get('referer'),
     };
 
-    // Insertar en base de datos
-    console.log('💾 Insertando en base de datos:', formData);
     const result = dbHelpers.insertContactForm(formData);
-    console.log('✅ Resultado de inserción:', result);
 
-    if (result.lastInsertRowid) {
-      // Enviar notificación por email de forma asíncrona
-      emailHelpers.sendContactFormNotification(formData).catch(error => {
-        console.error('Error enviando notificación por email:', error);
-      });
+    // El mail es best-effort: el lead ya está persistido.
+    void emailHelpers.sendContactFormNotification(formData);
 
-      return new Response(JSON.stringify({
-        success: true,
-        message: 'Formulario enviado correctamente. Te contactaremos pronto.',
-        id: result.lastInsertRowid
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    } else {
-      throw new Error('Error insertando en base de datos');
-    }
-
-  } catch (error) {
-    console.error('Error procesando formulario de contacto:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Error interno del servidor. Inténtalo más tarde.'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
+    return ok({
+      message: 'Formulario enviado correctamente. Te contactamos pronto.',
+      id: result.lastInsertRowid,
     });
+  } catch (error) {
+    console.error('[api/contact] Error procesando formulario:', error);
+    return serverError();
   }
 };

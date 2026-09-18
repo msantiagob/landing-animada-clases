@@ -24,3 +24,9 @@ pnpm-lock.yaml
 .astro
 # Local Netlify folder
 .netlify
+
+# base de datos local
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

@@ -1,393 +1,247 @@
 ---
 export const prerender = false;
 
-import { authHelpers } from '../../lib/auth';
 import '../../assets/styles/tailwind.css';
+import { authHelpers } from '../../lib/auth';
 
-// Verificar autenticación
-const authData = authHelpers.requireAuthFromCookies(Astro.request);
-if (!authData) {
-  return Astro.redirect('/admin/login');
-}
+// El middleware ya bloquea el acceso, pero necesitamos el usuario para la cabecera.
+const authData = authHelpers.requireAdmin(Astro.request);
+if (!authData) return Astro.redirect('/admin/login');
 
 const user = authHelpers.getUserById(authData.userId);
-if (!user) {
-  return Astro.redirect('/admin/login');
-}
-
-const metadata = {
-  title: 'Dashboard - Admin Sonmyd',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 ---
 
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{metadata.title}</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .sidebar-link.active {
-      @apply bg-blue-100 text-blue-700 border-r-4 border-blue-700;
-    }
-  </style>
-</head>
-<body class="bg-gray-100">
-  <div class="flex h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-white shadow-lg">
-      <div class="p-6 border-b">
-        <h2 class="text-xl font-bold text-gray-800">Admin Sonmyd</h2>
-        <p class="text-sm text-gray-600">Bienvenido, {user.name}</p>
-      </div>
-      
-      <nav class="mt-6">
-        <a href="/admin/dashboard" class="sidebar-link active flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 5 4-4 4 4"></path>
-          </svg>
-          Dashboard
-        </a>
-        
-        <a href="/admin/forms" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.34a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-          </svg>
-          Formularios
-          <span id="pendingFormsCount" class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">0</span>
-        </a>
-        
-        <a href="/admin/appointments" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v14a2 2 0 002 2z"></path>
-          </svg>
-          Citas
-          <span id="pendingAppointmentsCount" class="ml-auto bg-yellow-500 text-white text-xs px-2 py-1 rounded-full">0</span>
-        </a>
-        
-        <a href="/admin/blog" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-          </svg>
-          Blog
-        </a>
-        
-        <a href="/admin/emails" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-          </svg>
-          Emails
-        </a>
-        
-        <a href="/admin/landing-pages" class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-          </svg>
-          Landing Pages
-        </a>
-      </nav>
-      
-      <!-- Logout -->
-      <div class="absolute bottom-0 w-64 p-6 border-t">
-        <button id="logoutBtn" class="flex items-center text-gray-700 hover:text-red-600">
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-          </svg>
-          Cerrar Sesión
+<html lang="es" class="bg-gray-50">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Panel — Sonmyd</title>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <header class="border-b border-gray-200 bg-white">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div>
+          <h1 class="text-lg font-semibold">Panel de Sonmyd</h1>
+          <p class="text-sm text-gray-500">{user?.email}</p>
+        </div>
+        <button
+          id="logoutBtn"
+          type="button"
+          class="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100"
+        >
+          Cerrar sesión
         </button>
       </div>
-    </div>
+    </header>
 
-    <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
-      <!-- Header -->
-      <div class="bg-white shadow-sm p-6 border-b">
-        <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <p class="text-gray-600">Resumen general de tu panel de administración</p>
-      </div>
+    <main class="mx-auto max-w-6xl px-4 py-8">
+      <p id="loadingState" class="text-sm text-gray-500">Cargando datos…</p>
+      <p id="errorState" class="hidden rounded-md bg-red-50 p-4 text-sm text-red-700"></p>
 
-      <!-- Content -->
-      <div class="p-6">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-              <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.34a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <h3 class="text-sm font-medium text-gray-500">Total Formularios</h3>
-                <p id="totalForms" class="text-2xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
+      <section id="content" class="hidden space-y-10">
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Contactos</p>
+            <p id="statContactTotal" class="text-2xl font-semibold">0</p>
           </div>
-
-          <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-              <div class="p-3 rounded-full bg-green-100 text-green-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v14a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <h3 class="text-sm font-medium text-gray-500">Total Citas</h3>
-                <p id="totalAppointments" class="text-2xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Sin leer</p>
+            <p id="statContactNew" class="text-2xl font-semibold text-blue-600">0</p>
           </div>
-
-          <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-              <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <h3 class="text-sm font-medium text-gray-500">Pendientes</h3>
-                <p id="pendingItems" class="text-2xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Citas</p>
+            <p id="statApptTotal" class="text-2xl font-semibold">0</p>
           </div>
-
-          <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center">
-              <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
-              </div>
-              <div class="ml-4">
-                <h3 class="text-sm font-medium text-gray-500">Esta Semana</h3>
-                <p id="weeklyActivity" class="text-2xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Citas pendientes</p>
+            <p id="statApptPending" class="text-2xl font-semibold text-amber-600">0</p>
           </div>
         </div>
 
-        <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <!-- Activity Chart -->
-          <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Actividad de los últimos 7 días</h3>
-            <canvas id="activityChart" width="400" height="200"></canvas>
-          </div>
-
-          <!-- Services Chart -->
-          <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Servicios más solicitados</h3>
-            <canvas id="servicesChart" width="400" height="200"></canvas>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Recent Forms -->
-          <div class="bg-white rounded-lg shadow">
-            <div class="p-6 border-b">
-              <h3 class="text-lg font-semibold text-gray-800">Formularios Recientes</h3>
-            </div>
-            <div id="recentForms" class="divide-y">
-              <!-- Forms will be loaded here -->
-            </div>
-            <div class="p-4 text-center">
-              <a href="/admin/forms" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver todos los formularios →</a>
-            </div>
-          </div>
-
-          <!-- Upcoming Appointments -->
-          <div class="bg-white rounded-lg shadow">
-            <div class="p-6 border-b">
-              <h3 class="text-lg font-semibold text-gray-800">Próximas Citas</h3>
-            </div>
-            <div id="upcomingAppointments" class="divide-y">
-              <!-- Appointments will be loaded here -->
-            </div>
-            <div class="p-4 text-center">
-              <a href="/admin/appointments" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver todas las citas →</a>
-            </div>
+        <div>
+          <h2 class="mb-3 text-base font-semibold">Contactos</h2>
+          <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+                <tr>
+                  <th class="px-4 py-3">Fecha</th>
+                  <th class="px-4 py-3">Nombre</th>
+                  <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Mensaje</th>
+                  <th class="px-4 py-3">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="contactRows" class="divide-y divide-gray-100"></tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    let activityChart, servicesChart;
-
-    // Load dashboard data
-    async function loadDashboardData() {
-      try {
-        const response = await fetch('/api/admin/dashboard');
-        const data = await response.json();
-
-        if (data.success) {
-          updateStats(data.stats);
-          updateRecentActivity(data.recentActivity);
-          updateCharts(data.charts);
-        } else {
-          console.error('Error loading dashboard data:', data.error);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    }
-
-    function updateStats(stats) {
-      document.getElementById('totalForms').textContent = stats.forms.total;
-      document.getElementById('totalAppointments').textContent = stats.appointments.total;
-      document.getElementById('pendingItems').textContent = stats.forms.pending + stats.appointments.pending;
-      document.getElementById('weeklyActivity').textContent = stats.forms.last7Days;
-      
-      // Update sidebar badges
-      document.getElementById('pendingFormsCount').textContent = stats.forms.pending;
-      document.getElementById('pendingAppointmentsCount').textContent = stats.appointments.pending;
-    }
-
-    function updateRecentActivity(activity) {
-      // Recent Forms
-      const recentFormsContainer = document.getElementById('recentForms');
-      recentFormsContainer.innerHTML = '';
-      
-      activity.forms.forEach(form => {
-        const formElement = document.createElement('div');
-        formElement.className = 'p-4';
-        formElement.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="font-medium text-gray-900">${form.name}</p>
-              <p class="text-sm text-gray-600">${form.email}</p>
-              <p class="text-xs text-gray-500">${new Date(form.created_at).toLocaleDateString('es-ES')}</p>
-            </div>
-            <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(form.status)}">${form.status}</span>
+        <div>
+          <h2 class="mb-3 text-base font-semibold">Citas</h2>
+          <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+                <tr>
+                  <th class="px-4 py-3">Fecha</th>
+                  <th class="px-4 py-3">Hora</th>
+                  <th class="px-4 py-3">Nombre</th>
+                  <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Servicio</th>
+                  <th class="px-4 py-3">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentRows" class="divide-y divide-gray-100"></tbody>
+            </table>
           </div>
-        `;
-        recentFormsContainer.appendChild(formElement);
-      });
+        </div>
+      </section>
+    </main>
 
-      // Upcoming Appointments
-      const appointmentsContainer = document.getElementById('upcomingAppointments');
-      appointmentsContainer.innerHTML = '';
-      
-      activity.appointments.forEach(appointment => {
-        const appointmentElement = document.createElement('div');
-        appointmentElement.className = 'p-4';
-        appointmentElement.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="font-medium text-gray-900">${appointment.name}</p>
-              <p class="text-sm text-gray-600">${appointment.service_type}</p>
-              <p class="text-xs text-gray-500">${appointment.date} - ${appointment.time}</p>
-            </div>
-            <span class="px-2 py-1 text-xs rounded-full ${getStatusColor(appointment.status)}">${appointment.status}</span>
-          </div>
-        `;
-        appointmentsContainer.appendChild(appointmentElement);
-      });
-    }
-
-    function updateCharts(chartData) {
-      // Activity Chart
-      const activityCtx = document.getElementById('activityChart').getContext('2d');
-      if (activityChart) {
-        activityChart.destroy();
+    <script>
+      // Tipado explícito: los scripts inline de Astro pasan por astro check y sin
+      // esto cada acceso al DOM se marca como posiblemente null.
+      interface LeadRow {
+        id: number;
+        name: string;
+        email: string;
+        status: string;
+        created_at: string;
+        message?: string;
+        date?: string;
+        time?: string;
+        service_type?: string;
       }
-      
-      activityChart = new Chart(activityCtx, {
-        type: 'line',
-        data: {
-          labels: chartData.dailyForms.map(d => new Date(d.date).toLocaleDateString('es-ES')),
-          datasets: [{
-            label: 'Formularios',
-            data: chartData.dailyForms.map(d => d.forms_count),
-            borderColor: 'rgb(59, 130, 246)',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
 
-      // Services Chart
-      const servicesCtx = document.getElementById('servicesChart').getContext('2d');
-      if (servicesChart) {
-        servicesChart.destroy();
-      }
-      
-      servicesChart = new Chart(servicesCtx, {
-        type: 'doughnut',
-        data: {
-          labels: chartData.topServices.map(s => s.service_type),
-          datasets: [{
-            data: chartData.topServices.map(s => s.count),
-            backgroundColor: [
-              'rgb(59, 130, 246)',
-              'rgb(16, 185, 129)',
-              'rgb(245, 158, 11)',
-              'rgb(239, 68, 68)',
-              'rgb(139, 92, 246)'
-            ]
-          }]
-        },
-        options: {
-          responsive: true
-        }
-      });
-    }
+      const CONTACT_STATUSES = ['new', 'contacted', 'closed'];
+      const APPOINTMENT_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed'];
 
-    function getStatusColor(status) {
-      const colors = {
-        'new': 'bg-blue-100 text-blue-800',
-        'pending': 'bg-yellow-100 text-yellow-800',
-        'confirmed': 'bg-green-100 text-green-800',
-        'completed': 'bg-gray-100 text-gray-800',
-        'cancelled': 'bg-red-100 text-red-800',
-        'in_progress': 'bg-orange-100 text-orange-800',
-        'resolved': 'bg-green-100 text-green-800',
-        'closed': 'bg-gray-100 text-gray-800'
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
+
+      const escapeHtml = (value: unknown): string =>
+        String(value ?? '').replace(
+          /[&<>"']/g,
+          (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string
+        );
+
+      const statusSelect = (type: string, id: number, current: string, options: string[]) =>
+        `<select data-type="${type}" data-id="${id}" class="status-select rounded border border-gray-300 px-2 py-1 text-xs">
+          ${options
+            .map((option) => `<option value="${option}"${option === current ? ' selected' : ''}>${option}</option>`)
+            .join('')}
+        </select>`;
+
+      const showError = (message: string) => {
+        $('loadingState').classList.add('hidden');
+        const error = $('errorState');
+        error.textContent = message;
+        error.classList.remove('hidden');
       };
-      return colors[status] || 'bg-gray-100 text-gray-800';
-    }
 
-    // Logout functionality
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/api/auth', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ action: 'logout' })
-        });
+      const render = (data: {
+        stats: {
+          contactForms: { total: number; new: number };
+          appointments: { total: number; pending: number };
+        };
+        contactForms: LeadRow[];
+        appointments: LeadRow[];
+      }) => {
+        $('statContactTotal').textContent = String(data.stats.contactForms.total);
+        $('statContactNew').textContent = String(data.stats.contactForms.new);
+        $('statApptTotal').textContent = String(data.stats.appointments.total);
+        $('statApptPending').textContent = String(data.stats.appointments.pending);
 
-        if (response.ok) {
-          window.location.href = '/admin/login';
+        $('contactRows').innerHTML = data.contactForms.length
+          ? data.contactForms
+              .map(
+                (row) => `<tr>
+                  <td class="px-4 py-3 whitespace-nowrap text-gray-500">${escapeHtml(row.created_at)}</td>
+                  <td class="px-4 py-3">${escapeHtml(row.name)}</td>
+                  <td class="px-4 py-3"><a class="text-blue-600 hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a></td>
+                  <td class="px-4 py-3 max-w-md">${escapeHtml(row.message)}</td>
+                  <td class="px-4 py-3">${statusSelect('contact', row.id, row.status, CONTACT_STATUSES)}</td>
+                </tr>`
+              )
+              .join('')
+          : '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">Todavía no hay contactos.</td></tr>';
+
+        $('appointmentRows').innerHTML = data.appointments.length
+          ? data.appointments
+              .map(
+                (row) => `<tr>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(row.date)}</td>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(row.time)}</td>
+                  <td class="px-4 py-3">${escapeHtml(row.name)}</td>
+                  <td class="px-4 py-3"><a class="text-blue-600 hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a></td>
+                  <td class="px-4 py-3">${escapeHtml(row.service_type)}</td>
+                  <td class="px-4 py-3">${statusSelect('appointment', row.id, row.status, APPOINTMENT_STATUSES)}</td>
+                </tr>`
+              )
+              .join('')
+          : '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Todavía no hay citas.</td></tr>';
+
+        $('loadingState').classList.add('hidden');
+        $('content').classList.remove('hidden');
+      };
+
+      const load = async () => {
+        try {
+          const response = await fetch('/api/admin/leads');
+
+          if (response.status === 401) {
+            window.location.href = '/admin/login';
+            return;
+          }
+
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error || 'Error cargando datos');
+
+          render(result);
+        } catch (error) {
+          console.error(error);
+          showError('No se pudieron cargar los datos. Recargá la página.');
         }
-      } catch (error) {
-        console.error('Error logging out:', error);
-      }
-    });
+      };
 
-    // Load data on page load
-    document.addEventListener('DOMContentLoaded', loadDashboardData);
+      document.addEventListener('change', async (event) => {
+        const select = (event.target as HTMLElement | null)?.closest('.status-select') as HTMLSelectElement | null;
+        if (!select) return;
 
-    // Auto-refresh every 30 seconds
-    setInterval(loadDashboardData, 30000);
-  </script>
-</body>
+        const previous = select.dataset.previous ?? select.value;
+        select.disabled = true;
+
+        try {
+          const response = await fetch('/api/admin/leads', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: select.dataset.type, id: Number(select.dataset.id), status: select.value }),
+          });
+
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error);
+
+          select.dataset.previous = select.value;
+          await load();
+        } catch (error) {
+          console.error(error);
+          select.value = previous;
+          showError('No se pudo actualizar el estado.');
+        } finally {
+          select.disabled = false;
+        }
+      });
+
+      $('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'logout' }),
+        });
+        window.location.href = '/admin/login';
+      });
+
+      load();
+    </script>
+  </body>
 </html>

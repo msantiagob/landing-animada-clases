@@ -1,9 +1,15 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import db from './database';
+import { getDb } from './database';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const SALT_ROUNDS = 10;
+/**
+ * 10 rondas en producción. Configurable porque en los tests hacer decenas de
+ * hashes a 10 rondas cuesta segundos y provoca timeouts intermitentes; con un
+ * costo menor se sigue ejercitando bcrypt de verdad, solo que más rápido.
+ */
+const SALT_ROUNDS = Number.parseInt(process.env.BCRYPT_ROUNDS || '', 10) || 10;
+const TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
+export const AUTH_COOKIE = 'auth-token';
 
 export interface User {
   id: number;
@@ -20,139 +26,122 @@ export interface AuthTokenPayload {
   role: string;
 }
 
-// Funciones de autenticación
+/**
+ * Nunca hay un secreto por defecto. Un fallback tipo 'change-me' hace que en
+ * producción cualquiera pueda firmarse un token válido de admin.
+ */
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET no está configurado o es demasiado corto (mínimo 32 caracteres).');
+  }
+
+  return secret;
+};
+
 export const authHelpers = {
-  // Crear hash de contraseña
-  hashPassword: async (password: string): Promise<string> => {
-    return await bcrypt.hash(password, SALT_ROUNDS);
-  },
+  hashPassword: (password: string): Promise<string> => bcrypt.hash(password, SALT_ROUNDS),
 
-  // Verificar contraseña
-  verifyPassword: async (password: string, hashedPassword: string): Promise<boolean> => {
-    return await bcrypt.compare(password, hashedPassword);
-  },
+  verifyPassword: (password: string, hashedPassword: string): Promise<boolean> =>
+    bcrypt.compare(password, hashedPassword),
 
-  // Generar JWT token
-  generateToken: (payload: AuthTokenPayload): string => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
-  },
+  generateToken: (payload: AuthTokenPayload): string =>
+    jwt.sign(payload, getJwtSecret(), { expiresIn: TOKEN_TTL_SECONDS }),
 
-  // Verificar JWT token
   verifyToken: (token: string): AuthTokenPayload | null => {
     try {
-      return jwt.verify(token, JWT_SECRET) as AuthTokenPayload;
-    } catch (error) {
+      return jwt.verify(token, getJwtSecret()) as AuthTokenPayload;
+    } catch {
       return null;
     }
   },
 
-  // Crear usuario admin
-  createUser: async (email: string, password: string, name: string): Promise<number | null> => {
-    try {
-      const hashedPassword = await authHelpers.hashPassword(password);
-      const stmt = db.prepare(`
-        INSERT INTO users (email, password, name, role)
-        VALUES (?, ?, ?, 'admin')
-      `);
-      const result = stmt.run(email, hashedPassword, name);
-      return result.lastInsertRowid as number;
-    } catch (error) {
-      console.error('Error creating user:', error);
-      return null;
-    }
+  /**
+   * No hay endpoint público de registro. Los usuarios se crean únicamente
+   * desde el script de seed (`scripts/create-admin.mjs`).
+   */
+  createUser: async (email: string, password: string, name: string, role = 'admin'): Promise<number> => {
+    const hashedPassword = await authHelpers.hashPassword(password);
+    const result = getDb()
+      .prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)')
+      .run(email.trim().toLowerCase(), hashedPassword, name, role);
+
+    return result.lastInsertRowid as number;
   },
 
-  // Obtener usuario por email
-  getUserByEmail: (email: string): User | null => {
-    const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-    return stmt.get(email) as User | null;
-  },
+  getUserByEmail: (email: string): (User & { password: string }) | null =>
+    (getDb().prepare('SELECT * FROM users WHERE email = ?').get(email.trim().toLowerCase()) as
+      | (User & { password: string })
+      | undefined) ?? null,
 
-  // Obtener usuario por ID
-  getUserById: (id: number): User | null => {
-    const stmt = db.prepare('SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = ?');
-    return stmt.get(id) as User | null;
-  },
+  getUserById: (id: number): User | null =>
+    (getDb().prepare('SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = ?').get(id) as
+      | User
+      | undefined) ?? null,
 
-  // Login
   login: async (email: string, password: string): Promise<{ user: User; token: string } | null> => {
-    const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-    const user = stmt.get(email) as any;
-    
+    const user = authHelpers.getUserByEmail(email);
+
     if (!user) {
+      // Hash de descarte: iguala el tiempo de respuesta con el de un usuario
+      // existente para no filtrar qué emails están registrados.
+      await bcrypt.compare(password, '$2a$10$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinv');
       return null;
     }
 
-    const isValidPassword = await authHelpers.verifyPassword(password, user.password);
-    if (!isValidPassword) {
-      return null;
-    }
+    if (!(await authHelpers.verifyPassword(password, user.password))) return null;
 
-    const tokenPayload: AuthTokenPayload = {
-      userId: user.id,
+    const userWithoutPassword: User = {
+      id: user.id,
       email: user.email,
-      role: user.role
+      name: user.name,
+      role: user.role,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     };
 
-    const token = authHelpers.generateToken(tokenPayload);
-    
-    // Remover password del objeto user
-    const { password: _, ...userWithoutPassword } = user;
-    
     return {
       user: userWithoutPassword,
-      token
+      token: authHelpers.generateToken({ userId: user.id, email: user.email, role: user.role }),
     };
   },
 
-  // Middleware para verificar autenticación en APIs
-  requireAuth: (request: Request): AuthTokenPayload | null => {
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return null;
-    }
-
-    const token = authHeader.substring(7);
-    return authHelpers.verifyToken(token);
-  },
-
-  // Obtener token desde cookies
   getTokenFromCookies: (request: Request): string | null => {
     const cookieHeader = request.headers.get('Cookie');
     if (!cookieHeader) return null;
 
-    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-      const [name, value] = cookie.trim().split('=');
-      acc[name] = value;
-      return acc;
-    }, {} as Record<string, string>);
+    for (const part of cookieHeader.split(';')) {
+      const separator = part.indexOf('=');
+      if (separator === -1) continue;
+      if (part.slice(0, separator).trim() === AUTH_COOKIE) return part.slice(separator + 1).trim();
+    }
 
-    return cookies['auth-token'] || null;
+    return null;
   },
 
-  // Verificar autenticación desde cookies
   requireAuthFromCookies: (request: Request): AuthTokenPayload | null => {
     const token = authHelpers.getTokenFromCookies(request);
     if (!token) return null;
-    
+
     return authHelpers.verifyToken(token);
-  }
+  },
+
+  /** Autenticación + control de rol para endpoints de administración. */
+  requireAdmin: (request: Request): AuthTokenPayload | null => {
+    const payload = authHelpers.requireAuthFromCookies(request);
+    if (!payload || payload.role !== 'admin') return null;
+
+    return payload;
+  },
 };
 
-// Función para inicializar usuario admin por defecto
-export const initializeDefaultAdmin = async () => {
-  const adminEmail = 'admin@sonmyd.com';
-  const existingAdmin = authHelpers.getUserByEmail(adminEmail);
-  
-  if (!existingAdmin) {
-    const defaultPassword = 'admin123'; // Cambiar en producción
-    const adminId = await authHelpers.createUser(adminEmail, defaultPassword, 'Administrador');
-    
-    if (adminId) {
-      console.log('🔐 Usuario admin creado:');
-      console.log('Email:', adminEmail);
-      console.log('Password:', defaultPassword);
-      console.log('⚠️  IMPORTANTE: Cambia la contraseña en producción');
-    }
-  }
+export const buildAuthCookie = (token: string): string => {
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  return `${AUTH_COOKIE}=${token}; HttpOnly;${secure} Path=/; Max-Age=${TOKEN_TTL_SECONDS}; SameSite=Strict`;
+};
+
+export const buildLogoutCookie = (): string => {
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  return `${AUTH_COOKIE}=; HttpOnly;${secure} Path=/; Max-Age=0; SameSite=Strict`;
 };

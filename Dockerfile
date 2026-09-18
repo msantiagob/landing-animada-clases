@@ -1,46 +1,39 @@
-# Dockerfile para aplicación AstroWind en producción
-FROM node:20-alpine AS base
+# --- Etapa de build -----------------------------------------------------------
+# Debian slim en vez de Alpine: better-sqlite3 publica binarios precompilados
+# para glibc. En Alpine (musl) tiene que compilar desde el código fuente, lo que
+# exige python3 + build-base y hace el build mucho más lento y frágil.
+FROM node:20-bookworm-slim AS build
 
-# Instalar dependencias para SQLite
-RUN apk add --no-cache sqlite
-
-# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
 COPY package*.json ./
-
-# Instalar dependencias (incluyendo dev dependencies para build)
 RUN npm ci
 
-# Copiar código fuente
 COPY . .
+RUN npm run build && npm prune --omit=dev
 
-# Construir la aplicación
-RUN npm run build
+# --- Etapa de runtime ---------------------------------------------------------
+FROM node:20-bookworm-slim AS runtime
 
-# Limpiar dev dependencies después del build
-RUN npm prune --production
+WORKDIR /app
 
-# Crear usuario no-root para seguridad
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S astro -u 1001
-
-# Crear directorio para base de datos con permisos
-RUN mkdir -p /app/data && chown -R astro:nodejs /app/data
-
-# Cambiar a usuario no-root
-USER astro
-
-# Exponer puerto
-EXPOSE 8080
-
-# Variables de entorno
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
-ENV DATABASE_PATH=/app/database.sqlite
+# Apunta al volumen persistente de Railway montado en /app/data.
+# El valor anterior (/app/database.sqlite) vivía dentro de la imagen: cada
+# deploy reemplaza la imagen, así que se perdían todos los leads.
+ENV DATABASE_PATH=/app/data/database.sqlite
 
-# Comando de inicio
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/scripts ./scripts
+COPY --from=build /app/package.json ./package.json
+
+RUN mkdir -p /app/data && chown -R node:node /app/data
+
+USER node
+
+EXPOSE 8080
+
 CMD ["node", "./dist/server/entry.mjs"]
-# Comando de inicio

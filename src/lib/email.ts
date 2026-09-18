@@ -1,257 +1,167 @@
-import nodemailer from 'nodemailer';
-import { format } from 'date-fns';
-
-// Configuración del transportador de email
-const createTransporter = () => {
-  return nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USER || 'tu-email@gmail.com',
-      pass: process.env.SMTP_PASS || 'tu-app-password'
-    }
-  });
-};
+import nodemailer, { type Transporter } from 'nodemailer';
 
 export interface EmailConfig {
   to: string | string[];
   subject: string;
+  html: string;
   text?: string;
-  html?: string;
   from?: string;
 }
 
+/**
+ * Si el SMTP no está configurado el sitio tiene que seguir funcionando: el lead
+ * ya quedó guardado en la base. El envío de mail es una notificación, no una
+ * dependencia dura del formulario.
+ */
+export const isEmailConfigured = (): boolean =>
+  Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+
+let transporter: Transporter | null = null;
+
+const getTransporter = (): Transporter => {
+  if (transporter) return transporter;
+
+  const port = Number.parseInt(process.env.SMTP_PORT || '587', 10);
+
+  // createTransport, no createTransporter. El nombre equivocado hacía que cada
+  // envío lanzara TypeError y ningún mail saliera nunca.
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port,
+    secure: port === 465,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  return transporter;
+};
+
+/** Solo para tests. */
+export const setTransporter = (custom: Transporter | null) => {
+  transporter = custom;
+};
+
+const escapeHtml = (value: unknown): string =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const layout = (title: string, rows: Array<[string, unknown]>, footer = '') => `
+  <div style="font-family: system-ui, Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background:#1e40af;color:#fff;padding:20px;text-align:center;">
+      <h1 style="margin:0;font-size:20px;">${escapeHtml(title)}</h1>
+    </div>
+    <div style="padding:20px;background:#f8fafc;">
+      <table style="width:100%;background:#fff;border-radius:8px;padding:15px;border-collapse:collapse;">
+        ${rows
+          .filter(([, value]) => value !== null && value !== undefined && value !== '')
+          .map(
+            ([label, value]) =>
+              `<tr><td style="padding:6px 0;"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</td></tr>`
+          )
+          .join('')}
+      </table>
+      ${footer}
+    </div>
+  </div>
+`;
+
+const notificationRecipient = () => process.env.CONTACT_NOTIFICATION_EMAIL || process.env.SMTP_USER || '';
+
 export const emailHelpers = {
-  // Enviar email genérico
   sendEmail: async (config: EmailConfig): Promise<boolean> => {
+    if (!isEmailConfigured()) {
+      console.warn('[email] SMTP sin configurar, se omite el envío:', config.subject);
+      return false;
+    }
+
     try {
-      const transporter = createTransporter();
-      
-      const mailOptions = {
-        from: config.from || process.env.SMTP_FROM || 'noreply@sonmyd.com',
+      await getTransporter().sendMail({
+        from: config.from || process.env.SMTP_FROM || process.env.SMTP_USER,
         to: Array.isArray(config.to) ? config.to.join(', ') : config.to,
         subject: config.subject,
         text: config.text,
-        html: config.html
-      };
+        html: config.html,
+      });
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('Email enviado:', result.messageId);
       return true;
     } catch (error) {
-      console.error('Error enviando email:', error);
+      console.error('[email] Error enviando email:', error);
       return false;
     }
   },
 
-  // Notificación de nuevo formulario de contacto
-  sendContactFormNotification: async (formData: any): Promise<boolean> => {
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #1e40af; color: white; padding: 20px; text-align: center;">
-          <h1>🚀 Nuevo Contacto - Sonmyd</h1>
-        </div>
-        
-        <div style="padding: 20px; background: #f8fafc;">
-          <h2 style="color: #1e40af;">Información del Contacto</h2>
-          
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Nombre:</strong> ${formData.name}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            ${formData.phone ? `<p><strong>Teléfono:</strong> ${formData.phone}</p>` : ''}
-            ${formData.company ? `<p><strong>Empresa:</strong> ${formData.company}</p>` : ''}
-          </div>
-          
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Mensaje:</strong></p>
-            <p style="background: #f1f5f9; padding: 10px; border-radius: 4px;">${formData.message}</p>
-          </div>
-          
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Información Técnica:</strong></p>
-            <p><small>IP: ${formData.ip || 'N/A'}</small></p>
-            <p><small>Página: ${formData.sourcePage || 'N/A'}</small></p>
-            <p><small>Fecha: ${format(new Date(), 'dd/MM/yyyy HH:mm:ss')}</small></p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="http://localhost:3000/admin/forms" style="background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Ver en Panel Admin
-            </a>
-          </div>
-        </div>
-        
-        <div style="background: #1e40af; color: white; padding: 10px; text-align: center; font-size: 12px;">
-          <p>Sonmyd - Soluciones Tecnológicas | Bogotá, Colombia</p>
-        </div>
-      </div>
-    `;
+  sendContactFormNotification: (data: {
+    name: string;
+    email: string;
+    message: string;
+    phone?: string | null;
+    company?: string | null;
+    sourcePage?: string | null;
+  }) =>
+    emailHelpers.sendEmail({
+      to: notificationRecipient(),
+      subject: `Nuevo contacto en Sonmyd: ${data.name}`,
+      html: layout('Nuevo contacto — Sonmyd', [
+        ['Nombre', data.name],
+        ['Email', data.email],
+        ['Teléfono', data.phone],
+        ['Empresa', data.company],
+        ['Origen', data.sourcePage],
+        ['Mensaje', data.message],
+      ]),
+    }),
 
-    return await emailHelpers.sendEmail({
-      to: 'admin@sonmyd.com', // Cambiar por el email real
-      subject: `🚀 Nuevo Contacto: ${formData.name}`,
-      html
-    });
-  },
+  sendAppointmentNotification: (data: {
+    name: string;
+    email: string;
+    serviceType: string;
+    date: string;
+    time: string;
+    phone?: string | null;
+    company?: string | null;
+    message?: string | null;
+  }) =>
+    emailHelpers.sendEmail({
+      to: notificationRecipient(),
+      subject: `Nueva cita agendada: ${data.name} — ${data.date} ${data.time}`,
+      html: layout('Nueva cita agendada — Sonmyd', [
+        ['Nombre', data.name],
+        ['Email', data.email],
+        ['Teléfono', data.phone],
+        ['Empresa', data.company],
+        ['Servicio', data.serviceType],
+        ['Fecha', data.date],
+        ['Hora', data.time],
+        ['Mensaje', data.message],
+      ]),
+    }),
 
-  // Confirmación de cita agendada
-  sendAppointmentConfirmation: async (appointmentData: any): Promise<boolean> => {
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #059669; color: white; padding: 20px; text-align: center;">
-          <h1>✅ Cita Confirmada - Sonmyd</h1>
-        </div>
-        
-        <div style="padding: 20px; background: #f0fdf4;">
-          <h2 style="color: #059669;">¡Gracias por agendar tu consulta!</h2>
-          
-          <p>Hola <strong>${appointmentData.name}</strong>,</p>
-          <p>Tu consulta ha sido confirmada exitosamente. Aquí están los detalles:</p>
-          
-          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #059669;">
-            <h3 style="margin-top: 0; color: #059669;">Detalles de la Cita</h3>
-            <p><strong>📅 Fecha:</strong> ${format(new Date(appointmentData.date), 'dd/MM/yyyy')}</p>
-            <p><strong>🕒 Hora:</strong> ${appointmentData.time}</p>
-            <p><strong>⏱️ Duración:</strong> ${appointmentData.duration} minutos</p>
-            <p><strong>🎯 Servicio:</strong> ${appointmentData.serviceType}</p>
-            ${appointmentData.meetingLink ? `<p><strong>🔗 Link de reunión:</strong> <a href="${appointmentData.meetingLink}">${appointmentData.meetingLink}</a></p>` : ''}
-          </div>
-          
-          ${appointmentData.message ? `
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Tu mensaje:</strong></p>
-            <p style="background: #f1f5f9; padding: 10px; border-radius: 4px;">${appointmentData.message}</p>
-          </div>
-          ` : ''}
-          
-          <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h4 style="margin-top: 0; color: #d97706;">📋 Qué esperar en tu consulta:</h4>
-            <ul style="color: #92400e;">
-              <li>Análisis detallado de tus necesidades tecnológicas</li>
-              <li>Propuesta personalizada de soluciones</li>
-              <li>Cronograma y presupuesto estimado</li>
-              <li>Siguiente pasos recomendados</li>
-            </ul>
-          </div>
-          
-          <div style="text-align: center; margin-top: 30px;">
-            <p><strong>¿Necesitas reprogramar o cancelar?</strong></p>
-            <p>Responde este email o llámanos al <strong>+57 (1) 234-5678</strong></p>
-          </div>
-        </div>
-        
-        <div style="background: #059669; color: white; padding: 15px; text-align: center;">
-          <p><strong>¡Estamos emocionados de trabajar contigo!</strong></p>
-          <p style="font-size: 12px; margin: 5px 0;">Sonmyd - Transformamos tu negocio con tecnología</p>
-          <p style="font-size: 12px; margin: 0;">Bogotá, Colombia | hola@sonmyd.com | +57 (1) 234-5678</p>
-        </div>
-      </div>
-    `;
-
-    return await emailHelpers.sendEmail({
-      to: appointmentData.email,
-      subject: `✅ Cita confirmada - ${format(new Date(appointmentData.date), 'dd/MM/yyyy')} a las ${appointmentData.time}`,
-      html
-    });
-  },
-
-  // Notificación interna de nueva cita
-  sendAppointmentNotification: async (appointmentData: any): Promise<boolean> => {
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #7c3aed; color: white; padding: 20px; text-align: center;">
-          <h1>📅 Nueva Cita Agendada</h1>
-        </div>
-        
-        <div style="padding: 20px; background: #faf5ff;">
-          <h2 style="color: #7c3aed;">Detalles de la Cita</h2>
-          
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Cliente:</strong> ${appointmentData.name}</p>
-            <p><strong>Email:</strong> ${appointmentData.email}</p>
-            <p><strong>Teléfono:</strong> ${appointmentData.phone || 'No proporcionado'}</p>
-            <p><strong>Empresa:</strong> ${appointmentData.company || 'No proporcionada'}</p>
-          </div>
-          
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Fecha:</strong> ${format(new Date(appointmentData.date), 'dd/MM/yyyy')}</p>
-            <p><strong>Hora:</strong> ${appointmentData.time}</p>
-            <p><strong>Duración:</strong> ${appointmentData.duration} minutos</p>
-            <p><strong>Servicio:</strong> ${appointmentData.serviceType}</p>
-          </div>
-          
-          ${appointmentData.message ? `
-          <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-            <p><strong>Mensaje del cliente:</strong></p>
-            <p style="background: #f1f5f9; padding: 10px; border-radius: 4px;">${appointmentData.message}</p>
-          </div>
-          ` : ''}
-          
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="http://localhost:3000/admin/appointments" style="background: #7c3aed; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-              Ver en Panel Admin
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    return await emailHelpers.sendEmail({
-      to: 'admin@sonmyd.com', // Cambiar por el email real
-      subject: `📅 Nueva Cita: ${appointmentData.name} - ${format(new Date(appointmentData.date), 'dd/MM/yyyy')}`,
-      html
-    });
-  },
-
-  // Recordatorio de cita
-  sendAppointmentReminder: async (appointmentData: any): Promise<boolean> => {
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #f59e0b; color: white; padding: 20px; text-align: center;">
-          <h1>⏰ Recordatorio de Cita</h1>
-        </div>
-        
-        <div style="padding: 20px; background: #fffbeb;">
-          <h2 style="color: #f59e0b;">Tu cita es mañana</h2>
-          
-          <p>Hola <strong>${appointmentData.name}</strong>,</p>
-          <p>Te recordamos que tienes una consulta programada con nosotros mañana:</p>
-          
-          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-            <p><strong>📅 Fecha:</strong> ${format(new Date(appointmentData.date), 'dd/MM/yyyy')}</p>
-            <p><strong>🕒 Hora:</strong> ${appointmentData.time}</p>
-            <p><strong>⏱️ Duración:</strong> ${appointmentData.duration} minutos</p>
-            <p><strong>🎯 Servicio:</strong> ${appointmentData.serviceType}</p>
-            ${appointmentData.meetingLink ? `<p><strong>🔗 Link de reunión:</strong> <a href="${appointmentData.meetingLink}">${appointmentData.meetingLink}</a></p>` : ''}
-          </div>
-          
-          <div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h4 style="margin-top: 0; color: #1e40af;">💡 Para aprovechar al máximo tu consulta:</h4>
-            <ul style="color: #1e40af;">
-              <li>Ten lista una descripción de tu proyecto o necesidad</li>
-              <li>Prepara preguntas específicas sobre tecnología</li>
-              <li>Si tienes documentos relevantes, tenlos a mano</li>
-              <li>Piensa en tu presupuesto y timeline</li>
-            </ul>
-          </div>
-          
-          <div style="text-align: center; margin-top: 30px;">
-            <p>¡Estamos emocionados de conocer tu proyecto!</p>
-          </div>
-        </div>
-        
-        <div style="background: #f59e0b; color: white; padding: 15px; text-align: center;">
-          <p>¿Necesitas reprogramar? Responde este email o llámanos</p>
-          <p style="font-size: 12px; margin: 0;">+57 (1) 234-5678 | hola@sonmyd.com</p>
-        </div>
-      </div>
-    `;
-
-    return await emailHelpers.sendEmail({
-      to: appointmentData.email,
-      subject: `⏰ Recordatorio: Tu cita mañana a las ${appointmentData.time}`,
-      html
-    });
-  }
+  sendAppointmentConfirmation: (data: {
+    name: string;
+    email: string;
+    serviceType: string;
+    date: string;
+    time: string;
+    duration?: number;
+  }) =>
+    emailHelpers.sendEmail({
+      to: data.email,
+      subject: 'Tu cita con Sonmyd está confirmada',
+      html: layout(
+        `Hola ${data.name}, tu cita quedó agendada`,
+        [
+          ['Servicio', data.serviceType],
+          ['Fecha', data.date],
+          ['Hora', data.time],
+          ['Duración', `${data.duration ?? 60} minutos`],
+        ],
+        `<p style="margin-top:16px;color:#475569;">Te contactamos por este mismo medio si necesitamos reprogramar. Si querés cancelar, respondé este correo.</p>`
+      ),
+    }),
 };

@@ -1,178 +1,69 @@
 import type { APIRoute } from 'astro';
-import { authHelpers } from '../../lib/auth';
+import { authHelpers, buildAuthCookie, buildLogoutCookie } from '../../lib/auth';
+import {
+  asTrimmedString,
+  badRequest,
+  getClientIp,
+  json,
+  ok,
+  parseBody,
+  rateLimit,
+  serverError,
+  tooManyRequests,
+  unauthorized,
+} from '../../lib/http';
 
+export const prerender = false;
+
+/**
+ * Acá NO hay acción de registro. La versión anterior exponía `action: 'register'`
+ * de forma pública: cualquiera podía crearse un usuario con rol admin.
+ * Los usuarios se crean únicamente con `node scripts/create-admin.mjs`.
+ */
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
-    const { action, email, password, name } = body;
+    const body = await parseBody(request);
+    const action = asTrimmedString(body.action);
 
-    switch (action) {
-      case 'login':
-        if (!email || !password) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Email y contraseña son obligatorios'
-          }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        const loginResult = await authHelpers.login(email, password);
-        
-        if (!loginResult) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Credenciales inválidas'
-          }), {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Crear cookie con el token
-        const response = new Response(JSON.stringify({
-          success: true,
-          user: loginResult.user,
-          token: loginResult.token
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        // Establecer cookie httpOnly para seguridad
-        response.headers.append('Set-Cookie', 
-          `auth-token=${loginResult.token}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; SameSite=Strict`
-        );
-
-        return response;
-
-      case 'register':
-        if (!email || !password || !name) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Email, contraseña y nombre son obligatorios'
-          }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        // Verificar si el usuario ya existe
-        const existingUser = authHelpers.getUserByEmail(email);
-        if (existingUser) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Usuario ya existe'
-          }), {
-            status: 409,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        const userId = await authHelpers.createUser(email, password, name);
-        
-        if (!userId) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Error creando usuario'
-          }), {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-
-        return new Response(JSON.stringify({
-          success: true,
-          message: 'Usuario creado correctamente',
-          userId
-        }), {
-          status: 201,
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-      case 'logout':
-        const logoutResponse = new Response(JSON.stringify({
-          success: true,
-          message: 'Sesión cerrada'
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        // Limpiar cookie
-        logoutResponse.headers.append('Set-Cookie', 
-          'auth-token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict'
-        );
-
-        return logoutResponse;
-
-      default:
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'Acción no válida'
-        }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        });
+    if (action === 'logout') {
+      return json({ success: true, message: 'Sesión cerrada' }, 200, { 'Set-Cookie': buildLogoutCookie() });
     }
 
+    if (action !== 'login') return badRequest('Acción no válida');
+
+    const email = asTrimmedString(body.email);
+    const password = typeof body.password === 'string' ? body.password : '';
+
+    if (!email || !password) return badRequest('Email y contraseña son obligatorios');
+
+    // Freno de fuerza bruta por IP.
+    if (!rateLimit({ key: `login:${getClientIp(request)}`, limit: 8, windowMs: 15 * 60 * 1000 })) {
+      return tooManyRequests();
+    }
+
+    const result = await authHelpers.login(email, password);
+    if (!result) return json({ success: false, error: 'Credenciales inválidas' }, 401);
+
+    // El token viaja solo en la cookie httpOnly; devolverlo en el body lo
+    // dejaría accesible desde JavaScript y anularía la protección contra XSS.
+    return json({ success: true, user: result.user }, 200, { 'Set-Cookie': buildAuthCookie(result.token) });
   } catch (error) {
-    console.error('Error en autenticación:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Error interno del servidor'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.error('[api/auth] Error en autenticación:', error);
+    return serverError();
   }
 };
 
 export const GET: APIRoute = async ({ request }) => {
   try {
     const authData = authHelpers.requireAuthFromCookies(request);
-    
-    if (!authData) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'No autenticado'
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (!authData) return unauthorized();
 
     const user = authHelpers.getUserById(authData.userId);
-    
-    if (!user) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: 'Usuario no encontrado'
-      }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    if (!user) return unauthorized();
 
-    return new Response(JSON.stringify({
-      success: true,
-      user
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return ok({ user });
   } catch (error) {
-    console.error('Error verificando autenticación:', error);
-    
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Error interno del servidor'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.error('[api/auth] Error verificando autenticación:', error);
+    return serverError();
   }
 };

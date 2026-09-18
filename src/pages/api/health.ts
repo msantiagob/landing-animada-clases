@@ -1,36 +1,30 @@
 import type { APIRoute } from 'astro';
-import db from '../../lib/database';
+import { getDb } from '../../lib/database';
+import { json } from '../../lib/http';
 
-export const GET: APIRoute = async ({ request }) => {
+export const prerender = false;
+
+/** Healthcheck para Railway: verifica proceso vivo + base accesible. */
+export const GET: APIRoute = async () => {
   try {
-    // Verificar conexión a la base de datos
-    const result = db.prepare('SELECT 1').get();
-    
-    if (!result) {
-      throw new Error('Database connection failed');
-    }
+    getDb().prepare('SELECT 1').get();
 
-    return new Response(JSON.stringify({
+    return json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      database: 'connected'
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      database: 'connected',
     });
   } catch (error) {
-    return new Response(JSON.stringify({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    console.error('[api/health] Healthcheck falló:', error);
+
+    return json(
+      {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        database: 'disconnected',
+      },
+      503
+    );
   }
 };

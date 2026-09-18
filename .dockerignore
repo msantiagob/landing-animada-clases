@@ -1,4 +1,13 @@
-dist/
 node_modules/
-.vscode/
+dist/
+.git/
 .github/
+.vscode/
+.astro/
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.env
+.env.*
+!.env.example
