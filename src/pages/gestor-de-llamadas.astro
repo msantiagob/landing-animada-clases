@@ -5,7 +5,7 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
 
@@ -218,15 +218,11 @@ const faqs = [
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Probar el gestor', href: '/booking', icon: 'tabler:phone-incoming' },
-      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
-    ]}
-  >
-    <Fragment slot="title">Llamá y escuchá cómo atiende</Fragment>
-    <Fragment slot="subtitle">
-      Te damos un número de prueba configurado para tu rubro. Hacé la llamada que haría tu cliente y sacá conclusiones.
-    </Fragment>
-  </CallToAction>
+  <LeadCapture
+    interest="gestor-de-llamadas"
+    formId="lead-gestor"
+    title="Llamá y escuchá cómo atiende"
+    subtitle="Te damos un número de prueba configurado para tu rubro. Hacé la llamada que haría tu cliente y sacá conclusiones."
+    button="Quiero probar el gestor"
+  />
 </Layout>

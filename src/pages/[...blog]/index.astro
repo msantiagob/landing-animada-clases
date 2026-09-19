@@ -12,6 +12,8 @@ import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
 import { findImage } from '~/utils/images';
 import type { MetaData } from '~/types';
 import RelatedPosts from '~/components/blog/RelatedPosts.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { articleSchema, breadcrumbSchema, personSchema } from '~/utils/seo';
 
 export const prerender = true;
 
@@ -43,9 +45,29 @@ const metadata = merge(
   },
   { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }
 ) as MetaData;
+
+const articlePath = getPermalink(post.permalink, 'post');
 ---
 
 <Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      articleSchema({
+        headline: post.title,
+        description: post.excerpt ?? '',
+        path: articlePath,
+        datePublished: post.publishDate.toISOString(),
+        dateModified: post.updateDate?.toISOString(),
+        image: typeof image === 'string' ? image : (image as ImageMetadata | undefined)?.src,
+      }),
+      personSchema(),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: post.title, path: articlePath },
+      ]),
+    ]}
+  />
   <SinglePost post={{ ...post, image: image }} url={url}>
     {post.Content ? <post.Content /> : <Fragment set:html={post.content || ''} />}
   </SinglePost>

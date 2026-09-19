@@ -1,0 +1,245 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/ciberseguridad';
+
+const metadata = {
+  title: 'Ciberseguridad para pymes: auditoría y protección | Sonmyd',
+  description:
+    'Auditoría de seguridad para empresas pequeñas y medianas: revisión de accesos, servidores y aplicaciones, plan de backups, segundo factor y capacitación del equipo. Informe claro y priorizado.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Por qué atacarían a una empresa chica?',
+    answer:
+      'Porque casi nunca es personal. La mayoría de los ataques son automáticos: escanean internet buscando sistemas sin actualizar o contraseñas débiles, sin importar de quién sean. Las empresas chicas caen más seguido justamente porque suponen que nadie las mira.',
+  },
+  {
+    question: '¿Qué incluye una auditoría de seguridad?',
+    answer:
+      'Revisión de cómo se accede a los sistemas y con qué permisos, estado de actualizaciones en servidores y equipos, configuración de correo, exposición de servicios a internet, política de contraseñas y segundo factor, y estado real de los backups. Termina en un informe priorizado por riesgo, no en una lista de hallazgos técnicos sin orden.',
+  },
+  {
+    question: '¿Hacen pruebas de intrusión?',
+    answer:
+      'Hacemos pruebas técnicas sobre sistemas propios del cliente, siempre con autorización firmada y alcance definido por escrito. Para la mayoría de las pymes, sin embargo, lo que cambia el riesgo no es una prueba de intrusión sino cerrar lo básico: segundo factor, backups y accesos. Lo decimos aunque sea el servicio menos vistoso.',
+  },
+  {
+    question: '¿Cuál es el punto más débil en la mayoría de las empresas?',
+    answer:
+      'Las personas, sin discusión. La mayoría de los incidentes empieza con alguien que hizo clic donde no debía o entregó una clave creyendo que hablaba con un proveedor. Por eso la capacitación del equipo rinde más que casi cualquier herramienta que puedas comprar.',
+  },
+  {
+    question: '¿Qué es el segundo factor y por qué insisten tanto?',
+    answer:
+      'Es pedir algo más que la contraseña para entrar: un código temporal o una llave física. Es la medida individual con mejor relación entre esfuerzo y protección que existe: aunque te roben la clave, no entran. Si solo pudieras hacer una cosa este mes, sería esta.',
+  },
+  {
+    question: '¿Nos ayudan si ya tuvimos un incidente?',
+    answer:
+      'Sí. Lo primero es contener y preservar la evidencia, no apurarse a borrar y reinstalar, que destruye el rastro de cómo entraron. Después viene la recuperación desde backups limpios y el cierre de la puerta que usaron. Si el incidente involucra datos personales, además hay obligaciones legales de notificación que hay que atender.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Auditoría y asesoría en ciberseguridad',
+        description:
+          'Auditoría de seguridad para pymes: revisión de accesos, servidores, correo y aplicaciones, plan de backups, implementación de segundo factor y capacitación del equipo.',
+        path: PATH,
+        serviceType: 'Consultoría en ciberseguridad',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Ciberseguridad', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Ciberseguridad"
+    actions={[
+      { variant: 'primary', text: 'Pedir una auditoría', href: '#contacto', icon: 'tabler:shield-lock' },
+      { text: 'Ver servidores y VPS', href: '/servidores-y-vps', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Auditoría de ciberseguridad para empresas',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Ciberseguridad</span> sin humo y sin sembrar miedo
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Auditamos tus accesos, servidores y correo, y te damos un plan ordenado por riesgo real. Sin venderte herramientas
+      que no necesitás para resolver problemas que no tenés.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Informe priorizado por riesgo</span>
+      <span>·</span>
+      <span>Sin jerga innecesaria</span>
+      <span>·</span>
+      <span>Alcance acordado por escrito</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="El error de base"
+    title="La seguridad no se compra, se practica"
+    items={[
+      {
+        title: 'El antivirus no es un plan',
+        description:
+          'Sirve, pero cubre una fracción del riesgo. La mayoría de los incidentes actuales no entra por un archivo infectado sino por una credencial robada.',
+      },
+      {
+        title: 'La contraseña sola ya no alcanza',
+        description:
+          'Se filtran en brechas de terceros, se repiten entre servicios y se adivinan. Sin segundo factor, una clave es una sola puerta.',
+      },
+      {
+        title: 'El backup es el último seguro',
+        description:
+          'Frente a un secuestro de datos, lo único que te devuelve la operación es una copia limpia, guardada aparte y probada.',
+      },
+      {
+        title: 'Tu equipo es la superficie más grande',
+        description:
+          'Herramientas comprás; criterio se entrena. Media hora bien invertida en el equipo baja más el riesgo que la mayoría de las licencias.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Seguridad informática en una empresa',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        Nadie te va a hackear con una película: te van a entrar por una clave repetida
+      </h2>
+      La ciberseguridad real es aburrida y es rutina: accesos ordenados, actualizaciones al día, backups probados y gente
+      entrenada. Lo espectacular vende cursos; esto protege empresas.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="servicios"
+    tagline="Qué hacemos"
+    title="Lo que de verdad mueve la aguja"
+    items={[
+      {
+        title: 'Auditoría de accesos',
+        description:
+          'Quién entra a qué, con qué permisos y desde dónde. Aparecen siempre cuentas de gente que ya no trabaja y permisos de administrador de más.',
+        icon: 'tabler:key',
+      },
+      {
+        title: 'Segundo factor en todo',
+        description:
+          'Correo, banca, servidores, redes sociales y panel del sitio. La medida con mejor relación esfuerzo-protección que existe.',
+        icon: 'tabler:lock-access',
+      },
+      {
+        title: 'Plan de backups',
+        description:
+          'Copias fuera de línea, con frecuencia acordada según cuántos datos podés perder, y con restauración probada de verdad.',
+        icon: 'tabler:database-export',
+      },
+      {
+        title: 'Endurecimiento de servidores',
+        description:
+          'Superficie expuesta mínima, firewall, actualizaciones y registro de actividad. La base que casi nunca está hecha.',
+        icon: 'tabler:server-cog',
+      },
+      {
+        title: 'Seguridad del correo',
+        description:
+          'SPF, DKIM y DMARC bien configurados para que nadie mande mails haciéndose pasar por tu dominio y para que los tuyos lleguen.',
+        icon: 'tabler:mail-check',
+      },
+      {
+        title: 'Capacitación del equipo',
+        description:
+          'Sesiones prácticas con casos reales de engaño. Que aprendan a dudar del mensaje urgente que pide una transferencia.',
+        icon: 'tabler:users',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo trabajamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Alcance por escrito</span>',
+        description:
+          'Se define qué se revisa, cómo y con qué autorización. En seguridad, trabajar sin alcance firmado no es agilidad: es un problema legal.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Relevamiento</span>',
+        description:
+          'Inventario de sistemas, accesos y datos sensibles. No se puede proteger lo que no se sabe que existe.',
+        icon: 'tabler:list-search',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Informe priorizado</span>',
+        description:
+          'Hallazgos ordenados por riesgo y esfuerzo, en lenguaje entendible. Con qué hacer esta semana, este mes y este trimestre.',
+        icon: 'tabler:report',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Implementación y revisión</span>',
+        description:
+          'Aplicamos las medidas con tu equipo o lo acompañamos para que las aplique, y se revisa a los meses para confirmar que se sostienen.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Análisis de seguridad informática',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre ciberseguridad"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="ciberseguridad"
+    formId="lead-ciberseguridad"
+    title="Empecemos por saber cómo estás"
+    subtitle="Una conversación inicial alcanza para detectar los riesgos más grandes. Si estás bien, te lo decimos y listo."
+    button="Pedir una auditoría"
+    bullets={[
+      'Conversación inicial sin costo',
+      'Informe priorizado por riesgo, entendible por cualquiera',
+      'Sin venderte herramientas que no necesitás',
+      'Alcance y autorización siempre por escrito',
+    ]}
+  />
+</Layout>

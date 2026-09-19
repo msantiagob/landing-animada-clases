@@ -1,0 +1,314 @@
+---
+import Button from '~/components/ui/Button.astro';
+import { INTERESTS } from '~/lib/interests';
+
+/**
+ * Formulario de captación de leads.
+ *
+ * Reemplaza al Form genérico en todas las páginas comerciales. Tres decisiones
+ * de diseño que están acá por conversión, no por estética:
+ *
+ * 1. Cinco campos y uno solo opcional. Cada campo extra en un formulario de
+ *    captación cuesta conversión; se pide lo mínimo para poder devolver el
+ *    contacto y saber de qué se trata.
+ * 2. El éxito REEMPLAZA al formulario. Un cartel verde sobre los campos
+ *    todavía llenos invita a reenviar y deja duplicados en la base.
+ * 3. La validación es por campo y al salir del campo (blur), no un cartel
+ *    global al final. El usuario corrige donde está el error, no buscándolo.
+ *
+ * Cada instancia se aísla por elemento, así que puede haber varias en la misma
+ * página (una en el hero y otra al pie) sin pisarse los IDs ni los listeners.
+ */
+export interface Props {
+  /** Servicio preseleccionado. En una landing viene del silo de esa página. */
+  interest?: string;
+  title?: string;
+  subtitle?: string;
+  button?: string;
+  /** Texto bajo el botón. Reduce la fricción de dejar los datos. */
+  note?: string;
+  compact?: boolean;
+  id?: string;
+}
+
+const {
+  interest = '',
+  title,
+  subtitle,
+  button = 'Quiero que me contacten',
+  note = 'Respondemos en menos de 24 horas hábiles. Sin llamadas automáticas ni spam.',
+  compact = false,
+  id = 'lead-form',
+} = Astro.props;
+
+const field = (name: string) => `${id}-${name}`;
+---
+
+<div class="lead-form-wrapper" data-lead-form>
+  {
+    (title || subtitle) && (
+      <header class="mb-6">
+        {title && <h2 class="text-2xl font-bold tracking-tight text-heading sm:text-3xl">{title}</h2>}
+        {subtitle && <p class="mt-2 text-muted">{subtitle}</p>}
+      </header>
+    )
+  }
+
+  <form novalidate data-lead-form-el class="space-y-5">
+    {/* Honeypot: invisible para personas, irresistible para bots. */}
+    <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+      <label for={field('website')}>No completar este campo</label>
+      <input type="text" id={field('website')} name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    {
+      /*
+      aria-live="assertive" porque es la respuesta directa a una acción del
+      usuario: un lector de pantalla tiene que anunciarla al instante.
+    */
+    }
+    <div
+      data-lead-error
+      role="alert"
+      aria-live="assertive"
+      class="hidden rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+    >
+      <span data-lead-error-text></span>
+    </div>
+
+    <div class={compact ? 'space-y-5' : 'grid gap-5 sm:grid-cols-2'}>
+      <div>
+        <label class="field-label" for={field('name')}>Nombre y apellido</label>
+        <input
+          class="field"
+          type="text"
+          id={field('name')}
+          name="name"
+          autocomplete="name"
+          placeholder="Juana Pérez"
+          required
+          aria-describedby={`${field('name')}-error`}
+        />
+        <p class="field-error hidden" id={`${field('name')}-error`} data-field-error></p>
+      </div>
+
+      <div>
+        <label class="field-label" for={field('email')}>Email de trabajo</label>
+        <input
+          class="field"
+          type="email"
+          id={field('email')}
+          name="email"
+          autocomplete="email"
+          placeholder="juana@empresa.com"
+          required
+          aria-describedby={`${field('email')}-error`}
+        />
+        <p class="field-error hidden" id={`${field('email')}-error`} data-field-error></p>
+      </div>
+
+      <div>
+        <label class="field-label" for={field('phone')}>
+          Teléfono o WhatsApp <span class="font-normal text-muted">(opcional)</span>
+        </label>
+        <input
+          class="field"
+          type="tel"
+          id={field('phone')}
+          name="phone"
+          autocomplete="tel"
+          placeholder="+57 300 000 0000"
+          aria-describedby={`${field('phone')}-error`}
+        />
+        <p class="field-error hidden" id={`${field('phone')}-error`} data-field-error></p>
+      </div>
+
+      <div>
+        <label class="field-label" for={field('interest')}>¿Sobre qué querés hablar?</label>
+        <select class="field" id={field('interest')} name="interest">
+          <option value="">Elegí una opción</option>
+          {
+            INTERESTS.map((option) => (
+              <option value={option.value} selected={option.value === interest}>
+                {option.label}
+              </option>
+            ))
+          }
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="field-label" for={field('message')}>Contanos brevemente qué necesitás</label>
+      <textarea
+        class="field"
+        id={field('message')}
+        name="message"
+        rows="4"
+        placeholder="Ej: recibimos unos 200 mensajes por WhatsApp al día y no damos abasto."
+        required
+        aria-describedby={`${field('message')}-error`}></textarea>
+      <p class="field-error hidden" id={`${field('message')}-error`} data-field-error></p>
+    </div>
+
+    <div class="grid">
+      <Button variant="primary" type="submit" data-lead-submit>
+        <span data-lead-submit-text>{button}</span>
+      </Button>
+    </div>
+
+    <p class="text-center text-sm text-muted">{note}</p>
+  </form>
+
+  {
+    /*
+    Panel de éxito. Vive en el DOM desde el principio para no depender de
+    innerHTML al confirmar, y lleva tabindex para poder mover el foco: quien
+    navega con teclado o lector de pantalla tiene que aterrizar en la
+    confirmación, no quedar donde estaba el botón que acaba de desaparecer.
+  */
+  }
+  <div data-lead-success tabindex="-1" class="hidden rounded-xl border border-line bg-surface p-8 text-center">
+    <div
+      class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40"
+    >
+      <svg class="h-6 w-6 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+        ><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-heading">Recibimos tu consulta</h3>
+    <p class="mx-auto mt-2 max-w-md text-muted">
+      Te escribimos a tu email en menos de 24 horas hábiles. Si preferís adelantar, podés agendar una llamada ahora
+      mismo.
+    </p>
+    <a class="btn-secondary mt-6" href="/booking">Agendar una llamada</a>
+  </div>
+</div>
+
+<style>
+  .field-error {
+    @apply mt-1.5 text-sm font-medium text-red-600 dark:text-red-400;
+  }
+
+  /* El borde rojo acompaña al mensaje: el color solo nunca alcanza, pero
+     sumado al texto del error da la segunda señal que pide la WCAG. */
+  :global(.field[aria-invalid='true']) {
+    border-color: rgb(220 38 38);
+  }
+</style>
+
+<script>
+  import { LEAD_FIELDS, validators } from '~/lib/lead-validation';
+
+  const setupLeadForm = (wrapper: HTMLElement) => {
+    const form = wrapper.querySelector<HTMLFormElement>('[data-lead-form-el]');
+    const success = wrapper.querySelector<HTMLElement>('[data-lead-success]');
+    const errorBox = wrapper.querySelector<HTMLElement>('[data-lead-error]');
+    const errorText = wrapper.querySelector<HTMLElement>('[data-lead-error-text]');
+    const submit = wrapper.querySelector<HTMLButtonElement>('[data-lead-submit]');
+    const submitText = wrapper.querySelector<HTMLElement>('[data-lead-submit-text]');
+
+    if (!form || !success || !errorBox || !errorText || !submit || !submitText) return;
+
+    /** El <p> de error vive junto al campo, dentro del mismo contenedor. */
+    const fieldError = (input: Element) =>
+      input.parentElement?.querySelector<HTMLElement>('[data-field-error]') ?? null;
+
+    const showFieldError = (name: string, message: string | null) => {
+      const input = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
+      const target = input ? fieldError(input) : null;
+      if (!input || !target) return;
+
+      if (message) {
+        target.textContent = message;
+        target.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+      } else {
+        target.textContent = '';
+        target.classList.add('hidden');
+        input.removeAttribute('aria-invalid');
+      }
+    };
+
+    const valueOf = (name: string) =>
+      (form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`)?.value ?? '').trim();
+
+    const validateField = (name: (typeof LEAD_FIELDS)[number]) => {
+      const message = validators[name](valueOf(name));
+      showFieldError(name, message);
+      return message === null;
+    };
+
+    // Validación al salir del campo: molestar mientras alguien escribe su email
+    // es la forma más rápida de que abandone el formulario.
+    LEAD_FIELDS.forEach((name) => {
+      const input = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
+      if (!input) return;
+      input.addEventListener('blur', () => validateField(name));
+      input.addEventListener('input', () => {
+        if (input.getAttribute('aria-invalid') === 'true') validateField(name);
+      });
+    });
+
+    let sending = false;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (sending) return;
+
+      errorBox.classList.add('hidden');
+
+      const invalid = LEAD_FIELDS.filter((name) => !validateField(name));
+
+      if (invalid.length > 0) {
+        form.querySelector<HTMLElement>(`[name="${invalid[0]}"]`)?.focus();
+        return;
+      }
+
+      sending = true;
+      const original = submitText.textContent;
+      submitText.textContent = 'Enviando…';
+      submit.disabled = true;
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: valueOf('name'),
+            email: valueOf('email'),
+            phone: valueOf('phone') || null,
+            message: valueOf('message'),
+            interest: valueOf('interest') || null,
+            website: valueOf('website'),
+            sourcePage: window.location.pathname,
+          }),
+        });
+
+        // El backend devuelve el motivo en el cuerpo también con 400 y 429, así
+        // que cortar por response.ok escondería el error real tras uno genérico.
+        const result = await response.json().catch(() => null);
+
+        if (result?.success) {
+          form.classList.add('hidden');
+          success.classList.remove('hidden');
+          success.focus();
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        errorText.textContent = result?.error || 'No pudimos enviar la consulta. Probá de nuevo en un momento.';
+        errorBox.classList.remove('hidden');
+      } catch {
+        errorText.textContent = 'Hubo un problema de conexión. Revisá tu red e intentá otra vez.';
+        errorBox.classList.remove('hidden');
+      } finally {
+        submitText.textContent = original;
+        submit.disabled = false;
+        sending = false;
+      }
+    });
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-lead-form]').forEach(setupLeadForm);
+</script>

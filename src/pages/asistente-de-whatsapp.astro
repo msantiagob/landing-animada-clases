@@ -5,7 +5,7 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
 
@@ -226,15 +226,11 @@ const faqs = [
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Ver una demo', href: '/booking', icon: 'tabler:brand-whatsapp' },
-      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
-    ]}
-  >
-    <Fragment slot="title">Probá el asistente antes de decidir</Fragment>
-    <Fragment slot="subtitle">
-      Te mostramos un asistente funcionando con las preguntas típicas de tu rubro. Media hora y sacás tus conclusiones.
-    </Fragment>
-  </CallToAction>
+  <LeadCapture
+    interest="asistente-de-whatsapp"
+    formId="lead-wa-asistente"
+    title="Probá el asistente antes de decidir"
+    subtitle="Te mostramos un asistente funcionando con las preguntas típicas de tu rubro. Media hora y sacás tus conclusiones."
+    button="Quiero ver una demo"
+  />
 </Layout>

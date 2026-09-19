@@ -5,7 +5,7 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
 
@@ -259,15 +259,11 @@ const faqs = [
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Reservar clase de prueba', href: '/booking', icon: 'tabler:calendar-plus' },
-      { text: 'Escribinos', href: '/contact', variant: 'tertiary' },
-    ]}
-  >
-    <Fragment slot="title">Tu primera clase de IA es gratis</Fragment>
-    <Fragment slot="subtitle">
-      Una sesión para ver si te sirve. Sin compromiso y sin venderte humo: si creemos que no es para vos, te lo decimos.
-    </Fragment>
-  </CallToAction>
+  <LeadCapture
+    interest="clases-de-ia"
+    formId="lead-clases-ia"
+    title="Tu primera clase de IA es gratis"
+    subtitle="Una sesión para ver si te sirve. Sin compromiso y sin venderte humo: si creemos que no es para vos, te lo decimos."
+    button="Reservar clase de prueba"
+  />
 </Layout>

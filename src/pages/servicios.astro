@@ -1,385 +1,198 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-
 import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
 import Features from '~/components/widgets/Features.astro';
-import Features2 from '~/components/widgets/Features2.astro';
-import Content from '~/components/widgets/Content.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import Testimonials from '~/components/widgets/Testimonials.astro';
-import Pricing from '~/components/widgets/Pricing.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, itemListSchema } from '~/utils/seo';
+
+/**
+ * Página HUB, no landing.
+ *
+ * "Servicios" no es una keyword: nadie busca eso. Esta página no compite por
+ * posiciones; su trabajo es distribuir autoridad hacia las páginas pilar y dar
+ * una entrada única a quien llega sin saber qué necesita. Por eso no repite el
+ * contenido de los pilares: los enlaza.
+ */
+const PATH = '/servicios';
 
 const metadata = {
-  title: 'Servicios',
-  canonical: '/servicios',
+  title: 'Servicios: IA, automatización, desarrollo y seguridad | Sonmyd',
   description:
-    'Descubre nuestros servicios especializados en Inteligencia Artificial, desarrollo web, capacitaciones tecnológicas y automatización empresarial.',
+    'Todos los servicios de Sonmyd en un lugar: clases de IA y Python, asistentes de WhatsApp, automatizaciones, desarrollo de software a medida, servidores y ciberseguridad.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
 };
+
+const pilares = [
+  { name: 'Asistente de WhatsApp con IA', path: '/asistente-de-whatsapp' },
+  { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
+  { name: 'Llamadas de marketing con IA', path: '/llamadas-de-marketing' },
+  { name: 'Gestor de llamadas', path: '/gestor-de-llamadas' },
+  { name: 'Clases de IA', path: '/clases-de-ia' },
+  { name: 'Clases de Python', path: '/clases-de-python' },
+  { name: 'Capacitaciones para empresas', path: '/capacitaciones' },
+  { name: 'Automatizaciones e integraciones', path: '/automatizaciones' },
+  { name: 'Desarrollo de software a medida', path: '/desarrollo-de-software' },
+  { name: 'Servidores y VPS', path: '/servidores-y-vps' },
+  { name: 'Ciberseguridad', path: '/ciberseguridad' },
+];
 ---
 
 <Layout metadata={metadata}>
-  <!-- Hero Widget ******************* -->
+  <StructuredData
+    schema={[
+      itemListSchema(pilares),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Servicios', path: PATH },
+      ]),
+    ]}
+  />
+
   <Hero
-    tagline="Nuestros Servicios"
+    tagline="Servicios"
     actions={[
-      {
-        variant: 'primary',
-        text: 'Solicitar Cotización',
-        href: '/contact',
-        icon: 'tabler:send',
-      },
-      { text: 'Agendar una reunión', href: '/booking', variant: 'tertiary' },
+      { variant: 'primary', text: 'Agendar una consulta', href: '/booking', icon: 'tabler:calendar' },
+      { text: 'Escribirnos', href: '#contacto', variant: 'tertiary' },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Servicios de Tecnología e IA',
+      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Servicios de tecnología e inteligencia artificial',
     }}
   >
     <Fragment slot="title">
-      Soluciones <span class="text-accent">Tecnológicas</span>
-      <span class="hidden lg:inline">que Transforman</span> tu Negocio
+      Formación, automatización y <span class="text-accent">tecnología que sostiene</span> tu operación
     </Fragment>
 
     <Fragment slot="subtitle">
-      Ofrecemos servicios especializados en <span class="font-semibold">Inteligencia Artificial</span>, desarrollo web
-      avanzado, capacitaciones tecnológicas y automatización empresarial. Más de 500 proyectos exitosos nos respaldan.
+      Trabajamos en tres frentes: enseñar a tu equipo, automatizar lo que hoy se hace a mano y construir y cuidar la
+      tecnología sobre la que corre tu negocio. Elegí por dónde empezar.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Primera consulta sin costo</span>
+      <span>·</span>
+      <span>Hablás con quien hace el trabajo</span>
+      <span>·</span>
+      <span>Todo lo que construimos queda tuyo</span>
     </Fragment>
   </Hero>
 
-  <!-- Stats Widget ****************** -->
-  <Stats
-    stats={[
-      { title: 'Proyectos Completados', amount: '500+' },
-      { title: 'Clientes Satisfechos', amount: '200+' },
-      { title: 'Años de Experiencia', amount: '8+' },
-      { title: 'Tecnologías Dominadas', amount: '50+' },
-    ]}
-  />
-
-  <!-- Features Widget *************** -->
   <Features
-    id="servicios-principales"
-    tagline="Servicios Principales"
-    title="Lo que Ofrecemos"
-    subtitle="Servicios tecnológicos integrales diseñados para llevar tu empresa al siguiente nivel"
+    id="ia-whatsapp"
+    tagline="IA y WhatsApp"
+    title="Atención automática que no parece automática"
+    subtitle="Asistentes y agentes de voz que atienden, califican y agendan 24/7, sobre canales oficiales."
+    columns={2}
     items={[
       {
-        title: 'Desarrollo de Aplicaciones con IA',
+        title: 'Asistente de WhatsApp con IA',
         description:
-          'Creamos aplicaciones inteligentes que aprenden y se adaptan. Desde chatbots avanzados hasta sistemas de recomendación personalizados.',
+          'Responde en lenguaje natural, califica interesados, agenda y deriva a una persona cuando hace falta. Conectado a tu CRM.',
+        icon: 'tabler:message-chatbot',
+        callToAction: { text: 'Ver detalle', href: '/asistente-de-whatsapp' },
+      },
+      {
+        title: 'WhatsApp Business API',
+        description:
+          'Habilitación completa con Meta: verificación del negocio, número oficial, plantillas aprobadas e integración.',
+        icon: 'tabler:brand-whatsapp',
+        callToAction: { text: 'Ver detalle', href: '/whatsapp-business-api' },
+      },
+      {
+        title: 'Llamadas de marketing con IA',
+        description: 'Campañas de voz automatizadas que contactan, presentan y registran el resultado de cada llamada.',
+        icon: 'tabler:phone-outgoing',
+        callToAction: { text: 'Ver detalle', href: '/llamadas-de-marketing' },
+      },
+      {
+        title: 'Gestor de llamadas',
+        description:
+          'Recepcionista virtual que atiende, deriva y toma mensajes las 24 horas, sin que se pierda una llamada.',
+        icon: 'tabler:phone-call',
+        callToAction: { text: 'Ver detalle', href: '/gestor-de-llamadas' },
+      },
+    ]}
+  />
+
+  <Features
+    id="formacion"
+    tagline="Formación"
+    title="Que tu equipo pueda sin depender de nadie"
+    subtitle="Enseñamos los conceptos antes que las herramientas. Es más lento al principio y es lo único que sirve después."
+    columns={3}
+    items={[
+      {
+        title: 'Clases de IA',
+        description:
+          'Desde usar bien las herramientas hasta construir con modelos. Con un profesor que trabaja en esto todos los días.',
         icon: 'tabler:brain',
+        callToAction: { text: 'Ver detalle', href: '/clases-de-ia' },
       },
       {
-        title: 'Desarrollo Web y Móvil',
+        title: 'Clases de Python',
         description:
-          'Aplicaciones web responsivas y apps móviles nativas. Tecnologías modernas como React, Vue, Flutter y más.',
-        icon: 'tabler:device-desktop',
-      },
-      {
-        title: 'Automatización de Procesos (RPA)',
-        description:
-          'Automatizamos tareas repetitivas y procesos empresariales. Reducimos costos operativos hasta un 60%.',
-        icon: 'tabler:robot',
-      },
-      {
-        title: 'Capacitación Tecnológica',
-        description:
-          'Programas de formación personalizados para tu equipo. Certificaciones en IA, desarrollo web, DevOps y más.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Consultoría en Transformación Digital',
-        description:
-          'Analizamos tu negocio y diseñamos estrategias tecnológicas para optimizar procesos y aumentar productividad.',
-        icon: 'tabler:chart-line',
-      },
-      {
-        title: 'Soporte y Mantenimiento',
-        description:
-          'Soporte técnico 24/7, actualizaciones de software y mantenimiento preventivo para garantizar óptimo funcionamiento.',
-        icon: 'tabler:headset',
-      },
-    ]}
-  />
-
-  <!-- Content Widget **************** -->
-  <Content
-    isReversed
-    tagline="Inteligencia Artificial"
-    title="Servicios de IA Avanzada"
-    items={[
-      {
-        title: 'Machine Learning y Deep Learning',
-        description: 'Desarrollamos modelos predictivos personalizados para tu industria.',
-      },
-      {
-        title: 'Procesamiento de Lenguaje Natural (NLP)',
-        description: 'Análisis de sentimientos, chatbots inteligentes y traducción automática.',
-      },
-      {
-        title: 'Computer Vision',
-        description: 'Reconocimiento de imágenes, análisis de video y detección de objetos.',
-      },
-      {
-        title: 'IA Generativa',
-        description: 'Implementación de GPT, DALL-E y otras tecnologías generativas.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Inteligencia Artificial',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Potencia tu Negocio con IA</h3>
-      Implementamos soluciones de inteligencia artificial que transforman datos en insights accionables, optimizan procesos
-      y crean experiencias personalizadas para tus clientes.
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-surface"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-  <Content
-    isAfterContent
-    tagline="Desarrollo Web"
-    title="Aplicaciones Web Modernas"
-    items={[
-      {
-        title: 'Frontend Avanzado',
-        description: 'React, Vue.js, Angular con las mejores prácticas de UX/UI.',
-      },
-      {
-        title: 'Backend Robusto',
-        description: 'Node.js, Python, .NET Core con arquitecturas escalables.',
-      },
-      {
-        title: 'Bases de Datos',
-        description: 'PostgreSQL, MongoDB, Redis para máximo rendimiento.',
-      },
-      {
-        title: 'DevOps e Infraestructura',
-        description: 'AWS, Docker, Kubernetes para deployments automatizados.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2015&q=80',
-      alt: 'Desarrollo Web',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Desarrollo Web de Última Generación
-      </h3>
-      Creamos aplicaciones web escalables, seguras y de alto rendimiento utilizando las tecnologías más avanzadas del mercado.
-    </Fragment>
-  </Content>
-
-  <!-- Features2 Widget ************** -->
-  <Features2
-    tagline="Metodología"
-    title="Nuestro Proceso de Trabajo"
-    subtitle="Seguimos una metodología ágil y probada que garantiza resultados excepcionales"
-    items={[
-      {
-        title: 'Análisis y Consultoría',
-        description: 'Evaluamos tus necesidades específicas y diseñamos la solución óptima.',
-        icon: 'tabler:search',
-      },
-      {
-        title: 'Prototipado Rápido',
-        description: 'Desarrollamos prototipos funcionales para validar conceptos rápidamente.',
-        icon: 'tabler:bulb',
-      },
-      {
-        title: 'Desarrollo Iterativo',
-        description: 'Implementamos en sprints con entregas frecuentes y feedback continuo.',
+          'De cero a automatizar tareas reales de tu trabajo. Individuales o para equipos, online o presencial.',
         icon: 'tabler:code',
+        callToAction: { text: 'Ver detalle', href: '/clases-de-python' },
       },
       {
-        title: 'Testing y Quality Assurance',
-        description: 'Pruebas exhaustivas automatizadas y manuales para garantizar calidad.',
-        icon: 'tabler:shield-check',
-      },
-      {
-        title: 'Deployment y Monitoreo',
-        description: 'Desplegamos con cero downtime y monitoreamos rendimiento 24/7.',
-        icon: 'tabler:rocket',
-      },
-      {
-        title: 'Soporte Continuo',
-        description: 'Mantenimiento, actualizaciones y soporte técnico especializado.',
-        icon: 'tabler:headset',
+        title: 'Capacitaciones para empresas',
+        description: 'Programas armados sobre los procesos de tu organización, con casos del área que participa.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver detalle', href: '/capacitaciones' },
       },
     ]}
   />
 
-  <!-- Pricing Widget **************** -->
-  <Pricing
-    tagline="Planes y Precios"
-    title="Elige el Plan que Mejor se Adapte a ti"
-    subtitle="Ofrecemos soluciones flexibles para empresas de todos los tamaños"
-    prices={[
+  <Features
+    id="tecnologia"
+    tagline="Tecnología"
+    title="Construir, conectar y sostener"
+    subtitle="El software que tu operación necesita, la infraestructura donde corre y la seguridad que lo protege."
+    columns={2}
+    items={[
       {
-        title: 'Startup',
-        subtitle: 'Ideal para empresas pequeñas',
-        price: '$2,500',
-        period: 'proyecto',
-        items: [
-          {
-            description: 'Sitio web responsivo (hasta 5 páginas)',
-          },
-          {
-            description: 'Panel de administración básico',
-          },
-          {
-            description: 'Integración con redes sociales',
-          },
-          {
-            description: 'SEO básico incluido',
-          },
-          {
-            description: '3 meses de soporte gratuito',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Comenzar',
-          href: '/contact',
-        },
+        title: 'Automatizaciones e integraciones',
+        description:
+          'WhatsApp, Google Workspace, tu CRM y tus sistemas conectados para que los datos dejen de copiarse a mano.',
+        icon: 'tabler:arrows-shuffle',
+        callToAction: { text: 'Ver detalle', href: '/automatizaciones' },
       },
       {
-        title: 'Empresarial',
-        subtitle: 'Para empresas en crecimiento',
-        price: '$8,500',
-        period: 'proyecto',
-        items: [
-          {
-            description: 'Aplicación web completa',
-          },
-          {
-            description: 'Sistema de gestión personalizado',
-          },
-          {
-            description: 'Integración con APIs externas',
-          },
-          {
-            description: 'Funcionalidades de IA básicas',
-          },
-          {
-            description: 'Base de datos optimizada',
-          },
-          {
-            description: '6 meses de soporte incluido',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Comenzar',
-          href: '/contact',
-        },
-        hasRibbon: true,
-        ribbonTitle: 'Popular',
+        title: 'Desarrollo de software a medida',
+        description:
+          'Aplicaciones internas, APIs e integraciones con pruebas automatizadas. El código queda en tu repositorio.',
+        icon: 'tabler:app-window',
+        callToAction: { text: 'Ver detalle', href: '/desarrollo-de-software' },
       },
       {
-        title: 'Enterprise',
-        subtitle: 'Soluciones empresariales avanzadas',
-        price: '$25,000+',
-        period: 'proyecto',
-        items: [
-          {
-            description: 'Solución completa de IA personalizada',
-          },
-          {
-            description: 'Arquitectura de microservicios',
-          },
-          {
-            description: 'Automatización de procesos (RPA)',
-          },
-          {
-            description: 'Capacitación del equipo incluida',
-          },
-          {
-            description: 'Infraestructura en la nube',
-          },
-          {
-            description: 'Soporte prioritario 24/7',
-          },
-          {
-            description: 'Consultoría estratégica',
-          },
-        ],
-        callToAction: {
-          target: '_blank',
-          text: 'Contactar',
-          href: '/contact',
-        },
+        title: 'Servidores y VPS',
+        description: 'Despliegue, backups probados, monitoreo con alertas y parches de seguridad al día.',
+        icon: 'tabler:server',
+        callToAction: { text: 'Ver detalle', href: '/servidores-y-vps' },
+      },
+      {
+        title: 'Ciberseguridad',
+        description:
+          'Auditoría de accesos, segundo factor, plan de backups y capacitación del equipo. Sin vender miedo.',
+        icon: 'tabler:shield-lock',
+        callToAction: { text: 'Ver detalle', href: '/ciberseguridad' },
       },
     ]}
   />
 
-  <!-- Testimonials Widget *********** -->
-  <Testimonials
-    title="Lo que Dicen Nuestros Clientes"
-    testimonials={[
-      {
-        testimonial: `Sonmyd transformó completamente nuestros procesos. La automatización que implementaron nos ahorra más de 40 horas semanales. El ROI fue evidente desde el primer mes.`,
-        name: 'Carlos Mendoza',
-        job: 'CEO, TechCorp',
-        image: {
-          src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-          alt: 'Carlos Mendoza',
-        },
-      },
-      {
-        testimonial: `El equipo de Sonmyd no solo entregó una aplicación excepcional, sino que también capacitó a nuestro equipo. Su enfoque integral es lo que los diferencia.`,
-        name: 'María González',
-        job: 'CTO, InnovateSoft',
-        image: {
-          src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-          alt: 'María González',
-        },
-      },
-      {
-        testimonial: `La solución de IA que desarrollaron para nosotros aumentó nuestras ventas en un 35%. Su experiencia en machine learning es impresionante.`,
-        name: 'Roberto Silva',
-        job: 'Director de Ventas, RetailMax',
-        image: {
-          src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80',
-          alt: 'Roberto Silva',
-        },
-      },
+  <LeadCapture
+    formId="lead-servicios"
+    title="¿No sabés por dónde empezar?"
+    subtitle="Contanos el problema, no la solución. Con eso alcanza para decirte qué te conviene y qué no necesitás."
+    button="Quiero que me orienten"
+    bullets={[
+      'Primera consulta sin costo ni compromiso',
+      'Si no somos los indicados, te lo decimos',
+      'Hablás con quien va a hacer el trabajo',
+      'No compartimos tus datos con terceros',
     ]}
   />
-
-  <!-- Note Widget ******************* -->
-  <Note
-    title="¿Necesitas algo personalizado?"
-    description="Contáctanos para discutir tu proyecto específico. Ofrecemos consultorías gratuitas de 30 minutos."
-  />
-
-  <!-- CallToAction Widget *********** -->
-  <CallToAction
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Solicitar Consultoría Gratuita',
-        href: '/contact',
-        icon: 'tabler:calendar',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      ¿Listo para <br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Transformar tu Negocio?</span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Agenda una consultoría gratuita de 30 minutos con nuestros expertos. Analizaremos tu situación actual y te
-      mostraremos cómo la tecnología puede impulsar tu crecimiento.
-    </Fragment>
-  </CallToAction>
 </Layout>

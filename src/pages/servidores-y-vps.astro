@@ -1,0 +1,244 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/servidores-y-vps';
+
+const metadata = {
+  title: 'Administración de servidores y VPS para empresas | Sonmyd',
+  description:
+    'Configuramos y administramos tu VPS o servidor: despliegue de aplicaciones, backups automáticos, monitoreo, certificados SSL y actualizaciones de seguridad. En español y sin jerga.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Qué es un VPS y cuándo conviene sobre un hosting compartido?',
+    answer:
+      'Un VPS es un servidor virtual con recursos propios y acceso completo al sistema operativo. Conviene cuando el hosting compartido te queda corto: necesitás instalar algo que no te dejan, tu aplicación no es un sitio PHP estándar, el rendimiento del vecino te afecta o manejás datos que exigen control del entorno.',
+  },
+  {
+    question: '¿Qué proveedor recomiendan?',
+    answer:
+      'Depende del caso. Hetzner y DigitalOcean dan la mejor relación precio-potencia para la mayoría de los proyectos; Railway o Render simplifican mucho si no querés administrar el sistema; AWS o Google Cloud recién se justifican cuando necesitás sus servicios específicos. Recomendar el más caro por costumbre es una mala práctica que evitamos.',
+  },
+  {
+    question: '¿Cuánto cuesta mantener un VPS?',
+    answer:
+      'El servidor en sí arranca en unos pocos dólares al mes para cargas chicas y ronda los veinte a cincuenta para una aplicación de empresa con base de datos. A eso se suma el dominio, los backups fuera del servidor y, si lo tercerizás, la administración. Lo caro nunca es el servidor: es el día que se cae y nadie sabe por qué.',
+  },
+  {
+    question: '¿Hacen backups y cada cuánto?',
+    answer:
+      'Sí, automáticos y guardados FUERA del servidor. Un backup en el mismo disco que la base de datos no es un backup: es una copia que se pierde junto con el original. La frecuencia se define según cuántos datos podés tolerar perder, y probamos la restauración, porque un backup que nunca se restauró es una suposición.',
+  },
+  {
+    question: '¿Qué pasa si el servidor se cae de madrugada?',
+    answer:
+      'El monitoreo avisa apenas deja de responder, no cuando lo nota un cliente. Según el plan acordado, se responde en horario laboral o con guardia extendida. Lo definimos de entrada por escrito para que nadie se entere de los límites durante una caída.',
+  },
+  {
+    question: '¿Se encargan también de la seguridad del servidor?',
+    answer:
+      'Sí: firewall, acceso solo por clave SSH sin contraseña, usuarios sin privilegios innecesarios, actualizaciones de seguridad y certificados renovados solos. Es el mínimo indispensable. Un servidor expuesto con contraseña débil recibe intentos de acceso a los minutos de encenderse.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Administración de servidores y VPS',
+        description:
+          'Configuración y administración de servidores VPS: despliegue de aplicaciones, backups automáticos, monitoreo, certificados SSL, firewall y actualizaciones de seguridad.',
+        path: PATH,
+        serviceType: 'Administración de infraestructura y servidores',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Servidores y VPS', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Servidores y VPS"
+    actions={[
+      { variant: 'primary', text: 'Revisar mi infraestructura', href: '#contacto', icon: 'tabler:server' },
+      { text: 'Ver ciberseguridad', href: '/ciberseguridad', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Administración de servidores y VPS para empresas',
+    }}
+  >
+    <Fragment slot="title">
+      Tu <span class="text-accent">servidor</span> andando, respaldado y vigilado
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Configuramos y administramos tu VPS: despliegue, backups fuera del servidor, monitoreo con alertas, SSL y parches
+      de seguridad. Vos ocupate del negocio.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Backups probados, no supuestos</span>
+      <span>·</span>
+      <span>Monitoreo con alertas</span>
+      <span>·</span>
+      <span>Sin atarte a un proveedor</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Lo que suele estar mal"
+    title="Casi todos los servidores que recibimos tienen los mismos cuatro problemas"
+    items={[
+      {
+        title: 'Backups que nadie probó restaurar',
+        description:
+          'O no existen, o están en el mismo disco, o nunca se verificaron. El día del incidente se descubre que el archivo estaba vacío hace meses.',
+      },
+      {
+        title: 'Acceso por contraseña y usuario root',
+        description:
+          'Puerto SSH abierto al mundo con contraseña. Los bots lo encuentran en minutos y prueban millones de combinaciones sin descanso.',
+      },
+      {
+        title: 'Sistema sin actualizar hace años',
+        description:
+          'Versiones con vulnerabilidades públicas y documentadas. No hace falta que te ataquen específicamente: los escaneos automáticos las buscan solas.',
+      },
+      {
+        title: 'Nadie se entera cuando se cae',
+        description:
+          'Sin monitoreo, el aviso llega por el cliente que no pudo comprar. Eso ya es tarde y se paga en reputación.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Sala de servidores',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        "Anda bien" no es lo mismo que "está bien"
+      </h2>
+      Un servidor puede funcionar perfecto durante años y estar a un incidente de distancia de una pérdida de datos irreversible.
+      La diferencia se ve el día malo, no el día normal.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="De la instalación limpia al mantenimiento continuo"
+    items={[
+      {
+        title: 'Puesta a punto inicial',
+        description:
+          'Sistema actualizado, usuarios sin privilegios de más, acceso solo por clave SSH, firewall cerrado salvo lo necesario y zona horaria correcta.',
+        icon: 'tabler:settings-cog',
+      },
+      {
+        title: 'Despliegue de aplicaciones',
+        description:
+          'Tu aplicación corriendo con reinicio automático, variables de entorno bien guardadas y despliegues repetibles, no manuales.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Backups automáticos y probados',
+        description:
+          'Copias periódicas guardadas fuera del servidor, con restauración verificada. Un backup sin prueba de restauración no cuenta.',
+        icon: 'tabler:database-export',
+      },
+      {
+        title: 'Certificados SSL',
+        description:
+          'HTTPS con renovación automática. Sin candado en el navegador perdés confianza del visitante y posiciones en el buscador.',
+        icon: 'tabler:lock-check',
+      },
+      {
+        title: 'Monitoreo y alertas',
+        description:
+          'Disponibilidad, disco, memoria y procesos vigilados. Si algo se desvía, llega el aviso antes de que lo note un cliente.',
+        icon: 'tabler:activity',
+      },
+      {
+        title: 'Actualizaciones de seguridad',
+        description:
+          'Parches al día con ventana de mantenimiento acordada. Actualizar sin avisar es tan malo como no actualizar nunca.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo empezamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Revisamos qué tenés hoy: proveedor, versiones, accesos, backups y puntos únicos de falla. Sale un informe en castellano, no una lista de comandos.',
+        icon: 'tabler:stethoscope',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Plan y prioridades</span>',
+        description:
+          'Se ordena por riesgo real: primero lo que puede hacerte perder datos, después lo que puede tirarte el servicio, al final lo deseable.',
+        icon: 'tabler:list-numbers',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Puesta a punto</span>',
+        description:
+          'Migración o saneamiento del servidor actual, con ventana coordinada para no cortar en el peor momento.',
+        icon: 'tabler:tool',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Mantenimiento</span>',
+        description: 'Monitoreo activo, parches, revisión de backups e informe periódico de qué pasó y qué se hizo.',
+        icon: 'tabler:refresh',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Infraestructura de servidores en la nube',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre servidores y VPS"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="servidores-y-vps"
+    formId="lead-vps"
+    title="Empecemos por el diagnóstico"
+    subtitle="Contanos qué tenés hoy y te decimos qué está en riesgo, qué es urgente y qué puede esperar."
+    button="Revisar mi infraestructura"
+    bullets={[
+      'Diagnóstico inicial sin costo',
+      'Informe en castellano, no una lista de comandos',
+      'Priorizado por riesgo real, no por lo que más factura',
+      'Los accesos y el control siguen siendo tuyos',
+    ]}
+  />
+</Layout>

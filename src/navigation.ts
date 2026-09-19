@@ -1,18 +1,25 @@
-import { getPermalink } from './utils/permalinks';
+import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 /**
  * El enlazado interno es una señal directa de SEO: las páginas que apuntamos
  * desde el header y el footer son las que Google entiende como prioritarias.
- * Por eso los cuatro servicios objetivo están en el primer nivel del menú.
+ *
+ * El menú está agrupado por SILO, no por capricho de diseño. Cada grupo es un
+ * bloque temático cerrado con su página pilar. Mezclar servicios de silos
+ * distintos en un mismo desplegable diluye justamente la señal que buscamos.
  */
 export const headerData = {
   links: [
     {
-      text: 'Servicios de IA',
+      text: 'IA y WhatsApp',
       links: [
         {
           text: 'Asistente de WhatsApp con IA',
           href: getPermalink('/asistente-de-whatsapp'),
+        },
+        {
+          text: 'WhatsApp Business API',
+          href: getPermalink('/whatsapp-business-api'),
         },
         {
           text: 'Llamadas de marketing con IA',
@@ -22,18 +29,18 @@ export const headerData = {
           text: 'Gestor de llamadas',
           href: getPermalink('/gestor-de-llamadas'),
         },
-        {
-          text: 'Todos los servicios',
-          href: getPermalink('/servicios'),
-        },
       ],
     },
     {
-      text: 'Clases de IA',
+      text: 'Formación',
       links: [
         {
-          text: 'Clases particulares de IA',
+          text: 'Clases de IA',
           href: getPermalink('/clases-de-ia'),
+        },
+        {
+          text: 'Clases de Python',
+          href: getPermalink('/clases-de-python'),
         },
         {
           text: 'Capacitaciones para empresas',
@@ -42,8 +49,37 @@ export const headerData = {
       ],
     },
     {
+      text: 'Tecnología',
+      links: [
+        {
+          text: 'Automatizaciones',
+          href: getPermalink('/automatizaciones'),
+        },
+        {
+          text: 'Desarrollo de software',
+          href: getPermalink('/desarrollo-de-software'),
+        },
+        {
+          text: 'Servidores y VPS',
+          href: getPermalink('/servidores-y-vps'),
+        },
+        {
+          text: 'Ciberseguridad',
+          href: getPermalink('/ciberseguridad'),
+        },
+      ],
+    },
+    {
       text: 'Empresa',
       links: [
+        {
+          text: 'Todos los servicios',
+          href: getPermalink('/servicios'),
+        },
+        {
+          text: 'Blog',
+          href: getBlogPermalink(),
+        },
         {
           text: 'Acerca de nosotros',
           href: getPermalink('/about'),
@@ -61,27 +97,37 @@ export const headerData = {
 export const footerData = {
   links: [
     {
-      title: 'Servicios de IA',
+      title: 'IA y WhatsApp',
       links: [
         { text: 'Asistente de WhatsApp con IA', href: getPermalink('/asistente-de-whatsapp') },
+        { text: 'WhatsApp Business API', href: getPermalink('/whatsapp-business-api') },
         { text: 'Llamadas de marketing con IA', href: getPermalink('/llamadas-de-marketing') },
         { text: 'Gestor de llamadas', href: getPermalink('/gestor-de-llamadas') },
-        { text: 'Automatización de procesos', href: getPermalink('/servicios') },
       ],
     },
     {
       title: 'Formación',
       links: [
         { text: 'Clases de IA', href: getPermalink('/clases-de-ia') },
-        { text: 'Profesor de IA particular', href: getPermalink('/clases-de-ia') },
+        { text: 'Clases de Python', href: getPermalink('/clases-de-python') },
         { text: 'Capacitaciones para empresas', href: getPermalink('/capacitaciones') },
+      ],
+    },
+    {
+      title: 'Tecnología',
+      links: [
+        { text: 'Automatizaciones e integraciones', href: getPermalink('/automatizaciones') },
+        { text: 'Desarrollo de software', href: getPermalink('/desarrollo-de-software') },
+        { text: 'Servidores y VPS', href: getPermalink('/servidores-y-vps') },
+        { text: 'Ciberseguridad', href: getPermalink('/ciberseguridad') },
       ],
     },
     {
       title: 'Empresa',
       links: [
+        { text: 'Todos los servicios', href: getPermalink('/servicios') },
+        { text: 'Blog', href: getBlogPermalink() },
         { text: 'Acerca de nosotros', href: getPermalink('/about') },
-        { text: 'Contacto', href: getPermalink('/contact') },
         { text: 'Agendar una reunión', href: getPermalink('/booking') },
       ],
     },
@@ -90,9 +136,9 @@ export const footerData = {
     { text: 'Términos', href: getPermalink('/terms') },
     { text: 'Política de privacidad', href: getPermalink('/privacy') },
   ],
-  // Sin redes propias todavía; el RSS se quitó porque el blog está desactivado y devuelve 404.
+  // Sin redes propias todavía. Se agregan cuando existan cuentas reales:
+  // un enlace a un perfil vacío daña más la confianza que la ausencia.
   socialLinks: [],
   description:
-    'Formación y automatización con inteligencia artificial para empresas: clases de IA, asistentes de WhatsApp y agentes de voz para llamadas.',
-  footNote: `© ${new Date().getFullYear()} Sonmyd. Todos los derechos reservados.`,
+    'Formación y automatización con inteligencia artificial para empresas: clases de IA y Python, asistentes de WhatsApp, desarrollo a medida, servidores y seguridad.',
 };

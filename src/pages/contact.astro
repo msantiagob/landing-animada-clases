@@ -1,95 +1,81 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
-import ContactUs from '~/components/widgets/Contact.astro';
-import Features2 from '~/components/widgets/Features2.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Features from '~/components/widgets/Features.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema } from '~/utils/seo';
+
+const PATH = '/contact';
 
 const metadata = {
-  title: 'Contacto',
+  title: 'Contacto | Sonmyd',
   description:
-    'Escribinos y te contactamos en menos de 24 horas. Consulta inicial gratuita sobre clases de IA, asistentes de WhatsApp, llamadas de marketing y gestión de llamadas.',
-  canonical: '/contact',
+    'Escribinos y te respondemos en menos de 24 horas hábiles. Primera consulta sin costo sobre clases de IA y Python, WhatsApp, automatizaciones, desarrollo, servidores y seguridad.',
+  canonical: PATH,
 };
 ---
 
 <Layout metadata={metadata}>
-  <!-- HeroText Widget ******************* -->
-
-  <HeroText tagline="Contacto" title="¡Transformemos tu negocio juntos!" />
-
-  <ContactUs
-    id="form"
-    title="¡Solicita tu consulta gratuita ahora!"
-    subtitle="Nuestros especialistas te contactarán en menos de 24 horas para analizar tu proyecto y diseñar una solución personalizada. Consulta inicial completamente gratuita y sin compromiso."
-    inputs={[
-      {
-        type: 'text',
-        name: 'name',
-        label: 'Nombre *',
-        placeholder: 'Tu nombre completo',
-      },
-      {
-        type: 'email',
-        name: 'email',
-        label: 'Correo Electrónico *',
-        placeholder: 'tu@email.com',
-      },
-      {
-        type: 'tel',
-        name: 'phone',
-        label: 'Teléfono (opcional)',
-        placeholder: '+57 300 123 4567',
-      },
-      {
-        type: 'text',
-        name: 'company',
-        label: 'Empresa (opcional)',
-        placeholder: 'Nombre de tu empresa',
-      },
+  <StructuredData
+    schema={[
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Contacto', path: PATH },
+      ]),
     ]}
-    textarea={{
-      label: 'Mensaje *',
-      placeholder: 'Cuéntanos sobre tu proyecto o necesidades específicas...',
-      rows: 5,
-    }}
-    disclaimer={{
-      label: 'Al enviar este formulario de contacto, reconoces y aceptas la recopilación de tu información personal.',
-    }}
-    description="Respuesta garantizada en menos de 4 horas hábiles. Consultas urgentes atendidas en tiempo real vía WhatsApp."
   />
 
-  <!-- Features2 Widget ************** -->
+  <HeroText
+    tagline="Contacto"
+    title="Contanos qué querés resolver"
+    subtitle="No hace falta que traigas la solución pensada. Con el problema bien descrito alcanza para empezar."
+  />
 
-  <Features2
-    title="¡Estamos aquí para ayudar!"
+  <LeadCapture
+    id="form"
+    formId="lead-contacto"
+    title="Escribinos"
+    subtitle="Leemos todo lo que entra y respondemos nosotros, no un formulario automático."
+  />
+
+  <Features
+    title="Cómo trabajamos"
+    subtitle="Para que sepas qué esperar antes de escribir."
+    columns={3}
     items={[
       {
-        title: 'Soporte general',
-        description: `Consultas sobre proyectos de IA, desarrollo web, automatización de procesos, capacitaciones especializadas y asesoría en transformación digital.`,
-      },
-      {
-        title: 'Consultoría Especializada',
+        title: 'Primera consulta sin costo',
         description:
-          'Habla directamente con nuestros arquitectos de software para cotizaciones personalizadas, planificación de proyectos y análisis de factibilidad técnica.',
+          'Media hora para entender tu caso. Si no somos los indicados, te lo decimos ahí y te orientamos hacia dónde mirar.',
+        icon: 'tabler:message-circle',
       },
       {
-        title: 'Soporte técnico',
+        title: 'Hablás con quien hace el trabajo',
         description:
-          'Soporte 24/7 para aplicaciones en producción, migraciones de datos, optimización de rendimiento, actualizaciones de seguridad y resolución de incidencias críticas.',
+          'No hay capa de vendedores. La persona que te responde es la que va a construir o enseñar lo que se acuerde.',
+        icon: 'tabler:user-check',
       },
       {
-        title: 'Teléfono',
-        description: '+57 (1) 234-5678',
-        icon: 'tabler:headset',
+        title: 'Propuesta concreta',
+        description:
+          'Alcance, plazo y precio por escrito. Si el alcance todavía es difuso, lo acotamos antes de poner un número.',
+        icon: 'tabler:file-description',
       },
       {
-        title: 'Correo Electrónico',
+        title: 'Respondemos en 24 horas hábiles',
+        description:
+          'Es el plazo real, no una promesa de marketing. Si vamos a demorar más, te avisamos que vamos a demorar más.',
+        icon: 'tabler:clock',
+      },
+      {
+        title: 'Correo electrónico',
         description: 'hola@sonmyd.com',
         icon: 'tabler:mail',
       },
       {
         title: 'Ubicación',
-        description: 'Bogotá, Colombia - Centro de Innovación Tecnológica',
+        description: 'Bogotá, Colombia. Trabajamos de forma remota con toda Latinoamérica y España.',
         icon: 'tabler:map-pin',
       },
     ]}

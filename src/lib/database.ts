@@ -8,6 +8,8 @@ export interface ContactFormInput {
   message: string;
   phone?: string | null;
   company?: string | null;
+  /** Servicio por el que consulta: define a qué silo pertenece el lead. */
+  interest?: string | null;
   ip?: string | null;
   userAgent?: string | null;
   sourcePage?: string | null;
@@ -50,6 +52,7 @@ export interface ContactFormRow {
   message: string;
   phone: string | null;
   company: string | null;
+  interest: string | null;
   status: string;
   ip_address: string | null;
   user_agent: string | null;
@@ -81,6 +84,7 @@ export const applySchema = (database: Database.Database) => {
       message TEXT NOT NULL,
       phone TEXT,
       company TEXT,
+      interest TEXT,
       status TEXT NOT NULL DEFAULT 'new',
       ip_address TEXT,
       user_agent TEXT,
@@ -112,7 +116,25 @@ export const applySchema = (database: Database.Database) => {
     CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
   `);
 
+  runMigrations(database);
+
   return database;
+};
+
+/**
+ * Migraciones para bases que YA existen. `CREATE TABLE IF NOT EXISTS` no toca
+ * una tabla creada en un despliegue anterior, así que una columna nueva nunca
+ * llegaría al volumen de producción sin esto. SQLite no tiene
+ * `ADD COLUMN IF NOT EXISTS`: hay que preguntarle al pragma.
+ */
+const runMigrations = (database: Database.Database) => {
+  const columns = database.prepare('PRAGMA table_info(contact_forms)').all() as Array<{ name: string }>;
+
+  if (!columns.some((column) => column.name === 'interest')) {
+    database.exec('ALTER TABLE contact_forms ADD COLUMN interest TEXT');
+  }
+
+  database.exec('CREATE INDEX IF NOT EXISTS idx_contact_forms_interest ON contact_forms(interest)');
 };
 
 const resolveDbPath = () => process.env.DATABASE_PATH || join(process.cwd(), 'data', 'database.sqlite');
@@ -151,8 +173,8 @@ export const dbHelpers = {
   insertContactForm: (data: ContactFormInput) =>
     getDb()
       .prepare(
-        `INSERT INTO contact_forms (name, email, message, phone, company, ip_address, user_agent, source_page)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+        `INSERT INTO contact_forms (name, email, message, phone, company, interest, ip_address, user_agent, source_page)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .run(
         data.name,
@@ -160,6 +182,7 @@ export const dbHelpers = {
         data.message,
         data.phone ?? null,
         data.company ?? null,
+        data.interest ?? null,
         data.ip ?? null,
         data.userAgent ?? null,
         data.sourcePage ?? null

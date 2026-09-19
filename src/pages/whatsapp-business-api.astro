@@ -1,0 +1,276 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/whatsapp-business-api';
+
+const metadata = {
+  title: 'WhatsApp Business API: habilitación y configuración con Meta | Sonmyd',
+  description:
+    'Habilitamos tu cuenta de WhatsApp Business API con Meta: verificación del negocio, número oficial, plantillas aprobadas e integración con tu CRM. Sin riesgo de bloqueo.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Qué es la WhatsApp Business API?',
+    answer:
+      'Es la vía oficial de Meta para que una empresa gestione WhatsApp de forma programática: permite conectar el número a un CRM, un sistema de tickets o un asistente con IA, atender con varios agentes a la vez y enviar plantillas aprobadas. No tiene interfaz propia; se usa a través del software que conectes.',
+  },
+  {
+    question: '¿En qué se diferencia de WhatsApp Business normal?',
+    answer:
+      'La app de WhatsApp Business es gratuita, vive en un teléfono y la usa una sola persona por vez. La API no tiene app: se integra con tus sistemas, soporta equipos completos, automatización y volúmenes altos, y se factura por conversación. Si tu operación depende de que alguien tenga el celular en la mano, ya te quedó chica.',
+  },
+  {
+    question: '¿Cuánto cuesta la WhatsApp Business API?',
+    answer:
+      'Meta cobra por conversación iniciada, con precio distinto según el país y según si la inicia la empresa o el cliente. Las conversaciones de servicio que abre el cliente tienen una ventana gratuita. Sobre eso se suma el costo del proveedor técnico y el de la implementación. Armamos la estimación con tu volumen real antes de que firmes nada.',
+  },
+  {
+    question: '¿Puedo conservar mi número actual?',
+    answer:
+      'Sí, siempre que esté libre de la app de WhatsApp Business o WhatsApp personal. Hay que desvincularlo primero y el historial de esos chats no migra. Si el número es crítico, lo habitual es probar con uno nuevo y migrar el principal cuando todo funciona.',
+  },
+  {
+    question: '¿Qué es la verificación del negocio en Meta Business?',
+    answer:
+      'Es el trámite donde Meta confirma que tu empresa existe: documento de constitución, dirección y un medio de contacto verificable. Sin verificar, la cuenta queda con límites bajos de envío. Es la parte que más se demora, por eso la arrancamos el primer día.',
+  },
+  {
+    question: '¿Qué son las plantillas y por qué las rechazan?',
+    answer:
+      'Toda conversación que inicia la empresa fuera de la ventana de 24 horas requiere una plantilla aprobada por Meta. Las rechazan por ser demasiado promocionales, por variables mal definidas o por texto que parece spam. Las redactamos y las presentamos nosotros, que es donde se ahorra la mayor parte del ida y vuelta.',
+  },
+  {
+    question: '¿Corre riesgo de bloqueo mi número?',
+    answer:
+      'Ese riesgo existe con las soluciones no oficiales que automatizan WhatsApp por fuera de la API: Meta las detecta y bloquea el número. Trabajando sobre la API oficial el número está en regla; lo que sí hay que cuidar es la calidad, porque muchos reportes de usuarios bajan tu nivel y con él tus límites de envío.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Habilitación e integración de WhatsApp Business API',
+        description:
+          'Alta y configuración de WhatsApp Business API con Meta: verificación del negocio, número oficial, plantillas aprobadas, integración con CRM y automatización de la atención.',
+        path: PATH,
+        serviceType: 'Integración de WhatsApp Business API',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'WhatsApp Business API', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="WhatsApp Business API"
+    actions={[
+      { variant: 'primary', text: 'Quiero habilitar la API', href: '#contacto', icon: 'tabler:brand-whatsapp' },
+      { text: 'Ver el asistente con IA', href: '/asistente-de-whatsapp', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Integración de WhatsApp Business API con sistemas de empresa',
+    }}
+  >
+    <Fragment slot="title">
+      Habilitamos tu <span class="text-accent">WhatsApp Business API</span> con Meta, de principio a fin
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Verificación del negocio, número oficial, plantillas aprobadas e integración con las herramientas que ya usás. Te
+      evitamos los meses de ida y vuelta con el soporte de Meta.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Proveedor oficial de Meta</span>
+      <span>·</span>
+      <span>Sin riesgo de bloqueo</span>
+      <span>·</span>
+      <span>Operativo en 1 a 3 semanas</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="La diferencia que importa"
+    title="App de WhatsApp Business o API: no es lo mismo"
+    items={[
+      {
+        title: 'Un celular, una persona',
+        description:
+          'La app gratuita corre en un teléfono y la atiende alguien a la vez. Cuando el volumen crece, ese teléfono es el cuello de botella de toda tu operación comercial.',
+      },
+      {
+        title: 'Sin registro ni métricas',
+        description:
+          'No sabés cuántas consultas llegaron, cuántas se respondieron ni cuánto tardaste. Lo que no se mide no se puede mejorar, y ahí se te va la plata.',
+      },
+      {
+        title: 'Los atajos te bloquean el número',
+        description:
+          'Las herramientas que automatizan WhatsApp por fuera de la API oficial funcionan hasta que Meta las detecta. El día que bloquea el número, perdés el canal y la base de contactos.',
+      },
+      {
+        title: 'La API es la vía en regla',
+        description:
+          'Varios agentes, integración con tus sistemas, automatización y volumen alto, dentro de las reglas de Meta. Es la única forma sostenible de operar WhatsApp en serio.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Comparación entre WhatsApp Business y WhatsApp Business API',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        Si tu negocio depende del celular de alguien, ya tenés un problema
+      </h2>
+      La app de WhatsApp Business alcanza para un emprendimiento chico. Cuando hay equipo, turnos, CRM o más de un puñado
+      de consultas por día, se necesita la API oficial.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="incluye"
+    tagline="Qué incluye"
+    title="El trámite completo, sin que lo tengas que entender"
+    subtitle="La API oficial exige pasos administrativos con Meta que no son técnicos pero sí tediosos. Los hacemos nosotros."
+    items={[
+      {
+        title: 'Verificación del negocio',
+        description:
+          'Armamos la carpeta de Meta Business y presentamos la documentación. Es lo que más demora y lo que más se rechaza por detalles evitables.',
+        icon: 'tabler:building-store',
+      },
+      {
+        title: 'Alta del número oficial',
+        description:
+          'Damos de alta un número nuevo o migramos el tuyo. Te advertimos antes qué se pierde al migrar, para que decidas con la información sobre la mesa.',
+        icon: 'tabler:phone-check',
+      },
+      {
+        title: 'Plantillas aprobadas',
+        description:
+          'Redactamos y presentamos las plantillas de mensaje. Sabemos qué rechaza Meta y por qué, así que pasan a la primera o a la segunda.',
+        icon: 'tabler:file-check',
+      },
+      {
+        title: 'Perfil comercial completo',
+        description:
+          'Nombre visible, categoría, descripción, sitio y horarios. Es lo primero que ve un cliente que nunca te compró: define si te escribe o se va.',
+        icon: 'tabler:id-badge',
+      },
+      {
+        title: 'Integración con tus sistemas',
+        description:
+          'Conectamos la API con tu CRM, tu sistema de tickets, tu ERP o una planilla. Cada conversación queda donde tu equipo ya trabaja.',
+        icon: 'tabler:plug-connected',
+      },
+      {
+        title: 'Monitoreo de calidad',
+        description:
+          'Meta puntúa tu número según los reportes de los usuarios. Vigilamos ese nivel y corregimos antes de que te recorte los límites de envío.',
+        icon: 'tabler:activity-heartbeat',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo es el proceso"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Relevamiento y cuenta de Meta Business</span>',
+        description:
+          'Revisamos qué tenés (número, cuenta, documentación) y abrimos o corregimos la cuenta de Meta Business. Definimos si migrás el número o arrancás con uno nuevo.',
+        icon: 'tabler:clipboard-list',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Verificación del negocio</span>',
+        description:
+          'Presentamos la documentación ante Meta y seguimos el trámite hasta la aprobación. Acá es donde la mayoría se traba durante semanas.',
+        icon: 'tabler:certificate',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Número, perfil y plantillas</span>',
+        description:
+          'Alta del número, perfil comercial completo y presentación de las plantillas que vas a necesitar para iniciar conversaciones.',
+        icon: 'tabler:template',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Integración y puesta en marcha</span>',
+        description:
+          'Conectamos la API con tus sistemas, probamos con tráfico real y dejamos el canal operativo con monitoreo de calidad.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Proceso de habilitación de WhatsApp Business API',
+    }}
+  />
+
+  <Features
+    id="siguiente"
+    tagline="El paso siguiente"
+    title="La API es la base. Lo que construís encima es lo que rinde"
+    subtitle="Habilitar el canal es el requisito. El retorno aparece cuando lo automatizás."
+    columns={3}
+    items={[
+      {
+        title: 'Asistente con IA',
+        description:
+          'Atención automática 24/7 que entiende lenguaje natural, califica y deriva. Es el uso que más se pide sobre la API.',
+        icon: 'tabler:message-chatbot',
+        callToAction: { text: 'Ver asistente de WhatsApp', href: '/asistente-de-whatsapp' },
+      },
+      {
+        title: 'Automatizaciones',
+        description:
+          'Conectá WhatsApp con Google Sheets, tu calendario, tu CRM o tu ERP para que los datos fluyan solos.',
+        icon: 'tabler:arrows-shuffle',
+        callToAction: { text: 'Ver automatizaciones', href: '/automatizaciones' },
+      },
+      {
+        title: 'Formación para tu equipo',
+        description:
+          'Si preferís que la operación quede puertas adentro, entrenamos a tu gente para que la administre.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver capacitaciones', href: '/capacitaciones' },
+      },
+    ]}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre WhatsApp Business API"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="whatsapp-business-api"
+    formId="lead-wa-api"
+    title="Empecemos por la verificación"
+    subtitle="Contanos tu situación actual y te decimos qué falta, cuánto demora y qué va a costar. Sin vueltas."
+    button="Quiero habilitar la API"
+  />
+</Layout>

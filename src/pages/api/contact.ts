@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { dbHelpers } from '../../lib/database';
 import { emailHelpers } from '../../lib/email';
+import { normalizeInterest } from '../../lib/interests';
 import {
   EMAIL_REGEX,
   asOptionalString,
@@ -42,9 +43,12 @@ export const POST: APIRoute = async ({ request }) => {
       message,
       phone: asOptionalString(body.phone),
       company: asOptionalString(body.company),
+      interest: normalizeInterest(body.interest),
+      // El formulario manda la ruta real donde se completó. El referer sirve de
+      // respaldo, pero se pierde si el navegador lo recorta por política.
+      sourcePage: asOptionalString(body.sourcePage) ?? request.headers.get('referer'),
       ip,
       userAgent: request.headers.get('user-agent'),
-      sourcePage: request.headers.get('referer'),
     };
 
     const result = dbHelpers.insertContactForm(formData);

@@ -1,0 +1,246 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const PATH = '/clases-de-python';
+
+const metadata = {
+  title: 'Clases de Python particulares y para empresas | Profesor en español',
+  description:
+    'Clases de Python en español, uno a uno o para equipos: fundamentos, automatización de tareas, análisis de datos y APIs. Con proyectos sobre tu trabajo real, no ejercicios de juguete.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para empezar?',
+    answer:
+      'No. La mayoría de quienes arrancan vienen de Excel, del área administrativa o de marketing y nunca escribieron una línea de código. Se empieza desde cero, con ritmo adaptado a la persona.',
+  },
+  {
+    question: '¿Las clases son individuales o grupales?',
+    answer:
+      'Ambas. Las individuales avanzan al ritmo de la persona y permiten trabajar sobre sus propios archivos y procesos. Las grupales, para equipos de una misma empresa, se arman alrededor de un caso común del área.',
+  },
+  {
+    question: '¿Cuánto tardo en automatizar algo útil?',
+    answer:
+      'Entre la cuarta y la sexta clase la mayoría ya tiene un script que le ahorra una tarea repetitiva real: renombrar archivos, consolidar planillas, descargar reportes. No hace falta terminar el curso para que empiece a rendir.',
+  },
+  {
+    question: '¿Qué versión de Python y qué herramientas usamos?',
+    answer:
+      'Python 3 actual, con el entorno instalado en tu propia máquina, no en un simulador de navegador. Aprender a manejar el intérprete, los entornos virtuales y el editor es parte del oficio: es lo que te permite seguir solo cuando terminan las clases.',
+  },
+  {
+    question: '¿Sirve para análisis de datos o para IA?',
+    answer:
+      'Sí, y es el camino natural. Python es el lenguaje dominante en ambos campos. Una vez que están firmes los fundamentos se pasa a pandas para datos o a las librerías de IA, según hacia dónde quieras ir.',
+  },
+  {
+    question: '¿Dan certificado?',
+    answer:
+      'Entregamos un certificado de participación al cerrar el programa. Dicho con honestidad: lo que te consigue trabajo es el repositorio con lo que construiste, no el PDF. Por eso el foco está en que termines con proyectos propios.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: 'Clases de Python en español',
+        description:
+          'Programa de clases de Python para principiantes y equipos: fundamentos del lenguaje, automatización de tareas repetitivas, análisis de datos con pandas y consumo de APIs.',
+        path: PATH,
+        modes: ['online', 'onsite'],
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Clases de Python', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Clases de Python"
+    actions={[
+      { variant: 'primary', text: 'Reservar una clase', href: '#contacto', icon: 'tabler:code' },
+      { text: 'Ver clases de IA', href: '/clases-de-ia', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Clases de Python en español con profesor particular',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Clases de Python</span> con proyectos de tu trabajo real
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Uno a uno o para tu equipo. Arrancás desde cero y terminás automatizando tareas que hoy hacés a mano. En español,
+      con un profesor que programa todos los días, no que lee un temario.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Desde cero, sin requisitos</span>
+      <span>·</span>
+      <span>Online o presencial</span>
+      <span>·</span>
+      <span>Primera clase de diagnóstico sin costo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué Python"
+    title="Es el lenguaje que más devuelve por hora invertida"
+    items={[
+      {
+        title: 'Se lee casi como inglés',
+        description:
+          'La curva inicial es la más suave de los lenguajes serios. Alguien sin experiencia escribe algo que funciona en la primera clase.',
+      },
+      {
+        title: 'Automatiza lo que hoy hacés a mano',
+        description:
+          'Planillas, archivos, reportes, descargas, mails. Todo lo repetitivo que te come horas cada semana se resuelve con veinte líneas.',
+      },
+      {
+        title: 'Es la puerta de entrada a la IA',
+        description:
+          'Prácticamente todo el ecosistema de inteligencia artificial está en Python. Si querés entender IA de verdad, pasás por acá.',
+      },
+      {
+        title: 'Tiene salida laboral concreta',
+        description:
+          'Datos, backend, automatización, infraestructura. Es de los lenguajes con más demanda sostenida del mercado hispanohablante.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Código Python en un editor',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        No se trata de "aprender a programar" en abstracto
+      </h2>
+      Se trata de resolver un problema que tenés hoy. El temario se arma alrededor de tu trabajo: si vivís en planillas,
+      empezamos por planillas.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Del primer script a un programa que corre solo"
+    subtitle="El recorrido se adapta a tu punto de partida y a tu objetivo. Esto es el esqueleto."
+    items={[
+      {
+        title: 'Fundamentos del lenguaje',
+        description:
+          'Variables, tipos, condicionales, bucles, funciones y estructuras de datos. La base sin la cual todo lo demás es copiar y pegar a ciegas.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Archivos y planillas',
+        description:
+          'Leer y escribir CSV, Excel y JSON. Consolidar veinte archivos en uno, limpiar datos sucios, generar reportes automáticos.',
+        icon: 'tabler:file-spreadsheet',
+      },
+      {
+        title: 'Automatización de tareas',
+        description:
+          'Scripts que renombran, ordenan, descargan, mandan mails y corren solos en un horario. El retorno más inmediato del curso.',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Consumo de APIs',
+        description:
+          'Traer datos de servicios externos, autenticarse, manejar errores y límites. La llave para conectar sistemas entre sí.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Análisis de datos con pandas',
+        description:
+          'Cargar, filtrar, agrupar y cruzar tablas grandes. Lo que en Excel se traba con cien mil filas, acá vuela.',
+        icon: 'tabler:chart-histogram',
+      },
+      {
+        title: 'Buenas prácticas',
+        description:
+          'Entornos virtuales, control de versiones con Git, estructura de proyecto y pruebas. Lo que separa un script de algo que se puede mantener.',
+        icon: 'tabler:git-branch',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo trabajamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Clase de diagnóstico</span>',
+        description:
+          'Media hora sin costo para ver desde dónde partís y qué querés resolver. De ahí sale el plan, no de un temario enlatado.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Fundamentos con ejercicios propios</span>',
+        description:
+          'Se aprende la base practicando sobre tus archivos y tus procesos. Nada de ejercicios de juguete que no se parecen a nada.',
+        icon: 'tabler:book',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Proyecto real</span>',
+        description:
+          'Construís algo que usás de verdad: un automatizador, un reporte, una integración. Es lo que fija el conocimiento.',
+        icon: 'tabler:tools',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Autonomía</span>',
+        description:
+          'Terminás sabiendo leer documentación, depurar tus propios errores y seguir solo. El objetivo es que dejes de necesitarme.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Clase particular de programación en Python',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre las clases de Python"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="clases-de-python"
+    formId="lead-python"
+    title="Empecemos por la clase de diagnóstico"
+    subtitle="Contame desde dónde partís y qué querés lograr. Te armo el plan antes de que pagues nada."
+    button="Reservar clase de diagnóstico"
+    bullets={[
+      'Primera clase de diagnóstico sin costo',
+      'Plan armado sobre tu caso, no un temario enlatado',
+      'Clases individuales o para equipos de empresa',
+      'Online o presencial, con horarios flexibles',
+    ]}
+  />
+</Layout>

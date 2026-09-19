@@ -1,0 +1,252 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, itemListSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/desarrollo-de-software';
+
+const metadata = {
+  title: 'Desarrollo de software a medida y APIs | Sonmyd',
+  description:
+    'Desarrollo de software a medida en Python y TypeScript: aplicaciones internas, APIs, integraciones y portales. Entregas por partes, código documentado y propiedad del cliente.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Cuándo conviene software a medida y cuándo comprar uno hecho?',
+    answer:
+      'Si existe un producto que cubre el 80% de lo que necesitás, compralo: va a salir más barato y va a estar mejor mantenido. El desarrollo a medida se justifica cuando el proceso es el diferencial de tu negocio, cuando ningún producto encaja sin deformar tu operación, o cuando el costo de licencias por usuario se te fue de las manos.',
+  },
+  {
+    question: '¿Cuánto cuesta desarrollar un sistema?',
+    answer:
+      'Depende del alcance, y desconfiá de quien te dé un número sin haber entendido el problema. Lo que sí hacemos es acotar: definimos la versión más chica que ya te sirve, la presupuestamos con precisión y recién después discutimos el resto. Un presupuesto cerrado sobre un alcance difuso termina mal para las dos partes.',
+  },
+  {
+    question: '¿En qué tecnologías trabajan?',
+    answer:
+      'Python y TypeScript principalmente, con PostgreSQL o SQLite según el volumen, y despliegue en contenedores. Son tecnologías maduras, con comunidad grande y con gente disponible en el mercado: elegir algo exótico te deja atado a quien lo escribió.',
+  },
+  {
+    question: '¿El código queda mío?',
+    answer:
+      'Sí, sin asteriscos. Repositorio, documentación y accesos son tuyos desde el primer día, no al final del proyecto. Si mañana querés seguir con otro equipo, podés. Retener clientes por dependencia técnica es una práctica que no ejercemos.',
+  },
+  {
+    question: '¿Cómo sé que van avanzando?',
+    answer:
+      'Porque lo ves funcionando. Entregamos por partes con demostraciones periódicas sobre software real, no sobre diapositivas de avance. Si en un mes no hay nada que puedas usar, algo se está haciendo mal.',
+  },
+  {
+    question: '¿Incluye pruebas automatizadas?',
+    answer:
+      'Sí, y no es negociable de nuestro lado. Un sistema sin pruebas es barato de escribir y carísimo de cambiar: a los seis meses nadie se anima a tocarlo por miedo a romper algo. Las pruebas son lo que te permite seguir evolucionando el software sin rezar.',
+  },
+];
+
+const silo = [
+  { name: 'Automatizaciones e integraciones', path: '/automatizaciones' },
+  { name: 'Servidores y VPS', path: '/servidores-y-vps' },
+  { name: 'Ciberseguridad', path: '/ciberseguridad' },
+  { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Desarrollo de software a medida',
+        description:
+          'Desarrollo de aplicaciones internas, APIs e integraciones en Python y TypeScript, con entregas incrementales, pruebas automatizadas y propiedad del código para el cliente.',
+        path: PATH,
+        serviceType: 'Desarrollo de software a medida',
+      }),
+      itemListSchema(silo),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Desarrollo de software', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Desarrollo de software"
+    actions={[
+      { variant: 'primary', text: 'Contar mi proyecto', href: '#contacto', icon: 'tabler:code' },
+      { text: 'Ver automatizaciones', href: '/automatizaciones', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Desarrollo de software a medida para empresas',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Software a medida</span> que podés mantener sin nosotros
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Aplicaciones internas, APIs e integraciones en Python y TypeScript. Entregas por partes, con pruebas automatizadas
+      y código documentado que queda en tu repositorio desde el día uno.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>El código es tuyo</span>
+      <span>·</span>
+      <span>Con pruebas automatizadas</span>
+      <span>·</span>
+      <span>Entregas cada dos semanas</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué fracasan los proyectos"
+    title="Casi nunca es por la tecnología"
+    items={[
+      {
+        title: 'Alcance que nunca se cerró',
+        description:
+          'Se arranca a programar sin definir qué es "terminado". Cada semana aparece algo más y el proyecto no llega nunca.',
+      },
+      {
+        title: 'Seis meses sin nada usable',
+        description:
+          'Todo se entrega al final. Cuando por fin se ve, el negocio ya cambió y la mitad no sirve. Se descubre tarde y caro.',
+      },
+      {
+        title: 'Sin pruebas, sin cambios',
+        description:
+          'Sale más rápido al principio. Después nadie se anima a tocar nada porque no hay forma de saber qué se rompe.',
+      },
+      {
+        title: 'El conocimiento se va con el proveedor',
+        description:
+          'Sin documentación ni acceso al repositorio, cambiar de equipo significa reescribir todo desde cero.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Equipo de desarrollo de software trabajando',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        La tecnología casi nunca es el problema. El proceso, casi siempre
+      </h2>
+      Los proyectos no se caen porque el lenguaje era el equivocado. Se caen porque nadie definió qué había que construir
+      y porque la primera versión usable llegó demasiado tarde.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-construimos"
+    tagline="Qué construimos"
+    title="Sistemas que resuelven un problema concreto"
+    items={[
+      {
+        title: 'Aplicaciones internas',
+        description:
+          'Paneles de gestión, sistemas de turnos, seguimiento de pedidos, control de inventario. Todo lo que hoy vive en planillas compartidas.',
+        icon: 'tabler:layout-dashboard',
+      },
+      {
+        title: 'APIs e integraciones',
+        description:
+          'Servicios que conectan tus sistemas entre sí o exponen tus datos a terceros, con autenticación y control de acceso.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Portales para clientes',
+        description:
+          'Espacios donde tus clientes consultan su estado, descargan documentos o cargan información sin llamar por teléfono.',
+        icon: 'tabler:users',
+      },
+      {
+        title: 'Procesos con IA integrada',
+        description:
+          'Clasificación de documentos, extracción de datos, resúmenes y asistentes conectados a tus sistemas, donde aportan valor real.',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Migraciones y rescates',
+        description:
+          'Sistemas viejos que nadie quiere tocar, hechos por alguien que ya no está. Los documentamos, los estabilizamos y los movemos.',
+        icon: 'tabler:transfer',
+      },
+      {
+        title: 'Sitios y landings a medida',
+        description:
+          'Cuando el sitio necesita lógica propia, integraciones o rendimiento que un constructor genérico no da.',
+        icon: 'tabler:world-www',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo trabajamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Entender el problema</span>',
+        description:
+          'Antes de hablar de tecnología, entendemos el proceso y qué duele. A veces la conclusión es que no necesitás software: eso también lo decimos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Definir la primera versión útil</span>',
+        description:
+          'La versión más chica que ya te sirve para algo. Se presupuesta con precisión porque el alcance está acotado de verdad.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construir por entregas</span>',
+        description: 'Ciclos cortos con software funcionando y demostrable. Ves avance real, no informes de avance.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Entregar y transferir</span>',
+        description:
+          'Despliegue, documentación y traspaso a tu equipo. Si querés que sigamos manteniéndolo, es una decisión tuya, no una necesidad.',
+        icon: 'tabler:package-export',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Proceso de desarrollo de software por entregas',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre desarrollo a medida"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="desarrollo-de-software"
+    formId="lead-desarrollo"
+    title="Contanos qué problema querés resolver"
+    subtitle="No hace falta que traigas la solución pensada. Con el problema bien descrito alcanza para empezar a conversar."
+    button="Contar mi proyecto"
+    bullets={[
+      'Primera conversación sin costo ni compromiso',
+      'Te decimos si conviene comprar algo hecho en vez de desarrollarlo',
+      'El código y la documentación son tuyos desde el día uno',
+      'Entregas cada dos semanas con software que podés usar',
+    ]}
+  />
+</Layout>

@@ -69,6 +69,7 @@ const user = authHelpers.getUserById(authData.userId);
                   <th class="px-4 py-3">Fecha</th>
                   <th class="px-4 py-3">Nombre</th>
                   <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Interés</th>
                   <th class="px-4 py-3">Mensaje</th>
                   <th class="px-4 py-3">Estado</th>
                 </tr>
@@ -100,6 +101,8 @@ const user = authHelpers.getUserById(authData.userId);
     </main>
 
     <script>
+      import { interestLabel } from '~/lib/interests';
+
       // Tipado explícito: los scripts inline de Astro pasan por astro check y sin
       // esto cada acceso al DOM se marca como posiblemente null.
       interface LeadRow {
@@ -109,6 +112,7 @@ const user = authHelpers.getUserById(authData.userId);
         status: string;
         created_at: string;
         message?: string;
+        interest?: string | null;
         date?: string;
         time?: string;
         service_type?: string;
@@ -159,12 +163,13 @@ const user = authHelpers.getUserById(authData.userId);
                   <td class="px-4 py-3 whitespace-nowrap text-gray-500">${escapeHtml(row.created_at)}</td>
                   <td class="px-4 py-3">${escapeHtml(row.name)}</td>
                   <td class="px-4 py-3"><a class="text-blue-600 hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a></td>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(interestLabel(row.interest))}</td>
                   <td class="px-4 py-3 max-w-md">${escapeHtml(row.message)}</td>
                   <td class="px-4 py-3">${statusSelect('contact', row.id, row.status, CONTACT_STATUSES)}</td>
                 </tr>`
               )
               .join('')
-          : '<tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">Todavía no hay contactos.</td></tr>';
+          : '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Todavía no hay contactos.</td></tr>';
 
         $('appointmentRows').innerHTML = data.appointments.length
           ? data.appointments

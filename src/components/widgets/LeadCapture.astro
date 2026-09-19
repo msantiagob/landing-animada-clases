@@ -1,0 +1,86 @@
+---
+import LeadForm from '~/components/ui/LeadForm.astro';
+
+/**
+ * Sección de captación que cierra cada landing.
+ *
+ * El formulario va a la derecha y los argumentos a la izquierda porque en
+ * lectura occidental el ojo termina el recorrido a la derecha: el último
+ * elemento antes de decidir tiene que ser el campo, no el texto.
+ *
+ * Los `bullets` no son adornos: son las objeciones que frenan el envío
+ * (¿me van a spamear?, ¿cuánto tardan?, ¿me cobran la primera charla?)
+ * respondidas al lado del botón, que es donde aparecen en la cabeza del
+ * visitante.
+ */
+export interface Props {
+  id?: string;
+  interest?: string;
+  title?: string;
+  subtitle?: string;
+  bullets?: string[];
+  button?: string;
+  formId?: string;
+}
+
+const {
+  id = 'contacto',
+  interest = '',
+  title = 'Contanos qué necesitás',
+  subtitle = 'Respondemos con una propuesta concreta, no con un catálogo genérico.',
+  bullets = [
+    'Primera consulta sin costo y sin compromiso',
+    'Te respondemos en menos de 24 horas hábiles',
+    'Hablás con quien va a hacer el trabajo, no con un vendedor',
+    'No compartimos tus datos con terceros',
+  ],
+  button = 'Quiero que me contacten',
+  formId = 'lead',
+} = Astro.props;
+---
+
+<section id={id} class="scroll-mt-24 bg-surface">
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-20">
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 class="text-3xl font-bold tracking-tight text-heading sm:text-4xl">{title}</h2>
+        <p class="mt-4 text-lg text-muted">{subtitle}</p>
+
+        <ul class="mt-8 space-y-4">
+          {
+            bullets.map((bullet) => (
+              <li class="flex items-start gap-3">
+                <svg
+                  class="mt-1 h-5 w-5 flex-none text-emerald-600 dark:text-emerald-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 12.75 6 6 9-13.5"
+                  />
+                </svg>
+                <span class="text-page">{bullet}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="mt-8 text-sm text-muted">
+          ¿Preferís hablar directamente?
+          <a class="font-medium underline underline-offset-4 hover:text-heading" href="/booking">
+            Agendá una llamada de 30 minutos
+          </a>.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-page p-6 shadow-card-lg sm:p-8">
+        <LeadForm id={formId} interest={interest} button={button} />
+      </div>
+    </div>
+  </div>
+</section>

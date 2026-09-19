@@ -1,0 +1,248 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { breadcrumbSchema, faqSchema, itemListSchema, serviceSchema } from '~/utils/seo';
+
+const PATH = '/automatizaciones';
+
+const metadata = {
+  title: 'Automatizaciones e integraciones: WhatsApp, Google y tu CRM | Sonmyd',
+  description:
+    'Automatizamos procesos conectando WhatsApp, Google Workspace, tu CRM y tus sistemas vía API. Menos carga manual, menos errores de tipeo y datos que dejan de vivir en planillas sueltas.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const faqs = [
+  {
+    question: '¿Qué procesos conviene automatizar primero?',
+    answer:
+      'Los que son repetitivos, tienen reglas claras y se hacen seguido. Cargar a mano los datos de un formulario en el CRM, armar el mismo reporte todos los lunes o copiar información entre dos sistemas son los candidatos obvios. Un proceso que cambia cada vez y depende del criterio de una persona todavía no está listo para automatizarse.',
+  },
+  {
+    question: '¿Usan herramientas como Zapier o Make, o programan a medida?',
+    answer:
+      'Las dos cosas, según el caso. Para flujos simples y de bajo volumen, una herramienta sin código sale más barata y se mantiene sola. Cuando hay lógica compleja, volumen alto o el costo por operación se dispara, conviene código propio. Te decimos cuál corresponde aunque implique facturarte menos.',
+  },
+  {
+    question: '¿Qué pasa si el sistema que uso no tiene API?',
+    answer:
+      'Se busca la vía alternativa: exportaciones automáticas, base de datos, webhooks o incluso automatización de interfaz. Son soluciones más frágiles y lo decimos de entrada, porque se rompen cuando el proveedor cambia algo. Si el sistema es crítico y está cerrado, a veces la recomendación honesta es cambiar de sistema.',
+  },
+  {
+    question: '¿Cuánto tarda una automatización?',
+    answer:
+      'Una integración simple entre dos servicios con API, entre unos días y dos semanas. Un flujo que toca varios sistemas, tiene reglas de negocio y necesita manejo de errores, entre cuatro y ocho semanas. La mayor parte del tiempo no se va en programar: se va en entender bien el proceso.',
+  },
+  {
+    question: '¿Qué pasa cuando una automatización falla?',
+    answer:
+      'Se diseña asumiendo que va a fallar, porque las APIs se caen y los datos llegan sucios. Cada flujo lleva reintentos, registro de lo que pasó y un aviso a una persona cuando algo queda trabado. Una automatización silenciosa que falla sin avisar hace más daño que no tenerla.',
+  },
+  {
+    question: '¿Después quedo atado a ustedes?',
+    answer:
+      'No. El código y los accesos son tuyos, documentados y en tu repositorio. Si querés que tu equipo lo mantenga, lo capacitamos. Retener clientes por oscuridad técnica es una forma pésima de hacer negocios.',
+  },
+];
+
+const silo = [
+  { name: 'Asistente de WhatsApp con IA', path: '/asistente-de-whatsapp' },
+  { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
+  { name: 'Desarrollo de software a medida', path: '/desarrollo-de-software' },
+  { name: 'Servidores y VPS', path: '/servidores-y-vps' },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: 'Automatización de procesos e integraciones',
+        description:
+          'Automatización de procesos de negocio e integración de sistemas: WhatsApp, Google Workspace, CRMs y software propio conectados vía API.',
+        path: PATH,
+        serviceType: 'Automatización de procesos de negocio',
+      }),
+      itemListSchema(silo),
+      faqSchema(faqs),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Automatizaciones', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Hero
+    tagline="Automatizaciones"
+    actions={[
+      { variant: 'primary', text: 'Contar mi proceso', href: '#contacto', icon: 'tabler:arrows-shuffle' },
+      { text: 'Ver desarrollo a medida', href: '/desarrollo-de-software', variant: 'tertiary' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Automatización de procesos e integración de sistemas',
+    }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Automatizaciones</span> que le devuelven horas a tu semana
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Conectamos WhatsApp, Google Workspace, tu CRM y tus sistemas propios para que los datos dejen de pasar de una
+      pantalla a otra copiados a mano.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>El código queda tuyo</span>
+      <span>·</span>
+      <span>Con manejo de errores y alertas</span>
+      <span>·</span>
+      <span>Documentado y transferible</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="El costo invisible"
+    title="El copiar y pegar entre sistemas te sale carísimo"
+    items={[
+      {
+        title: 'Horas que nadie contabiliza',
+        description:
+          'Media hora por día pasando datos de un lado a otro son más de cien horas al año por persona. Nadie las factura, pero se pagan igual.',
+      },
+      {
+        title: 'Errores de tipeo con consecuencias',
+        description:
+          'Un dígito mal en un precio, un mail con una letra cambiada. La carga manual falla siempre; es cuestión de volumen.',
+      },
+      {
+        title: 'Información que llega tarde',
+        description:
+          'Si el reporte se arma a mano los lunes, el lunes decidís con datos del viernes. Las decisiones buenas necesitan datos frescos.',
+      },
+      {
+        title: 'Conocimiento en la cabeza de una sola persona',
+        description:
+          'Cuando el proceso vive en la memoria de quien lo hace, cada vacación es un riesgo operativo y cada renuncia, una crisis.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Datos pasando manualmente entre sistemas',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="mb-2 text-2xl font-bold tracking-tight dark:text-white sm:text-3xl">
+        Si un humano copia datos de una pantalla a otra, eso es un error esperando
+      </h2>
+      No es falta de cuidado: es que las personas no están hechas para tareas repetitivas y las máquinas sí. Cada proceso
+      manual es un costo fijo disfrazado de rutina.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-conectamos"
+    tagline="Qué conectamos"
+    title="Las integraciones que más nos piden"
+    subtitle="Si tiene API, se conecta. Y si no la tiene, casi siempre hay una vía."
+    items={[
+      {
+        title: 'WhatsApp con tu CRM',
+        description:
+          'Cada consulta que entra por WhatsApp se convierte en un contacto con su historial, su origen y su responsable asignado.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Google Sheets y Workspace',
+        description:
+          'Planillas que se llenan solas, Drive que se ordena solo, Gmail que dispara avisos y Calendar que agenda sin intervención.',
+        icon: 'tabler:brand-google',
+      },
+      {
+        title: 'Formularios a base de datos',
+        description:
+          'Lo que carga un cliente en tu web entra validado a tu sistema, sin que nadie lo transcriba ni lo revise a mano.',
+        icon: 'tabler:forms',
+      },
+      {
+        title: 'Reportes automáticos',
+        description:
+          'El informe que hoy arma alguien cada lunes se genera solo y llega por mail o por WhatsApp a quien lo necesita.',
+        icon: 'tabler:report-analytics',
+      },
+      {
+        title: 'Facturación y cobros',
+        description:
+          'Emisión, envío y seguimiento de comprobantes conectados a tu operación, con recordatorios de vencimiento.',
+        icon: 'tabler:receipt',
+      },
+      {
+        title: 'Sistemas propios vía API',
+        description:
+          'Tu ERP, tu sistema a medida o esa base que mantiene alguien hace años: si expone datos, lo integramos.',
+        icon: 'tabler:api',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo lo abordamos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Mapa del proceso real</span>',
+        description:
+          'Miramos cómo se hace hoy, no cómo dice el manual que se hace. Casi siempre aparecen pasos que nadie recordaba.',
+        icon: 'tabler:map-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Simplificar antes de automatizar</span>',
+        description:
+          'Automatizar un proceso malo lo único que hace es acelerar el desorden. Primero se poda lo que no aporta.',
+        icon: 'tabler:scissors',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construcción por partes</span>',
+        description:
+          'Se entrega el primer tramo funcionando en semanas, no el sistema completo en meses. Se valida con uso real y se sigue.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Monitoreo y entrega</span>',
+        description:
+          'Alertas cuando algo falla, documentación y traspaso a tu equipo. La automatización tiene que sobrevivir sin nosotros.',
+        icon: 'tabler:checkup-list',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Equipo mapeando un proceso de negocio para automatizarlo',
+    }}
+  />
+
+  <FAQs
+    title="Preguntas frecuentes sobre automatizaciones"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <LeadCapture
+    interest="automatizaciones"
+    formId="lead-automatizaciones"
+    title="Contanos qué proceso te está comiendo el tiempo"
+    subtitle="Con una descripción del proceso te decimos si conviene automatizarlo, con qué herramienta y qué esfuerzo implica."
+    button="Contar mi proceso"
+  />
+</Layout>

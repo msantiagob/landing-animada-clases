@@ -5,6 +5,7 @@ export const SITE_URL = (SITE?.site ?? 'https://sonmyd.com').replace(/\/$/, '');
 export const absoluteUrl = (path = '/'): string => `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const AUTHOR_ID = `${SITE_URL}/autor#person`;
 
 /**
  * Identidad de la marca. Se emite en todas las páginas para que Google
@@ -18,16 +19,46 @@ export const organizationSchema = () => ({
   url: SITE_URL,
   logo: absoluteUrl('/favicon.svg'),
   description:
-    'Clases de inteligencia artificial, asistentes de WhatsApp con IA y agentes de voz para llamadas de marketing y gestión de llamadas.',
+    'Clases de inteligencia artificial y Python, asistentes de WhatsApp sobre la API oficial de Meta, automatizaciones, desarrollo de software, administración de servidores y ciberseguridad.',
   slogan: 'Inteligencia artificial aplicada a tu negocio',
   areaServed: ['CO', 'AR', 'MX', 'ES', 'CL', 'PE'],
   knowsAbout: [
     'Inteligencia artificial',
     'Clases de IA',
+    'Clases de Python',
     'Asistente de WhatsApp con IA',
+    'WhatsApp Business API',
+    'Meta Business',
     'Llamadas de marketing con IA',
     'Gestión de llamadas',
     'Automatización de procesos',
+    'Automatización con Google Workspace',
+    'Desarrollo de software a medida',
+    'Desarrollo de APIs',
+    'Administración de servidores y VPS',
+    'Ciberseguridad',
+  ],
+});
+
+/**
+ * Autor de los artículos. Google evalúa E-E-A-T (experiencia, pericia,
+ * autoridad, confianza) y en temas técnicos —ciberseguridad sobre todo— un
+ * artículo sin autor identificable rankea peor que uno firmado.
+ */
+export const personSchema = () => ({
+  '@type': 'Person',
+  '@id': AUTHOR_ID,
+  name: 'Santiago Bedoya',
+  url: absoluteUrl('/autor'),
+  jobTitle: 'Ingeniero de software e instructor de inteligencia artificial',
+  worksFor: { '@id': ORGANIZATION_ID },
+  knowsAbout: [
+    'Inteligencia artificial',
+    'Python',
+    'WhatsApp Business API',
+    'Automatización de procesos',
+    'Administración de servidores',
+    'Ciberseguridad',
   ],
 });
 
@@ -97,6 +128,53 @@ export const faqSchema = (faqs: Array<{ question: string; answer: string }>) => 
     '@type': 'Question',
     name: question,
     acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+});
+
+/**
+ * Artículos del blog. El `mainEntityOfPage` le dice a Google cuál es la URL
+ * canónica de la pieza, y el autor enlaza al Person para que la autoridad se
+ * acumule en una entidad y no se disperse artículo por artículo.
+ */
+export const articleSchema = ({
+  headline,
+  description,
+  path,
+  datePublished,
+  dateModified,
+  image,
+}: {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished: string;
+  dateModified?: string;
+  image?: string;
+}) => ({
+  '@type': 'Article',
+  '@id': `${absoluteUrl(path)}#article`,
+  headline,
+  description,
+  inLanguage: 'es',
+  mainEntityOfPage: absoluteUrl(path),
+  datePublished,
+  dateModified: dateModified ?? datePublished,
+  author: { '@id': AUTHOR_ID },
+  publisher: { '@id': ORGANIZATION_ID },
+  ...(image ? { image: image.startsWith('http') ? image : absoluteUrl(image) } : {}),
+});
+
+/**
+ * Lista de enlaces de una página pilar hacia su silo. Ayuda a que el buscador
+ * lea el bloque como una jerarquía y no como enlaces sueltos.
+ */
+export const itemListSchema = (items: Array<{ name: string; path: string }>) => ({
+  '@type': 'ItemList',
+  itemListElement: items.map(({ name, path }, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name,
+    url: absoluteUrl(path),
   })),
 });
 

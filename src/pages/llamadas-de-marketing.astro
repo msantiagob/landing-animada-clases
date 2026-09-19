@@ -5,7 +5,7 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
 
@@ -223,15 +223,11 @@ const faqs = [
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
-  <CallToAction
-    actions={[
-      { variant: 'primary', text: 'Escuchar un ejemplo', href: '/booking', icon: 'tabler:phone-call' },
-      { text: 'Pedir presupuesto', href: '/contact', variant: 'tertiary' },
-    ]}
-  >
-    <Fragment slot="title">Escuchá una llamada antes de contratar</Fragment>
-    <Fragment slot="subtitle">
-      Te hacemos una llamada de demostración con el guion de tu rubro. Juzgá vos mismo si suena bien.
-    </Fragment>
-  </CallToAction>
+  <LeadCapture
+    interest="llamadas-de-marketing"
+    formId="lead-llamadas"
+    title="Escuchá una llamada antes de contratar"
+    subtitle="Te hacemos una llamada de demostración con el guion de tu rubro. Juzgá vos mismo si suena bien."
+    button="Quiero escuchar un ejemplo"
+  />
 </Layout>

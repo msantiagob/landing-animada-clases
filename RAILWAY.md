@@ -47,3 +47,55 @@ proceso y la conexión a la base.
   escribe en un único volumen. Escalar a varias réplicas rompe ambas cosas.
 - **Backup.** El archivo está en `/app/data/database.sqlite`. Copialo
   periódicamente desde la consola del servicio.
+
+## 6. Después del despliegue: puesta en marcha del SEO
+
+El sitio no aparece en Google por existir. Estos cuatro pasos son manuales y
+son la Fase 0 del plan de SEO: sin ellos, todo el contenido publicado es
+invisible para el buscador.
+
+### 6.1 DNS del dominio
+
+`sonmyd.com` tiene que resolver al servicio de Railway. Verificalo con:
+
+```bash
+dig +short sonmyd.com A
+```
+
+Si no devuelve nada, el dominio no apunta a ningún lado y ningún rastreador
+puede llegar. En Railway se agrega el dominio personalizado desde Settings >
+Domains, y el registro se crea en tu proveedor de DNS.
+
+### 6.2 Desconectar el auto-deploy de Netlify
+
+El repositorio todavía está conectado al proyecto `portfolio-sonmyd` de
+Netlify, que construye en cada push a `develop` y publica un sitio que
+responde 404 en todas las rutas. El proyecto usa el adapter de **node**
+(`astro.config.ts`), no el de Netlify: lo que genera no es un sitio estático
+servible.
+
+Un despliegue "ready" en verde sirviendo 404 es peor que ningún despliegue,
+porque oculta el problema. Desconectá el repositorio desde el panel de Netlify
+o eliminá el proyecto.
+
+### 6.3 Google Search Console
+
+1. Dar de alta la propiedad `https://sonmyd.com`.
+2. Copiar el token de verificación (método "Etiqueta HTML").
+3. Pegarlo en `src/config.yaml` → `site.googleSiteVerificationId`.
+4. Desplegar y verificar.
+5. Enviar `https://sonmyd.com/sitemap-index.xml`.
+
+> El valor que traía la plantilla (`orcPxI47GSa-...`) era el de onwidget y
+> nunca iba a verificar este dominio. El campo quedó vacío a propósito.
+
+### 6.4 Comprobación posterior
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/clases-de-ia
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/api/health
+```
+
+Los tres tienen que devolver `200`. Si la raíz responde 404, el despliegue
+está sirviendo el directorio equivocado.

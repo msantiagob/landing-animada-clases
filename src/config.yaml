@@ -34,14 +34,14 @@ i18n:
 
 apps:
   blog:
-    # Desactivado hasta que haya contenido propio: un blog vacío no aporta SEO y
-    # deja /blog y /rss.xml en 404. Poner en true al publicar el primer post real.
-    isEnabled: false
+    isEnabled: true
     postsPerPage: 6
 
     post:
       isEnabled: true
-      permalink: '/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      # Los artículos cuelgan de /blog/ a propósito: cada silo necesita que la
+      # URL muestre la jerarquía. Sueltos en la raíz compiten con las landings.
+      permalink: '/blog/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
       robots:
         index: true
 

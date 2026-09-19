@@ -9,7 +9,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import Content from '~/components/widgets/Content.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Stats from '~/components/widgets/Stats.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
 
 const metadata = {
   title: 'Clases de IA, Asistente de WhatsApp y Gestor de Llamadas | Sonmyd',
@@ -386,27 +386,12 @@ const metadata = {
     ]}
   />
 
-  <!-- CallToAction Widget *********** -->
+  <!-- Captura de leads ************** -->
 
-  <CallToAction
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Consulta Gratuita',
-        href: '/contact',
-        target: '_self',
-        icon: 'tabler:calendar-plus',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      Sonmyd&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tu Éxito</span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      Únete a las empresas líderes que ya transformaron su negocio con nuestras soluciones. <br
-        class="hidden md:inline"
-      />No dejes que la competencia te adelante. ¡Actúa ahora!
-    </Fragment>
-  </CallToAction>
+  <LeadCapture
+    formId="lead-home"
+    title="Empecemos por tu caso"
+    subtitle="Contanos qué querés resolver y te decimos si podemos ayudarte, cómo y qué implica. Si no somos los indicados, también te lo decimos."
+    button="Quiero que me contacten"
+  />
 </Layout>
