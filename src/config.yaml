@@ -4,7 +4,8 @@ site:
   base: '/'
   trailingSlash: false
 
-  googleSiteVerificationId: orcPxI47GSa-cRvY11tUe6iGg2IO_RPvnA1q95iEM3M
+  # Pegar aquí el token que da Google Search Console (Propiedad > Etiqueta HTML).
+  googleSiteVerificationId: ''
 
 # Default SEO metadata
 metadata:
@@ -33,7 +34,9 @@ i18n:
 
 apps:
   blog:
-    isEnabled: true
+    # Desactivado hasta que haya contenido propio: un blog vacío no aporta SEO y
+    # deja /blog y /rss.xml en 404. Poner en true al publicar el primer post real.
+    isEnabled: false
     postsPerPage: 6
 
     post:

@@ -1,4 +1,4 @@
-import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
+import { getPermalink } from './utils/permalinks';
 
 /**
  * El enlazado interno es una señal directa de SEO: las páginas que apuntamos
@@ -48,10 +48,6 @@ export const headerData = {
           text: 'Acerca de nosotros',
           href: getPermalink('/about'),
         },
-        {
-          text: 'Blog',
-          href: getBlogPermalink(),
-        },
       ],
     },
     {
@@ -85,7 +81,6 @@ export const footerData = {
       title: 'Empresa',
       links: [
         { text: 'Acerca de nosotros', href: getPermalink('/about') },
-        { text: 'Blog', href: getBlogPermalink() },
         { text: 'Contacto', href: getPermalink('/contact') },
         { text: 'Agendar una reunión', href: getPermalink('/booking') },
       ],
@@ -95,7 +90,8 @@ export const footerData = {
     { text: 'Términos', href: getPermalink('/terms') },
     { text: 'Política de privacidad', href: getPermalink('/privacy') },
   ],
-  socialLinks: [{ ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') }],
+  // Sin redes propias todavía; el RSS se quitó porque el blog está desactivado y devuelve 404.
+  socialLinks: [],
   description:
     'Formación y automatización con inteligencia artificial para empresas: clases de IA, asistentes de WhatsApp y agentes de voz para llamadas.',
   footNote: `© ${new Date().getFullYear()} Sonmyd. Todos los derechos reservados.`,

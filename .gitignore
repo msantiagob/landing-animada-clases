@@ -25,8 +25,9 @@ pnpm-lock.yaml
 # Local Netlify folder
 .netlify
 
-# base de datos local
-data/
+# base de datos local (solo la raíz: sin la barra inicial el patrón también
+# ignoraba src/data/, donde vive el contenido del sitio)
+/data/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
