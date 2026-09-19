@@ -7,6 +7,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { breadcrumbSchema, faqSchema, itemListSchema, serviceSchema } from '~/utils/seo';
 
 const PATH = '/desarrollo-de-software';
@@ -76,6 +77,13 @@ const silo = [
         { name: 'Inicio', path: '/' },
         { name: 'Desarrollo de software', path: PATH },
       ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Desarrollo de software', path: '/desarrollo-de-software' },
     ]}
   />
 

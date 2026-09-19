@@ -1,0 +1,48 @@
+---
+/**
+ * Migas de pan visibles.
+ *
+ * El JSON-LD de BreadcrumbList ya se emitía, pero Google pide que los datos
+ * estructurados describan contenido que el usuario efectivamente ve. Una miga
+ * declarada solo en JSON-LD es una señal a medias y, en el peor caso, se
+ * interpreta como marcado que no corresponde a la página.
+ *
+ * Aparte cumple una función real de navegación: quien entra desde una búsqueda
+ * cae en una página interna sin contexto, y esto le muestra dónde está parado.
+ */
+export interface Props {
+  items: Array<{ name: string; path: string }>;
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+
+// El último elemento es la página actual: se marca con aria-current y no se
+// enlaza, porque un enlace a la página en la que ya estás no aporta nada.
+const last = items.length - 1;
+---
+
+<nav aria-label="Migas de pan" class={`mx-auto max-w-6xl px-4 pt-6 sm:px-6 ${className}`}>
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+    {
+      items.map((item, index) => (
+        <li class="flex items-center gap-2">
+          {index > 0 && (
+            <span aria-hidden="true" class="select-none opacity-60">
+              /
+            </span>
+          )}
+          {index === last ? (
+            <span aria-current="page" class="font-medium text-heading">
+              {item.name}
+            </span>
+          ) : (
+            <a class="underline-offset-4 transition-colors hover:text-heading hover:underline" href={item.path}>
+              {item.name}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

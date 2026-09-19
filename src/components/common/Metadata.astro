@@ -17,12 +17,25 @@ export interface Props extends MetaData {
 const {
   title,
   ignoreTitleTemplate = false,
-  canonical = String(getCanonical(String(Astro.url.pathname))),
+  canonical: rawCanonical = String(getCanonical(String(Astro.url.pathname))),
   robots = {},
   description,
   openGraph = {},
   twitter = {},
 } = Astro.props;
+
+/**
+ * Normaliza el canonical a URL ABSOLUTA.
+ *
+ * Las páginas declaran `canonical: '/ciberseguridad'` porque es lo cómodo de
+ * escribir, y eso salía tal cual al HTML. Un canonical relativo es frágil y un
+ * `og:url` relativo directamente no sirve: las redes sociales y los rastreadores
+ * no lo resuelven, así que las tarjetas al compartir salían rotas.
+ *
+ * Se normaliza acá, en un solo lugar, y no en cada página: así la próxima
+ * landing que se escriba no puede reintroducir el bug.
+ */
+const canonical = String(getCanonical(String(rawCanonical)));
 
 const seoProps: AstroSeoProps = merge(
   {

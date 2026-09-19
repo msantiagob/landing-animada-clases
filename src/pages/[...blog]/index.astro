@@ -13,6 +13,8 @@ import { findImage } from '~/utils/images';
 import type { MetaData } from '~/types';
 import RelatedPosts from '~/components/blog/RelatedPosts.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import AuthorBox from '~/components/blog/AuthorBox.astro';
 import { articleSchema, breadcrumbSchema, personSchema } from '~/utils/seo';
 
 export const prerender = true;
@@ -68,9 +70,21 @@ const articlePath = getPermalink(post.permalink, 'post');
       ]),
     ]}
   />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Blog', path: '/blog' },
+      { name: post.title, path: articlePath },
+    ]}
+  />
+
   <SinglePost post={{ ...post, image: image }} url={url}>
     {post.Content ? <post.Content /> : <Fragment set:html={post.content || ''} />}
   </SinglePost>
+
+  <AuthorBox class="mt-12" />
+
   <ToBlogLink />
   <RelatedPosts post={post} />
 </Layout>

@@ -5,4 +5,59 @@ Allow: /
 Disallow: /admin
 Disallow: /api
 
+# --- Rastreadores de IA -------------------------------------------------------
+# Se permiten A PROPÓSITO. Hay dos familias distintas y conviene no confundirlas:
+#
+#   1) Los que RESPONDEN preguntas citando la fuente (OAI-SearchBot,
+#      PerplexityBot, ClaudeBot). Bloquearlos te saca de las respuestas de IA,
+#      que hoy es un canal de tráfico real.
+#   2) Los que recopilan datos de ENTRENAMIENTO (GPTBot, Google-Extended,
+#      CCBot). No mandan tráfico directo, pero alimentan el conocimiento del
+#      modelo sobre la marca.
+#
+# Para un negocio que vive de que lo encuentren, la decisión es permitir ambas.
+# Si algún día se quiere revertir, basta con cambiar Allow por Disallow acá.
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
 Sitemap: https://sonmyd.com/sitemap-index.xml

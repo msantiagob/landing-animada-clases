@@ -4,6 +4,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import Features from '~/components/widgets/Features.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { breadcrumbSchema, itemListSchema } from '~/utils/seo';
 
 /**
@@ -47,6 +48,13 @@ const pilares = [
         { name: 'Inicio', path: '/' },
         { name: 'Servicios', path: PATH },
       ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Servicios', path: '/servicios' },
     ]}
   />
 

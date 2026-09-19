@@ -7,6 +7,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
 
 const PATH = '/gestor-de-llamadas';
@@ -68,6 +69,13 @@ const faqs = [
         { name: 'Inicio', path: '/' },
         { name: 'Gestor de llamadas', path: PATH },
       ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Gestor de llamadas', path: '/gestor-de-llamadas' },
     ]}
   />
 

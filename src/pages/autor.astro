@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Features from '~/components/widgets/Features.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import { breadcrumbSchema, personSchema } from '~/utils/seo';
 
 const PATH = '/autor';
@@ -24,6 +25,13 @@ const metadata = {
         { name: 'Inicio', path: '/' },
         { name: 'Autor', path: PATH },
       ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Autor', path: '/autor' },
     ]}
   />
 
