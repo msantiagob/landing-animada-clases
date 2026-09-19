@@ -31,7 +31,26 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     sitemap({
-      filter: (page) => !/\/(admin|api)(\/|$)/.test(new URL(page).pathname),
+      /**
+       * El sitemap solo debe listar páginas indexables. Enviar una URL que
+       * además responde noindex es contradictorio: Search Console lo reporta
+       * como "URL enviada marcada como noindex" y gasta presupuesto de rastreo.
+       *
+       * Quedan fuera:
+       * - /admin y /api, que no son contenido.
+       * - Las páginas paginadas del blog (/blog/2, /blog/3...): solo se indexa
+       *   la primera, porque el resto tiene contenido casi idéntico.
+       * - /etiqueta/*, marcado noindex en config.yaml (tag.robots.index: false).
+       */
+      filter: (page) => {
+        const { pathname } = new URL(page);
+
+        if (/\/(admin|api)(\/|$)/.test(pathname)) return false;
+        if (/^\/blog\/\d+\/?$/.test(pathname)) return false;
+        if (/^\/etiqueta(\/|$)/.test(pathname)) return false;
+
+        return true;
+      },
       changefreq: 'weekly',
       lastmod: new Date(),
     }),
