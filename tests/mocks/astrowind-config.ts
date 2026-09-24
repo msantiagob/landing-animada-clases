@@ -2,7 +2,7 @@
 // de Astro. Sin esto, cualquier test que importe utils/seo.ts explota.
 export const SITE = {
   name: 'Sonmyd',
-  site: 'https://sonmyd.com',
+  site: 'https://sonmyd.co',
   base: '/',
   trailingSlash: false,
 };

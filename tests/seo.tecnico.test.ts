@@ -72,7 +72,7 @@ describe('robots.txt', () => {
   });
 
   it('declara el sitemap', () => {
-    expect(robots).toMatch(/^Sitemap: https:\/\/sonmyd\.com\/sitemap-index\.xml$/m);
+    expect(robots).toMatch(/^Sitemap: https:\/\/sonmyd\.co\/sitemap-index\.xml$/m);
   });
 
   // Bloquearlos deja el sitio fuera de las respuestas de IA, que hoy es un
@@ -87,6 +87,39 @@ describe('robots.txt', () => {
 
   it('no bloquea a ningún rastreador de IA', () => {
     expect(robots).not.toMatch(/User-agent: (GPTBot|ClaudeBot|PerplexityBot)\nDisallow: \//);
+  });
+});
+
+describe('coherencia del dominio', () => {
+  /**
+   * El dominio aparece en config.yaml, en robots.txt y como respaldo en
+   * seo.ts. Al migrar de sonmyd.com a sonmyd.co quedó desincronizado en un
+   * archivo porque estaba escapado dentro de una expresión regular.
+   *
+   * Un dominio distinto entre config y robots.txt manda a Google a un sitemap
+   * que no existe, y no falla ningún build.
+   */
+  const siteConfig = read('src/config.yaml');
+  const dominio = siteConfig.match(/^\s*site: '(https:\/\/[^']+)'/m)?.[1];
+
+  it('config.yaml declara el sitio', () => {
+    expect(dominio).toBeDefined();
+  });
+
+  it('robots.txt apunta al sitemap del MISMO dominio que config.yaml', () => {
+    expect(read('public/robots.txt')).toContain(`Sitemap: ${dominio}/sitemap-index.xml`);
+  });
+
+  it('el respaldo de seo.ts usa el mismo dominio', () => {
+    expect(read('src/utils/seo.ts')).toContain(`SITE?.site ?? '${dominio}'`);
+  });
+
+  it('ningún archivo del sitio quedó apuntando al dominio viejo', () => {
+    ['src/config.yaml', 'public/robots.txt', 'src/utils/seo.ts'].forEach((file) => {
+      // Se admite en un correo (hola@sonmyd.com), no como URL.
+      const urlsViejas = read(file).match(/(?<!@)\bsonmyd\.com\b/g) ?? [];
+      expect(urlsViejas, `${file} conserva URLs de sonmyd.com`).toEqual([]);
+    });
   });
 });
 

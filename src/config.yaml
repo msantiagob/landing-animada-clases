@@ -1,6 +1,6 @@
 site:
   name: Sonmyd
-  site: 'https://sonmyd.com'
+  site: 'https://sonmyd.co'
   base: '/'
   trailingSlash: false
 

@@ -122,11 +122,11 @@ describe('personSchema', () => {
   });
 
   it('lo vincula a la organización para consolidar la entidad', () => {
-    expect(schema.worksFor).toEqual({ '@id': 'https://sonmyd.com/#organization' });
+    expect(schema.worksFor).toEqual({ '@id': 'https://sonmyd.co/#organization' });
   });
 
   it('usa un @id estable, que es lo que permite referenciarlo desde los artículos', () => {
-    expect(schema['@id']).toBe('https://sonmyd.com/autor#person');
+    expect(schema['@id']).toBe('https://sonmyd.co/autor#person');
   });
 });
 
@@ -141,11 +141,11 @@ describe('articleSchema', () => {
     });
 
   it('apunta el mainEntityOfPage a la URL absoluta del artículo', () => {
-    expect(build().mainEntityOfPage).toBe('https://sonmyd.com/blog/que-es-whatsapp-business-api');
+    expect(build().mainEntityOfPage).toBe('https://sonmyd.co/blog/que-es-whatsapp-business-api');
   });
 
   it('referencia al autor por @id en vez de duplicar sus datos', () => {
-    expect(build().author).toEqual({ '@id': 'https://sonmyd.com/autor#person' });
+    expect(build().author).toEqual({ '@id': 'https://sonmyd.co/autor#person' });
   });
 
   it('usa la fecha de publicación como fecha de modificación si no hay otra', () => {
@@ -158,7 +158,7 @@ describe('articleSchema', () => {
   });
 
   it('convierte una imagen relativa en absoluta', () => {
-    expect(build({ image: '/portada.png' }).image).toBe('https://sonmyd.com/portada.png');
+    expect(build({ image: '/portada.png' }).image).toBe('https://sonmyd.co/portada.png');
   });
 
   it('respeta una imagen que ya es absoluta', () => {
@@ -179,7 +179,7 @@ describe('itemListSchema', () => {
 
     expect(schema.itemListElement[0].position).toBe(1);
     expect(schema.itemListElement[1].position).toBe(2);
-    expect(schema.itemListElement[0].url).toBe('https://sonmyd.com/ciberseguridad');
+    expect(schema.itemListElement[0].url).toBe('https://sonmyd.co/ciberseguridad');
   });
 
   it('devuelve una lista vacía sin romperse', () => {

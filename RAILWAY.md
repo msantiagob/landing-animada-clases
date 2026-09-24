@@ -54,12 +54,27 @@ El sitio no aparece en Google por existir. Estos cuatro pasos son manuales y
 son la Fase 0 del plan de SEO: sin ellos, todo el contenido publicado es
 invisible para el buscador.
 
-### 6.1 DNS del dominio
+### 6.1 Dominio principal: sonmyd.co
 
-`sonmyd.com` tiene que resolver al servicio de Railway. Verificalo con:
+**Decisión tomada**: `sonmyd.co` es el dominio principal, no `sonmyd.com`.
+
+El motivo es que `sonmyd.co` ya está indexado y tiene autoridad acumulada.
+Empezar de cero en otro dominio habría significado tirar esa antigüedad a la
+basura y competir contra uno mismo desde dos dominios, que es la forma más
+cara de la canibalización de keywords.
+
+> **Atención antes del corte**: hoy `sonmyd.co` sirve OTRO sitio, desplegado en
+> Netlify desde el repositorio `msantiagob/landing-animada-clases` (proyecto
+> `venerable-druid-0b7175`). Apuntar el dominio a Railway REEMPLAZA ese sitio.
+> Ese sitio tiene páginas que este no tiene (`/agendar`, `/servicios`, y las
+> versiones en inglés bajo `/en/`). Antes de cortar hay que decidir qué pasa
+> con esas URLs: si no se redirigen, cada una pasa a devolver 404 y se pierde
+> el posicionamiento que ya tenían.
+
+`sonmyd.co` tiene que resolver al servicio de Railway. Verificalo con:
 
 ```bash
-dig +short sonmyd.com A
+dig +short sonmyd.co A
 ```
 
 Si no devuelve nada, el dominio no apunta a ningún lado y ningún rastreador
@@ -80,11 +95,11 @@ o eliminá el proyecto.
 
 ### 6.3 Google Search Console
 
-1. Dar de alta la propiedad `https://sonmyd.com`.
+1. Dar de alta la propiedad `https://sonmyd.co`.
 2. Copiar el token de verificación (método "Etiqueta HTML").
 3. Pegarlo en `src/config.yaml` → `site.googleSiteVerificationId`.
 4. Desplegar y verificar.
-5. Enviar `https://sonmyd.com/sitemap-index.xml`.
+5. Enviar `https://sonmyd.co/sitemap-index.xml`.
 
 > El valor que traía la plantilla (`orcPxI47GSa-...`) era el de onwidget y
 > nunca iba a verificar este dominio. El campo quedó vacío a propósito.
@@ -92,9 +107,9 @@ o eliminá el proyecto.
 ### 6.4 Comprobación posterior
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/
-curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/clases-de-ia
-curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.com/api/health
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.co/
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.co/clases-de-ia
+curl -s -o /dev/null -w "%{http_code}\n" https://sonmyd.co/api/health
 ```
 
 Los tres tienen que devolver `200`. Si la raíz responde 404, el despliegue

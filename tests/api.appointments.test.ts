@@ -5,7 +5,7 @@ import { dbHelpers } from '~/lib/database';
 import { emailHelpers } from '~/lib/email';
 import { closeTestDb, createTestDb, jsonRequest, readJson, tomorrow } from './helpers';
 
-const ENDPOINT = 'https://sonmyd.com/api/appointments';
+const ENDPOINT = 'https://sonmyd.co/api/appointments';
 
 const validBody = () => ({
   name: 'Carlos Ruiz',

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 /**
  * Guardas de contenido: el sitio arrastraba los posts de demostración de la
  * plantilla AstroWind y el token de verificación de Google de onwidget. Ambos
- * se publicaban en sonmyd.com. Estos tests impiden que vuelvan a entrar.
+ * se publicaban en sonmyd.co. Estos tests impiden que vuelvan a entrar.
  */
 
 const ROOT = resolve(__dirname, '..');

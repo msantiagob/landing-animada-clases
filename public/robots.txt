@@ -60,4 +60,4 @@ Allow: /
 User-agent: meta-externalagent
 Allow: /
 
-Sitemap: https://sonmyd.com/sitemap-index.xml
+Sitemap: https://sonmyd.co/sitemap-index.xml

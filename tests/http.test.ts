@@ -14,7 +14,7 @@ describe('json', () => {
 
 describe('getClientIp', () => {
   it('toma la primera IP de x-forwarded-for, que es la del cliente real', () => {
-    const request = new Request('https://sonmyd.com', {
+    const request = new Request('https://sonmyd.co', {
       headers: { 'x-forwarded-for': '203.0.113.5, 70.41.3.18, 150.172.238.178' },
     });
 
@@ -22,13 +22,13 @@ describe('getClientIp', () => {
   });
 
   it('cae a x-real-ip cuando no hay x-forwarded-for', () => {
-    const request = new Request('https://sonmyd.com', { headers: { 'x-real-ip': '198.51.100.1' } });
+    const request = new Request('https://sonmyd.co', { headers: { 'x-real-ip': '198.51.100.1' } });
 
     expect(getClientIp(request)).toBe('198.51.100.1');
   });
 
   it('devuelve unknown si no hay ninguna cabecera', () => {
-    expect(getClientIp(new Request('https://sonmyd.com'))).toBe('unknown');
+    expect(getClientIp(new Request('https://sonmyd.co'))).toBe('unknown');
   });
 });
 
@@ -74,7 +74,7 @@ describe('rateLimit', () => {
 
 describe('parseBody', () => {
   it('parsea JSON', async () => {
-    const request = new Request('https://sonmyd.com', {
+    const request = new Request('https://sonmyd.co', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'Ana' }),
@@ -85,7 +85,7 @@ describe('parseBody', () => {
 
   it('parsea un envío nativo de formulario, para que funcione sin JavaScript', async () => {
     const form = new URLSearchParams({ name: 'Ana', email: 'ana@example.com' });
-    const request = new Request('https://sonmyd.com', {
+    const request = new Request('https://sonmyd.co', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: form,

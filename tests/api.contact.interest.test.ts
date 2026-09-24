@@ -6,7 +6,7 @@ import { applySchema, dbHelpers, setDb } from '~/lib/database';
 import { emailHelpers } from '~/lib/email';
 import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
 
-const ENDPOINT = 'https://sonmyd.com/api/contact';
+const ENDPOINT = 'https://sonmyd.co/api/contact';
 
 const base = {
   name: 'Ana Pérez',
@@ -75,15 +75,15 @@ describe('POST /api/contact — página de origen', () => {
   afterEach(() => closeTestDb(db));
 
   it('usa la ruta que manda el formulario', async () => {
-    await call({ ...base, sourcePage: '/ciberseguridad' }, { referer: 'https://sonmyd.com/otra' });
+    await call({ ...base, sourcePage: '/ciberseguridad' }, { referer: 'https://sonmyd.co/otra' });
     expect(dbHelpers.getContactForms()[0].source_page).toBe('/ciberseguridad');
   });
 
   // El referer se pierde con ciertas políticas del navegador; por eso el
   // formulario manda la ruta, y el header queda solo como respaldo.
   it('cae al referer cuando el formulario no manda la ruta', async () => {
-    await call(base, { referer: 'https://sonmyd.com/clases-de-python' });
-    expect(dbHelpers.getContactForms()[0].source_page).toBe('https://sonmyd.com/clases-de-python');
+    await call(base, { referer: 'https://sonmyd.co/clases-de-python' });
+    expect(dbHelpers.getContactForms()[0].source_page).toBe('https://sonmyd.co/clases-de-python');
   });
 
   it('guarda null cuando no hay ninguno de los dos', async () => {

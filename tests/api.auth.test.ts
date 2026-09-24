@@ -4,7 +4,7 @@ import { GET, POST } from '~/pages/api/auth';
 import { authHelpers } from '~/lib/auth';
 import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
 
-const ENDPOINT = 'https://sonmyd.com/api/auth';
+const ENDPOINT = 'https://sonmyd.co/api/auth';
 const PASSWORD = 'una-password-larga-123';
 
 const post = (body: unknown, headers: Record<string, string> = {}) =>

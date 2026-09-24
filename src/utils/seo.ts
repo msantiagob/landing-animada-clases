@@ -1,6 +1,6 @@
 import { SITE } from 'astrowind:config';
 
-export const SITE_URL = (SITE?.site ?? 'https://sonmyd.com').replace(/\/$/, '');
+export const SITE_URL = (SITE?.site ?? 'https://sonmyd.co').replace(/\/$/, '');
 
 export const absoluteUrl = (path = '/'): string => `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 

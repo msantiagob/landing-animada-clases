@@ -12,15 +12,15 @@ import {
 
 describe('absoluteUrl', () => {
   it('construye URLs absolutas a partir de una ruta', () => {
-    expect(absoluteUrl('/clases-de-ia')).toBe('https://sonmyd.com/clases-de-ia');
+    expect(absoluteUrl('/clases-de-ia')).toBe('https://sonmyd.co/clases-de-ia');
   });
 
   it('tolera rutas sin barra inicial', () => {
-    expect(absoluteUrl('clases-de-ia')).toBe('https://sonmyd.com/clases-de-ia');
+    expect(absoluteUrl('clases-de-ia')).toBe('https://sonmyd.co/clases-de-ia');
   });
 
   it('nunca genera una doble barra', () => {
-    expect(absoluteUrl('/')).toBe('https://sonmyd.com/');
+    expect(absoluteUrl('/')).toBe('https://sonmyd.co/');
     expect(SITE_URL.endsWith('/')).toBe(false);
   });
 });
@@ -30,7 +30,7 @@ describe('organizationSchema', () => {
     const schema = organizationSchema();
 
     expect(schema['@type']).toBe('Organization');
-    expect(schema['@id']).toBe('https://sonmyd.com/#organization');
+    expect(schema['@id']).toBe('https://sonmyd.co/#organization');
     expect(schema.name).toBe('Sonmyd');
   });
 
@@ -45,7 +45,7 @@ describe('organizationSchema', () => {
 
 describe('websiteSchema', () => {
   it('referencia a la organización en lugar de duplicar sus datos', () => {
-    expect(websiteSchema().publisher).toEqual({ '@id': 'https://sonmyd.com/#organization' });
+    expect(websiteSchema().publisher).toEqual({ '@id': 'https://sonmyd.co/#organization' });
   });
 
   it('declara el idioma del sitio', () => {
@@ -62,12 +62,12 @@ describe('serviceSchema', () => {
   });
 
   it('usa un @id derivado de la URL de la página', () => {
-    expect(schema['@id']).toBe('https://sonmyd.com/asistente-de-whatsapp#service');
-    expect(schema.url).toBe('https://sonmyd.com/asistente-de-whatsapp');
+    expect(schema['@id']).toBe('https://sonmyd.co/asistente-de-whatsapp#service');
+    expect(schema.url).toBe('https://sonmyd.co/asistente-de-whatsapp');
   });
 
   it('enlaza el proveedor con la organización', () => {
-    expect(schema.provider).toEqual({ '@id': 'https://sonmyd.com/#organization' });
+    expect(schema.provider).toEqual({ '@id': 'https://sonmyd.co/#organization' });
   });
 });
 
@@ -118,8 +118,8 @@ describe('breadcrumbSchema', () => {
     ]);
 
     expect(schema.itemListElement).toEqual([
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://sonmyd.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Clases de IA', item: 'https://sonmyd.com/clases-de-ia' },
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://sonmyd.co/' },
+      { '@type': 'ListItem', position: 2, name: 'Clases de IA', item: 'https://sonmyd.co/clases-de-ia' },
     ]);
   });
 });

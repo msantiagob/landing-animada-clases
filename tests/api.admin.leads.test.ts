@@ -5,7 +5,7 @@ import { authHelpers } from '~/lib/auth';
 import { dbHelpers } from '~/lib/database';
 import { closeTestDb, createTestDb, jsonRequest, readJson, sessionCookieFor, tomorrow } from './helpers';
 
-const ENDPOINT = 'https://sonmyd.com/api/admin/leads';
+const ENDPOINT = 'https://sonmyd.co/api/admin/leads';
 
 const get = (cookie?: string, query = '') =>
   GET({
