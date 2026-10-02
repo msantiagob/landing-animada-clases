@@ -27,13 +27,25 @@
 }
 
 /* Status Indicators */
-.status-published { @apply bg-green-100 text-green-800; }
-.status-draft { @apply bg-yellow-100 text-yellow-800; }
-.status-archived { @apply bg-gray-100 text-gray-800; }
+.status-published {
+  @apply bg-green-100 text-green-800;
+}
+.status-draft {
+  @apply bg-yellow-100 text-yellow-800;
+}
+.status-archived {
+  @apply bg-gray-100 text-gray-800;
+}
 
 /* Page Builder Styles */
 .unified-page-builder {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
 .component-item {
@@ -47,7 +59,7 @@
 }
 
 .component-item.selected {
-  border-color: #3B82F6 !important;
+  border-color: #3b82f6 !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
@@ -95,7 +107,7 @@
 }
 
 .editable:hover {
-  border-color: #3B82F6;
+  border-color: #3b82f6;
   background-color: rgba(59, 130, 246, 0.05);
 }
 
@@ -211,12 +223,12 @@
 
 /* Drop Zone Indicators */
 .drop-indicator {
-  border: 2px dashed #3B82F6;
+  border: 2px dashed #3b82f6;
   background: rgba(59, 130, 246, 0.05);
   border-radius: 8px;
   padding: 20px;
   text-align: center;
-  color: #3B82F6;
+  color: #3b82f6;
   font-size: 14px;
   margin: 10px 0;
   transition: all 0.2s ease;
@@ -224,5 +236,5 @@
 
 .drop-indicator.active {
   background: rgba(59, 130, 246, 0.1);
-  border-color: #1D4ED8;
+  border-color: #1d4ed8;
 }
