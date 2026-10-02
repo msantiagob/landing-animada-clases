@@ -3,7 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GET, POST } from '~/pages/api/appointments';
 import { dbHelpers } from '~/lib/database';
 import { emailHelpers } from '~/lib/email';
+import { SERVICE_TYPE_OPTIONS } from '~/utils/booking';
 import { closeTestDb, createTestDb, jsonRequest, readJson, tomorrow } from './helpers';
+import { findVoseo } from './voseo';
 
 const ENDPOINT = 'https://sonmyd.co/api/appointments';
 
@@ -49,6 +51,35 @@ describe('POST /api/appointments', () => {
     expect(emailHelpers.sendAppointmentNotification).toHaveBeenCalledTimes(1);
   });
 
+  // Las opciones del formulario salen de SILOS + "Otro": la API tiene que
+  // aceptar cada una tal cual y guardarla con el mismo texto que se ve.
+  it.each([...SERVICE_TYPE_OPTIONS])(
+    'acepta el tipo de servicio "%s" que ofrece el formulario',
+    async (serviceType) => {
+      const response = await post({ ...validBody(), serviceType });
+
+      expect(response.status).toBe(200);
+      expect(dbHelpers.getAppointments()[0].service_type).toBe(serviceType);
+    }
+  );
+
+  // La API no tiene lista cerrada de servicios a propósito: una página en caché
+  // con las opciones viejas ("Desarrollo Web") no puede perder una reserva.
+  it('no rechaza un tipo de servicio heredado de la versión anterior del formulario', async () => {
+    const response = await post({ ...validBody(), serviceType: 'Desarrollo Web' });
+
+    expect(response.status).toBe(200);
+    expect(dbHelpers.getAppointments()[0].service_type).toBe('Desarrollo Web');
+  });
+
+  it('rechaza un tipo de servicio compuesto solo por espacios', async () => {
+    const response = await post({ ...validBody(), serviceType: '   ' });
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toMatch(/obligatorios/i);
+    expect(dbHelpers.getAppointments()).toHaveLength(0);
+  });
+
   it.each([
     ['sin nombre', { name: '' }],
     ['sin email', { email: '' }],
@@ -60,6 +91,27 @@ describe('POST /api/appointments', () => {
 
     expect(response.status).toBe(400);
     expect((await readJson(response)).error).toMatch(/obligatorios/i);
+  });
+
+  // Un cuerpo ilegible es un error del cliente: 400, ninguna cita y ningún correo.
+  it.each([
+    ['un JSON roto', '{"name": "Carlos", ', 'application/json'],
+    ['un JSON vacío', '', 'application/json'],
+    ['un JSON que no es un objeto', 'null', 'application/json'],
+    ['un Content-Type desconocido', 'name=Carlos', 'text/plain'],
+  ])('responde 400, y no 500, ante %s', async (_caso, body, contentType) => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await POST({
+      request: new Request(ENDPOINT, { method: 'POST', headers: { 'Content-Type': contentType }, body }),
+    } as never);
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toMatch(/obligatorios/i);
+    expect(dbHelpers.getAppointments()).toHaveLength(0);
+    expect(emailHelpers.sendAppointmentConfirmation).not.toHaveBeenCalled();
+    expect(emailHelpers.sendAppointmentNotification).not.toHaveBeenCalled();
+    expect(consoleError).not.toHaveBeenCalled();
   });
 
   it('rechaza formatos de fecha que no sean yyyy-MM-dd', async () => {
@@ -99,6 +151,16 @@ describe('POST /api/appointments', () => {
     expect(dbHelpers.getAppointments()).toHaveLength(1);
   });
 
+  // El mensaje llega tal cual a la pantalla de quien reserva: español de Colombia, sin voseo.
+  it('el aviso de turno ocupado le habla de "tú"', async () => {
+    await post(validBody());
+
+    const { error } = await readJson(await post({ ...validBody(), email: 'otra@example.com' }));
+
+    expect(error).toMatch(/Elige otro/);
+    expect(error).not.toMatch(/Elegí/);
+  });
+
   it('vuelve a liberar el turno si la cita fue cancelada', async () => {
     await post(validBody());
     dbHelpers.updateAppointmentStatus(1, 'cancelled');
@@ -126,6 +188,17 @@ describe('POST /api/appointments', () => {
     expect((await post({ ...validBody(), time: '14:00' }, headers)).status).toBe(429);
   });
 
+  it('el aviso de demasiados intentos le habla de "tú"', async () => {
+    const headers = { 'x-forwarded-for': '198.51.100.5' };
+    const hours = ['09:00', '10:00', '11:00', '12:00', '13:00'];
+    for (const time of hours) await post({ ...validBody(), time }, headers);
+
+    const { error } = await readJson(await post({ ...validBody(), time: '14:00' }, headers));
+
+    expect(error).toBe('Demasiados envíos. Espera unos minutos e inténtalo de nuevo.');
+    expect(findVoseo(error)).toEqual([]);
+  });
+
   it('devuelve 500 genérico si la base falla', async () => {
     vi.spyOn(dbHelpers, 'insertAppointment').mockImplementation(() => {
       throw new Error('disk I/O error');
@@ -133,8 +206,12 @@ describe('POST /api/appointments', () => {
 
     const response = await post(validBody());
 
+    const payload = await readJson(response);
+
     expect(response.status).toBe(500);
-    expect(JSON.stringify(await readJson(response))).not.toContain('disk I/O');
+    expect(JSON.stringify(payload)).not.toContain('disk I/O');
+    expect(payload.error).toBe('Error interno del servidor. Inténtalo más tarde.');
+    expect(findVoseo(payload.error)).toEqual([]);
   });
 });
 

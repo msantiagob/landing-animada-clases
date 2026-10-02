@@ -22,26 +22,26 @@ export type Validator = (value: string) => string | null;
 
 export const validators: Record<LeadField, Validator> = {
   name: (value) => {
-    if (!value) return 'Escribí tu nombre.';
+    if (!value) return 'Escribe tu nombre.';
     if (value.length < 2) return 'El nombre es demasiado corto.';
     return null;
   },
 
   email: (value) => {
     if (!value) return 'Necesitamos un email para responderte.';
-    if (!EMAIL_PATTERN.test(value)) return 'Revisá el email: parece incompleto.';
+    if (!EMAIL_PATTERN.test(value)) return 'Revisa el email: parece incompleto.';
     return null;
   },
 
   // Opcional: vacío es válido. Pero si lo completan, tiene que servir para llamar.
   phone: (value) => {
     if (!value) return null;
-    if (!PHONE_PATTERN.test(value)) return 'Revisá el teléfono: solo números, espacios y +.';
+    if (!PHONE_PATTERN.test(value)) return 'Revisa el teléfono: solo números, espacios y +.';
     return null;
   },
 
   message: (value) => {
-    if (!value) return 'Contanos brevemente qué necesitás.';
+    if (!value) return 'Cuéntanos brevemente qué necesitas.';
     if (value.length < MESSAGE_MIN_LENGTH) return 'Un poco más de detalle nos ayuda a responderte mejor.';
     return null;
   },

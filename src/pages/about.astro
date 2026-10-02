@@ -1,232 +1,206 @@
 ---
-import Features2 from '~/components/widgets/Features2.astro';
-import Features3 from '~/components/widgets/Features3.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import Stats from '~/components/widgets/Stats.astro';
-import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+
+import { getSeoImageMeta } from '~/data/seo-images';
+import { getHub, landingPath } from '~/utils/landings';
+import { breadcrumbSchema } from '~/utils/seo';
+
+/**
+ * Sobre Sonmyd.
+ *
+ * Solo afirma lo que se puede sostener: quién lo dirige, dónde está y qué hace.
+ * No hay cifras de clientes, años de experiencia, certificaciones, socios ni
+ * oficinas: ninguna se ha verificado, y esta página es donde un lector decide
+ * si confiar. Los principios describen cómo se trabaja, no resultados.
+ */
+const PATH = '/about';
+
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
 const metadata = {
-  title: 'Acerca de nosotros',
+  title: 'Sobre Sonmyd: software, IA y formación en Medellín',
   description:
-    'Quiénes somos en Sonmyd: formación y automatización con inteligencia artificial para empresas de Latinoamérica y España.',
-  canonical: '/about',
+    'Conoce a Sonmyd, el negocio de tecnología de Santiago Bedoya en Medellín: desarrollamos software e IA y damos clases 1 a 1 de programación, AWS y Linux.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
+
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
+const marketingHub = getHub('marketing-digital');
 ---
 
 <Layout metadata={metadata}>
-  <!-- Hero Widget ******************* -->
+  <StructuredData
+    schema={[
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Sobre Sonmyd', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Sobre Sonmyd', path: PATH },
+    ]}
+  />
 
   <Hero
-    tagline="Acerca de nosotros"
-    image={{
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Caos Image',
-    }}
+    tagline="Sobre Sonmyd"
+    actions={[
+      { variant: 'primary', text: 'Agenda una asesoría gratuita', href: '/booking', icon: 'tabler:calendar-plus' },
+      { text: 'Conoce al autor', href: '/autor', variant: 'tertiary' },
+    ]}
   >
     <Fragment slot="title">
-      Transformamos negocios con <br />
-      <span class="text-accent dark:text-white"> Soluciones Tecnológicas de Vanguardia</span>
+      Construimos software y enseñamos tecnología <span class="text-accent">desde Medellín</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Somos una empresa líder en el desarrollo de soluciones tecnológicas avanzadas, especializados en Inteligencia
-      Artificial, desarrollo web, aplicaciones multiplataforma y automatizaciones empresariales. Con más de 15 años de
-      experiencia, hemos transformado digitalmente a cientos de empresas en América Latina.
+      Sonmyd lo dirige Santiago Bedoya, ingeniero de software e instructor de inteligencia artificial. Desarrollamos
+      software, IA y automatizaciones para negocios, y damos clases 1 a 1 de programación, IA, AWS y Linux. Las dos
+      cosas se retroalimentan.
     </Fragment>
   </Hero>
 
-  <!-- Stats Widget ****************** -->
+  <WidgetWrapper id="quien" containerClass="max-w-4xl pt-0 md:pt-0 lg:pt-0">
+    <Headline tagline="Quién está detrás" title="Una persona real detrás de cada proyecto y cada clase" />
 
-  <Stats
-    title="Nuestro Impacto en Números"
-    stats={[
-      { title: 'Países Atendidos', amount: '8' },
-      { title: 'Especialistas', amount: '50+' },
-      { title: 'Proyectos Exitosos', amount: '500+' },
-      { title: 'Certificaciones', amount: '45+' },
-    ]}
-  />
+    <div class="space-y-5 text-lg leading-relaxed text-default">
+      <p>
+        Sonmyd lo dirige
+        <a class="font-medium text-primary underline underline-offset-4" href="/autor">Santiago Bedoya</a>, ingeniero de
+        software e instructor de inteligencia artificial. Es quien escribe el código, da las clases y responde cuando
+        nos escribes: no hay una capa de vendedores entre tú y el trabajo.
+      </p>
+      <p>
+        Hacemos las dos cosas porque se retroalimentan. Enseñar te obliga a entender de verdad lo que haces, y construir
+        todos los días evita enseñar cosas que en la práctica no funcionan.
+      </p>
+    </div>
+  </WidgetWrapper>
 
-  <!-- Features3 Widget ************** -->
-
-  <Features3
-    title="Nuestras Especialidades"
-    subtitle="Ofrecemos soluciones tecnológicas integrales que abarcan desde IA hasta desarrollo multiplataforma, respaldadas por certificaciones internacionales y experiencia comprobada."
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="Enseñamos, construimos y medimos"
+    subtitle="Tres frentes de trabajo, todos desde Medellín."
     columns={3}
-    isBeforeContent={true}
     items={[
       {
-        title: 'Inteligencia Artificial',
+        title: 'Enseñamos',
         description:
-          'Desarrollamos chatbots inteligentes, sistemas de análisis predictivo y automatización con IA para optimizar operaciones empresariales.',
-        icon: 'tabler:template',
+          'Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web, apps, AWS, Linux, n8n y marketing digital, en Medellín o en línea. También capacitaciones para equipos.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver las clases de programación', href: landingPath(courseHub.slug) },
       },
       {
-        title: 'Desarrollo Web Avanzado',
+        title: 'Construimos',
         description:
-          'Creamos aplicaciones web escalables, APIs robustas y sistemas de e-commerce con las últimas tecnologías del mercado.',
-        icon: 'tabler:template',
+          'Software a medida, páginas web, apps móviles, bots, agentes de IA, automatizaciones con n8n, servidores en AWS y Linux, y ciberseguridad para pymes.',
+        icon: 'tabler:code',
+        callToAction: { text: 'Ver los servicios', href: landingPath(servicesHub.slug) },
       },
       {
-        title: 'Apps Multiplataforma',
+        title: 'Marketing digital',
         description:
-          'Desarrollamos aplicaciones nativas y híbridas para iOS y Android con React Native, Flutter y tecnologías nativas.',
-        icon: 'tabler:template',
+          'Publicidad en Meta Ads, Google Shopping, posicionamiento SEO y llamadas de marketing con IA, con medición para saber qué funciona.',
+        icon: 'tabler:chart-line',
+        callToAction: { text: 'Ver marketing digital', href: landingPath(marketingHub.slug) },
       },
     ]}
-  />
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Features>
 
-  <!-- Features3 Widget ************** -->
-
-  <Features3
-    columns={3}
-    isAfterContent={true}
-    items={[
-      {
-        title: 'Automatización de Procesos',
-        description:
-          'Implementamos RPA, workflows inteligentes y sistemas de automatización que reducen costos operativos hasta un 60%.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Blog',
-        description:
-          'Nullam efficitur volutpat sem sed fringilla. Suspendisse et enim eu orci volutpat laoreet ac vitae libero.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Capacitaciones Técnicas',
-        description:
-          'Programas de formación especializada en IA, desarrollo web, DevOps y metodologías ágiles con certificación internacional.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Consultoría Digital',
-        description:
-          'Asesoramos en transformación digital, arquitectura de software, migración cloud y estrategias de innovación tecnológica.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Médico',
-        description:
-          'Vestibulum malesuada lacus id nibh posuere feugiat. Nam volutpat nulla a felis ultrices, id suscipit mauris congue. In hac habitasse platea dictumst.',
-        icon: 'tabler:template',
-      },
-      {
-        title: 'Diseño de Moda',
-        description:
-          'Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus.',
-        icon: 'tabler:template',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      alt: 'Colorful Image',
-    }}
-  />
-
-  <!-- Steps2 Widget ****************** -->
-
-  <Steps2
-    title="Nuestros valores"
-    subtitle="Nuestros valores fundamentales guían cada proyecto y relación. Creemos en la excelencia técnica, la innovación continua y el compromiso absoluto con el éxito de nuestros clientes."
-    items={[
-      {
-        title: 'Orientación al Cliente',
-        description:
-          'Cada solución que desarrollamos está diseñada pensando en las necesidades específicas del cliente, garantizando resultados que superan expectativas.',
-      },
-      {
-        title: 'Innovación Continua',
-        description:
-          'Mantenemos a nuestro equipo actualizado con las últimas tecnologías y tendencias, asegurando soluciones de vanguardia.',
-      },
-      {
-        title: 'Excelencia Técnica',
-        description:
-          'Aplicamos las mejores prácticas de desarrollo, estándares de calidad internacional y metodologías probadas en cada proyecto.',
-      },
-    ]}
-  />
-
-  <!-- Steps2 Widget ****************** -->
-
-  <Steps2
-    title="Logros"
-    subtitle="Nuestros logros respaldan nuestra experiencia y compromiso con la excelencia. Cada reconocimiento representa la confianza de nuestros clientes y socios estratégicos."
-    isReversed={true}
-    callToAction={{
-      text: 'Ver más',
-      href: '/',
-    }}
-    items={[
-      {
-        title: 'Presencia Internacional',
-        description:
-          'Operamos en 8 países de América Latina, con proyectos exitosos en sectores financiero, retail, salud y educación.',
-        icon: 'tabler:globe',
-      },
-      {
-        title: '98% de Satisfacción del Cliente',
-        description:
-          'Nuestros clientes nos evalúan consistentemente con puntuaciones superiores al 98%, respaldando nuestro compromiso con la calidad.',
-        icon: 'tabler:message-star',
-      },
-      {
-        title: 'Líderes en Innovación Tecnológica',
-        description:
-          'Reconocidos por Microsoft, Google y AWS como partners especializados. Certificaciones en Azure, AWS y Google Cloud Platform.',
-        icon: 'tabler:award',
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Oficinas Principales"
-    tagline="Encuéntranos"
-    columns={4}
-    items={[
-      {
-        title: 'Colombia',
-        description: 'Bogotá - Sede Principal y Centro de Innovación',
-      },
-      {
-        title: 'México',
-        description: 'Ciudad de México - Hub de Expansión Norte',
-      },
-      {
-        title: 'Perú',
-        description: 'Lima - Centro de Operaciones Regionales',
-      },
-      {
-        title: 'Chile',
-        description: 'Santiago - Oficina de Desarrollo y Soporte',
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Soporte Técnico"
-    tagline="Contáctanos"
+  <Features
+    id="principios"
+    tagline="Cómo trabajamos"
+    title="Los principios con los que trabajamos"
+    subtitle="Las reglas que usamos para decidir qué hacer y qué decirte."
     columns={2}
     items={[
       {
-        title: 'Soporte en Línea 24/7',
+        title: 'Conceptos antes que herramientas',
         description:
-          'Chat especializado con nuestros ingenieros para resolver dudas técnicas, consultas de proyectos y soporte de emergencia.',
+          'Las herramientas cambian cada año; los fundamentos, mucho menos. Por eso las clases arrancan por entender qué pasa por debajo y no por copiar código.',
+        icon: 'tabler:bulb',
+      },
+      {
+        title: 'Alcance claro antes de empezar',
+        description:
+          'Acotamos la versión más pequeña que ya te sirve y la presentamos con alcance, plazo y precio por escrito. Si el alcance todavía es difuso, lo acotamos antes de poner un número.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Medimos lo que importa',
+        description:
+          'Acordamos desde el inicio cómo vamos a saber si funcionó y lo revisamos con datos, no con opiniones.',
+        icon: 'tabler:chart-bar',
+      },
+      {
+        title: 'Hablas con quien hace el trabajo',
+        description:
+          'Sin intermediarios: la persona que te responde es la que va a construir o enseñar lo que se acuerde.',
         icon: 'tabler:messages',
       },
       {
-        title: 'Consulta Telefónica',
+        title: 'Honestidad antes que una venta',
         description:
-          'Línea directa con nuestros especialistas para asesoría personalizada, cotizaciones y planificación de proyectos.',
-        icon: 'tabler:headset',
+          'Si no somos los indicados para tu caso, o si lo que quieres contratar no lo necesitas, te lo decimos y, si podemos, te orientamos hacia dónde mirar.',
+        icon: 'tabler:eye-check',
+      },
+      {
+        title: 'El conocimiento se queda contigo',
+        description:
+          'En las clases, el objetivo es que aprendas a seguir solo cuando terminan. En los proyectos, te explicamos lo que construimos para que no dependas de una caja negra.',
+        icon: 'tabler:school',
       },
     ]}
   />
+
+  <ServiceArea id="medellin" kind="servicio" message="Hola, quiero información sobre Sonmyd." />
+
+  <CallToAction>
+    <Fragment slot="title">¿Hablamos?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos qué necesitas o qué quieres aprender. Si podemos ayudarte, te decimos cómo; si no, te orientamos hacia
+      dónde mirar.
+    </Fragment>
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <Button
+          variant="primary"
+          text="Agenda una asesoría gratuita"
+          href="/booking"
+          icon="tabler:calendar-plus"
+          class="w-full sm:w-auto"
+        />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton location="about-cta" variant="secondary" class="w-full sm:w-auto" />
+      </div>
+    </Fragment>
+  </CallToAction>
 </Layout>

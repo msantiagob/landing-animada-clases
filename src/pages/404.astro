@@ -1,23 +1,60 @@
 ---
-import Layout from '~/layouts/Layout.astro';
-import { getHomePermalink } from '~/utils/permalinks';
+import { Icon } from 'astro-icon/components';
 
-const title = `Error 404`;
+import Layout from '~/layouts/PageLayout.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+
+import { HUBS } from '~/data/landings';
+import { landingPath } from '~/utils/landings';
+import { getBlogPermalink, getHomePermalink } from '~/utils/permalinks';
+
+/**
+ * Página 404.
+ *
+ * Los destinos salen del registro (los tres hubs): si se renombra o se suma uno,
+ * esta página lo sigue. No lleva `noindex`: el servidor ya responde con estado
+ * 404, que es lo que hace que los buscadores la descarten, y el sitemap no la lista.
+ */
+const metadata = {
+  title: 'Página no encontrada',
+  description: 'La página que buscas no existe o cambió de dirección. Encuentra lo que necesitas desde el inicio.',
+};
+
+const links = [
+  { name: 'Inicio', href: getHomePermalink(), icon: 'tabler:home' },
+  ...HUBS.map((hub) => ({ name: hub.name, href: landingPath(hub.slug), icon: 'tabler:arrow-right' })),
+  { name: 'Blog', href: getBlogPermalink(), icon: 'tabler:book' },
+];
 ---
 
-<Layout metadata={{ title }}>
-  <section class="flex items-center h-full p-16">
-    <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
-      <div class="max-w-md text-center">
-        <h2 class="mb-8 font-bold text-9xl">
-          <span class="sr-only">Error</span>
-          <span class="text-primary">404</span>
-        </h2>
-        <p class="text-3xl font-semibold md:text-3xl">Sorry, we couldn't find this page.</p>
-        <p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
-          But dont worry, you can find plenty of other things on our homepage.
-        </p>
-        <a rel="noopener noreferrer" href={getHomePermalink()} class="btn ml-4">Back to homepage</a>
+<Layout metadata={metadata}>
+  <section class="px-4 py-16 sm:px-6 md:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="font-heading text-8xl font-bold text-primary" aria-hidden="true">404</p>
+      <h1 class="mt-4 text-3xl font-bold text-heading sm:text-4xl">Página no encontrada</h1>
+      <p class="mt-4 text-lg text-muted">
+        La página que buscas no existe o cambió de dirección. Estos enlaces te llevan a lo más buscado del sitio.
+      </p>
+
+      <ul class="mt-10 grid gap-3 text-left sm:grid-cols-2">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="card flex items-center gap-3 !p-4 font-medium text-heading hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--aw-color-cta)]"
+              >
+                <Icon name={link.icon} class="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                {link.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-10 flex flex-col items-center justify-center gap-3">
+        <p class="text-muted">¿No encuentras lo que buscas? Escríbenos y te ayudamos.</p>
+        <WhatsAppButton location="404" message="Hola, no encontré una página en sonmyd.co." />
       </div>
     </div>
   </section>

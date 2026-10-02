@@ -1,0 +1,33 @@
+---
+import { Icon } from 'astro-icon/components';
+import { whatsappUrl } from '~/utils/whatsapp';
+
+/**
+ * Botón flotante de WhatsApp, en todas las páginas públicas (lo monta Layout).
+ *
+ * - z-30, POR DEBAJO de la cabecera (z-40): cuando el menú móvil se abre, la
+ *   cabecera ocupa toda la pantalla y su barra inferior fija no puede quedar
+ *   tapada por este botón.
+ * - `transition:persist`: con el ClientRouter es el mismo nodo en todas las
+ *   páginas, no se vuelve a pintar en cada navegación.
+ * - Se oculta al imprimir. Sin animaciones de movimiento: solo un cambio de
+ *   color al pasar el cursor, y ni siquiera ese si la persona pidió menos
+ *   movimiento (`motion-safe`).
+ * - Verde de marca más oscuro que el #25D366 oficial: con icono blanco ese
+ *   verde da ~2:1 de contraste y no llega al 3:1 que exige la WCAG para
+ *   componentes gráficos. Este ronda 4:1.
+ */
+const MESSAGE = 'Hola, vengo de sonmyd.co y quiero más información.';
+---
+
+<a
+  href={whatsappUrl(MESSAGE)}
+  target="_blank"
+  rel="noopener"
+  aria-label="Escríbenos por WhatsApp"
+  data-whatsapp-location="float"
+  transition:persist="whatsapp-float"
+  class="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#128C7E] text-white shadow-card-lg hover:bg-[#0E6F64] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--aw-color-bg-page)] motion-safe:transition-colors motion-safe:duration-150 print:hidden"
+>
+  <Icon name="tabler:brand-whatsapp" class="h-7 w-7" aria-hidden="true" />
+</a>

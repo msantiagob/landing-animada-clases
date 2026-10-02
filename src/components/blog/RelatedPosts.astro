@@ -21,8 +21,8 @@ const relatedPosts = post.tags ? await getRelatedPosts(post, 4) : [];
       classes={{
         container: 'pt-0 lg:pt-0 md:pt-0 intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade',
       }}
-      title="Posts Relacionados"
-      linkText="Ver Todos los Posts"
+      title="Artículos relacionados"
+      linkText="Ver todos los artículos"
       linkUrl={getBlogPermalink()}
       postIds={relatedPosts.map((post) => post.id)}
     />

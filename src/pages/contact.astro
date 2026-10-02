@@ -1,24 +1,65 @@
 ---
-import Layout from '~/layouts/PageLayout.astro';
-import HeroText from '~/components/widgets/HeroText.astro';
-import LeadCapture from '~/components/widgets/LeadCapture.astro';
-import Features from '~/components/widgets/Features.astro';
-import StructuredData from '~/components/common/StructuredData.astro';
-import { breadcrumbSchema } from '~/utils/seo';
+import { Icon } from 'astro-icon/components';
 
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+
+import { BUSINESS } from '~/data/business';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { absoluteUrl, breadcrumbSchema } from '~/utils/seo';
+import { formatList } from '~/utils/service-area';
+
+/**
+ * Contacto.
+ *
+ * Los únicos canales reales son WhatsApp, el formulario y la agenda. NO hay
+ * correo: el dominio no tiene registros MX y un correo publicado aquí rebotaría.
+ * Tampoco se promete un plazo de respuesta, porque no se ha medido ninguno.
+ */
 const PATH = '/contact';
 
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
 const metadata = {
-  title: 'Contacto | Sonmyd',
+  title: 'Contacto: escríbenos por WhatsApp | Sonmyd',
   description:
-    'Escribinos y te respondemos en menos de 24 horas hábiles. Primera consulta sin costo sobre clases de IA y Python, WhatsApp, automatizaciones, desarrollo, servidores y seguridad.',
+    'Escríbenos por WhatsApp, usa el formulario o agenda una asesoría gratuita. Estamos en Medellín, Colombia, y atendemos en persona y en línea.',
+  ignoreTitleTemplate: true,
   canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
+
+// Referencia a la organización y al sitio por su @id (los emite Layout en todas las páginas).
+const contactPageSchema = {
+  '@type': 'ContactPage',
+  '@id': `${absoluteUrl(PATH)}#contactpage`,
+  url: absoluteUrl(PATH),
+  name: 'Contacto',
+  inLanguage: 'es',
+  isPartOf: { '@id': absoluteUrl('/#website') },
+  about: { '@id': absoluteUrl('/#organization') },
+};
+
+const COUNTRY_NAME = 'Colombia';
 ---
 
 <Layout metadata={metadata}>
   <StructuredData
     schema={[
+      contactPageSchema,
       breadcrumbSchema([
         { name: 'Inicio', path: '/' },
         { name: 'Contacto', path: PATH },
@@ -26,17 +67,81 @@ const metadata = {
     ]}
   />
 
-  <HeroText
-    tagline="Contacto"
-    title="Contanos qué querés resolver"
-    subtitle="No hace falta que traigas la solución pensada. Con el problema bien descrito alcanza para empezar."
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Contacto', path: PATH },
+    ]}
   />
+
+  <Hero tagline="Contacto">
+    <Fragment slot="title">Cuéntanos qué necesitas</Fragment>
+
+    <Fragment slot="subtitle">
+      No hace falta que traigas la solución pensada: con el problema bien descrito alcanza para empezar. Escríbenos por
+      WhatsApp, deja tus datos en el formulario o agenda una asesoría gratuita.
+    </Fragment>
+  </Hero>
+
+  <WidgetWrapper id="canales" containerClass="max-w-5xl pt-0 md:pt-0 lg:pt-0">
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="card flex h-full flex-col">
+        <Icon
+          name="tabler:brand-whatsapp"
+          class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary"
+          aria-hidden="true"
+        />
+        <h2 class="text-xl font-bold text-heading">WhatsApp</h2>
+        <p class="mt-2 text-muted">
+          La vía más directa. Escríbenos al <strong class="font-semibold text-heading">{BUSINESS.telephone}</strong> y cuéntanos
+          tu caso.
+        </p>
+        <div class="mt-auto pt-5">
+          <WhatsAppButton
+            location="contact"
+            message="Hola, quiero contarles lo que necesito."
+            class="w-full sm:w-auto"
+          />
+        </div>
+      </div>
+
+      <div class="card flex h-full flex-col">
+        <Icon
+          name="tabler:calendar-event"
+          class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary"
+          aria-hidden="true"
+        />
+        <h2 class="text-xl font-bold text-heading">Asesoría gratuita</h2>
+        <p class="mt-2 text-muted">
+          Elige en el calendario el día y la hora que mejor te convengan y cuéntanos qué necesitas.
+        </p>
+        <div class="mt-auto pt-5">
+          <Button variant="secondary" text="Agenda una asesoría" href="/booking" class="w-full sm:w-auto" />
+        </div>
+      </div>
+
+      <div class="card flex h-full flex-col">
+        <Icon name="tabler:map-pin" class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary" aria-hidden="true" />
+        <h2 class="text-xl font-bold text-heading">Dónde estamos</h2>
+        <p class="mt-2 text-muted">
+          {BUSINESS.address.locality}, {BUSINESS.address.region}, {COUNTRY_NAME}. Atendemos en persona en
+          {formatList(BUSINESS.areaServed)}, y en línea en toda {COUNTRY_NAME}.
+        </p>
+      </div>
+    </div>
+  </WidgetWrapper>
 
   <LeadCapture
     id="form"
     formId="lead-contacto"
-    title="Escribinos"
+    title="Déjanos tu mensaje"
     subtitle="Leemos todo lo que entra y respondemos nosotros, no un formulario automático."
+    bullets={[
+      'Primera consulta sin costo y sin compromiso',
+      'Hablas con quien hace el trabajo, no con un vendedor',
+      'Si no somos los indicados para tu caso, te lo decimos',
+      'Tus datos no se venden ni se ceden a terceros',
+    ]}
   />
 
   <Features
@@ -47,11 +152,11 @@ const metadata = {
       {
         title: 'Primera consulta sin costo',
         description:
-          'Media hora para entender tu caso. Si no somos los indicados, te lo decimos ahí y te orientamos hacia dónde mirar.',
+          'Entendemos tu caso sin compromiso. Si no somos los indicados, te lo decimos y, si podemos, te orientamos hacia dónde mirar.',
         icon: 'tabler:message-circle',
       },
       {
-        title: 'Hablás con quien hace el trabajo',
+        title: 'Hablas con quien hace el trabajo',
         description:
           'No hay capa de vendedores. La persona que te responde es la que va a construir o enseñar lo que se acuerde.',
         icon: 'tabler:user-check',
@@ -61,22 +166,6 @@ const metadata = {
         description:
           'Alcance, plazo y precio por escrito. Si el alcance todavía es difuso, lo acotamos antes de poner un número.',
         icon: 'tabler:file-description',
-      },
-      {
-        title: 'Respondemos en 24 horas hábiles',
-        description:
-          'Es el plazo real, no una promesa de marketing. Si vamos a demorar más, te avisamos que vamos a demorar más.',
-        icon: 'tabler:clock',
-      },
-      {
-        title: 'Correo electrónico',
-        description: 'hola@sonmyd.com',
-        icon: 'tabler:mail',
-      },
-      {
-        title: 'Ubicación',
-        description: 'Bogotá, Colombia. Trabajamos de forma remota con toda Latinoamérica y España.',
-        icon: 'tabler:map-pin',
       },
     ]}
   />

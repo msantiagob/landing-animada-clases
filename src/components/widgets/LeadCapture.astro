@@ -26,13 +26,15 @@ export interface Props {
 const {
   id = 'contacto',
   interest = '',
-  title = 'Contanos qué necesitás',
+  title = 'Cuéntanos qué necesitas',
   subtitle = 'Respondemos con una propuesta concreta, no con un catálogo genérico.',
+  // Los mismos cuatro compromisos que declaran el inicio y el contacto. No hay un
+  // plazo de respuesta: no se ha medido ninguno y un número publicado es una promesa.
   bullets = [
     'Primera consulta sin costo y sin compromiso',
-    'Te respondemos en menos de 24 horas hábiles',
-    'Hablás con quien va a hacer el trabajo, no con un vendedor',
-    'No compartimos tus datos con terceros',
+    'Hablas con quien hace el trabajo, no con un vendedor',
+    'Si no somos los indicados para tu caso, te lo decimos',
+    'Tus datos no se venden ni se ceden a terceros',
   ],
   button = 'Quiero que me contacten',
   formId = 'lead',
@@ -71,10 +73,8 @@ const {
         </ul>
 
         <p class="mt-8 text-sm text-muted">
-          ¿Preferís hablar directamente?
-          <a class="font-medium underline underline-offset-4 hover:text-heading" href="/booking">
-            Agendá una llamada de 30 minutos
-          </a>.
+          ¿Prefieres hablar directamente?
+          <a class="font-medium underline underline-offset-4 hover:text-heading" href="/booking">Agenda una llamada</a>.
         </p>
       </div>
 

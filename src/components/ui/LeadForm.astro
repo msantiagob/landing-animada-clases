@@ -1,6 +1,6 @@
 ---
 import Button from '~/components/ui/Button.astro';
-import { INTERESTS } from '~/lib/interests';
+import { groupInterestsBySilo } from '~/lib/interests';
 
 /**
  * Formulario de captación de leads.
@@ -18,6 +18,13 @@ import { INTERESTS } from '~/lib/interests';
  *
  * Cada instancia se aísla por elemento, así que puede haber varias en la misma
  * página (una en el hero y otra al pie) sin pisarse los IDs ni los listeners.
+ *
+ * ClientRouter: el script de módulo de un componente corre UNA vez por
+ * documento. Si el formulario se enlazara solo al cargar, tras una navegación
+ * suave el de la página nueva quedaría sin listeners y se enviaría como un GET
+ * nativo: el lead se perdía sin ningún error. Por eso se enlaza en
+ * `astro:page-load` (primera carga y cada navegación) y la marca `data-bound`
+ * evita enlazarlo dos veces.
  */
 export interface Props {
   /** Servicio preseleccionado. En una landing viene del silo de esa página. */
@@ -28,6 +35,7 @@ export interface Props {
   /** Texto bajo el botón. Reduce la fricción de dejar los datos. */
   note?: string;
   compact?: boolean;
+  /** Identifica el formulario: prefija los IDs de los campos y viaja al dataLayer como `form_id`. */
   id?: string;
 }
 
@@ -36,15 +44,19 @@ const {
   title,
   subtitle,
   button = 'Quiero que me contacten',
-  note = 'Respondemos en menos de 24 horas hábiles. Sin llamadas automáticas ni spam.',
+  note = 'Sin llamadas automáticas ni spam.',
   compact = false,
   id = 'lead-form',
 } = Astro.props;
 
 const field = (name: string) => `${id}-${name}`;
+
+// Una opción por landing son más de veinte entradas seguidas: se agrupan por silo
+// (el mismo orden y los mismos nombres que el menú) y "Otro" va suelto al final.
+const { groups: interestGroups, other: otherInterest } = groupInterestsBySilo();
 ---
 
-<div class="lead-form-wrapper" data-lead-form>
+<div class="lead-form-wrapper" data-lead-form data-form-id={id}>
   {
     (title || subtitle) && (
       <header class="mb-6">
@@ -124,22 +136,29 @@ const field = (name: string) => `${id}-${name}`;
       </div>
 
       <div>
-        <label class="field-label" for={field('interest')}>¿Sobre qué querés hablar?</label>
+        <label class="field-label" for={field('interest')}>¿Sobre qué quieres hablar?</label>
         <select class="field" id={field('interest')} name="interest">
-          <option value="">Elegí una opción</option>
+          <option value="">Elige una opción</option>
           {
-            INTERESTS.map((option) => (
-              <option value={option.value} selected={option.value === interest}>
-                {option.label}
-              </option>
+            interestGroups.map((group) => (
+              <optgroup label={group.label}>
+                {group.options.map((option) => (
+                  <option value={option.value} selected={option.value === interest}>
+                    {option.label}
+                  </option>
+                ))}
+              </optgroup>
             ))
           }
+          <option value={otherInterest.value} selected={otherInterest.value === interest}>
+            {otherInterest.label}
+          </option>
         </select>
       </div>
     </div>
 
     <div>
-      <label class="field-label" for={field('message')}>Contanos brevemente qué necesitás</label>
+      <label class="field-label" for={field('message')}>Cuéntanos brevemente qué necesitas</label>
       <textarea
         class="field"
         id={field('message')}
@@ -178,8 +197,7 @@ const field = (name: string) => `${id}-${name}`;
     </div>
     <h3 class="text-xl font-bold text-heading">Recibimos tu consulta</h3>
     <p class="mx-auto mt-2 max-w-md text-muted">
-      Te escribimos a tu email en menos de 24 horas hábiles. Si preferís adelantar, podés agendar una llamada ahora
-      mismo.
+      Revisamos tu mensaje y te escribimos a tu email. Si prefieres adelantarte, puedes agendar una llamada ahora mismo.
     </p>
     <a class="btn-secondary mt-6" href="/booking">Agendar una llamada</a>
   </div>
@@ -199,6 +217,12 @@ const field = (name: string) => `${id}-${name}`;
 
 <script>
   import { LEAD_FIELDS, validators } from '~/lib/lead-validation';
+  import { LEAD_FORM_MESSAGES, buildLeadPayload, markBound, postJson } from '~/utils/forms';
+  import { trackLead } from '~/utils/tracking';
+
+  type LeadInput = HTMLInputElement | HTMLTextAreaElement;
+
+  const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const setupLeadForm = (wrapper: HTMLElement) => {
     const form = wrapper.querySelector<HTMLFormElement>('[data-lead-form-el]');
@@ -210,12 +234,18 @@ const field = (name: string) => `${id}-${name}`;
 
     if (!form || !success || !errorBox || !errorText || !submit || !submitText) return;
 
+    // Idempotente: `astro:page-load` también se dispara en la primera carga y
+    // este módulo ya enlazó los formularios que existían al ejecutarse.
+    if (!markBound(wrapper)) return;
+
+    const formId = wrapper.dataset.formId || 'lead';
+
     /** El <p> de error vive junto al campo, dentro del mismo contenedor. */
     const fieldError = (input: Element) =>
       input.parentElement?.querySelector<HTMLElement>('[data-field-error]') ?? null;
 
     const showFieldError = (name: string, message: string | null) => {
-      const input = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
+      const input = form.querySelector<LeadInput>(`[name="${name}"]`);
       const target = input ? fieldError(input) : null;
       if (!input || !target) return;
 
@@ -231,7 +261,7 @@ const field = (name: string) => `${id}-${name}`;
     };
 
     const valueOf = (name: string) =>
-      (form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`)?.value ?? '').trim();
+      (form.querySelector<LeadInput | HTMLSelectElement>(`[name="${name}"]`)?.value ?? '').trim();
 
     const validateField = (name: (typeof LEAD_FIELDS)[number]) => {
       const message = validators[name](valueOf(name));
@@ -242,7 +272,7 @@ const field = (name: string) => `${id}-${name}`;
     // Validación al salir del campo: molestar mientras alguien escribe su email
     // es la forma más rápida de que abandone el formulario.
     LEAD_FIELDS.forEach((name) => {
-      const input = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
+      const input = form.querySelector<LeadInput>(`[name="${name}"]`);
       if (!input) return;
       input.addEventListener('blur', () => validateField(name));
       input.addEventListener('input', () => {
@@ -271,36 +301,33 @@ const field = (name: string) => `${id}-${name}`;
       submit.disabled = true;
 
       try {
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const payload = buildLeadPayload(
+          {
             name: valueOf('name'),
             email: valueOf('email'),
-            phone: valueOf('phone') || null,
+            phone: valueOf('phone'),
             message: valueOf('message'),
-            interest: valueOf('interest') || null,
+            interest: valueOf('interest'),
             website: valueOf('website'),
-            sourcePage: window.location.pathname,
-          }),
-        });
+          },
+          window.location.pathname
+        );
 
-        // El backend devuelve el motivo en el cuerpo también con 400 y 429, así
-        // que cortar por response.ok escondería el error real tras uno genérico.
-        const result = await response.json().catch(() => null);
+        // `postJson` no lanza: o devuelve el motivo que hay que mostrar, o éxito.
+        const result = await postJson('/api/contact', payload, LEAD_FORM_MESSAGES);
 
-        if (result?.success) {
+        if (result.ok) {
+          // Medir va primero y nunca lanza: el lead ya quedó guardado.
+          trackLead({ interest: payload.interest, formId });
+
           form.classList.add('hidden');
           success.classList.remove('hidden');
           success.focus();
-          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          success.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
           return;
         }
 
-        errorText.textContent = result?.error || 'No pudimos enviar la consulta. Probá de nuevo en un momento.';
-        errorBox.classList.remove('hidden');
-      } catch {
-        errorText.textContent = 'Hubo un problema de conexión. Revisá tu red e intentá otra vez.';
+        errorText.textContent = result.error;
         errorBox.classList.remove('hidden');
       } finally {
         submitText.textContent = original;
@@ -310,5 +337,9 @@ const field = (name: string) => `${id}-${name}`;
     });
   };
 
-  document.querySelectorAll<HTMLElement>('[data-lead-form]').forEach(setupLeadForm);
+  const initLeadForms = () => document.querySelectorAll<HTMLElement>('[data-lead-form]').forEach(setupLeadForm);
+
+  // Primera carga (el DOM ya existe cuando corre un módulo) y cada navegación suave.
+  initLeadForms();
+  document.addEventListener('astro:page-load', initLeadForms);
 </script>

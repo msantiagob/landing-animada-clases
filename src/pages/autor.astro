@@ -4,17 +4,30 @@ import Features from '~/components/widgets/Features.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { getHub, landingPath } from '~/utils/landings';
 import { breadcrumbSchema, personSchema } from '~/utils/seo';
 
 const PATH = '/autor';
 
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
 const metadata = {
   title: 'Santiago Bedoya, autor y responsable técnico | Sonmyd',
   description:
-    'Quién escribe y firma el contenido técnico de Sonmyd: experiencia en desarrollo de software, automatización, inteligencia artificial, infraestructura y seguridad.',
+    'Quién escribe y firma el contenido técnico de Sonmyd: desarrollo de software, automatización, inteligencia artificial, infraestructura y seguridad.',
   ignoreTitleTemplate: true,
   canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
+
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
 ---
 
 <Layout metadata={metadata}>
@@ -46,17 +59,27 @@ const metadata = {
       <p>
         Trabajo construyendo software y automatizando procesos para empresas, y doy clases de programación e
         inteligencia artificial en español. Las dos cosas se retroalimentan: enseñar te obliga a entender de verdad lo
-        que hacés, y construir todos los días te evita enseñar cosas que en la práctica no funcionan.
+        que haces, y construir todos los días te evita enseñar cosas que en la práctica no funcionan.
       </p>
       <p>
-        Lo que publico acá sale de proyectos reales, no de repetir documentación. Cuando algo no lo probé, lo digo. Y
-        cuando la respuesta honesta es "no necesitás esto que te quiero vender", también.
+        Lo que publico aquí sale de proyectos reales, no de repetir documentación. Cuando algo no lo probé, lo digo. Y
+        cuando la respuesta honesta es "no necesitas esto que te quiero vender", también.
       </p>
       <p>
         Tengo una obsesión declarada con los fundamentos. Veo mucha gente escribiendo código sin entender qué pasa por
         debajo, copiando soluciones que no comprende y quedándose bloqueada al primer error que no está en el tutorial.
         Por eso las clases arrancan por los conceptos aunque sea el camino más lento: es el único que después te deja
         caminar solo.
+      </p>
+      <p>
+        Trabajo desde Medellín, Colombia. Doy
+        <a class="font-medium text-primary underline underline-offset-4" href={landingPath(courseHub.slug)}
+          >clases de programación</a
+        >
+        en persona en la ciudad y en línea para toda Colombia, y desarrollo software, automatizaciones y otros
+        <a class="font-medium text-primary underline underline-offset-4" href={landingPath(servicesHub.slug)}
+          >servicios de tecnología</a
+        > para empresas.
       </p>
     </div>
   </section>
@@ -107,6 +130,34 @@ const metadata = {
     ]}
   />
 
+  <Features
+    id="trabajar-conmigo"
+    tagline="Trabajemos juntos"
+    title="Dos formas de trabajar conmigo"
+    subtitle="Puedes aprender a hacerlo tú o dejar que lo haga por ti."
+    columns={2}
+    items={[
+      {
+        title: 'Aprende conmigo',
+        description:
+          'Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web, apps, AWS, Linux, n8n y marketing digital, en Medellín o en línea.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver las clases de programación', href: landingPath(courseHub.slug) },
+      },
+      {
+        title: 'Lo hago por ti',
+        description:
+          'Software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores y seguridad para tu negocio.',
+        icon: 'tabler:code',
+        callToAction: { text: 'Ver los servicios', href: landingPath(servicesHub.slug) },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Features>
+
   <CallToAction
     actions={[
       { variant: 'primary', text: 'Agendar una llamada', href: '/booking', icon: 'tabler:calendar' },
@@ -115,7 +166,7 @@ const metadata = {
   >
     <Fragment slot="title">¿Trabajamos juntos?</Fragment>
     <Fragment slot="subtitle">
-      Contame qué estás tratando de resolver. Si puedo ayudar, te digo cómo; si no, te digo con quién.
+      Cuéntame qué estás tratando de resolver. Si puedo ayudar, te digo cómo; si no, te digo con quién.
     </Fragment>
   </CallToAction>
 </Layout>

@@ -1,0 +1,275 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+/**
+ * Landing de curso: "curso de desarrollo web".
+ *
+ * El título, la descripción, la keyword y los enlaces relacionados salen del
+ * registro (src/data/landings.ts); esta página solo aporta el contenido.
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ */
+const landing = getLanding('curso-de-desarrollo-web');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para empezar?',
+    answer:
+      'No. Empezamos con un curso de HTML y CSS desde cero, que no requiere experiencia previa, y avanzamos a JavaScript cuando tengas la base. Si ya sabes algo, saltamos lo que domines. Lo único indispensable es practicar entre clases: un sitio se aprende construyéndolo.',
+  },
+  {
+    question: '¿Cuánto cuesta el curso de desarrollo web?',
+    answer:
+      'El precio depende del alcance: de tu punto de partida, de lo que quieras construir y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor revisa tu sitio mientras lo construyes.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Un portafolio sencillo no pide lo mismo que una web con formularios, analítica y React, y no es lo mismo estudiar dos veces por semana que una. Preferimos ajustar el plan a ti antes que prometerte una cifra sin conocerte.',
+  },
+  {
+    question: '¿Qué necesito para tomar las clases y publicar mi sitio?',
+    answer:
+      'Un computador con internet (Windows, macOS o Linux). Las herramientas son gratuitas: Visual Studio Code, Git, Node.js y un navegador. El dominio se paga aparte y existen servicios de hosting gratuitos para sitios estáticos; te explicamos las opciones cuando llegues a la publicación.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conversamos sobre el sitio que quieres crear y sobre tu nivel, dejamos listo tu entorno de trabajo y construyes tu primera página en HTML, que ves funcionando en el navegador. Al terminar tienes una ruta clara y sabes qué practicar antes de la siguiente sesión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({ name: landing.name, description: landing.description, path: landingPath(landing.slug) }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Clases de desarrollo web 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de desarrollo web</span> en Medellín: crea y publica tu propio sitio
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Aprende a crear páginas web con HTML, CSS, JavaScript y React en clases 1 a 1 con un ingeniero de software, y
+      termina con tu propio sitio o portafolio publicado, rápido y optimizado para buscadores. En Medellín o en línea
+      para toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>Tu propio sitio publicado</span>
+      <span>Con un ingeniero de software</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Para quién es"
+    title="Aprender a crear páginas web, paso a paso"
+    items={[
+      {
+        title: 'Un proyecto que es tuyo',
+        description:
+          'Tu sitio personal, tu portafolio o la página de tu negocio, construido y publicado durante el curso.',
+      },
+      {
+        title: 'Sitios que Google entiende',
+        description:
+          'HTML semántico, metadatos y datos estructurados desde el primer día, no como un añadido al final.',
+      },
+      {
+        title: 'Rápidos y accesibles',
+        description:
+          'Medimos rendimiento y accesibilidad con herramientas reales y corregimos lo que falle antes de publicar.',
+      },
+      {
+        title: 'Autonomía para mantenerlo',
+        description: 'Aprendes a cambiar, ampliar y publicar tu sitio sin depender de otra persona para cada ajuste.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Un buen curso de desarrollo web no se queda en copiar plantillas. Empieza por entender cómo funciona la web, con
+        HTML, CSS y JavaScript, y llega hasta publicar un sitio que carga rápido, se ve bien en el celular y que los
+        buscadores pueden entender.
+      </p>
+      <p class="mb-4">
+        Es para quien quiere crear su propio sitio o portafolio, para quien necesita mantener la web de su negocio sin
+        depender de nadie y para quien da el primer paso hacia la programación. No necesitas experiencia previa: solo un
+        computador con internet y ganas de practicar.
+      </p>
+      <p>
+        Las clases las da un ingeniero de software; <a href="/autor" class={link}>conoce a tu profesor</a>. Si primero
+        quieres comparar con contratar el trabajo, revisa
+        <a href="/blog/cuanto-cuesta-una-pagina-web-en-colombia" class={link}
+          >cuánto cuesta una página web en Colombia</a
+        >, y si te atrae la programación en sí, mira el
+        <a href="/clases-de-javascript" class={link}>curso de JavaScript</a>.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Temario"
+    title="Temario del curso de desarrollo web, de HTML a la publicación"
+    subtitle="Un recorrido por capas, de la estructura a la publicación. Lo ajustamos a tu nivel y a tu proyecto."
+    items={[
+      {
+        title: 'HTML semántico',
+        description:
+          'La estructura de una página con las etiquetas correctas: encabezados, listas, enlaces, imágenes y formularios. Es la base del SEO y de la accesibilidad.',
+        icon: 'tabler:brand-html5',
+      },
+      {
+        title: 'CSS moderno y diseño responsive',
+        description:
+          'Flexbox, grid y unidades relativas para que tu sitio se vea bien en celular, tableta y computador, con una hoja de estilos ordenada.',
+        icon: 'tabler:brand-css3',
+      },
+      {
+        title: 'JavaScript para la web',
+        description:
+          'Interactividad con el DOM, eventos y fetch: menús, formularios que validan y contenido que se carga desde una API.',
+        icon: 'tabler:brand-javascript',
+      },
+      {
+        title: 'React y Astro',
+        description:
+          'Componentes reutilizables con React y sitios estáticos con Astro. Aprendes cuándo conviene cada uno para que tu sitio sea rápido y fácil de mantener.',
+        icon: 'tabler:brand-react',
+      },
+      {
+        title: 'SEO técnico, accesibilidad y rendimiento',
+        description:
+          'Etiquetas title y description, datos estructurados, contraste, navegación con teclado y Core Web Vitals. Mides con Lighthouse y corriges lo que falle.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Publicación, formularios y analítica',
+        description:
+          'Dominio, hosting y HTTPS; formularios cuyos mensajes te llegan a ti; y analítica para saber cuántas personas visitan tu sitio y qué hacen en él.',
+        icon: 'tabler:world-www',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo es el curso de programación web, paso a paso"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Defines tu proyecto</span>',
+        description:
+          'Elegimos qué vas a construir: tu portafolio, la web de tu negocio o un sitio para un cliente. Ese proyecto guía todo el temario.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Construyes por capas</span>',
+        description:
+          'Primero la estructura, después el diseño y luego la interactividad. Cada capa se prueba antes de pasar a la siguiente.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Optimizas y mides</span>',
+        description:
+          'Revisamos SEO, accesibilidad y velocidad con herramientas reales, y corriges lo necesario antes de publicar.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Publicas</span>',
+        description:
+          'Conectas tu dominio, publicas en un hosting y activas la analítica. Tu sitio queda en línea y sabes cómo mantenerlo.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <CallToAction
+    title="¿Ya tienes un sitio en mente?"
+    subtitle="Cuéntanos qué quieres crear por WhatsApp o agenda una asesoría gratuita, y definimos juntos tu proyecto."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-desarrollo-web-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el curso de desarrollo web"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-desarrollo-web"
+    formId="lead-curso-de-desarrollo-web"
+    title="Agenda tu primera clase de desarrollo web"
+    subtitle="Cuéntanos qué sitio quieres crear y cuál es tu nivel. Te proponemos una ruta de aprendizaje y una cotización sin costo."
+    button="Quiero crear mi sitio"
+    bullets={[
+      'Asesoría gratuita para definir tu proyecto',
+      'Clases 1 a 1, en Medellín o en línea',
+      'Temario ajustado a tu nivel y a tu sitio',
+      'Cotización sin costo por WhatsApp',
+    ]}
+  />
+</Layout>

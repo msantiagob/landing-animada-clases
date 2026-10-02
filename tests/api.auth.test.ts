@@ -1,8 +1,9 @@
 import type Database from 'better-sqlite3';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GET, POST } from '~/pages/api/auth';
 import { authHelpers } from '~/lib/auth';
 import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
+import { findVoseo } from './voseo';
 
 const ENDPOINT = 'https://sonmyd.co/api/auth';
 const PASSWORD = 'una-password-larga-123';
@@ -83,6 +84,26 @@ describe('POST /api/auth', () => {
     expect((await post({})).status).toBe(400);
   });
 
+  // Un cuerpo ilegible es un error del cliente: 400 sin sesión y sin un 500 que
+  // ensucie los logs cada vez que un bot golpea el login.
+  it.each([
+    ['un JSON roto', '{"action": "login", ', 'application/json'],
+    ['un JSON vacío', '', 'application/json'],
+    ['un JSON que no es un objeto', 'null', 'application/json'],
+    ['un Content-Type desconocido', 'action=login', 'text/plain'],
+  ])('responde 400, y no 500, ante %s', async (_caso, body, contentType) => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await POST({
+      request: new Request(ENDPOINT, { method: 'POST', headers: { 'Content-Type': contentType }, body }),
+    } as never);
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toMatch(/no válida/i);
+    expect(response.headers.get('set-cookie')).toBeNull();
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
   it('el logout limpia la cookie', async () => {
     const response = await post({ action: 'logout' });
 
@@ -100,6 +121,21 @@ describe('POST /api/auth', () => {
     const blocked = await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD }, headers);
 
     expect(blocked.status).toBe(429);
+  });
+
+  // La pantalla de login pinta este texto tal cual.
+  it('el bloqueo por intentos le pide esperar con "tú"', async () => {
+    const headers = { 'x-forwarded-for': '192.0.2.51' };
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      await post({ action: 'login', email: 'admin@sonmyd.test', password: 'mala' }, headers);
+    }
+
+    const { error } = await readJson(
+      await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD }, headers)
+    );
+
+    expect(error).toBe('Demasiados envíos. Espera unos minutos e inténtalo de nuevo.');
+    expect(findVoseo(error)).toEqual([]);
   });
 });
 

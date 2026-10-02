@@ -10,7 +10,9 @@ import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
 import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
 import Analytics from '~/components/common/Analytics.astro';
+import GoogleTagManager from '~/components/common/GoogleTagManager.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+import WhatsAppFloat from '~/components/common/WhatsAppFloat.astro';
 import { organizationSchema, websiteSchema } from '~/utils/seo';
 import BasicScripts from '~/components/common/BasicScripts.astro';
 
@@ -31,6 +33,8 @@ const { language, textDirection } = I18N;
 <html lang={language} dir={textDirection} class="2xl:text-[20px]">
   <head>
     <CommonMeta />
+    {/* Google Tag Manager: lo más arriba posible, justo después del charset y el viewport. */}
+    <GoogleTagManager />
     <Favicons />
     <CustomStyles />
     <ApplyColorMode />
@@ -46,8 +50,25 @@ const { language, textDirection } = I18N;
   </head>
 
   <body class="antialiased text-default bg-page tracking-tight">
+    {/* Google Tag Manager (noscript): GTM exige que sea el PRIMER hijo de <body>. */}
+    <GoogleTagManager part="body" />
+
     <slot />
 
+    {
+      /* Contacto por WhatsApp en todas las páginas públicas. El panel admin tiene su propio esqueleto y no usa este layout. */
+    }
+    <WhatsAppFloat />
+
     <BasicScripts />
+
+    <script>
+      // Un solo listener en `document` mide cada clic a wa.me (botones, flotante
+      // y enlaces escritos a mano). Sobrevive a las navegaciones del ClientRouter
+      // porque `document` no se reemplaza; la marca en `window` evita duplicarlo.
+      import { initWhatsAppTracking } from '~/utils/tracking';
+
+      initWhatsAppTracking();
+    </script>
   </body>
 </html>

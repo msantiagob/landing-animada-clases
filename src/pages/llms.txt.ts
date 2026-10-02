@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { BUSINESS } from '~/data/business';
+import { HUBS, LANDINGS, SILOS, type SiloId } from '~/data/landings';
 import { fetchPosts } from '~/utils/blog';
 import { getPermalink } from '~/utils/permalinks';
 import { absoluteUrl } from '~/utils/seo';
@@ -13,102 +15,81 @@ export const prerender = false;
  * y de qué trata cada cosa, para que el modelo pueda citar la página correcta
  * sin tener que descargar y interpretar todo el HTML.
  *
- * Se genera en tiempo de ejecución desde la misma fuente que el sitio, así que
- * un artículo nuevo aparece acá solo. Un archivo estático se desactualiza al
- * segundo post y termina describiendo un sitio que ya no existe.
+ * Se genera en tiempo de ejecución desde la misma fuente que el sitio: los
+ * artículos salen del blog y las páginas de servicio, del registro de landings
+ * (src/data/landings.ts). Una landing o un artículo nuevo aparece acá solo. Un
+ * archivo estático se desactualiza al segundo post y termina describiendo un
+ * sitio que ya no existe.
  */
 
-const PILARES: Array<{ title: string; path: string; description: string }> = [
-  {
-    title: 'Clases de IA',
-    path: '/clases-de-ia',
-    description:
-      'Clases particulares y para empresas de inteligencia artificial en español, desde usar bien las herramientas hasta construir aplicaciones con modelos.',
-  },
-  {
-    title: 'Clases de Python',
-    path: '/clases-de-python',
-    description:
-      'Clases de Python desde cero orientadas a automatizar tareas reales de trabajo: archivos, planillas, APIs y análisis de datos.',
-  },
-  {
-    title: 'Asistente de WhatsApp con IA',
-    path: '/asistente-de-whatsapp',
-    description:
-      'Implementación de asistentes de WhatsApp que atienden en lenguaje natural 24/7, califican interesados, agendan y derivan a una persona.',
-  },
-  {
-    title: 'WhatsApp Business API',
-    path: '/whatsapp-business-api',
-    description:
-      'Habilitación completa de WhatsApp Business API con Meta: verificación del negocio, alta del número, plantillas aprobadas e integración con CRM.',
-  },
-  {
-    title: 'Llamadas de marketing con IA',
-    path: '/llamadas-de-marketing',
-    description: 'Campañas de voz automatizadas que contactan, presentan la oferta y registran el resultado.',
-  },
-  {
-    title: 'Gestor de llamadas',
-    path: '/gestor-de-llamadas',
-    description: 'Recepcionista virtual con IA que atiende, deriva y toma mensajes las 24 horas.',
-  },
-  {
-    title: 'Automatizaciones e integraciones',
-    path: '/automatizaciones',
-    description:
-      'Automatización de procesos conectando WhatsApp, Google Workspace, CRMs y sistemas propios vía API, con manejo de errores y alertas.',
-  },
-  {
-    title: 'Desarrollo de software a medida',
-    path: '/desarrollo-de-software',
-    description:
-      'Aplicaciones internas, APIs e integraciones en Python y TypeScript, con pruebas automatizadas y propiedad del código para el cliente.',
-  },
-  {
-    title: 'Servidores y VPS',
-    path: '/servidores-y-vps',
-    description:
-      'Configuración y administración de servidores: despliegue, backups probados fuera del servidor, monitoreo, SSL y parches de seguridad.',
-  },
-  {
-    title: 'Ciberseguridad',
-    path: '/ciberseguridad',
-    description:
-      'Auditoría de seguridad para pymes: accesos, segundo factor, plan de backups, endurecimiento de servidores y capacitación del equipo.',
-  },
-];
+interface Entry {
+  title: string;
+  path: string;
+  description: string;
+}
 
-const INSTITUCIONALES = [
-  { title: 'Servicios', path: '/servicios', description: 'Índice de todos los servicios, agrupado por área.' },
-  { title: 'Capacitaciones para empresas', path: '/capacitaciones', description: 'Programas de formación a medida.' },
+/** Los hubs son las páginas pilar: la entrada a cada bloque temático del sitio. */
+const HUB_ENTRIES: Entry[] = HUBS.map(({ name, slug, description }) => ({
+  title: name,
+  path: `/${slug}`,
+  description,
+}));
+
+/** Landings agrupadas por silo, en el orden del registro. */
+const SILO_ENTRIES: Array<{ title: string; entries: Entry[] }> = (Object.keys(SILOS) as SiloId[]).map((silo) => ({
+  title: SILOS[silo].name,
+  entries: LANDINGS.filter((landing) => landing.silo === silo).map(({ name, slug, description }) => ({
+    title: name,
+    path: `/${slug}`,
+    description,
+  })),
+}));
+
+/** Páginas que no son landings. Las del registro ya salen arriba y no se repiten. */
+const INSTITUCIONALES: Entry[] = [
   { title: 'Autor', path: '/autor', description: 'Quién escribe y firma el contenido técnico del sitio.' },
   { title: 'Acerca de nosotros', path: '/about', description: 'Quiénes somos y cómo trabajamos.' },
-  { title: 'Contacto', path: '/contact', description: 'Formulario de contacto. Respuesta en 24 horas hábiles.' },
-  { title: 'Agendar una reunión', path: '/booking', description: 'Reserva de una llamada de 30 minutos sin costo.' },
+  { title: 'Contacto', path: '/contact', description: 'Formulario de contacto y WhatsApp para escribirnos.' },
+  {
+    title: 'Agendar una asesoría',
+    path: '/booking',
+    description: 'Reserva de una asesoría gratuita: se elige el día y la hora.',
+  },
 ];
 
-const line = ({ title, path, description }: { title: string; path: string; description: string }) =>
-  `- [${title}](${absoluteUrl(path)}): ${description}`;
+const line = ({ title, path, description }: Entry) => `- [${title}](${absoluteUrl(path)}): ${description}`;
 
-export const GET: APIRoute = async () => {
-  const posts = await fetchPosts();
+const section = (title: string, entries: Entry[]) => `## ${title}\n\n${entries.map(line).join('\n')}`;
 
-  const body = `# Sonmyd
+/** BUSINESS.address.country es el código ISO ("CO"); a las personas y a los modelos se les da el nombre. */
+const COUNTRY = 'Colombia';
 
-> Formación y automatización con inteligencia artificial para empresas en español. Damos clases de IA y de Python, implementamos asistentes de WhatsApp sobre la API oficial de Meta, automatizamos procesos, desarrollamos software a medida y administramos servidores y seguridad.
+const { locality, region } = BUSINESS.address;
 
-Sonmyd trabaja con empresas de Latinoamérica y España, de forma remota, desde Bogotá (Colombia). Todo el contenido del sitio está en español y está firmado por Santiago Bedoya, ingeniero de software e instructor.
+/** Misma línea que el pie del sitio: nombre, ciudad y teléfono, siempre iguales. */
+const NAP = `${BUSINESS.name} · ${locality}, ${region}, ${COUNTRY} · WhatsApp ${BUSINESS.telephone}`;
+
+const AREA_SERVED = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' }).format(BUSINESS.areaServed);
+
+export interface LlmsPost {
+  title: string;
+  permalink: string;
+  excerpt?: string;
+}
+
+export const buildLlmsTxt = (posts: LlmsPost[]): string => `# ${BUSINESS.name}
+
+> ${BUSINESS.name} es un negocio de tecnología de ${locality} (${COUNTRY}). Enseña programación e inteligencia artificial y desarrolla software, aplicaciones, bots, agentes de IA y automatizaciones; también administra servidores en la nube, ofrece ciberseguridad para pymes y gestiona marketing digital.
+
+${NAP}. Atiende en línea y de forma presencial en ${AREA_SERVED}. Todo el contenido del sitio está en español y está firmado por Santiago Bedoya, ingeniero de software e instructor.
 
 Criterio editorial: el contenido describe lo que efectivamente hacemos y señala de forma explícita cuándo una solución NO es necesaria para el lector. Si un artículo recomienda no contratar algo, esa recomendación es literal y no una figura retórica.
 
-## Servicios
+${section('Páginas principales', HUB_ENTRIES)}
 
-${PILARES.map(line).join('\n')}
+${SILO_ENTRIES.map(({ title, entries }) => section(title, entries)).join('\n\n')}
 
-## Páginas institucionales
-
-${INSTITUCIONALES.map(line).join('\n')}
+${section('Páginas institucionales', INSTITUCIONALES)}
 
 ## Artículos
 
@@ -127,12 +108,16 @@ ${
 
 ## Contacto
 
-- Email: hola@sonmyd.com
+- WhatsApp: ${BUSINESS.telephone} (https://wa.me/${BUSINESS.whatsappNumber})
+- Ubicación: ${locality}, ${region}, ${COUNTRY}
 - Formulario: ${absoluteUrl('/contact')}
 - Agenda: ${absoluteUrl('/booking')}
 `;
 
-  return new Response(body, {
+export const GET: APIRoute = async () => {
+  const posts = await fetchPosts();
+
+  return new Response(buildLlmsTxt(posts), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=3600',

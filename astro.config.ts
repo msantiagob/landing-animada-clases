@@ -14,6 +14,7 @@ import type { AstroIntegration } from 'astro';
 
 import astrowind from './vendor/integration';
 
+import { LEGACY_REDIRECTS } from './src/data/legacy-redirects';
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,6 +26,16 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
+
+  /**
+   * 301 desde las URLs del sitio anterior que Google ya conoce (lista en
+   * src/data/legacy-redirects.ts). En modo servidor se resuelven en tiempo de
+   * ejecución. Un origen reemplaza a la página real que tenga esa ruta, así que
+   * ninguno puede coincidir con una página existente.
+   */
+  redirects: Object.fromEntries(
+    Object.entries(LEGACY_REDIRECTS).map(([from, destination]) => [from, { status: 301 as const, destination }])
+  ),
 
   integrations: [
     tailwind({

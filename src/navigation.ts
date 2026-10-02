@@ -1,144 +1,79 @@
+import { BUSINESS } from './data/business';
+import { LANDINGS, SILOS, type HubSlug, type Landing, type SiloId } from './data/landings';
 import { getBlogPermalink, getPermalink } from './utils/permalinks';
 
 /**
  * El enlazado interno es una señal directa de SEO: las páginas que apuntamos
  * desde el header y el footer son las que Google entiende como prioritarias.
  *
- * El menú está agrupado por SILO, no por capricho de diseño. Cada grupo es un
- * bloque temático cerrado con su página pilar. Mezclar servicios de silos
- * distintos en un mismo desplegable diluye justamente la señal que buscamos.
+ * Ambos menús se derivan del registro de landings (src/data/landings.ts) y se
+ * agrupan por SILO, no por capricho de diseño. Cada grupo es un bloque temático
+ * cerrado con su página pilar (hub). Mezclar silos distintos en un mismo
+ * desplegable diluye justamente la señal que buscamos. Registrar una landing
+ * nueva alcanza para que aparezca acá; no hay que tocar este archivo.
  */
-export const headerData = {
-  links: [
-    {
-      text: 'IA y WhatsApp',
-      links: [
-        {
-          text: 'Asistente de WhatsApp con IA',
-          href: getPermalink('/asistente-de-whatsapp'),
-        },
-        {
-          text: 'WhatsApp Business API',
-          href: getPermalink('/whatsapp-business-api'),
-        },
-        {
-          text: 'Llamadas de marketing con IA',
-          href: getPermalink('/llamadas-de-marketing'),
-        },
-        {
-          text: 'Gestor de llamadas',
-          href: getPermalink('/gestor-de-llamadas'),
-        },
-      ],
-    },
-    {
-      text: 'Formación',
-      links: [
-        {
-          text: 'Clases de IA',
-          href: getPermalink('/clases-de-ia'),
-        },
-        {
-          text: 'Clases de Python',
-          href: getPermalink('/clases-de-python'),
-        },
-        {
-          text: 'Capacitaciones para empresas',
-          href: getPermalink('/capacitaciones'),
-        },
-      ],
-    },
-    {
-      text: 'Tecnología',
-      links: [
-        {
-          text: 'Automatizaciones',
-          href: getPermalink('/automatizaciones'),
-        },
-        {
-          text: 'Desarrollo de software',
-          href: getPermalink('/desarrollo-de-software'),
-        },
-        {
-          text: 'Servidores y VPS',
-          href: getPermalink('/servidores-y-vps'),
-        },
-        {
-          text: 'Ciberseguridad',
-          href: getPermalink('/ciberseguridad'),
-        },
-      ],
-    },
-    {
-      text: 'Empresa',
-      links: [
-        {
-          text: 'Todos los servicios',
-          href: getPermalink('/servicios'),
-        },
-        {
-          text: 'Blog',
-          href: getBlogPermalink(),
-        },
-        {
-          text: 'Acerca de nosotros',
-          href: getPermalink('/about'),
-        },
-      ],
-    },
-    {
-      text: 'Contacto',
-      href: getPermalink('/contact'),
-    },
-  ],
-  actions: [{ text: 'Consulta gratuita', href: getPermalink('/booking'), target: '_self' }],
+
+const SILO_IDS = Object.keys(SILOS) as SiloId[];
+
+const link = (text: string, path: string) => ({ text, href: getPermalink(path) });
+
+const landingsOf = (silo: SiloId): Landing[] => LANDINGS.filter((landing) => landing.silo === silo);
+
+const landingLinks = (landings: Landing[]) => landings.map(({ name, slug }) => link(name, `/${slug}`));
+
+/**
+ * Texto del enlace al hub dentro de cada desplegable. Es un Record sobre
+ * HubSlug a propósito: sumar un hub al registro sin darle texto no compila.
+ */
+const HUB_LINK_TEXT: Record<HubSlug, string> = {
+  'clases-de-programacion': 'Todos los cursos',
+  servicios: 'Todos los servicios',
+  'marketing-digital': 'Marketing digital',
 };
+
+/** Un desplegable por silo: primero el hub que lo agrupa, después sus landings. */
+const dropdown = (silo: SiloId) => {
+  const { name, hub } = SILOS[silo];
+
+  return {
+    text: name,
+    links: [link(HUB_LINK_TEXT[hub], `/${hub}`), ...landingLinks(landingsOf(silo))],
+  };
+};
+
+export const headerData = {
+  links: [...SILO_IDS.map(dropdown), { text: 'Blog', href: getBlogPermalink() }],
+  actions: [{ text: 'Asesoría gratuita', href: getPermalink('/booking'), target: '_self' }],
+};
+
+/** BUSINESS.address.country es el código ISO ("CO"); a las personas se les muestra el nombre. */
+const COUNTRY_NAME = 'Colombia';
 
 export const footerData = {
   links: [
+    // Una columna por silo, con todas sus landings.
+    ...SILO_IDS.map((silo) => ({ title: SILOS[silo].name, links: landingLinks(landingsOf(silo)) })),
     {
-      title: 'IA y WhatsApp',
+      title: BUSINESS.name,
       links: [
-        { text: 'Asistente de WhatsApp con IA', href: getPermalink('/asistente-de-whatsapp') },
-        { text: 'WhatsApp Business API', href: getPermalink('/whatsapp-business-api') },
-        { text: 'Llamadas de marketing con IA', href: getPermalink('/llamadas-de-marketing') },
-        { text: 'Gestor de llamadas', href: getPermalink('/gestor-de-llamadas') },
-      ],
-    },
-    {
-      title: 'Formación',
-      links: [
-        { text: 'Clases de IA', href: getPermalink('/clases-de-ia') },
-        { text: 'Clases de Python', href: getPermalink('/clases-de-python') },
-        { text: 'Capacitaciones para empresas', href: getPermalink('/capacitaciones') },
-      ],
-    },
-    {
-      title: 'Tecnología',
-      links: [
-        { text: 'Automatizaciones e integraciones', href: getPermalink('/automatizaciones') },
-        { text: 'Desarrollo de software', href: getPermalink('/desarrollo-de-software') },
-        { text: 'Servidores y VPS', href: getPermalink('/servidores-y-vps') },
-        { text: 'Ciberseguridad', href: getPermalink('/ciberseguridad') },
-      ],
-    },
-    {
-      title: 'Empresa',
-      links: [
-        { text: 'Todos los servicios', href: getPermalink('/servicios') },
+        link(`Sobre ${BUSINESS.name}`, '/about'),
+        link('Autor', '/autor'),
         { text: 'Blog', href: getBlogPermalink() },
-        { text: 'Acerca de nosotros', href: getPermalink('/about') },
-        { text: 'Agendar una reunión', href: getPermalink('/booking') },
+        link('Contacto', '/contact'),
+        link('Agenda una asesoría', '/booking'),
+        link('Privacidad', '/privacidad'),
+        link('Términos', '/terminos'),
       ],
     },
   ],
-  secondaryLinks: [
-    { text: 'Términos', href: getPermalink('/terms') },
-    { text: 'Política de privacidad', href: getPermalink('/privacy') },
-  ],
+  // Privacidad y Términos viven en la columna de la empresa.
+  secondaryLinks: [],
   // Sin redes propias todavía. Se agregan cuando existan cuentas reales:
   // un enlace a un perfil vacío daña más la confianza que la ausencia.
   socialLinks: [],
-  description:
-    'Formación y automatización con inteligencia artificial para empresas: clases de IA y Python, asistentes de WhatsApp, desarrollo a medida, servidores y seguridad.',
+  footNote: `© ${new Date().getFullYear()} ${BUSINESS.name}. Todos los derechos reservados.`,
+  // Nombre, ciudad y teléfono salen de BUSINESS: repetirlos idénticos en todo el
+  // sitio es una señal de SEO local, y escribirlos a mano en cada lugar es la
+  // forma más rápida de que dejen de coincidir.
+  description: `${BUSINESS.name} · ${BUSINESS.address.locality}, ${BUSINESS.address.region}, ${COUNTRY_NAME} · WhatsApp ${BUSINESS.telephone}`,
 };

@@ -49,6 +49,15 @@ const {
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+
+/*
+ * Punto de corte del menú: por debajo de xl (1280 px) se muestra el menú móvil.
+ * Seis grupos más el botón de asesoría necesitan alrededor de 1200 px en una
+ * sola fila; con el corte en md (768 px) el menú se encimaba con el botón en
+ * cualquier ancho intermedio. Por eso todas las clases estructurales de este
+ * componente usan `xl:`. Si se cambia el corte, hay que cambiarlo también en
+ * el script del final.
+ */
 ---
 
 <header
@@ -64,30 +73,34 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     class:list={[
       'relative text-default py-3 px-3 md:px-6 mx-auto w-full',
       {
-        'md:flex md:justify-between': position !== 'center',
+        'xl:flex xl:justify-between': position !== 'center',
       },
       {
-        'md:grid md:grid-cols-3 md:items-center': position === 'center',
+        'xl:grid xl:grid-cols-[auto_1fr_auto] xl:items-center': position === 'center',
       },
       {
         'max-w-7xl': !isFullWidth,
       },
     ]}
   >
-    <div class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between']}>
+    {/* data-aw-header-row: src/utils/menu.ts mide dónde termina esta fila para ubicar el menú móvil abierto. */}
+    <div
+      class:list={[{ 'mr-auto rtl:mr-0 rtl:ml-auto': position === 'right' }, 'flex justify-between']}
+      data-aw-header-row
+    >
       <a class="flex items-center" href={getHomePermalink()}>
         <Logo />
       </a>
-      <div class="flex items-center md:hidden">
+      <div class="flex items-center xl:hidden">
         <ToggleMenu />
       </div>
     </div>
     <nav
-      class="items-center w-full md:w-auto hidden md:flex md:mx-5 text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:justify-self-center"
+      class="items-center w-full xl:w-auto hidden xl:flex xl:mx-5 text-default overflow-y-auto overflow-x-hidden xl:overflow-y-visible xl:overflow-x-auto xl:justify-self-center"
       aria-label="Navegación principal"
     >
       <ul
-        class="flex flex-col md:flex-row md:self-center w-full md:w-auto text-xl md:text-[0.9375rem] tracking-[0.01rem] font-medium md:justify-center"
+        class="flex flex-col xl:flex-row xl:self-center w-full xl:w-auto text-xl xl:text-[0.9375rem] tracking-[0.01rem] font-medium xl:justify-center"
       >
         {
           links.map(({ text, href, links }) => (
@@ -99,14 +112,14 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                     class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center whitespace-nowrap"
                   >
                     {text}{' '}
-                    <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
+                    <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden xl:inline" />
                   </button>
-                  <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
+                  <ul class="dropdown-menu xl:backdrop-blur-md dark:xl:bg-dark rounded xl:absolute pl-4 xl:pl-0 xl:hidden font-medium xl:bg-white/90 xl:min-w-[200px] xl:max-h-[calc(100vh-8rem)] xl:overflow-y-auto xl:overscroll-contain xl:border border-line drop-shadow-xl">
                     {links.map(({ text: text2, href: href2 }) => (
                       <li>
                         <a
                           class:list={[
-                            'first:rounded-t last:rounded-b md:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
+                            'first:rounded-t last:rounded-b xl:hover:bg-gray-100 hover:text-link dark:hover:text-white dark:hover:bg-gray-700 py-2 px-5 block whitespace-no-wrap',
                             { 'aw-link-active': href2 === currentPath },
                           ]}
                           href={href2}
@@ -136,12 +149,12 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     <div
       class:list={[
         { 'ml-auto rtl:ml-0 rtl:mr-auto': position === 'left' },
-        'hidden md:self-center md:flex items-center md:mb-0 fixed w-full md:w-auto md:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 md:p-0 md:justify-self-end',
+        'hidden xl:self-center xl:flex items-center xl:mb-0 fixed w-full xl:w-auto xl:static justify-end left-0 rtl:left-auto rtl:right-0 bottom-0 p-3 xl:p-0 xl:justify-self-end',
       ]}
     >
-      <div class="items-center flex justify-between w-full md:w-auto">
+      <div class="items-center flex justify-between w-full xl:w-auto">
         <div class="flex">
-          {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
+          {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 xl:w-5 xl:h-5 xl:inline-block" />}
           <!-- {
             showRssFeed && (
               <a
@@ -158,7 +171,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
           actions?.length ? (
             <span class="ml-4 rtl:ml-0 rtl:mr-4">
               {actions.map((btnProps) => (
-                <Button {...btnProps} class="ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" />
+                <Button {...btnProps} class="ml-2 py-2.5 px-5.5 xl:px-6 font-semibold shadow-none text-sm w-auto" />
               ))}
             </span>
           ) : (
@@ -169,3 +182,20 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
     </div>
   </div>
 </header>
+
+<script>
+  import { initMenuOffset } from '~/utils/menu';
+
+  // Con la barra de anuncio visible la cabecera no está pegada arriba, y el panel
+  // del menú abierto (`position: fixed`) necesita saber dónde termina la fila del logo.
+  initMenuOffset();
+
+  // BasicScripts solo restablece el menú móvil abierto al cruzar los 767 px, pero
+  // el menú de escritorio empieza en 1280 px (xl). Sin esto, abrir el menú a 900 px
+  // y ensanchar la ventana dejaba la página bloqueada y el header a pantalla completa.
+  // Un clic en el botón ya expandido reutiliza el manejador de BasicScripts, que
+  // deshace todo ese estado.
+  window.matchMedia('(min-width: 1280px)').addEventListener('change', (event) => {
+    if (event.matches) document.querySelector<HTMLElement>('[data-aw-toggle-menu].expanded')?.click();
+  });
+</script>

@@ -1,0 +1,43 @@
+---
+import { BUSINESS } from '~/data/business';
+import { gtmHeadSnippet, gtmNoscriptUrl, isValidGtmId } from '~/utils/tracking';
+
+/**
+ * Google Tag Manager (contenedor del sitio en vivo: BUSINESS.gtmId).
+ *
+ * Se usa en dos lugares de Layout, como pide Google:
+ * - `part="head"` (por defecto): el fragmento de <head>, lo más arriba posible.
+ * - `part="body"`: el <noscript><iframe> que va como PRIMER hijo de <body>.
+ *
+ * Solo se emite en producción y con un ID bien formado. En desarrollo no se
+ * mide (ensuciaría los informes con visitas de localhost) y un ID roto no
+ * llega nunca al HTML.
+ *
+ * El script va `is:inline`, SIN Partytown: en este sitio Partytown está
+ * apagado, y mover GTM a un worker rompería los disparadores de clic y de
+ * historial. Las vistas de página del ClientRouter las cubre el disparador
+ * "Cambio de historial" de GTM: no hace falta código adicional.
+ */
+export interface Props {
+  part?: 'head' | 'body';
+}
+
+const { part = 'head' } = Astro.props;
+
+const enabled = import.meta.env.PROD && isValidGtmId(BUSINESS.gtmId);
+---
+
+{enabled && part === 'head' && <script is:inline set:html={gtmHeadSnippet(BUSINESS.gtmId)} />}
+{
+  enabled && part === 'body' && (
+    <noscript>
+      <iframe
+        src={gtmNoscriptUrl(BUSINESS.gtmId)}
+        title="Google Tag Manager"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      />
+    </noscript>
+  )
+}

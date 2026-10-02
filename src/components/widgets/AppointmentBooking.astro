@@ -1,6 +1,7 @@
 ---
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
+import { SERVICE_TYPE_OPTIONS } from '~/utils/booking';
 
 const {
   title = 'Agenda tu Consulta Gratuita',
@@ -23,14 +24,24 @@ const {
 
       <!-- Calendar Navigation -->
       <div class="flex justify-between items-center mb-4">
-        <button id="prevMonth" class="rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-heading">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          id="prevMonth"
+          type="button"
+          aria-label="Mes anterior"
+          class="rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-heading"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
         <h4 id="currentMonth" class="text-base font-semibold text-heading"></h4>
-        <button id="nextMonth" class="rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-heading">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          id="nextMonth"
+          type="button"
+          aria-label="Mes siguiente"
+          class="rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-heading"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
@@ -129,13 +140,7 @@ const {
             <label for="serviceType" class="field-label"> Tipo de servicio * </label>
             <select id="serviceType" name="serviceType" required class="field">
               <option value="">Selecciona un servicio</option>
-              <option value="Inteligencia Artificial">Inteligencia Artificial</option>
-              <option value="Desarrollo Web">Desarrollo Web</option>
-              <option value="Apps Multiplataforma">Apps Multiplataforma</option>
-              <option value="Automatización">Automatización de Procesos</option>
-              <option value="Capacitaciones">Capacitaciones Técnicas</option>
-              <option value="Consultoría">Consultoría Digital</option>
-              <option value="Otro">Otro</option>
+              {SERVICE_TYPE_OPTIONS.map((option) => <option value={option}>{option}</option>)}
             </select>
           </div>
 
@@ -174,311 +179,307 @@ const {
 </WidgetWrapper>
 
 <script>
-  const currentDate = new Date();
-  let selectedDate: Date | null = null;
-  let selectedTime: string | null = null;
-  let isSubmitting = false;
-
-  // Formatea en la zona horaria del usuario. NO usar toISOString(): convierte a
-  // UTC y, con offset negativo, devuelve el día anterior al elegido.
-  const toLocalIsoDate = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  import { BOOKING_MESSAGES, buildAppointmentPayload, formatMonthYear, toLocalIsoDate } from '~/utils/booking';
+  import { markBound, postJson } from '~/utils/forms';
+  import { trackLead } from '~/utils/tracking';
 
   const el = (id: string) => document.getElementById(id) as HTMLElement | null;
 
-  // Initialize calendar
-  function initCalendar() {
-    updateCalendarHeader();
-    generateCalendarDays();
-  }
+  /**
+   * Enlaza el widget de citas. Corre en `astro:page-load` (primera carga y cada
+   * navegación suave del ClientRouter) y es idempotente gracias a `data-bound`.
+   *
+   * Todo el estado vive acá dentro y no en el módulo: tras una navegación suave
+   * llega un DOM nuevo que tiene que arrancar de cero. Antes el calendario se
+   * dibujaba en `DOMContentLoaded`, que no se vuelve a disparar, y el formulario
+   * de la página nueva quedaba sin listeners.
+   */
+  const initBooking = () => {
+    const appointmentForm = el('appointmentForm') as HTMLFormElement | null;
+    if (!appointmentForm || !markBound(appointmentForm)) return;
 
-  function updateCalendarHeader() {
-    const monthNames = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
+    // Se ancla al día 1: con `new Date()` y setMonth(), estando el 31 de octubre
+    // "el mes siguiente" desbordaba a diciembre y el calendario se saltaba noviembre.
+    const now = new Date();
+    const currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    let selectedDate: Date | null = null;
+    let selectedTime: string | null = null;
+    let isSubmitting = false;
 
-    const header = el('currentMonth');
-    if (header) header.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-  }
-
-  function generateCalendarDays() {
-    const calendarDays = el('calendarDays');
-    if (!calendarDays) return;
-
-    calendarDays.innerHTML = '';
-
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const today = new Date();
-
-    // First day of the month and number of days
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      const emptyDay = document.createElement('div');
-      emptyDay.className = 'p-2';
-      calendarDays.appendChild(emptyDay);
-    }
-
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayDate = new Date(year, month, day);
-      const dayElement = document.createElement('button');
-      dayElement.className = 'p-2 rounded-lg text-sm font-medium transition-colors';
-      dayElement.textContent = String(day);
-
-      // Disable past dates and weekends
-      const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
-      const isPast = dayDate < today;
-
-      if (isPast || isWeekend) {
-        dayElement.className += ' text-muted/50 cursor-not-allowed';
-        dayElement.disabled = true;
-      } else {
-        dayElement.className += ' text-default hover:bg-subtle';
-        // Se pasa el propio botón. Antes el handler leía `window.event`, una API
-        // global deprecada que solo funciona por accidente dentro de un handler
-        // síncrono y que rompe en cuanto hay un await de por medio.
-        dayElement.addEventListener('click', () => selectDate(dayDate, dayElement));
-      }
-
-      calendarDays.appendChild(dayElement);
-    }
-  }
-
-  async function selectDate(date: Date, dayElement: HTMLButtonElement) {
-    selectedDate = date;
-    selectedTime = null;
-
-    // Update visual selection
-    document.querySelectorAll<HTMLButtonElement>('#calendarDays button').forEach((btn) => {
-      btn.classList.remove('bg-blue-600', 'text-white');
-      if (!btn.disabled) {
-        btn.classList.add('text-default', 'hover:bg-subtle');
-      }
-    });
-
-    dayElement.classList.remove('text-default', 'hover:bg-subtle');
-    dayElement.classList.add('bg-blue-600', 'text-white');
-
-    // Load available time slots
-    await loadTimeSlots(date);
-
-    // Show time slots section
-    el('timeSlots')?.classList.remove('hidden');
-
-    updateSelectedDateTime();
-  }
-
-  async function loadTimeSlots(date: Date) {
-    const dateString = toLocalIsoDate(date);
-
-    try {
-      const response = await fetch(`/api/appointments?date=${dateString}`);
-      const data = await response.json();
-
-      if (data.success) {
-        displayTimeSlots(data.availableSlots);
-      } else {
-        console.error('Error loading time slots:', data.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
-
-  function displayTimeSlots(slots: string[]) {
-    const container = el('availableSlots');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (slots.length === 0) {
-      container.innerHTML = '<p class="col-span-2 text-sm text-muted">No hay horarios disponibles para esta fecha</p>';
-      return;
-    }
-
-    slots.forEach((time: string) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className =
-        'rounded-lg border border-line p-2 text-sm font-medium text-default transition-colors hover:bg-subtle';
-      button.textContent = time;
-      button.addEventListener('click', () => selectTime(time, button));
-
-      container.appendChild(button);
-    });
-  }
-
-  function selectTime(time: string, buttonElement: HTMLButtonElement) {
-    selectedTime = time;
-
-    // Update visual selection
-    document.querySelectorAll('#availableSlots button').forEach((btn) => {
-      btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-      btn.classList.add('border-line', 'hover:bg-subtle');
-    });
-
-    buttonElement.classList.remove('border-line', 'hover:bg-subtle');
-    buttonElement.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-
-    updateSelectedDateTime();
-
-    // Enable submit button
-    const submitBtn = el('submitBtn') as HTMLButtonElement | null;
-    if (submitBtn) submitBtn.disabled = false;
-  }
-
-  function updateSelectedDateTime() {
-    const selectedDateTimeDiv = el('selectedDateTime');
-    const selectedDateText = el('selectedDateText');
-    const selectedTimeText = el('selectedTimeText');
-
-    if (selectedDate && selectedDateTimeDiv && selectedDateText && selectedTimeText) {
-      selectedDateText.textContent = selectedDate.toLocaleDateString('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-
-      if (selectedTime) {
-        selectedTimeText.textContent = selectedTime;
-        selectedDateTimeDiv.classList.remove('hidden');
-      } else {
-        selectedDateTimeDiv.classList.add('hidden');
-      }
-    }
-  }
-
-  const showBookingError = (message: string) => {
-    const errorText = el('errorText');
-    if (errorText) errorText.textContent = message;
-    el('errorMessage')?.classList.remove('hidden');
-  };
-
-  // Form submission
-  const appointmentForm = el('appointmentForm') as HTMLFormElement | null;
-
-  appointmentForm?.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    // Prevenir envíos duplicados
-    if (isSubmitting) {
-      return;
-    }
-
-    if (!selectedDate || !selectedTime) {
-      showBookingError('Por favor selecciona una fecha y hora.');
-      return;
-    }
-
-    const submitBtn = el('submitBtn') as HTMLButtonElement | null;
-    if (!submitBtn) return;
-
-    isSubmitting = true;
-
-    const formData = new FormData(this);
-    const appointmentData = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      company: formData.get('company'),
-      serviceType: formData.get('serviceType'),
-      date: toLocalIsoDate(selectedDate),
-      time: selectedTime,
-      message: formData.get('message'),
-      duration: 60,
-      website: formData.get('website') || '',
+    const setSubmitDisabled = (disabled: boolean) => {
+      const submitBtn = el('submitBtn') as HTMLButtonElement | null;
+      if (submitBtn) submitBtn.disabled = disabled;
     };
 
-    // Hide previous messages
-    el('successMessage')?.classList.add('hidden');
-    el('errorMessage')?.classList.add('hidden');
+    function updateCalendarHeader() {
+      const header = el('currentMonth');
+      if (header) header.textContent = formatMonthYear(currentDate);
+    }
 
-    // Loading state
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Agendando...';
-    submitBtn.disabled = true;
+    function generateCalendarDays() {
+      const calendarDays = el('calendarDays');
+      if (!calendarDays) return;
 
-    try {
-      // Asegurar que siempre se use POST
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(appointmentData),
+      calendarDays.innerHTML = '';
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const today = new Date();
+
+      // First day of the month and number of days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
+
+      // Add empty cells for days before the first day of the month
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'p-2';
+        calendarDays.appendChild(emptyDay);
+      }
+
+      // Add days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayDate = new Date(year, month, day);
+        const dayElement = document.createElement('button');
+        dayElement.className = 'p-2 rounded-lg text-sm font-medium transition-colors';
+        dayElement.textContent = String(day);
+
+        // Disable past dates and weekends
+        const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+        const isPast = dayDate < today;
+
+        if (isPast || isWeekend) {
+          dayElement.className += ' text-muted/50 cursor-not-allowed';
+          dayElement.disabled = true;
+        } else {
+          dayElement.className += ' text-default hover:bg-subtle';
+          // Se pasa el propio botón. Antes el handler leía `window.event`, una API
+          // global deprecada que solo funciona por accidente dentro de un handler
+          // síncrono y que rompe en cuanto hay un await de por medio.
+          dayElement.addEventListener('click', () => selectDate(dayDate, dayElement));
+        }
+
+        calendarDays.appendChild(dayElement);
+      }
+    }
+
+    async function selectDate(date: Date, dayElement: HTMLButtonElement) {
+      selectedDate = date;
+      selectedTime = null;
+
+      // Update visual selection
+      document.querySelectorAll<HTMLButtonElement>('#calendarDays button').forEach((btn) => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        if (!btn.disabled) {
+          btn.classList.add('text-default', 'hover:bg-subtle');
+        }
       });
 
-      // El motivo real (turno ocupado, validación, rate limit) viene en el
-      // cuerpo aun con 400/409/429. Cortar por !response.ok lo ocultaba.
-      const result = await response.json();
+      dayElement.classList.remove('text-default', 'hover:bg-subtle');
+      dayElement.classList.add('bg-blue-600', 'text-white');
 
-      if (result.success) {
-        el('successMessage')?.classList.remove('hidden');
-        this.reset();
-        selectedDate = null;
-        selectedTime = null;
-        el('selectedDateTime')?.classList.add('hidden');
-        el('timeSlots')?.classList.add('hidden');
+      // Load available time slots
+      await loadTimeSlots(date);
 
-        // Reset calendar selection
-        document.querySelectorAll<HTMLButtonElement>('#calendarDays button').forEach((btn) => {
-          btn.classList.remove('bg-blue-600', 'text-white');
-          if (!btn.disabled) {
-            btn.classList.add('text-default', 'hover:bg-subtle');
-          }
-        });
-      } else {
-        showBookingError(result.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      showBookingError('Error de conexión. Inténtalo más tarde.');
-    } finally {
-      submitBtn.textContent = originalText;
-      if (selectedDate && selectedTime) {
-        submitBtn.disabled = false;
-      }
-      isSubmitting = false;
+      // Show time slots section
+      el('timeSlots')?.classList.remove('hidden');
+
+      updateSelectedDateTime();
     }
-  });
 
-  // Navigation events. Cambiar de mes descarta la selección previa: la fecha
-  // elegida ya no está visible en la grilla.
-  const goToMonth = (offset: number) => {
-    currentDate.setMonth(currentDate.getMonth() + offset);
-    generateCalendarDays();
+    async function loadTimeSlots(date: Date) {
+      const dateString = toLocalIsoDate(date);
+
+      try {
+        const response = await fetch(`/api/appointments?date=${dateString}`);
+        const data = await response.json();
+
+        if (data.success) {
+          displayTimeSlots(data.availableSlots);
+        } else {
+          console.error('Error loading time slots:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function displayTimeSlots(slots: string[]) {
+      const container = el('availableSlots');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      if (slots.length === 0) {
+        container.innerHTML =
+          '<p class="col-span-2 text-sm text-muted">No hay horarios disponibles para esta fecha</p>';
+        return;
+      }
+
+      slots.forEach((time: string) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className =
+          'rounded-lg border border-line p-2 text-sm font-medium text-default transition-colors hover:bg-subtle';
+        button.textContent = time;
+        button.addEventListener('click', () => selectTime(time, button));
+
+        container.appendChild(button);
+      });
+    }
+
+    function selectTime(time: string, buttonElement: HTMLButtonElement) {
+      selectedTime = time;
+
+      // Update visual selection
+      document.querySelectorAll('#availableSlots button').forEach((btn) => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.add('border-line', 'hover:bg-subtle');
+      });
+
+      buttonElement.classList.remove('border-line', 'hover:bg-subtle');
+      buttonElement.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+
+      updateSelectedDateTime();
+
+      // Enable submit button
+      setSubmitDisabled(false);
+    }
+
+    function updateSelectedDateTime() {
+      const selectedDateTimeDiv = el('selectedDateTime');
+      const selectedDateText = el('selectedDateText');
+      const selectedTimeText = el('selectedTimeText');
+
+      if (selectedDate && selectedDateTimeDiv && selectedDateText && selectedTimeText) {
+        selectedDateText.textContent = selectedDate.toLocaleDateString('es-CO', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        if (selectedTime) {
+          selectedTimeText.textContent = selectedTime;
+          selectedDateTimeDiv.classList.remove('hidden');
+        } else {
+          selectedDateTimeDiv.classList.add('hidden');
+        }
+      }
+    }
+
+    const showBookingError = (message: string) => {
+      const errorText = el('errorText');
+      if (errorText) errorText.textContent = message;
+      el('errorMessage')?.classList.remove('hidden');
+    };
+
+    // Form submission
+    appointmentForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // Prevenir envíos duplicados
+      if (isSubmitting) {
+        return;
+      }
+
+      if (!selectedDate || !selectedTime) {
+        showBookingError('Por favor selecciona una fecha y hora.');
+        return;
+      }
+
+      const submitBtn = el('submitBtn') as HTMLButtonElement | null;
+      if (!submitBtn) return;
+
+      isSubmitting = true;
+
+      const formData = new FormData(appointmentForm);
+      const field = (name: string) => String(formData.get(name) ?? '');
+      const payload = buildAppointmentPayload(
+        {
+          name: field('name'),
+          email: field('email'),
+          phone: field('phone'),
+          company: field('company'),
+          serviceType: field('serviceType'),
+          message: field('message'),
+          website: field('website'),
+        },
+        selectedDate,
+        selectedTime
+      );
+
+      // Hide previous messages
+      el('successMessage')?.classList.add('hidden');
+      el('errorMessage')?.classList.add('hidden');
+
+      // Loading state
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Agendando...';
+      submitBtn.disabled = true;
+
+      try {
+        // `postJson` no lanza y decide por el cuerpo (success/error), no por el
+        // estado HTTP: el motivo real (turno ocupado, validación, rate limit)
+        // viene en el cuerpo aun con 400/409/429.
+        const result = await postJson('/api/appointments', payload, BOOKING_MESSAGES);
+
+        if (result.ok) {
+          // Medir primero y sin riesgo: la cita ya quedó agendada.
+          trackLead({ interest: 'booking', formId: 'booking' });
+
+          el('successMessage')?.classList.remove('hidden');
+          appointmentForm.reset();
+          selectedDate = null;
+          selectedTime = null;
+          el('selectedDateTime')?.classList.add('hidden');
+          el('timeSlots')?.classList.add('hidden');
+
+          // Reset calendar selection
+          document.querySelectorAll<HTMLButtonElement>('#calendarDays button').forEach((btn) => {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            if (!btn.disabled) {
+              btn.classList.add('text-default', 'hover:bg-subtle');
+            }
+          });
+        } else {
+          showBookingError(result.error);
+        }
+      } finally {
+        submitBtn.textContent = originalText;
+        if (selectedDate && selectedTime) {
+          submitBtn.disabled = false;
+        }
+        isSubmitting = false;
+      }
+    });
+
+    // Navigation events. Cambiar de mes descarta la selección previa: la fecha
+    // elegida ya no está visible en la grilla.
+    const goToMonth = (offset: number) => {
+      currentDate.setMonth(currentDate.getMonth() + offset);
+      generateCalendarDays();
+      updateCalendarHeader();
+
+      el('timeSlots')?.classList.add('hidden');
+      selectedDate = null;
+      selectedTime = null;
+      el('selectedDateTime')?.classList.add('hidden');
+
+      setSubmitDisabled(true);
+    };
+
+    el('prevMonth')?.addEventListener('click', () => goToMonth(-1));
+    el('nextMonth')?.addEventListener('click', () => goToMonth(1));
+
+    // Initialize calendar
     updateCalendarHeader();
-
-    el('timeSlots')?.classList.add('hidden');
-    selectedDate = null;
-    selectedTime = null;
-    el('selectedDateTime')?.classList.add('hidden');
-
-    const submitBtn = el('submitBtn') as HTMLButtonElement | null;
-    if (submitBtn) submitBtn.disabled = true;
+    generateCalendarDays();
   };
 
-  el('prevMonth')?.addEventListener('click', () => goToMonth(-1));
-  el('nextMonth')?.addEventListener('click', () => goToMonth(1));
-
-  // Initialize calendar on page load
-  document.addEventListener('DOMContentLoaded', initCalendar);
+  // Primera carga (el DOM ya existe cuando corre un módulo) y cada navegación suave.
+  initBooking();
+  document.addEventListener('astro:page-load', initBooking);
 </script>

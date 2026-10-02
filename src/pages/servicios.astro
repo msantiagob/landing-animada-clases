@@ -1,206 +1,319 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
-import { breadcrumbSchema, itemListSchema } from '~/utils/seo';
+import type { Landing, SiloId } from '~/data/landings';
+import { getHub, hubBreadcrumbs, landingMetadata, landingPath, landingsBySilo, landingsForHub } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, itemListSchema } from '~/utils/seo';
 
 /**
- * Página HUB, no landing.
- *
- * "Servicios" no es una keyword: nadie busca eso. Esta página no compite por
- * posiciones; su trabajo es distribuir autoridad hacia las páginas pilar y dar
- * una entrada única a quien llega sin saber qué necesita. Por eso no repite el
- * contenido de los pilares: los enlaza.
+ * Página HUB de los servicios. Compite por "servicios de software" y reparte autoridad hacia
+ * cada página de servicio, que sale del registro: una landing nueva de estos silos aparece aquí
+ * sin tocar esta página. El marketing digital cuelga de su propio hub (`marketing-digital`),
+ * así que se lista en su propia sección y se enlaza a ese hub.
  */
-const PATH = '/servicios';
+const hub = getHub('servicios');
+const metadata = landingMetadata(hub);
+const hero = getSeoImage(hub.image);
 
-const metadata = {
-  title: 'Servicios: IA, automatización, desarrollo y seguridad | Sonmyd',
-  description:
-    'Todos los servicios de Sonmyd en un lugar: clases de IA y Python, asistentes de WhatsApp, automatizaciones, desarrollo de software a medida, servidores y ciberseguridad.',
-  ignoreTitleTemplate: true,
-  canonical: PATH,
-};
+// Servicios que cuelgan de este hub (desarrollo, IA y automatización, cloud y seguridad) y los de marketing.
+const technical = landingsForHub(hub.slug);
+const marketing = landingsForHub('marketing-digital');
 
-const pilares = [
-  { name: 'Asistente de WhatsApp con IA', path: '/asistente-de-whatsapp' },
-  { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
-  { name: 'Llamadas de marketing con IA', path: '/llamadas-de-marketing' },
-  { name: 'Gestor de llamadas', path: '/gestor-de-llamadas' },
-  { name: 'Clases de IA', path: '/clases-de-ia' },
-  { name: 'Clases de Python', path: '/clases-de-python' },
-  { name: 'Capacitaciones para empresas', path: '/capacitaciones' },
-  { name: 'Automatizaciones e integraciones', path: '/automatizaciones' },
-  { name: 'Desarrollo de software a medida', path: '/desarrollo-de-software' },
-  { name: 'Servidores y VPS', path: '/servidores-y-vps' },
-  { name: 'Ciberseguridad', path: '/ciberseguridad' },
+interface Section {
+  id: string;
+  tagline: string;
+  title: string;
+  subtitle: string;
+  services: Landing[];
+  /** Enlace opcional al pie de la sección. */
+  more?: { text: string; href: string };
+}
+
+const SILO_SECTIONS: Array<Omit<Section, 'services'> & { silo: SiloId }> = [
+  {
+    silo: 'desarrollo',
+    id: 'desarrollo',
+    tagline: 'Desarrollo',
+    title: 'Servicios de software a medida: sistemas, sitios web, apps y bots',
+    subtitle:
+      'Construimos lo que tu negocio necesita, de un sistema interno a una tienda online, con entregas por etapas y el código a tu nombre.',
+  },
+  {
+    silo: 'ia-automatizacion',
+    id: 'ia-y-automatizacion',
+    tagline: 'IA y automatización',
+    title: 'Automatización de procesos, agentes de IA y WhatsApp',
+    subtitle:
+      'Conectamos tus herramientas y ponemos la inteligencia artificial a trabajar en lo repetitivo: atención, documentos, reportes y seguimiento.',
+  },
+  {
+    silo: 'cloud-seguridad',
+    id: 'cloud-y-seguridad',
+    tagline: 'Cloud y seguridad',
+    title: 'Servidores, nube y ciberseguridad para pymes',
+    subtitle:
+      'La infraestructura donde corre tu negocio, bien administrada, con copias de seguridad probadas y protegida.',
+  },
+];
+
+const sections: Section[] = [
+  // Cada silo muestra solo las landings que realmente cuelgan de este hub.
+  ...SILO_SECTIONS.map(({ silo, ...section }) => ({
+    ...section,
+    services: landingsBySilo(silo).filter((landing) => technical.includes(landing)),
+  })),
+  {
+    id: 'marketing',
+    tagline: 'Marketing digital',
+    title: 'Marketing digital con enfoque técnico',
+    subtitle: 'Publicidad en Meta y Google, SEO y llamadas con IA, con la medición instalada antes de invertir.',
+    services: marketing,
+    more: { text: 'Conoce nuestra agencia de marketing digital', href: landingPath('marketing-digital') },
+  },
+];
+
+// Todo lo que lista la página, en el orden en que aparece.
+const listed = sections.flatMap((section) => section.services);
+
+// Tres columnas solo cuando las tarjetas llenan filas completas. Con cuatro, una cuadrícula de 2 x 2
+// evita que quede una tarjeta sola en la última fila.
+const gridClass = (count: number) =>
+  count % 3 === 0 ? 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'grid gap-6 sm:grid-cols-2';
+
+const WHATSAPP_MESSAGE = 'Hola, quiero información sobre los servicios de software y tecnología.';
+
+// Estilo de los enlaces dentro del texto (el reset de Tailwind los deja sin color ni subrayado).
+const LINK = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Fondo que alterna entre secciones, para que la lista no sea una pared del mismo color.
+const SURFACE = '<div class="absolute inset-0 bg-surface"></div>';
+
+const faqs = [
+  {
+    question: '¿Qué servicios de software ofrecen?',
+    answer:
+      'Desarrollo de software a medida, páginas web, apps móviles y bots; automatización de procesos, agentes de IA, n8n y asistentes de WhatsApp; administración de servidores, consultoría AWS y ciberseguridad para pymes; y marketing digital. Cada servicio tiene su propia página con el detalle.',
+  },
+  {
+    question: '¿Cuánto cuestan los servicios?',
+    answer:
+      'No hay una tarifa única: depende del alcance de cada proyecto. Cotizamos según el alcance, sin costo, y la propuesta detalla qué se entrega. Lo que cobran terceros, como el servidor, la nube, las APIs o la publicidad, lo pagas directamente a cada proveedor.',
+  },
+  {
+    question: '¿Por dónde empiezo si no sé qué necesito?',
+    answer:
+      'Cuéntanos el problema, no la solución. En una asesoría gratuita revisamos tu caso y te decimos qué servicio tiene sentido primero. Si lo que necesitas es algo más simple, o ni siquiera necesitas software, también te lo decimos.',
+  },
+  {
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y trabajamos de forma remota con empresas de toda Colombia: videollamadas, acceso seguro a tus herramientas y entregas por etapas.',
+  },
+  {
+    question: '¿Con quién hablo y de quién queda lo que construyen?',
+    answer:
+      'Hablas con quien hace el trabajo, no con un intermediario. Lo que construimos queda a tu nombre: el código, las cuentas y los accesos son tuyos, y puedes seguir con otro equipo cuando quieras.',
+  },
+  {
+    question: '¿Qué diferencia hay entre contratar un servicio y tomar clases?',
+    answer:
+      'Con un servicio, nosotros hacemos el trabajo y te lo entregamos documentado. Con las clases, aprendes a hacerlo tú, 1 a 1 y a tu ritmo. También puedes combinar las dos: que construyamos algo y que tu equipo aprenda a mantenerlo.',
+  },
 ];
 ---
 
 <Layout metadata={metadata}>
   <StructuredData
     schema={[
-      itemListSchema(pilares),
-      breadcrumbSchema([
-        { name: 'Inicio', path: '/' },
-        { name: 'Servicios', path: PATH },
-      ]),
+      itemListSchema(listed.map((service) => ({ name: service.name, path: landingPath(service.slug) }))),
+      faqSchema(faqs),
+      breadcrumbSchema(hubBreadcrumbs(hub)),
     ]}
   />
 
-  <Breadcrumbs
-    items={[
-      { name: 'Inicio', path: '/' },
-      { name: 'Servicios', path: '/servicios' },
-    ]}
-  />
+  <Breadcrumbs items={hubBreadcrumbs(hub)} />
 
   <Hero
-    tagline="Servicios"
+    tagline="Servicios de tecnología"
     actions={[
-      { variant: 'primary', text: 'Agendar una consulta', href: '/booking', icon: 'tabler:calendar' },
-      { text: 'Escribirnos', href: '#contacto', variant: 'tertiary' },
+      { variant: 'primary', text: 'Pedir una propuesta', href: '#contacto', icon: 'tabler:message-circle' },
+      { text: 'Ver los servicios', href: '#desarrollo', variant: 'tertiary' },
     ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Servicios de tecnología e inteligencia artificial',
-    }}
+    image={{ src: hero.src, alt: hero.alt }}
   >
     <Fragment slot="title">
-      Formación, automatización y <span class="text-accent">tecnología que sostiene</span> tu operación
+      <span class="text-accent">Servicios de software</span> en Medellín para construir, automatizar y proteger tu negocio
     </Fragment>
 
     <Fragment slot="subtitle">
-      Trabajamos en tres frentes: enseñar a tu equipo, automatizar lo que hoy se hace a mano y construir y cuidar la
-      tecnología sobre la que corre tu negocio. Elegí por dónde empezar.
+      Estos son nuestros servicios de software y tecnología: desarrollamos software a medida, páginas web, apps y bots;
+      automatizamos procesos con IA; administramos servidores y la nube; protegemos tu empresa y gestionamos su
+      marketing digital. Trabajamos con empresas de Medellín y de toda Colombia.
     </Fragment>
 
     <Fragment slot="trust">
-      <span>Primera consulta sin costo</span>
+      <span>Asesoría gratuita</span>
       <span>·</span>
-      <span>Hablás con quien hace el trabajo</span>
+      <span>Hablas con quien hace el trabajo</span>
       <span>·</span>
-      <span>Todo lo que construimos queda tuyo</span>
+      <span>Lo que construimos queda a tu nombre</span>
     </Fragment>
   </Hero>
 
-  <Features
-    id="ia-whatsapp"
-    tagline="IA y WhatsApp"
-    title="Atención automática que no parece automática"
-    subtitle="Asistentes y agentes de voz que atienden, califican y agendan 24/7, sobre canales oficiales."
-    columns={2}
-    items={[
-      {
-        title: 'Asistente de WhatsApp con IA',
-        description:
-          'Responde en lenguaje natural, califica interesados, agenda y deriva a una persona cuando hace falta. Conectado a tu CRM.',
-        icon: 'tabler:message-chatbot',
-        callToAction: { text: 'Ver detalle', href: '/asistente-de-whatsapp' },
-      },
-      {
-        title: 'WhatsApp Business API',
-        description:
-          'Habilitación completa con Meta: verificación del negocio, número oficial, plantillas aprobadas e integración.',
-        icon: 'tabler:brand-whatsapp',
-        callToAction: { text: 'Ver detalle', href: '/whatsapp-business-api' },
-      },
-      {
-        title: 'Llamadas de marketing con IA',
-        description: 'Campañas de voz automatizadas que contactan, presentan y registran el resultado de cada llamada.',
-        icon: 'tabler:phone-outgoing',
-        callToAction: { text: 'Ver detalle', href: '/llamadas-de-marketing' },
-      },
-      {
-        title: 'Gestor de llamadas',
-        description:
-          'Recepcionista virtual que atiende, deriva y toma mensajes las 24 horas, sin que se pierda una llamada.',
-        icon: 'tabler:phone-call',
-        callToAction: { text: 'Ver detalle', href: '/gestor-de-llamadas' },
-      },
-    ]}
-  />
+  <WidgetWrapper id="intro" containerClass="max-w-4xl">
+    <Headline tagline="Quiénes somos" title="Un solo lugar para construir, automatizar y sostener tu tecnología" />
 
-  <Features
-    id="formacion"
-    tagline="Formación"
-    title="Que tu equipo pueda sin depender de nadie"
-    subtitle="Enseñamos los conceptos antes que las herramientas. Es más lento al principio y es lo único que sirve después."
-    columns={3}
-    items={[
-      {
-        title: 'Clases de IA',
-        description:
-          'Desde usar bien las herramientas hasta construir con modelos. Con un profesor que trabaja en esto todos los días.',
-        icon: 'tabler:brain',
-        callToAction: { text: 'Ver detalle', href: '/clases-de-ia' },
-      },
-      {
-        title: 'Clases de Python',
-        description:
-          'De cero a automatizar tareas reales de tu trabajo. Individuales o para equipos, online o presencial.',
-        icon: 'tabler:code',
-        callToAction: { text: 'Ver detalle', href: '/clases-de-python' },
-      },
-      {
-        title: 'Capacitaciones para empresas',
-        description: 'Programas armados sobre los procesos de tu organización, con casos del área que participa.',
-        icon: 'tabler:school',
-        callToAction: { text: 'Ver detalle', href: '/capacitaciones' },
-      },
-    ]}
-  />
+    <div class="mx-auto max-w-3xl space-y-4 text-lg leading-relaxed">
+      <p>
+        Sonmyd es un negocio de tecnología de Medellín. Hablas con quien hace el trabajo, y lo que construimos queda a
+        tu nombre: el código, las cuentas y los accesos son tuyos. Preferimos recomendarte la solución más simple que
+        resuelva tu problema, aunque eso signifique venderte menos.
+      </p>
+      <p>
+        Trabajamos con tecnologías como Python, TypeScript, PostgreSQL, n8n, AWS y Linux, y con modelos de IA, según lo
+        que cada proyecto necesite. Cada servicio tiene su propia página con el detalle, las preguntas frecuentes y la
+        forma de trabajo. Conoce <a href="/autor" class={LINK}>quién está detrás de Sonmyd</a>.
+      </p>
+      <p>
+        ¿No sabes por dónde empezar? Si te frenan las tareas repetitivas, mira la
+        <a href={landingPath('automatizaciones')} class={LINK}>automatización de procesos</a>; si quieres que tus
+        clientes te encuentren y te escriban, el <a href={landingPath('desarrollo-web')} class={LINK}>desarrollo web</a>
+        y el <a href={landingPath('marketing-digital')} class={LINK}>marketing digital</a>; y si te preocupa la
+        infraestructura, los <a href={landingPath('servidores-y-vps')} class={LINK}>servidores Linux y VPS</a> y la
+        <a href={landingPath('ciberseguridad')} class={LINK}>ciberseguridad para pymes</a>.
+      </p>
+    </div>
+  </WidgetWrapper>
 
-  <Features
-    id="tecnologia"
-    tagline="Tecnología"
-    title="Construir, conectar y sostener"
-    subtitle="El software que tu operación necesita, la infraestructura donde corre y la seguridad que lo protege."
-    columns={2}
+  {
+    sections.map((section, index) => (
+      <WidgetWrapper id={section.id} containerClass="max-w-6xl" bg={index % 2 === 0 ? SURFACE : undefined}>
+        <Headline tagline={section.tagline} title={section.title} subtitle={section.subtitle} />
+
+        <ul class={gridClass(section.services.length)}>
+          {section.services.map((service) => (
+            <li class="card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]">
+              <h3 class="text-lg font-semibold text-heading">
+                <a
+                  href={landingPath(service.slug)}
+                  class="underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0"
+                >
+                  {service.name}
+                </a>
+              </h3>
+              <p class="mt-2 text-muted">{service.summary}</p>
+            </li>
+          ))}
+        </ul>
+
+        {section.more && (
+          <p class="mt-10 text-center">
+            <a href={section.more.href} class="btn-secondary">
+              {section.more.text}
+              <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+            </a>
+          </p>
+        )}
+      </WidgetWrapper>
+    ))
+  }
+
+  <WidgetWrapper id="aprender" containerClass="max-w-3xl">
+    <div class="card border-l-4 border-l-[color:var(--aw-color-cta)] md:p-8">
+      <h2 class="font-heading text-2xl font-bold leading-[1.15] text-heading md:text-3xl">
+        ¿Quieres aprender a hacerlo tú mismo?
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        También damos clases 1 a 1 de programación, inteligencia artificial, AWS, Linux, n8n y marketing digital, en
+        persona en Medellín o en línea para toda Colombia.
+      </p>
+      <p class="mt-6">
+        <a href={landingPath('clases-de-programacion')} class="btn-secondary">
+          Ver las clases de programación
+          <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Proceso"
+    title="Cómo trabajamos, sea cual sea el servicio"
     items={[
       {
-        title: 'Automatizaciones e integraciones',
+        title: 'Paso 1: <span class="font-medium">Nos cuentas el problema</span>',
         description:
-          'WhatsApp, Google Workspace, tu CRM y tus sistemas conectados para que los datos dejen de copiarse a mano.',
-        icon: 'tabler:arrows-shuffle',
-        callToAction: { text: 'Ver detalle', href: '/automatizaciones' },
+          'Describes qué necesitas resolver, no la solución. Lo hacemos por WhatsApp o en una asesoría gratuita.',
+        icon: 'tabler:message-circle',
       },
       {
-        title: 'Desarrollo de software a medida',
+        title: 'Paso 2: <span class="font-medium">Definimos el alcance</span>',
         description:
-          'Aplicaciones internas, APIs e integraciones con pruebas automatizadas. El código queda en tu repositorio.',
-        icon: 'tabler:app-window',
-        callToAction: { text: 'Ver detalle', href: '/desarrollo-de-software' },
+          'Proponemos la versión más pequeña que ya te sirve y la cotizamos por escrito según el alcance, sin costo.',
+        icon: 'tabler:target',
       },
       {
-        title: 'Servidores y VPS',
-        description: 'Despliegue, backups probados, monitoreo con alertas y parches de seguridad al día.',
-        icon: 'tabler:server',
-        callToAction: { text: 'Ver detalle', href: '/servidores-y-vps' },
+        title: 'Paso 3: <span class="font-medium">Construimos por etapas</span>',
+        description: 'Entregamos por partes, con avances que puedes ver y probar, y las cuentas quedan a tu nombre.',
+        icon: 'tabler:stack-2',
       },
       {
-        title: 'Ciberseguridad',
+        title: 'Paso 4: <span class="font-medium">Entregamos y acompañamos</span>',
         description:
-          'Auditoría de accesos, segundo factor, plan de backups y capacitación del equipo. Sin vender miedo.',
-        icon: 'tabler:shield-lock',
-        callToAction: { text: 'Ver detalle', href: '/ciberseguridad' },
+          'Documentamos, capacitamos a tu equipo y, si lo quieres, seguimos manteniéndolo. La decisión es tuya.',
+        icon: 'tabler:package-export',
       },
     ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <CallToAction title="¿No sabes por dónde empezar?">
+    <Fragment slot="subtitle">
+      Cuéntanos el problema y te decimos qué servicio tiene sentido primero. Cotizamos según el alcance, sin costo.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={WHATSAPP_MESSAGE} location="servicios-mid" text="Hablar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind="servicio" message={WHATSAPP_MESSAGE} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre nuestros servicios de software"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
   <LeadCapture
     formId="lead-servicios"
-    title="¿No sabés por dónde empezar?"
-    subtitle="Contanos el problema, no la solución. Con eso alcanza para decirte qué te conviene y qué no necesitás."
+    title="Cuéntanos tu problema y te orientamos"
+    subtitle="Describe qué quieres resolver y con qué herramientas trabajas hoy. Te respondemos con una recomendación concreta de por dónde empezar y una cotización según el alcance."
     button="Quiero que me orienten"
     bullets={[
-      'Primera consulta sin costo ni compromiso',
-      'Si no somos los indicados, te lo decimos',
-      'Hablás con quien va a hacer el trabajo',
-      'No compartimos tus datos con terceros',
+      'Asesoría gratuita y cotización sin costo',
+      'Si no necesitas lo que ofrecemos, te lo decimos',
+      'Hablas con quien va a hacer el trabajo',
+      'Atención en Medellín y remota para toda Colombia',
     ]}
   />
 </Layout>

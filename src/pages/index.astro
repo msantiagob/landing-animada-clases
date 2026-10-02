@@ -1,394 +1,453 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 import Layout from '~/layouts/PageLayout.astro';
 
 import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
-import Features from '~/components/widgets/Features.astro';
-import Features2 from '~/components/widgets/Features2.astro';
 import Steps from '~/components/widgets/Steps.astro';
-import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Image from '~/components/common/Image.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
+
+import { BUSINESS } from '~/data/business';
+import { HUBS, LANDINGS, SILOS } from '~/data/landings';
+import type { SiloId } from '~/data/landings';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { HUB_LINK_LABEL, getHub, landingPath, landingsBySilo, landingsForHub } from '~/utils/landings';
 import { faqSchema, itemListSchema } from '~/utils/seo';
+import { getSeoImage } from '~/utils/seo-images';
+import { formatList } from '~/utils/service-area';
+
+/**
+ * Inicio.
+ *
+ * Es la puerta de entrada a los tres hubs (clases, servicios y marketing) y
+ * reparte enlaces hacia todas las landings del registro. Todo lo que lista sale
+ * de `src/data/landings.ts`: una landing nueva aparece aquí sin tocar esta página.
+ *
+ * No lleva cifras, clientes ni reseñas: ninguna se ha verificado. Los datos del
+ * negocio (ciudad, teléfono, municipios) salen de `src/data/business.ts`.
+ */
+
+const homeImage = getSeoImage('home');
+const medellinImage = getSeoImage('medellin');
+
+// La imagen social se declara como `~/assets/...` y `adaptOpenGraphImages` la
+// resuelve al renderizar: es la misma convención que usa `landingMetadata()`.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
 
 const metadata = {
-  title: 'Clases de IA, Asistente de WhatsApp y Gestor de Llamadas | Sonmyd',
+  title: 'Software, IA y clases de programación en Medellín | Sonmyd',
   description:
-    'Clases de inteligencia artificial con profesor especializado, asistentes de WhatsApp con IA, llamadas de marketing automatizadas y gestor de llamadas 24/7 para empresas. En español.',
+    'Sonmyd, en Medellín: desarrollamos software, apps, páginas web, bots y automatizaciones con IA, y enseñamos programación, IA, AWS y Linux. Escríbenos.',
   ignoreTitleTemplate: true,
   canonical: '/',
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
+
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
+const marketingHub = getHub('marketing-digital');
+
+const courses = landingsForHub(courseHub.slug);
+
+// Los silos que cuelgan del hub de servicios (marketing tiene su propio hub y su propia sección).
+const serviceGroups = (Object.keys(SILOS) as SiloId[])
+  .filter((silo) => SILOS[silo].hub === servicesHub.slug)
+  .map((silo) => ({ id: silo, name: SILOS[silo].name, landings: landingsBySilo(silo) }));
+
+const marketing = landingsBySilo('marketing');
+
+const COUNTRY_NAME = 'Colombia';
 
 const faqs = [
   {
-    question: '¿Con quién trabajo exactamente?',
+    question: '¿Qué hace Sonmyd exactamente?',
     answer:
-      'Con Santiago Bedoya, que es quien da las clases y escribe el código. No hay una capa de vendedores entre vos y el trabajo. Para proyectos grandes se suma gente puntual, y se te dice quién y para qué.',
+      'Dos cosas que se complementan: construimos y enseñamos. Desarrollamos software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores, seguridad y campañas de marketing digital, y damos clases 1 a 1 de programación, inteligencia artificial, AWS, Linux, n8n y marketing digital. Puedes empezar aprendiendo y terminar contratando, o al revés.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. Damos clases 1 a 1 en persona en Medellín y municipios cercanos, y también en línea y en vivo para estudiantes de toda Colombia. El plan se arma a partir de tu nivel actual y de lo que quieres lograr.',
+  },
+  {
+    question: '¿Atienden fuera de Medellín?',
+    answer: `Estamos en Medellín y atendemos en persona en ${formatList(BUSINESS.areaServed)}. Si estás en otra ciudad, trabajamos de forma remota con clientes y estudiantes de toda Colombia.`,
   },
   {
     question: '¿Cuánto cuesta?',
     answer:
-      'Depende del alcance, y desconfiá de quien te tire un número sin haber entendido el problema. Lo que sí hacemos es acotar: definimos la versión más chica que ya te sirve, la presupuestamos con precisión y después discutimos el resto.',
+      'Depende de lo que necesites, y no damos un número sin haber entendido el problema. En los servicios, primero acotamos la versión más pequeña que ya te sirve y presentamos alcance, plazo y precio por escrito. En las clases, escríbenos y te contamos cómo se arma el plan y cuánto cuesta.',
   },
   {
-    question: '¿Cuánto tardan?',
+    question: '¿Necesito saber de tecnología para empezar?',
     answer:
-      'Una automatización simple entre dos sistemas con API: de días a dos semanas. Un asistente de WhatsApp: de dos a cuatro semanas. Un sistema a medida con varias partes: de dos a cuatro meses hasta la primera versión usable. Los plazos van por escrito en la propuesta.',
+      'No. Las clases parten de tu nivel actual, incluso desde cero. Y en los proyectos te explicamos en lenguaje claro lo que haga falta para que puedas decidir bien.',
   },
   {
-    question: '¿Qué pasa si no son los indicados para mi caso?',
+    question: '¿Cómo empiezo?',
     answer:
-      'Te lo decimos en la primera charla y, si podemos, te orientamos hacia dónde mirar. Tomar un proyecto que no encaja termina mal para los dos: vos pagás algo que no resuelve y nosotros entregamos algo de lo que no estamos orgullosos.',
-  },
-  {
-    question: '¿El código y los accesos quedan míos?',
-    answer:
-      'Sí, sin asteriscos, y desde el primer día: repositorio, documentación y credenciales. Si mañana querés seguir con otro equipo, podés. Retener clientes por dependencia técnica es una forma pésima de hacer negocios.',
-  },
-  {
-    question: '¿Necesito saber de tecnología para trabajar con ustedes?',
-    answer:
-      'No. Explicamos en castellano lo que hace falta para que puedas decidir, no para lucirnos. Y si querés entenderlo a fondo, para eso están las clases: el objetivo ahí es justamente que dejes de necesitarnos.',
-  },
-  {
-    question: '¿Ofrecen soporte después de entregar?',
-    answer:
-      'Sí, con un alcance y un horario acordados por escrito. No prometemos soporte 24/7 porque no podríamos cumplirlo, y una promesa de disponibilidad que se rompe el primer domingo es peor que no haberla hecho.',
+      'Agenda una asesoría gratuita, escríbenos por WhatsApp o deja tus datos en el formulario. Nos cuentas qué necesitas y te decimos si podemos ayudarte y cómo. Si no somos los indicados para tu caso, también te lo decimos.',
   },
 ];
+
+// Clases compartidas por las tarjetas de landings: la tarjeta entera es clicable
+// con un enlace extendido (`after:absolute after:inset-0`) y el ancla es el
+// nombre de la landing destino, que describe adónde lleva el enlace.
+const cardClass = 'card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]';
+const cardLinkClass =
+  'underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0';
+const seeAllClass = 'btn-secondary';
 ---
 
 <Layout metadata={metadata}>
   <StructuredData
     schema={[
       faqSchema(faqs),
-      itemListSchema([
-        { name: 'Clases de IA', path: '/clases-de-ia' },
-        { name: 'Clases de Python', path: '/clases-de-python' },
-        { name: 'Asistente de WhatsApp con IA', path: '/asistente-de-whatsapp' },
-        { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
-        { name: 'Llamadas de marketing con IA', path: '/llamadas-de-marketing' },
-        { name: 'Gestor de llamadas', path: '/gestor-de-llamadas' },
-        { name: 'Automatizaciones', path: '/automatizaciones' },
-        { name: 'Desarrollo de software', path: '/desarrollo-de-software' },
-        { name: 'Servidores y VPS', path: '/servidores-y-vps' },
-        { name: 'Ciberseguridad', path: '/ciberseguridad' },
-      ]),
+      itemListSchema(
+        [...HUBS, ...LANDINGS].map(({ name, slug }) => ({
+          name,
+          path: landingPath(slug),
+        }))
+      ),
     ]}
   />
 
-  <!-- Hero Widget ******************* -->
+  <!-- Hero ************************** -->
 
-  <Hero
-    actions={[
-      { variant: 'primary', text: 'Consulta gratuita', href: '#contacto', icon: 'tabler:calendar-plus' },
-      { text: 'Ver todos los servicios', href: '/servicios', variant: 'tertiary' },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Inteligencia artificial y automatización aplicadas a empresas',
-    }}
-  >
+  <Hero tagline="Medellín, Colombia" image={homeImage}>
     <Fragment slot="title">
-      Te enseñamos <span class="text-accent">inteligencia artificial</span> o la implementamos por vos
+      Desarrollo de software, IA y clases de programación <span class="text-accent">en Medellín</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Clases de IA y Python, asistentes de WhatsApp sobre la API oficial de Meta, automatizaciones, desarrollo de
-      software, servidores y seguridad. En español, con quien hace el trabajo y no con un vendedor.
+      Desarrollamos software, apps, páginas web, bots y automatizaciones con IA, y enseñamos programación, IA, AWS y
+      Linux en clases 1 a 1. Hablas con quien hace el trabajo, no con un vendedor.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <Button
+          variant="primary"
+          text="Agenda una asesoría gratuita"
+          href="/booking"
+          icon="tabler:calendar-plus"
+          class="w-full sm:w-auto"
+        />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton
+          location="home-hero"
+          variant="secondary"
+          message="Hola, quiero información sobre las clases y los servicios de Sonmyd."
+          class="w-full sm:w-auto"
+        />
+      </div>
     </Fragment>
 
     <Fragment slot="trust">
-      <span>Consulta inicial sin costo</span>
+      <span>Asesoría inicial gratuita</span>
       <span>·</span>
-      <span>Todo lo que construimos queda tuyo</span>
+      <span>Clases 1 a 1, en Medellín o en línea</span>
       <span>·</span>
       <span>Si no somos los indicados, te lo decimos</span>
     </Fragment>
   </Hero>
 
-  <!-- Note Widget ******************* -->
+  <!-- Dos caminos ******************* -->
 
-  <Note
-    title="Cómo trabajamos:"
-    description="Conceptos antes que herramientas, entregas que podés usar y ningún proyecto que no te convenga"
-  />
-
-  <!-- Servicios principales: enlazado interno hacia las páginas que queremos posicionar -->
-
-  <Features
-    id="servicios-ia"
-    tagline="Servicios de IA"
-    title="Inteligencia artificial que trabaja para tu negocio"
-    subtitle="Cuatro soluciones concretas, en español y funcionando desde el primer mes."
-    columns={2}
-    items={[
-      {
-        title: 'Clases de IA con profesor dedicado',
-        description:
-          'Clases particulares y capacitaciones para empresas. Aprendés inteligencia artificial aplicada a tu trabajo real, con un profesor que te corrige y te acompaña.',
-        icon: 'tabler:school',
-        callToAction: { text: 'Ver las clases de IA', href: '/clases-de-ia' },
-      },
-      {
-        title: 'Asistente de WhatsApp con IA',
-        description:
-          'Responde, califica interesados y agenda reuniones las 24 horas sobre la API oficial de WhatsApp Business, integrado a tu CRM.',
-        icon: 'tabler:brand-whatsapp',
-        callToAction: { text: 'Ver el asistente de WhatsApp', href: '/asistente-de-whatsapp' },
-      },
-      {
-        title: 'Llamadas de marketing con IA',
-        description:
-          'Campañas de llamadas salientes con agentes de voz que conversan en español natural, manejan objeciones y agendan reuniones a escala.',
-        icon: 'tabler:phone-call',
-        callToAction: { text: 'Ver las llamadas de marketing', href: '/llamadas-de-marketing' },
-      },
-      {
-        title: 'Gestor de llamadas 24/7',
-        description:
-          'Recepcionista virtual que atiende cada llamada entrante, entiende el motivo, agenda turnos y deriva al área correcta. Ninguna llamada perdida.',
-        icon: 'tabler:phone-incoming',
-        callToAction: { text: 'Ver el gestor de llamadas', href: '/gestor-de-llamadas' },
-      },
-    ]}
-  />
-
-  <!-- Features Widget *************** -->
-
-  <Features
-    id="features"
-    tagline="Por qué elegirnos"
-    title="Lo que obtienes con Sonmyd"
-    subtitle="Somos líderes en soluciones tecnológicas empresariales. Expertos certificados con más de 500 proyectos exitosos y capacitaciones especializadas en las últimas tecnologías."
-    items={[
-      {
-        title: 'Soluciones de Inteligencia Artificial',
-        description:
-          'Implementamos IA avanzada para automatizar procesos, optimizar operaciones y generar insights valiosos para tu negocio.',
-        icon: 'tabler:brain',
-      },
-      {
-        title: 'Desarrollo Web Multiplataforma',
-        description:
-          'Creamos aplicaciones web y móviles de alto rendimiento que funcionan perfectamente en cualquier dispositivo y plataforma.',
-        icon: 'tabler:device-desktop',
-      },
-      {
-        title: 'Capacitaciones Especializadas',
-        description:
-          'Formamos a tu equipo en las últimas tecnologías con programas personalizados y certificaciones reconocidas internacionalmente.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Automatización de Procesos',
-        description:
-          'Optimizamos tus operaciones con sistemas automatizados que reducen costos, eliminan errores y aumentan la productividad empresarial.',
-        icon: 'tabler:robot',
-      },
-      {
-        title: 'Soporte Técnico Especializado',
-        description:
-          'Ofrecemos acompañamiento continuo con nuestro equipo de expertos, garantizando el éxito y evolución constante de tus proyectos tecnológicos.',
-        icon: 'tabler:headset',
-      },
-      {
-        title: 'Innovación Continua',
-        description:
-          'Mantenemos tu negocio a la vanguardia con las últimas tendencias tecnológicas y metodologías ágiles de desarrollo.',
-        icon: 'tabler:bulb',
-      },
-    ]}
-  />
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    tagline="Nuestro enfoque"
-    title="Metodología Sonmyd: ¡Donde la Innovación se Encuentra con Resultados!"
-    items={[
-      {
-        title: 'Tecnologías de Vanguardia',
-        description:
-          'Utilizamos las últimas tecnologías en IA, cloud computing y frameworks modernos para garantizar soluciones escalables y futuras.',
-      },
-      {
-        title: 'Metodologías Ágiles',
-        description:
-          'Implementamos Scrum y DevOps para entregas rápidas, comunicación transparente y adaptación continua a tus necesidades.',
-      },
-      {
-        title: 'Equipo Multidisciplinario',
-        description:
-          'Contamos con especialistas en IA, desarrollo full-stack, UX/UI y arquitectura de software trabajando en sinergia para tu proyecto.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Colorful Image',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Innovación que impulsa resultados
-      </h3>
-      Obtén una ventaja competitiva con tecnologías de última generación y expertise comprobado
-    </Fragment>
-
+  <WidgetWrapper id="caminos" containerClass="max-w-6xl">
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
-  </Content>
 
-  <!-- Content Widget **************** -->
+    <Headline
+      tagline="Cómo podemos ayudarte"
+      title="Aprende a hacerlo tú o deja que lo hagamos por ti"
+      subtitle="Elige por dónde empezar. Puedes pasar de un camino al otro cuando quieras: lo que enseñamos es lo mismo que construimos."
+    />
 
-  <Content
-    isAfterContent
-    items={[
-      {
-        title: 'Empezás con un caso, no con un contrato anual',
-        description:
-          'Arrancamos por el proceso que más te duele y lo ponemos a funcionar. Si no da resultado medible, no seguimos.',
-      },
-      {
-        title: 'Todo queda documentado y auditable',
-        description:
-          'Conversaciones, llamadas y decisiones quedan registradas. Podés revisar qué respondió la IA y por qué.',
-      },
-      {
-        title: 'Tu equipo aprende a operarlo',
-        description:
-          'No te dejamos dependiendo de nosotros: capacitamos a tu gente para que ajuste y mantenga lo implementado.',
-      },
-      {
-        title: 'Integrado a lo que ya usás',
-        description:
-          'CRM, calendario, planillas y centralita actual. No hay que migrar nada ni cambiar el número de teléfono.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Equipo de Sonmyd trabajando en una implementación de inteligencia artificial',
-    }}
-  >
-    <Fragment slot="content">
-      <h2 class="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">Cómo trabajamos</h2>
-      La inteligencia artificial solo sirve si baja a un proceso concreto. Por eso no vendemos licencias: implementamos una
-      solución, la medimos y te enseñamos a operarla.
-    </Fragment>
+    <div class="grid gap-6 md:grid-cols-2">
+      <article
+        class="card relative flex h-full flex-col focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]"
+      >
+        <Icon name="tabler:school" class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary" aria-hidden="true" />
+        <h3 class="text-2xl font-semibold text-heading">Aprende</h3>
+        <p class="mt-3 text-muted">
+          Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web y de apps, AWS, Linux, n8n y
+          marketing digital. En Medellín o en línea, con proyectos reales y a tu ritmo.
+        </p>
+        <p class="mt-auto pt-6">
+          <a
+            href={landingPath(courseHub.slug)}
+            class="inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline focus:outline-none after:absolute after:inset-0"
+          >
+            Ver las clases de programación
+            <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </p>
+      </article>
 
+      <article
+        class="card relative flex h-full flex-col focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]"
+      >
+        <Icon name="tabler:code" class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary" aria-hidden="true" />
+        <h3 class="text-2xl font-semibold text-heading">Lo hacemos por ti</h3>
+        <p class="mt-3 text-muted">
+          Software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores, seguridad y marketing
+          digital. Tú nos cuentas el problema; nosotros lo construimos y lo medimos.
+        </p>
+        <p class="mt-auto pt-6">
+          <a
+            href={landingPath(servicesHub.slug)}
+            class="inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline focus:outline-none after:absolute after:inset-0"
+          >
+            Ver los servicios
+            <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </p>
+      </article>
+    </div>
+  </WidgetWrapper>
+
+  <!-- Clases ************************ -->
+
+  <WidgetWrapper id="clases" containerClass="max-w-6xl">
+    <Headline
+      tagline="Clases"
+      title="Clases de programación 1 a 1 en Medellín y en línea"
+      subtitle="Elige un tema o cuéntanos tu objetivo y armamos el plan contigo."
+    />
+
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        courses.map((course) => (
+          <li class={cardClass}>
+            <h3 class="text-lg font-semibold text-heading">
+              <a href={landingPath(course.slug)} class={cardLinkClass}>
+                {course.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{course.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(courseHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[courseHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Servicios, por silo *********** -->
+
+  <WidgetWrapper id="servicios" containerClass="max-w-6xl">
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
-  </Content>
 
-  <!-- Steps Widget ****************** -->
+    <Headline
+      tagline="Servicios"
+      title="Software, IA y tecnología para tu negocio"
+      subtitle="Desarrollo, automatización con IA, nube y seguridad, hechos desde Medellín para empresas y personas de toda Colombia."
+    />
+
+    <div class="space-y-12">
+      {
+        serviceGroups.map((group) => (
+          <div>
+            <h3 class="mb-5 text-xl font-bold text-heading">{group.name}</h3>
+            <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {group.landings.map((landing) => (
+                <li class={cardClass}>
+                  <h4 class="text-lg font-semibold text-heading">
+                    <a href={landingPath(landing.slug)} class={cardLinkClass}>
+                      {landing.name}
+                    </a>
+                  </h4>
+                  <p class="mt-2 text-muted">{landing.summary}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(servicesHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[servicesHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Marketing ********************* -->
+
+  <WidgetWrapper id="marketing" containerClass="max-w-6xl">
+    <Headline
+      tagline="Marketing digital"
+      title="Marketing digital para conseguir clientes"
+      subtitle="Campañas en Meta Ads, Google Shopping, posicionamiento SEO y llamadas con IA, con medición para saber qué funciona."
+    />
+
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        marketing.map((landing) => (
+          <li class={cardClass}>
+            <h3 class="text-lg font-semibold text-heading">
+              <a href={landingPath(landing.slug)} class={cardLinkClass}>
+                {landing.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{landing.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(marketingHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[marketingHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Cómo trabajamos *************** -->
 
   <Steps
-    title="Transforma tu negocio en 4 pasos simples con Sonmyd."
+    id="como-trabajamos"
+    tagline="Cómo trabajamos"
+    title="Un proceso simple, con las reglas claras desde el inicio"
     items={[
       {
-        title: 'Paso 1: <span class="font-medium">Consulta</span>',
+        title: '1. Hablamos de tu caso',
         description:
-          'Iniciamos con una consulta gratuita para entender tus necesidades. Analizamos tu negocio, objetivos y desafíos para diseñar la solución perfecta.',
+          'Nos cuentas qué necesitas o qué quieres aprender, por WhatsApp, por el formulario o en una asesoría gratuita. Escuchamos antes de proponer nada.',
         icon: 'tabler:messages',
       },
       {
-        title: 'Paso 2: <span class="font-medium">Planificación</span>',
+        title: '2. Definimos el alcance',
         description:
-          'Desarrollamos un plan detallado con cronogramas, hitos y entregables claros. Tu proyecto queda completamente estructurado antes de iniciar.',
-        icon: 'tabler:calendar-event',
+          'Acotamos la versión más pequeña que ya te sirve y la dejamos por escrito: qué se hace, cuánto cuesta y en cuánto tiempo. En las clases, armamos el plan a partir de tu nivel y de tu objetivo.',
+        icon: 'tabler:file-description',
       },
       {
-        title: 'Paso 3: <span class="font-medium">Desarrollo</span>',
+        title: '3. Construimos o enseñamos, por etapas',
         description:
-          'Nuestro equipo experto construye tu solución con las mejores prácticas, manteniéndote informado en cada etapa del proceso.',
+          'Avanzamos en entregas cortas para que veas resultados y puedas corregir el rumbo. En las clases se practica con proyectos reales, no con ejercicios de juguete.',
         icon: 'tabler:code',
       },
       {
-        title: 'Paso 4: <span class="font-medium">¡Lanzamiento y Soporte!</span>',
-        description: 'Implementamos tu solución y te acompañamos con soporte continuo, capacitación y actualizaciones.',
-        icon: 'tabler:rocket',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1616198814651-e71f960c3180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
-      alt: 'Steps image',
-    }}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Nuestros Servicios Principales"
-    subtitle="Soluciones tecnológicas especializadas que transforman tu negocio y potencian tu crecimiento empresarial"
-    tagline="Servicios"
-    items={[
-      {
-        title: 'Inteligencia Artificial',
+        title: '4. Medimos y ajustamos',
         description:
-          'Implementamos chatbots, análisis predictivo y automatización inteligente para optimizar tus operaciones.',
-        icon: 'flat-color-icons:template',
-      },
-      {
-        title: 'Desarrollo Web',
-        description: 'Creamos aplicaciones web modernas, rápidas y escalables que destacan en el mercado digital.',
-        icon: 'flat-color-icons:gallery',
-      },
-      {
-        title: 'Apps Multiplataforma',
-        description:
-          'Desarrollamos aplicaciones móviles nativas y híbridas que funcionan perfectamente en iOS y Android.',
-        icon: 'flat-color-icons:approval',
-      },
-      {
-        title: 'Automatización',
-        description:
-          'Optimizamos procesos empresariales con sistemas automatizados que ahorran tiempo y reducen errores.',
-        icon: 'flat-color-icons:document',
-      },
-      {
-        title: 'Capacitaciones',
-        description: 'Formamos a tu equipo en las últimas tecnologías con cursos especializados y certificaciones.',
-        icon: 'flat-color-icons:advertising',
-      },
-      {
-        title: 'Consultoría Técnica',
-        description: 'Asesoramos en arquitectura de software, migraciones cloud y transformación digital.',
-        icon: 'flat-color-icons:currency-exchange',
-      },
-      {
-        title: 'Soporte Técnico',
-        description: 'Brindamos soporte 24/7 y mantenimiento continuo para garantizar el óptimo funcionamiento.',
-        icon: 'flat-color-icons:voice-presentation',
-      },
-      {
-        title: 'Integraciones',
-        description:
-          'Conectamos tus sistemas existentes con nuevas tecnologías para crear un ecosistema digital unificado.',
-        icon: 'flat-color-icons:business-contact',
-      },
-      {
-        title: 'Analytics & BI',
-        description:
-          'Implementamos soluciones de Business Intelligence para convertir tus datos en insights accionables.',
-        icon: 'flat-color-icons:database',
+          'Revisamos con datos si funcionó (clientes, ventas, horas ahorradas) y ajustamos lo que haga falta.',
+        icon: 'tabler:chart-bar',
       },
     ]}
   >
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-surface"></div>
     </Fragment>
-  </Features2>
+  </Steps>
 
-  <!-- FAQs Widget ******************* -->
+  <!-- Por qué Sonmyd **************** -->
+
+  <Features
+    id="por-que-sonmyd"
+    tagline="Por qué Sonmyd"
+    title="Lo que nos diferencia, sin exagerar"
+    subtitle="Cuatro razones concretas, sin cifras infladas ni promesas vacías."
+    columns={2}
+    items={[
+      {
+        title: 'Un ingeniero real, no un intermediario',
+        description:
+          'Santiago Bedoya, ingeniero de software e instructor, escribe el código y da las clases. No hay una capa de vendedores entre tú y el trabajo.',
+        icon: 'tabler:user-check',
+        callToAction: { text: 'Conoce a Santiago', href: '/autor' },
+      },
+      {
+        title: 'Clases 1 a 1, a tu medida',
+        description:
+          'El plan se arma a partir de tu nivel y de lo que quieres lograr, con proyectos reales en lugar de ejercicios de juguete. En Medellín o en línea.',
+        icon: 'tabler:school',
+      },
+      {
+        title: 'Enseñamos y construimos',
+        description:
+          'Lo que enseñamos sale de lo que construimos todos los días, y lo que construimos lo puedes aprender a operar. Puedes empezar por una cosa y pasar a la otra.',
+        icon: 'tabler:refresh',
+      },
+      {
+        title: 'Medimos lo que importa',
+        description:
+          'Antes de empezar acordamos cómo vamos a saber si funcionó (clientes, ventas, horas ahorradas) y lo revisamos con datos, no con opiniones.',
+        icon: 'tabler:target-arrow',
+      },
+    ]}
+  />
+
+  <!-- Local: Medellín *************** -->
+
+  <div class="bg-surface">
+    <ServiceArea
+      id="medellin"
+      kind="servicio"
+      message="Hola, quiero información sobre las clases y los servicios de Sonmyd en Medellín."
+    />
+
+    <WidgetWrapper containerClass="max-w-5xl pt-0 md:pt-0 lg:pt-0">
+      <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <Image
+          class="w-full rounded-2xl border border-line shadow-card-lg"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1023px) 100vw, 480px"
+          width={1024}
+          height={576}
+          {...medellinImage}
+        />
+
+        <address class="card not-italic">
+          <p class="eyebrow">Datos del negocio</p>
+          <p class="mt-3 text-xl font-semibold text-heading">{BUSINESS.name}</p>
+          <p class="mt-1 text-muted">
+            {BUSINESS.address.locality}, {BUSINESS.address.region}, {COUNTRY_NAME}
+          </p>
+          <p class="mt-3 text-default">
+            WhatsApp: <strong class="font-semibold text-heading">{BUSINESS.telephone}</strong>
+          </p>
+          <p class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
+            <a class="text-primary underline underline-offset-4" href="/contact">Formulario de contacto</a>
+            <a class="text-primary underline underline-offset-4" href="/booking">Agenda una asesoría</a>
+          </p>
+        </address>
+      </div>
+    </WidgetWrapper>
+  </div>
+
+  <!-- FAQs ************************** -->
 
   <FAQs
-    title="Preguntas frecuentes"
-    subtitle="Las dudas que aparecen antes de escribirnos, respondidas sin vueltas."
+    id="preguntas-frecuentes"
     tagline="Dudas comunes"
+    title="Preguntas frecuentes"
+    subtitle="Lo que suelen preguntar antes de escribirnos."
     classes={{ container: 'max-w-6xl' }}
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
@@ -398,7 +457,38 @@ const faqs = [
   <LeadCapture
     formId="lead-home"
     title="Empecemos por tu caso"
-    subtitle="Contanos qué querés resolver y te decimos si podemos ayudarte, cómo y qué implica. Si no somos los indicados, también te lo decimos."
+    subtitle="Cuéntanos si quieres aprender o que lo hagamos por ti, y qué quieres lograr. Te decimos si podemos ayudarte, cómo y qué implica. Si no somos los indicados, también te lo decimos."
+    bullets={[
+      'Primera consulta sin costo y sin compromiso',
+      'Hablas con quien hace el trabajo, no con un vendedor',
+      'Si no somos los indicados para tu caso, te lo decimos',
+      'Tus datos no se venden ni se ceden a terceros',
+    ]}
     button="Quiero que me contacten"
   />
+
+  <!--
+    Información de la aplicación. Google la lee sin ejecutar JavaScript para
+    verificar la marca y el uso de Google Calendar en el OAuth: por eso es texto
+    visible, siempre en el HTML y sin ningún mecanismo para ocultarlo.
+  -->
+  <section id="sobre-la-plataforma" aria-label="Acerca de la plataforma Sonmyd" class="border-t border-line bg-page">
+    <div class="mx-auto flex max-w-3xl flex-col items-center gap-3 px-4 py-12 text-center sm:px-6">
+      <p class="text-sm font-bold uppercase tracking-widest text-heading">Sonmyd</p>
+      <p class="text-sm leading-relaxed text-muted">
+        Plataforma de tecnología, automatización e inteligencia artificial que opera desde Medellín, Colombia:
+        desarrollo de software, sitios web y aplicaciones, integraciones con WhatsApp Business y con Google Calendar
+        para el agendamiento de citas, automatización de procesos empresariales y clases de programación.
+      </p>
+      <p class="text-sm leading-relaxed text-muted">
+        Sonmyd accede a Google Calendar a través de OAuth, con la autorización del usuario, para crear y gestionar
+        citas. Este sitio utiliza Google Analytics, a través de Google Tag Manager, para medir el tráfico web.
+      </p>
+      <nav aria-label="Información legal" class="flex items-center gap-3 text-sm text-muted">
+        <a class="underline underline-offset-4 hover:text-heading" href="/privacidad">Política de privacidad</a>
+        <span aria-hidden="true">·</span>
+        <a class="underline underline-offset-4 hover:text-heading" href="/terminos">Términos y condiciones</a>
+      </nav>
+    </div>
+  </section>
 </Layout>

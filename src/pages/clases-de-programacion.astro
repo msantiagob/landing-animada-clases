@@ -1,0 +1,251 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getHub, hubBreadcrumbs, landingMetadata, landingPath, landingsForHub } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, itemListSchema } from '~/utils/seo';
+
+/**
+ * Hub de formación: "clases de programación".
+ *
+ * Su trabajo es doble: posicionar la keyword amplia y repartir autoridad hacia
+ * cada curso. Por eso no repite el temario de los cursos: ayuda a elegir y los
+ * enlaza. La lista sale del registro (`landingsForHub`), así que un curso nuevo
+ * aparece aquí sin tocar esta página.
+ *
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ */
+const hub = getHub('clases-de-programacion');
+const metadata = landingMetadata(hub);
+const hero = getSeoImage(hub.image);
+const courses = landingsForHub(hub.slug);
+
+const whatsappMessage = 'Hola, quiero información sobre las clases de programación.';
+
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const linkClass = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+const courseLink = (slug: string, text: string) => `<a href="${landingPath(slug)}" class="${linkClass}">${text}</a>`;
+
+const faqs = [
+  {
+    question: '¿Cuánto cuestan las clases de programación?',
+    answer:
+      'El precio depende del alcance: del curso que elijas, de tu punto de partida y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
+  },
+  {
+    question: '¿Qué curso me conviene si estoy empezando?',
+    answer:
+      'Depende de tu objetivo: Python si quieres automatizar tareas o entrar al mundo de los datos y la IA, y JavaScript si quieres crear páginas y aplicaciones web. Si no estás seguro, agenda una asesoría gratuita y te orientamos antes de decidir.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor revisa tu código mientras lo escribes.',
+  },
+  {
+    question: '¿Cuánto tiempo toma aprender a programar?',
+    answer:
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Influyen tu punto de partida, la frecuencia de las clases y cuánto practiques entre sesiones. Preferimos ajustar el plan a ti antes que prometerte una cifra sin conocerte.',
+  },
+  {
+    question: '¿Necesito experiencia o un computador especial?',
+    answer:
+      'No necesitas experiencia: los cursos para principiantes parten de cero. Basta un computador con internet (Windows, macOS o Linux) y las herramientas que usamos son gratuitas. Para compilar y publicar apps de iOS hace falta macOS, o un servicio de compilación en la nube; te lo explicamos antes de empezar.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conversamos sobre tu objetivo y tu nivel, dejamos listo tu entorno de trabajo y escribes tus primeras líneas de código con tu profesor al lado. Al terminar sabes con qué curso empezar, cuál es tu ruta y qué practicar antes de la siguiente sesión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      itemListSchema(courses.map((course) => ({ name: course.name, path: landingPath(course.slug) }))),
+      faqSchema(faqs),
+      breadcrumbSchema(hubBreadcrumbs(hub)),
+    ]}
+  />
+
+  <Breadcrumbs items={hubBreadcrumbs(hub)} />
+
+  <Hero
+    tagline="Clases 1 a 1 en persona y en línea"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver los cursos', href: '#cursos' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Clases de programación</span> en Medellín: aprende 1 a 1 y a tu ritmo
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Clases de programación y tecnología 1 a 1 con un ingeniero de software, en Medellín o en línea para toda Colombia.
+      Elige tu curso (Python, JavaScript, desarrollo web, apps, inteligencia artificial, AWS, Linux, n8n o marketing
+      digital) y construye proyectos reales con un plan hecho para ti.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>Ruta según tu nivel y tu objetivo</span>
+      <span>Con un ingeniero de software</span>
+    </Fragment>
+  </Hero>
+
+  <WidgetWrapper id="intro" containerClass="max-w-4xl">
+    <Headline tagline="Cómo son las clases" title="Clases de programación pensadas para ti, no para un grupo" />
+    <div class="mx-auto max-w-3xl space-y-4 text-lg leading-relaxed">
+      <p>
+        Sonmyd es un negocio de tecnología de Medellín que enseña programación en clases 1 a 1. Eso significa que el
+        temario se ajusta a tu nivel y a tu objetivo, que tu profesor revisa tu código mientras lo escribes y que no
+        tienes que seguir el ritmo de un grupo.
+      </p>
+      <p>
+        Son para personas sin experiencia que quieren empezar, para profesionales que quieren automatizar su trabajo,
+        para emprendedores que quieren construir su producto y para quienes buscan cambiar de carrera hacia tecnología.
+        Las clases las da un ingeniero de software; <a href="/autor" class={linkClass}>conoce a tu profesor</a>.
+      </p>
+      <p>
+        Puedes tomarlas en persona o en línea para toda Colombia, y cada curso tiene su propia página con el temario,
+        los proyectos y las preguntas frecuentes. Si lo que necesitas es formar a todo un equipo, mira las
+        <a href="/capacitaciones" class={linkClass}>capacitaciones para empresas</a>.
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <Features
+    id="como-elegir"
+    tagline="Cómo elegir"
+    title="Cómo elegir tu curso de programación según tu objetivo"
+    subtitle="No hay un mejor curso en abstracto: hay uno que encaja con lo que quieres lograr."
+    items={[
+      {
+        title: 'Quiero conseguir mi primer empleo en tecnología',
+        description: `Empieza por los fundamentos con ${courseLink('clases-de-javascript', 'JavaScript')} o ${courseLink('clases-de-python', 'Python')} y especialízate con el ${courseLink('curso-de-desarrollo-web', 'curso de desarrollo web')}. Terminas con un portafolio de proyectos reales para mostrar.`,
+        icon: 'tabler:briefcase',
+      },
+      {
+        title: 'Quiero automatizar mi trabajo',
+        description: `Usa ${courseLink('clases-de-python', 'Python')} para scripts y datos, el ${courseLink('curso-de-n8n', 'curso de n8n')} para conectar tus herramientas sin escribir código y las ${courseLink('clases-de-ia', 'clases de IA')} para sumar inteligencia artificial a tus procesos.`,
+        icon: 'tabler:settings-automation',
+      },
+      {
+        title: 'Quiero construir mi propio producto',
+        description: `Crea tu sitio con el ${courseLink('curso-de-desarrollo-web', 'curso de desarrollo web')} o tu app con el ${courseLink('curso-de-desarrollo-de-apps', 'curso de desarrollo de apps')}, y aprende a ponerlo en línea y mantenerlo con el ${courseLink('curso-de-aws', 'curso de AWS')} o el ${courseLink('curso-de-linux', 'curso de Linux')}.`,
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Quiero cambiar de carrera hacia tecnología',
+        description: `Parte de los fundamentos con Python o JavaScript, elige una dirección (web, apps, nube o servidores) y avanza paso a paso. ¿No sabes cuál? Agenda una <a href="/booking" class="${linkClass}">asesoría gratuita</a> y lo definimos juntos.`,
+        icon: 'tabler:route',
+      },
+    ]}
+  />
+
+  <WidgetWrapper id="cursos" containerClass="max-w-6xl">
+    <Headline
+      tagline="Cursos"
+      title="Todos los cursos y clases de programación"
+      subtitle="Elige un curso para ver su temario, cómo son las clases y resolver tus dudas."
+    />
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        courses.map((course) => (
+          <li class="card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]">
+            <h3 class="text-lg font-semibold text-heading">
+              <a
+                href={landingPath(course.slug)}
+                class="underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0"
+              >
+                {course.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{course.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </WidgetWrapper>
+
+  <CallToAction
+    title="¿No sabes por dónde empezar?"
+    subtitle="Cuéntanos tu objetivo por WhatsApp o agenda una asesoría gratuita, y te recomendamos el curso y el orden que más te convienen."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={whatsappMessage} location="clases-de-programacion-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <Steps
+    title="Cómo funcionan las clases de programación 1 a 1"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Conversamos sobre tu objetivo</span>',
+        description:
+          'Vemos tu nivel, tu meta y tu disponibilidad. Con eso decidimos con qué curso te conviene empezar.',
+        icon: 'tabler:compass',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Armamos tu ruta</span>',
+        description:
+          'Defines el orden de los cursos y los proyectos que vas a construir. La ruta se ajusta a medida que avanzas.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Aprendes practicando</span>',
+        description:
+          'Cada clase combina una explicación corta con práctica en vivo, en persona o en línea. Escribes tú; tu profesor corrige y explica el porqué.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Terminas con proyectos propios</span>',
+        description:
+          'Sales con proyectos publicados en tu GitHub y con el criterio para seguir aprendiendo por tu cuenta.',
+        icon: 'tabler:git-branch',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <FAQs
+    title="Preguntas frecuentes sobre las clases de programación"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <ServiceArea kind="curso" message={whatsappMessage} />
+
+  <LeadCapture
+    formId="lead-clases-de-programacion"
+    title="Cuéntanos qué quieres aprender"
+    subtitle="Dinos tu nivel y tu objetivo. Te recomendamos con qué curso empezar y te damos una cotización sin costo."
+    button="Quiero empezar a aprender"
+    bullets={[
+      'Asesoría gratuita para elegir tu curso y tu ruta',
+      'Clases 1 a 1, en persona o en línea',
+      'Temario ajustado a tu nivel y a tu objetivo',
+      'Cotización sin costo por WhatsApp',
+    ]}
+  />
+</Layout>

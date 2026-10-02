@@ -1,0 +1,237 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { BUSINESS } from '~/data/business';
+import { breadcrumbSchema } from '~/utils/seo';
+import { whatsappUrl } from '~/utils/whatsapp';
+
+/**
+ * Política de privacidad.
+ *
+ * Esta URL es la que Google tiene registrada para la verificación de la
+ * aplicación OAuth de Sonmyd: tiene que seguir existiendo y responder 200.
+ * El texto parte de la política del sitio anterior; solo se actualizó lo que
+ * describe la recolección de datos de ESTE sitio (formularios en servidor
+ * propio, GTM / Google Analytics, enlaces a WhatsApp) y el responsable.
+ *
+ * La política anterior NO tenía ningún texto sobre datos de usuario de Google,
+ * Google API Services, Limited Use ni alcances de OAuth (se comprobó contra el
+ * repositorio del sitio anterior y contra la página publicada): lo único de
+ * Google que decía era Analytics / Tag Manager, y eso se conserva. La mención a
+ * Google Calendar vive en el bloque informativo del inicio. Si este sitio llega a
+ * usar Google Calendar de verdad, hay que agregar aquí qué alcances se piden y
+ * cómo se usan los datos, con lo que apruebe el dueño.
+ */
+const PATH = '/privacidad';
+const LAST_UPDATED = '1 de octubre de 2026';
+
+const metadata = {
+  title: 'Política de privacidad | Sonmyd',
+  description:
+    'Política de privacidad y tratamiento de datos personales de Sonmyd, conforme a la Ley 1581 de 2012 de Colombia.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+};
+
+const whatsapp = whatsappUrl();
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Política de privacidad', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Política de privacidad', path: PATH },
+    ]}
+  />
+
+  <section class="px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-14">
+    <article class="mx-auto max-w-3xl">
+      <header>
+        <p class="eyebrow">Legal</p>
+        <h1 class="mt-3 text-4xl font-bold tracking-tight text-heading sm:text-5xl">Política de privacidad</h1>
+        <p class="mt-3 text-sm text-muted">Última actualización: {LAST_UPDATED}</p>
+      </header>
+
+      <div
+        class="prose prose-lg mt-10 max-w-none dark:prose-invert prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tighter prose-h2:mt-12 prose-h2:text-2xl prose-a:text-primary dark:prose-a:text-blue-400"
+      >
+        <p>
+          En <strong>Sonmyd</strong> (operado por Santiago Bedoya) nos comprometemos a proteger tu privacidad y tratar tus
+          datos personales de conformidad con la <strong>Ley 1581 de 2012</strong> y el
+          <strong>Decreto 1377 de 2013</strong> de la República de Colombia, y cuando aplique, con el Reglamento General
+          de Protección de Datos (RGPD) de la Unión Europea.
+        </p>
+        <p>
+          Al utilizar nuestro sitio web <a href={BUSINESS.url}>sonmyd.co</a> o al contactarnos, aceptas las prácticas descritas
+          en esta política.
+        </p>
+
+        <h2>1. Responsable del tratamiento</h2>
+        <p>
+          <strong>Nombre:</strong> Santiago Bedoya<br />
+          <strong>Marca:</strong> Sonmyd<br />
+          <strong>Sitio web:</strong>
+          <a href={BUSINESS.url}>sonmyd.co</a><br />
+          <strong>Domicilio:</strong>
+          {BUSINESS.address.locality}, {BUSINESS.address.region}, Colombia<br />
+          <strong>Contacto:</strong>
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-whatsapp-location="privacidad">WhatsApp</a>
+          ({BUSINESS.telephone})
+        </p>
+
+        <h2>2. Datos que recopilamos</h2>
+        <p>Recopilamos los siguientes datos personales cuando los proporcionas voluntariamente:</p>
+        <ul>
+          <li><strong>Nombre completo</strong></li>
+          <li><strong>Correo electrónico</strong></li>
+          <li><strong>Número de teléfono / WhatsApp</strong> (opcional)</li>
+          <li><strong>Empresa</strong> (opcional)</li>
+          <li>
+            <strong>Servicio de interés</strong> (información sobre el servicio o la clase que te interesa)
+          </li>
+          <li>
+            <strong>Tu mensaje</strong> y, si agendas una asesoría, el servicio, la fecha y la hora que eliges
+          </li>
+        </ul>
+        <p>
+          Adicionalmente, recopilamos de forma automática datos técnicos como la dirección IP, el tipo de navegador,
+          páginas visitadas y tiempo de permanencia, a través de herramientas de análisis de terceros. Cuando envías el
+          formulario de contacto, también guardamos en nuestro servidor la dirección IP, el tipo de navegador y la
+          página desde la que lo enviaste, para prevenir abusos y entender desde qué página nos escribes.
+        </p>
+
+        <h2>3. Finalidades del tratamiento</h2>
+        <p>Utilizamos tus datos para:</p>
+        <ul>
+          <li>Contactarte para confirmar reservas y brindar el servicio solicitado.</li>
+          <li>Enviarte por correo electrónico la confirmación de tu cita cuando agendas una asesoría.</li>
+          <li>Enviarte información relevante sobre nuestras clases y servicios.</li>
+          <li>Mejorar la experiencia en el sitio web y personalizar los contenidos.</li>
+          <li>Analizar el tráfico y el rendimiento del sitio mediante Google Analytics / Google Tag Manager.</li>
+          <li>Prevenir actividades fraudulentas (honeypot y rate limiting en formularios).</li>
+        </ul>
+
+        <h2>4. Base legal</h2>
+        <p>El tratamiento de tus datos se realiza con base en:</p>
+        <ul>
+          <li>
+            <strong>Tu consentimiento explícito</strong> al enviar el formulario de contacto o al escribirnos directamente.
+          </li>
+          <li><strong>La ejecución del contrato de servicios</strong> que has solicitado.</li>
+          <li><strong>El interés legítimo</strong> en mejorar y proteger el sitio web.</li>
+        </ul>
+
+        <h2>5. Almacenamiento de datos</h2>
+        <p>
+          Los datos de los formularios de contacto y de agendamiento de citas se almacenan en la base de datos de
+          nuestro propio servidor, que funciona sobre la infraestructura de un proveedor de alojamiento en la nube. Solo
+          el responsable del tratamiento accede a estos datos; el proveedor de alojamiento solo presta la
+          infraestructura.
+        </p>
+        <p>
+          Conservamos tus datos mientras exista una relación comercial activa o mientras sean necesarios para los fines
+          indicados. Puedes solicitar su eliminación en cualquier momento.
+        </p>
+
+        <h2>6. Cookies y tecnologías de seguimiento</h2>
+        <p>
+          Utilizamos <strong>Google Tag Manager</strong> y <strong>Google Analytics</strong> para recopilar datos de uso
+          anónimos y estadísticos sobre las visitas al sitio. Estas herramientas pueden utilizar cookies propias y de terceros.
+        </p>
+        <p>
+          También medimos los clics en los botones de WhatsApp y el envío de los formularios para saber qué partes del
+          sitio funcionan. Esos eventos no incluyen tu nombre, tu correo ni tu teléfono.
+        </p>
+        <p>
+          Puedes gestionar tus preferencias de cookies desde la configuración de tu navegador. Ten en cuenta que
+          deshabilitar ciertas cookies puede afectar la funcionalidad del sitio.
+        </p>
+
+        <h2>7. Compartición con terceros</h2>
+        <p>
+          No vendemos ni cedemos tus datos personales a terceros con fines comerciales. Los datos pueden ser procesados
+          por los siguientes proveedores de servicios de confianza, bajo estrictas obligaciones de confidencialidad:
+        </p>
+        <ul>
+          <li><strong>Google (Analytics / Tag Manager)</strong> — análisis de tráfico web.</li>
+          <li>
+            <strong>Proveedor de alojamiento en la nube</strong> — infraestructura donde funciona el sitio y se guarda su
+            base de datos.
+          </li>
+          <li>
+            <strong>Proveedor de correo electrónico</strong> — envío del aviso de cada consulta y de la confirmación de las
+            citas.
+          </li>
+        </ul>
+        <p>
+          Si nos escribes por WhatsApp, la conversación ocurre en esa plataforma (Meta) y se rige también por sus
+          propias condiciones y su política de privacidad.
+        </p>
+
+        <h2>8. Transferencias internacionales</h2>
+        <p>
+          Algunos proveedores listados operan fuera de Colombia. En tales casos, nos aseguramos de que existan garantías
+          adecuadas de protección conforme a la normativa vigente.
+        </p>
+
+        <h2>9. Tus derechos</h2>
+        <p>De conformidad con la Ley 1581 de 2012 y, cuando aplique, el RGPD, tienes derecho a:</p>
+        <ul>
+          <li><strong>Acceder</strong> a los datos personales que tenemos sobre ti.</li>
+          <li><strong>Rectificar</strong> datos incorrectos o desactualizados.</li>
+          <li><strong>Suprimir</strong> tus datos cuando ya no sean necesarios para los fines indicados.</li>
+          <li><strong>Oponerte</strong> al tratamiento de tus datos para fines de marketing.</li>
+          <li>
+            <strong>Revocar</strong> tu consentimiento en cualquier momento, sin que ello afecte la licitud del tratamiento
+            previo.
+          </li>
+          <li>
+            <strong>Presentar una queja</strong> ante la Superintendencia de Industria y Comercio (SIC) de Colombia.
+          </li>
+        </ul>
+        <p>
+          Para ejercer cualquiera de estos derechos, escríbenos por
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-whatsapp-location="privacidad">WhatsApp</a>.
+          Responderemos en un plazo máximo de 15 días hábiles.
+        </p>
+
+        <h2>10. Seguridad</h2>
+        <p>
+          Implementamos medidas técnicas y organizativas razonables para proteger tus datos frente al acceso no
+          autorizado, pérdida o alteración. Sin embargo, ninguna transmisión por internet es completamente segura;
+          usamos los datos bajo tu responsabilidad al compartirlos con nosotros.
+        </p>
+
+        <h2>11. Menores de edad</h2>
+        <p>
+          Nuestros servicios están dirigidos a personas mayores de 18 años. No recopilamos intencionalmente datos de
+          menores. Si detectamos que un menor nos ha proporcionado datos sin consentimiento de sus padres o tutores,
+          procederemos a eliminarlos de inmediato.
+        </p>
+
+        <h2>12. Cambios en esta política</h2>
+        <p>
+          Podemos actualizar esta política en cualquier momento. Los cambios se publicarán en esta página con la nueva
+          fecha de actualización. Te recomendamos revisarla periódicamente.
+        </p>
+
+        <h2>13. Contacto</h2>
+        <p>
+          Para cualquier consulta, duda o solicitud relacionada con esta política de privacidad, contáctanos a través de
+          <a href={whatsapp} target="_blank" rel="noopener noreferrer" data-whatsapp-location="privacidad">WhatsApp</a>
+          ({BUSINESS.telephone}).
+        </p>
+      </div>
+    </article>
+  </section>
+</Layout>

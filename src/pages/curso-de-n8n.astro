@@ -1,0 +1,282 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const landing = getLanding('curso-de-n8n');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+const breadcrumbs = landingBreadcrumbs(landing);
+
+// Panel decorativo de la sección de contenido: sin texto propio, solo refuerza visualmente los temas del temario.
+const stack = [
+  { icon: 'tabler:webhook', label: 'Webhooks y triggers' },
+  { icon: 'tabler:table', label: 'Google Sheets y Gmail' },
+  { icon: 'tabler:brand-whatsapp', label: 'WhatsApp y CRM' },
+  { icon: 'tabler:brain', label: 'Agentes de IA' },
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el curso de n8n?',
+    answer:
+      'Depende del alcance: de tu punto de partida, de los flujos que quieras construir y de cuántas sesiones necesites. Te damos una cotización sin costo por WhatsApp cuando conozcamos tu caso. Aparte, n8n Cloud, los servicios de IA y el servidor tienen costos propios, y antes de contratar algo te ayudamos a calcular lo mínimo necesario.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. En Medellín y en municipios cercanos podemos reunirnos en persona, en el lugar que acordemos contigo; en el resto de Colombia las clases son en línea y en vivo. En los dos casos son 1 a 1 y construyes los flujos en tu propio n8n, con tu profesor guiándote en tiempo real.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y de tus objetivos; lo definimos en la primera sesión. El plan para automatizar un proceso concreto es distinto al de quien quiere dominar la herramienta, el nodo Code y los agentes de IA. Armamos el plan por módulos y lo ajustamos sobre la marcha, según tu ritmo.',
+  },
+  {
+    question: '¿Necesito saber programar y qué material usamos?',
+    answer:
+      'No para empezar: n8n es visual y los primeros flujos se arman sin código. Un poco de lógica ayuda, y en el módulo del nodo Code usamos JavaScript desde lo básico. Necesitas un computador con internet y una cuenta en n8n Cloud o un servidor propio; te ayudamos a elegir. Usamos la documentación oficial y ejercicios hechos para tu caso.',
+  },
+  {
+    question: '¿Es también un curso de agentes de IA?',
+    answer:
+      'En parte. Incluye un módulo para construir agentes de IA con el nodo AI Agent de n8n: conectas un modelo de lenguaje y un RAG básico para que consulte tus documentos. Si lo que buscas son los fundamentos de la IA en general, te sirven más las clases de IA.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Hablamos de tu nivel, de las herramientas que usas y de un proceso concreto que quieras automatizar. Después dejamos n8n listo, en la nube o en tu servidor, y empezamos a armar tu primer flujo con un trigger y unos pocos nodos. Terminas con un plan de módulos para las siguientes sesiones.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <Breadcrumbs items={breadcrumbs} />
+
+  <Hero
+    tagline="n8n en español, clases 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario', icon: 'tabler:list-details' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de n8n</span> en Medellín: automatiza tu trabajo con flujos e IA
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Este curso de n8n te enseña a conectar tus herramientas (Google Sheets, Gmail, WhatsApp y tu CRM) y a crear flujos
+      con agentes de IA que ahorran trabajo repetitivo. Clases 1 a 1 en español, en Medellín o en línea para toda
+      Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1 en español</span>
+      <span>·</span>
+      <span>Proyectos con WhatsApp, CRM y correo</span>
+      <span>·</span>
+      <span>n8n Cloud o en tu propio servidor</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué aprender n8n"
+    title="Aprender n8n: un curso de automatización para tu trabajo real"
+    items={[
+      {
+        title: 'Flujos con tus herramientas reales',
+        description:
+          'Trabajas con Google Sheets, Gmail, la WhatsApp Business API y el CRM que use tu negocio, y no con ejemplos de juguete.',
+      },
+      {
+        title: 'Inteligencia artificial integrada',
+        description:
+          'Usas el nodo AI Agent y modelos de lenguaje para clasificar, resumir y responder, con criterio sobre cuándo conviene y cuándo no.',
+      },
+      {
+        title: 'Un profesor que automatiza procesos',
+        description:
+          'Las clases las da un ingeniero de software que automatiza procesos para empresas. <a href="/autor" class="font-medium text-primary underline underline-offset-4 hover:no-underline">Conoce a tu profesor</a>.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        En casi cualquier oficina hay tareas que se repiten todos los días: pasar datos de un formulario a una hoja de
+        cálculo, avisar por WhatsApp cuando entra un cliente, clasificar correos. n8n es una herramienta visual que
+        conecta aplicaciones mediante nodos y que, además, te deja escribir código cuando lo necesitas.
+      </p>
+      <p>
+        En este curso de n8n en español aprendes a pensar en flujos: qué dispara el proceso, qué datos viajan y qué pasa
+        cuando algo falla. No necesitas saber programar para empezar. Si primero quieres entender la herramienta, lee <a
+          href="/blog/que-es-n8n"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline"
+          >qué es n8n y para qué sirve</a
+        >, o la <a
+          href="/blog/n8n-vs-zapier-vs-make"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline"
+          >comparativa de n8n, Zapier y Make</a
+        > si todavía estás eligiendo.
+      </p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="hidden grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-6 md:grid">
+        {
+          stack.map(({ icon, label }) => (
+            <div class="flex flex-col items-center gap-3 rounded-xl border border-line bg-page p-6 text-center">
+              <Icon name={icon} class="h-10 w-10 text-primary" />
+              <span class="text-sm font-medium text-heading">{label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Temario del curso de n8n, módulo a módulo"
+    subtitle="Del primer nodo a dos proyectos completos, al ritmo que necesites."
+    items={[
+      {
+        title: 'Instalación: n8n Cloud o Docker',
+        description:
+          'Cuándo conviene n8n Cloud y cuándo instalarlo tú mismo con Docker en tu propio servidor, y cómo dejar el entorno listo para trabajar.',
+        icon: 'tabler:cloud-download',
+      },
+      {
+        title: 'Nodos, triggers y webhooks',
+        description:
+          'Cómo se arma un flujo: qué lo dispara (un formulario, un horario o un webhook), cómo se encadenan los nodos y cómo leer cada ejecución.',
+        icon: 'tabler:webhook',
+      },
+      {
+        title: 'Datos y expresiones',
+        description:
+          'Transformas, filtras y combinas datos entre nodos con expresiones, y manejas listas y objetos sin perderte.',
+        icon: 'tabler:variable',
+      },
+      {
+        title: 'Integraciones: Sheets, Gmail, WhatsApp y CRM',
+        description:
+          'Conectas Google Sheets, Gmail, la WhatsApp Business API y los CRM mediante credenciales y llamadas a APIs.',
+        icon: 'tabler:plug-connected',
+      },
+      {
+        title: 'Nodo Code, agentes de IA y RAG básico',
+        description:
+          'Escribes JavaScript en el nodo Code para lo que los nodos no cubren, y construyes agentes con el nodo AI Agent y modelos de lenguaje que consultan tus documentos (RAG básico).',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Errores y puesta en producción',
+        description:
+          'Manejo de errores, reintentos y alertas, credenciales seguras y copias de tus flujos, para llevar tus automatizaciones a producción con confianza.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <Steps
+    tagline="Cómo son las clases"
+    title="Así trabajamos, del primer flujo a producción"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y proceso a automatizar</span>',
+        description:
+          'Elegimos un proceso real de tu trabajo o de tu negocio como hilo conductor y definimos qué quieres lograr con n8n.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Flujos paso a paso, en vivo</span>',
+        description: 'Construyes cada flujo en tu propio n8n mientras tu profesor te guía y corrige sobre la marcha.',
+        icon: 'tabler:keyboard',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Dos proyectos completos</span>',
+        description:
+          'Armas un flujo que recibe un lead, lo guarda en tu CRM y avisa por WhatsApp, y un agente de IA que clasifica los correos que entran.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Puesta en producción</span>',
+        description:
+          'Agregas manejo de errores, alertas y buenas prácticas para que tus automatizaciones corran solas y puedas confiar en ellas. Si vas a alojar n8n en un servidor en la nube, el <a href="/curso-de-aws" class="font-medium text-primary underline underline-offset-4 hover:no-underline">curso de AWS</a> te da las bases para hacerlo.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Tienes un proceso que quieres automatizar?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos cuál es y qué herramientas usas, y te recomendamos un punto de partida, sin compromiso.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-n8n-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes sobre el curso de n8n"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-n8n"
+    formId="lead-curso-de-n8n"
+    title="Empieza tu curso de n8n con un plan a tu medida"
+    subtitle="Cuéntanos qué proceso quieres automatizar y qué herramientas usas. Te proponemos un punto de partida y una cotización sin costo."
+    button="Quiero empezar mi curso de n8n"
+    bullets={[
+      'Clases 1 a 1 en español, en Medellín o en línea para toda Colombia',
+      'Flujos con Google Sheets, Gmail, WhatsApp y tu CRM',
+      'Agentes de IA y puesta en producción dentro del temario',
+      'Cotización sin costo, según tu nivel y tu objetivo',
+    ]}
+  />
+</Layout>

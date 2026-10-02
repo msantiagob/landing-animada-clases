@@ -2,28 +2,75 @@
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import AppointmentBooking from '~/components/widgets/AppointmentBooking.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { breadcrumbSchema } from '~/utils/seo';
+
+const PATH = '/booking';
+
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
 
 const metadata = {
-  title: 'Agendá una consulta gratuita',
-  canonical: '/booking',
+  title: 'Agenda una asesoría gratuita | Sonmyd',
   description:
-    'Agenda tu consulta gratuita con nuestros expertos en tecnología. Selecciona el día y hora que mejor te convenga para tu asesoría personalizada.',
+    'Agenda una asesoría gratuita con Sonmyd, en Medellín: elige el día y la hora, cuéntanos qué necesitas y analizamos tu proyecto de software, IA o clases.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
 ---
 
 <Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Agenda una asesoría', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Agenda una asesoría', path: PATH },
+    ]}
+  />
+
   <!-- HeroText Widget ******************* -->
   <HeroText
-    tagline="Agenda tu Cita"
-    title="Reserva tu Consulta Gratuita"
-    subtitle="Selecciona el día y hora que mejor te convenga para tu asesoría personalizada con nuestros expertos en tecnología."
+    tagline="Asesoría gratuita"
+    title="Agenda una asesoría gratuita"
+    subtitle="Elige el día y la hora que mejor te convengan y cuéntanos qué necesitas. Analizamos tu caso y te decimos cómo podemos ayudarte."
   />
 
   <!-- AppointmentBooking Widget ********* -->
   <AppointmentBooking
     id="booking"
-    title="Agenda tu Consulta Gratuita"
-    subtitle="Nuestros especialistas te contactarán para analizar tu proyecto y diseñar una solución personalizada"
-    tagline="Reserva tu Cita"
+    title="Elige el día y la hora"
+    subtitle="Cuéntanos sobre tu proyecto o lo que quieres aprender, y preparamos la conversación."
+    tagline="Reserva tu cita"
   />
+
+  <WidgetWrapper id="whatsapp" containerClass="max-w-3xl pt-0 md:pt-0 lg:pt-0">
+    <div class="text-center">
+      <h2 class="font-heading text-2xl font-bold text-heading md:text-3xl">¿No encuentras un horario que te sirva?</h2>
+      <p class="mt-3 text-lg text-muted">Escríbenos por WhatsApp y buscamos una alternativa.</p>
+      <div class="mt-6 flex justify-center">
+        <WhatsAppButton
+          location="booking"
+          variant="secondary"
+          message="Hola, no encontré un horario disponible para la asesoría gratuita."
+        />
+      </div>
+    </div>
+  </WidgetWrapper>
 </Layout>

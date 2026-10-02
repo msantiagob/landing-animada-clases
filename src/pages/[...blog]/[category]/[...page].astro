@@ -1,6 +1,8 @@
 ---
 import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
 import { blogCategoryRobots, getStaticPathsBlogCategory } from '~/utils/blog';
+import { getCategoryDescription, getCategorySeo } from '~/utils/blog-seo';
+import type { Taxonomy } from '~/types';
 
 import Layout from '~/layouts/PageLayout.astro';
 import BlogList from '~/components/blog/List.astro';
@@ -13,14 +15,23 @@ export const getStaticPaths = (async ({ paginate }) => {
   return await getStaticPathsBlogCategory({ paginate });
 }) satisfies GetStaticPaths;
 
-type Props = InferGetStaticPropsType<typeof getStaticPaths> & { category: Record<string, string> };
+type Props = InferGetStaticPropsType<typeof getStaticPaths> & { category: Taxonomy };
 
 const { page, category } = Astro.props as Props;
 
 const currentPage = page.currentPage ?? 1;
 
+/**
+ * Las categorías SÍ se indexan (config.yaml) y entran al sitemap. Por eso cada una
+ * lleva su propio título y su propia descripción en español: sin ellas heredaban la
+ * descripción genérica del sitio, idéntica en todas las categorías.
+ */
+const seo = getCategorySeo(category, currentPage);
+
 const metadata = {
-  title: `Category '${category.title}' ${currentPage > 1 ? ` — Page ${currentPage}` : ''}`,
+  title: seo.title,
+  description: seo.description,
+  ignoreTitleTemplate: true,
   robots: {
     index: blogCategoryRobots?.index,
     follow: blogCategoryRobots?.follow,
@@ -30,7 +41,10 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
-    <Headline>{category.title}</Headline>
+    <Headline>
+      {seo.heading}
+      <Fragment slot="subtitle">{getCategoryDescription(category)}</Fragment>
+    </Headline>
     <BlogList posts={page.data} />
     <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
   </section>

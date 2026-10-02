@@ -67,7 +67,7 @@ export const POST: APIRoute = async ({ request }) => {
       .getAppointmentsByDate(date)
       .some((appointment) => appointment.time === time && appointment.status !== 'cancelled');
 
-    if (isTaken) return conflict('Ese horario ya no está disponible. Elegí otro, por favor.');
+    if (isTaken) return conflict('Ese horario ya no está disponible. Elige otro, por favor.');
 
     const appointmentData = {
       name,

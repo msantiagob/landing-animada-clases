@@ -4,6 +4,7 @@ import { GET, PATCH } from '~/pages/api/admin/leads';
 import { authHelpers } from '~/lib/auth';
 import { dbHelpers } from '~/lib/database';
 import { closeTestDb, createTestDb, jsonRequest, readJson, sessionCookieFor, tomorrow } from './helpers';
+import { findVoseo } from './voseo';
 
 const ENDPOINT = 'https://sonmyd.co/api/admin/leads';
 
@@ -192,10 +193,79 @@ describe('PATCH /api/admin/leads (admin autenticado)', () => {
     expect((await patch(cookie, { type: 'contact', id: -3, status: 'closed' })).status).toBe(400);
   });
 
+  // Un cuerpo ilegible es un error del cliente: 400, nada modificado y sin 500.
+  it.each([
+    ['un JSON roto', '{"type": "contact", ', 'application/json'],
+    ['un JSON vacío', '', 'application/json'],
+    ['un JSON que no es un objeto', 'null', 'application/json'],
+    ['un Content-Type desconocido', 'type=contact', 'text/plain'],
+  ])('responde 400, y no 500, ante %s', async (_caso, body, contentType) => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await PATCH({
+      request: new Request(ENDPOINT, {
+        method: 'PATCH',
+        headers: { 'Content-Type': contentType, Cookie: cookie },
+        body,
+      }),
+    } as never);
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toBe('Id inválido');
+    expect(dbHelpers.getContactForms()[0].status).toBe('new');
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
   it('devuelve 404 si el registro no existe', async () => {
     const response = await patch(cookie, { type: 'contact', id: 4242, status: 'closed' });
 
     expect(response.status).toBe(404);
+  });
+
+  // El panel pinta `error` tal cual: cada motivo es copy y tiene que estar en
+  // español de Colombia con "tú" ("usa", no "usá").
+  it.each([
+    ['un id inválido', { type: 'contact', id: 'abc', status: 'closed' }, 400, 'Id inválido'],
+    [
+      'un estado de cita en un contacto',
+      { type: 'contact', id: 1, status: 'confirmed' },
+      400,
+      'Estado inválido para un contacto',
+    ],
+    [
+      'un estado de contacto en una cita',
+      { type: 'appointment', id: 1, status: 'new' },
+      400,
+      'Estado inválido para una cita',
+    ],
+    ['un contacto que no existe', { type: 'contact', id: 4242, status: 'closed' }, 404, 'Contacto no encontrado'],
+    ['una cita que no existe', { type: 'appointment', id: 4242, status: 'confirmed' }, 404, 'Cita no encontrada'],
+    [
+      'un tipo desconocido',
+      { type: 'usuarios', id: 1, status: 'new' },
+      400,
+      'Tipo inválido: usa "contact" o "appointment"',
+    ],
+  ])('responde con el motivo exacto ante %s y sin voseo', async (_caso, body, status, motivo) => {
+    const response = await patch(cookie, body);
+    const { error } = await readJson(response);
+
+    expect(response.status).toBe(status);
+    expect(error).toBe(motivo);
+    expect(findVoseo(error)).toEqual([]);
+  });
+
+  it('un 500 no filtra el error de la base y le pide reintentar con "tú"', async () => {
+    vi.spyOn(dbHelpers, 'updateContactFormStatus').mockImplementation(() => {
+      throw new Error('database is locked');
+    });
+
+    const response = await patch(cookie, { type: 'contact', id: 1, status: 'closed' });
+    const { error } = await readJson(response);
+
+    expect(response.status).toBe(500);
+    expect(error).toBe('Error interno del servidor. Inténtalo más tarde.');
+    expect(error).not.toContain('database is locked');
   });
 });
 

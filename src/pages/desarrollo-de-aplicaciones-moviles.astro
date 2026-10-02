@@ -1,0 +1,263 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('desarrollo-de-aplicaciones-moviles');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Los widgets pintan el copy con set:html. Los enlaces se escriben como [texto](/ruta) y se convierten aquí:
+// la página recibe el <a> con estilo y el JSON-LD de las FAQs recibe el texto plano.
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
+const withLinks = (text: string) => text.replace(MARKDOWN_LINK, `<a href="$2" class="${link}">$1</a>`);
+const plainText = (text: string) => text.replace(MARKDOWN_LINK, '$1');
+
+const intro = [
+  'El desarrollo de aplicaciones móviles tiene sentido cuando tus clientes o tu equipo necesitan hacer algo desde el celular más fácil que en una web: reservar, pedir, registrar, pagar o recibir avisos. Si no es tu caso, te lo decimos: a veces una [página web adaptable](/desarrollo-web) resuelve lo mismo por menos.',
+  'Estos ejemplos son ilustrativos, no proyectos de clientes. Los proyectos los lidera un ingeniero de software: conoce [quién está detrás de Sonmyd](/autor).',
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el desarrollo de una aplicación móvil?',
+    answer:
+      'Depende de las plataformas, las funcionalidades, el backend, las integraciones y el diseño, así que cotizamos según el alcance, sin costo. Empezamos por la versión mínima que ya te sirve. Como referencia, lee [cuánto cuesta una app en Colombia](/blog/cuanto-cuesta-una-app-en-colombia), con rangos orientativos y los costos posteriores al lanzamiento.',
+  },
+  {
+    question: '¿Conviene una app nativa o una híbrida?',
+    answer:
+      'Depende de tu proyecto. La nativa, con Kotlin y Swift, da el máximo rendimiento y acceso al dispositivo, pero implica dos desarrollos. La multiplataforma, con React Native o Flutter, comparte un solo código, cuesta menos y alcanza para la mayoría de las apps de negocio. Compáralas en [app nativa vs híbrida](/blog/app-nativa-vs-hibrida).',
+  },
+  {
+    question: '¿Quién es dueño del código de la app?',
+    answer:
+      'Tú. El código, la documentación y los accesos son tuyos desde el primer día. Las cuentas de desarrollador de Google Play y de la App Store se abren a nombre de tu empresa o a tu nombre, para que nunca dependas de nosotros para publicar o para seguir con otro equipo.',
+  },
+  {
+    question: '¿Ustedes publican la app en Google Play y en la App Store?',
+    answer:
+      'Sí. Preparamos las fichas, las capturas y la política de privacidad, configuramos la publicación y acompañamos la revisión de cada tienda, que puede pedir ajustes. Las cuentas de desarrollador tienen su propio costo, aparte del desarrollo. La aprobación depende de Google y de Apple, así que no prometemos una fecha exacta.',
+  },
+  {
+    question: '¿Dan mantenimiento a la app después del lanzamiento?',
+    answer:
+      'Sí. Una app no se termina al publicarla: cada año salen versiones nuevas de Android e iOS y las tiendas cambian sus requisitos. Acordamos un plan de mantenimiento por escrito para corregir errores, actualizar y sumar mejoras. ¿Prefieres aprender a hacerlo tú mismo? Mira el [curso de desarrollo de apps](/curso-de-desarrollo-de-apps).',
+  },
+  {
+    question: '¿Cuánto tarda el desarrollo de una app?',
+    answer:
+      'Depende del alcance: una app con pocas pantallas es muy distinta de una con pagos, chat y varios roles. No damos un plazo sin conocer tu proyecto; lo definimos en la propuesta, por etapas y con una primera versión usable cuanto antes. A eso se suma la revisión de las tiendas.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Desarrollo de aplicaciones móviles',
+      }),
+      faqSchema(faqs.map(({ question, answer }) => ({ question, answer: plainText(answer) }))),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Apps nativas y multiplataforma"
+    actions={[
+      { variant: 'primary', text: 'Cuéntanos tu proyecto', href: '#contacto', icon: 'tabler:device-mobile' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Desarrollo de aplicaciones móviles</span> en Medellín para Android e iOS
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Hacemos el desarrollo de aplicaciones móviles de punta a punta: diseño, app para Android e iOS, backend, panel de
+      administración y publicación en Google Play y la App Store. Empezamos por la versión mínima que ya te sirve.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización según el alcance, sin costo</span>
+      <span>·</span>
+      <span>Publicación en Google Play y App Store</span>
+      <span>·</span>
+      <span>El código es tuyo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Casos de uso"
+    title="Crear una app para tu negocio: ejemplos por industria"
+    content={intro.map((paragraph) => `<p class="mb-4 last:mb-0">${withLinks(paragraph)}</p>`).join('')}
+    items={[
+      {
+        title: 'Reservas y citas',
+        description:
+          'Para salones de belleza, consultorios o servicios técnicos: el cliente reserva y recibe recordatorios, y el negocio administra la agenda desde un panel.',
+      },
+      {
+        title: 'Pedidos y comercio',
+        description:
+          'Para restaurantes o tiendas: catálogo, carrito, pagos y seguimiento del pedido, con avisos al cliente y gestión de productos desde un panel.',
+      },
+      {
+        title: 'Operación en campo',
+        description:
+          'Para equipos de ventas, inspección o logística: registrar visitas, tomar fotos y capturar datos desde el celular, sincronizados con tus sistemas.',
+      },
+      {
+        title: 'Membresías y comunidades',
+        description:
+          'Para gimnasios, academias o clubes: acceso con usuario, contenidos, pagos recurrentes y notificaciones para mantener activos a los miembros.',
+      },
+    ]}
+  />
+
+  <Features
+    id="que-incluye"
+    tagline="Qué incluye"
+    title="Lo que incluye el desarrollo de aplicaciones móviles con Sonmyd"
+    items={[
+      {
+        title: 'Estrategia, diseño y MVP',
+        description:
+          'Definimos el problema, los usuarios y la versión mínima que ya aporta valor. Diseñamos el flujo y un prototipo antes de programar.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Apps nativas para iOS y Android',
+        description:
+          'Con Kotlin para Android y Swift para iOS, cuando necesitas el máximo rendimiento o funciones específicas del dispositivo, como sensores o Bluetooth.',
+        icon: 'tabler:device-mobile-code',
+      },
+      {
+        title: 'Desarrollo de apps con Flutter o React Native',
+        description:
+          'Un solo código para Android e iOS: sale antes, cuesta menos y alcanza para la mayoría de las apps de negocio.',
+        icon: 'tabler:apps',
+      },
+      {
+        title: 'Backend, APIs y panel de administración',
+        description: withLinks(
+          'La parte invisible que hace funcionar la app: usuarios, base de datos, pagos, notificaciones y un panel de gestión. Es [desarrollo de software a medida](/desarrollo-de-software).'
+        ),
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Publicación en Google Play y App Store',
+        description:
+          'Preparamos las fichas, las capturas y la política de privacidad, y acompañamos la revisión de cada tienda.',
+        icon: 'tabler:cloud-upload',
+      },
+      {
+        title: 'Mantenimiento y evolución',
+        description:
+          'Actualizamos la app cuando salen versiones nuevas de Android e iOS, corregimos errores y sumamos mejoras según lo que pidan tus usuarios.',
+        icon: 'tabler:refresh',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Cómo trabajamos"
+    title="De la idea a la app en las tiendas, en cuatro pasos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Entendemos el problema, a tus usuarios y qué debe hacer la primera versión, en persona si estás en Medellín o por videollamada desde cualquier ciudad de Colombia. Si una app no es lo que necesitas, te lo decimos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Propuesta</span>',
+        description:
+          'Recibes una propuesta por escrito con el alcance del MVP, la tecnología recomendada, las etapas y el costo.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Desarrollo con demos semanales</span>',
+        description:
+          'Diseñamos y programamos por etapas. Cada semana ves la app funcionando y ajustamos el rumbo contigo antes de avanzar.',
+        icon: 'tabler:device-mobile-code',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Lanzamiento y soporte</span>',
+        description:
+          'Publicamos en Google Play y en la App Store, y seguimos contigo con correcciones, actualizaciones y mejoras.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Buscas una empresa de desarrollo de apps en Medellín?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos tu idea por WhatsApp y te orientamos sobre la mejor forma de empezar: un MVP, una app completa o, si
+      conviene más, una versión web.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton
+        message={landing.whatsapp}
+        location="desarrollo-de-aplicaciones-moviles-mid"
+        text="Cotiza tu app por WhatsApp"
+      />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el desarrollo de aplicaciones móviles"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: withLinks(answer) }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="desarrollo-de-aplicaciones-moviles"
+    formId="lead-desarrollo-de-aplicaciones-moviles"
+    title="Cuéntanos qué app quieres crear"
+    subtitle="Cuéntanos qué problema resuelve, quiénes la usarían y si ya tienes diseño o solo la idea. Te enviamos una propuesta según el alcance, sin costo."
+    button="Cuéntanos tu proyecto"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Hablas con quien desarrolla tu app, no con un vendedor',
+      'El código y las cuentas de las tiendas quedan a tu nombre',
+      'Si una app no es lo que necesitas, te lo decimos',
+    ]}
+  />
+</Layout>

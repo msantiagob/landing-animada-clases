@@ -4,6 +4,7 @@ import { POST } from '~/pages/api/contact';
 import { dbHelpers } from '~/lib/database';
 import { emailHelpers } from '~/lib/email';
 import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
+import { findVoseo } from './voseo';
 
 const ENDPOINT = 'https://sonmyd.co/api/contact';
 
@@ -87,6 +88,27 @@ describe('POST /api/contact', () => {
     expect((await readJson(response)).error).toMatch(/demasiado largo/i);
   });
 
+  // Un cuerpo ilegible es un error del cliente (bots, clientes rotos): 400, nada
+  // guardado y sin un `console.error` por cada intento, que es lo que dejaba el 500.
+  it.each([
+    ['un JSON roto', '{"name": "Ana", ', 'application/json'],
+    ['un JSON vacío', '', 'application/json'],
+    ['un JSON que no es un objeto', 'null', 'application/json'],
+    ['un Content-Type desconocido', 'name=Ana', 'text/plain'],
+  ])('responde 400, y no 500, ante %s', async (_caso, body, contentType) => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await POST({
+      request: new Request(ENDPOINT, { method: 'POST', headers: { 'Content-Type': contentType }, body }),
+    } as never);
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toMatch(/obligatorios/i);
+    expect(dbHelpers.getContactForms()).toHaveLength(0);
+    expect(emailHelpers.sendContactFormNotification).not.toHaveBeenCalled();
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
   it('descarta bots que completan el honeypot sin guardar nada', async () => {
     const response = await call({ ...validBody, website: 'http://spam.example' });
 
@@ -106,6 +128,17 @@ describe('POST /api/contact', () => {
 
     expect(blocked.status).toBe(429);
     expect(dbHelpers.getContactForms()).toHaveLength(5);
+  });
+
+  // El formulario muestra este texto tal cual debajo del botón de envío.
+  it('el aviso de demasiados envíos le habla de "tú"', async () => {
+    const headers = { 'x-forwarded-for': '203.0.113.10' };
+    for (let attempt = 0; attempt < 5; attempt += 1) await call(validBody, headers);
+
+    const { error } = await readJson(await call(validBody, headers));
+
+    expect(error).toBe('Demasiados envíos. Espera unos minutos e inténtalo de nuevo.');
+    expect(findVoseo(error)).toEqual([]);
   });
 
   it('el rate limit es por IP, no global', async () => {
@@ -128,5 +161,7 @@ describe('POST /api/contact', () => {
     expect(response.status).toBe(500);
     expect(payload.success).toBe(false);
     expect(JSON.stringify(payload)).not.toContain('SQLITE_READONLY');
+    expect(payload.error).toBe('Error interno del servidor. Inténtalo más tarde.');
+    expect(findVoseo(payload.error)).toEqual([]);
   });
 });

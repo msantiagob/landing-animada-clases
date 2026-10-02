@@ -1,55 +1,70 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
-import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
 import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
 import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
 
-const PATH = '/clases-de-ia';
+/**
+ * Landing de curso: "clases de inteligencia artificial".
+ *
+ * El título, la descripción, la keyword y los enlaces relacionados salen del
+ * registro (src/data/landings.ts); esta página solo aporta el contenido.
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ *
+ * Las capacitaciones para equipos viven en su propia landing (/capacitaciones):
+ * aquí solo se enlazan, para no competir con ella por la misma búsqueda.
+ */
+const landing = getLanding('clases-de-ia');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
 
-const metadata = {
-  title: 'Clases de IA | Profesor de Inteligencia Artificial en español',
-  description:
-    'Clases de IA particulares y para empresas con un profesor de inteligencia artificial en español. Aprendé ChatGPT, prompt engineering, automatizaciones y agentes desde cero. Online o presencial.',
-  ignoreTitleTemplate: true,
-  canonical: PATH,
-};
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
 
 const faqs = [
   {
     question: '¿Necesito saber programar para tomar clases de IA?',
     answer:
-      'No. El itinerario inicial está pensado para personas sin experiencia técnica: trabajamos con herramientas de IA, prompt engineering y automatizaciones sin escribir código. Si ya programás, existe un itinerario avanzado con APIs, RAG y agentes.',
+      'No. Para empezar trabajamos con herramientas de IA, prompts y automatizaciones sin escribir código. Si ya programas, hay un itinerario con APIs de modelos, RAG y agentes; y si quieres llegar ahí desde cero, lo ideal es sumar las clases de Python.',
   },
   {
-    question: '¿Las clases son particulares o grupales?',
+    question: '¿Cuánto cuestan las clases de inteligencia artificial?',
     answer:
-      'Ofrecemos ambas. Las clases particulares con profesor de IA dedicado se adaptan a tu ritmo y a tu caso real de trabajo. Las capacitaciones grupales están diseñadas para equipos de empresa, con ejercicios sobre los procesos propios de la compañía.',
+      'El precio depende del alcance: de lo que quieras aprender, de tu punto de partida y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
   },
   {
-    question: '¿Las clases son online o presenciales?',
+    question: '¿Las clases son presenciales o en línea?',
     answer:
-      'Las clases se dictan online en vivo para toda Latinoamérica y España. Para empresas también dictamos capacitaciones presenciales según la ubicación, coordinadas previamente.',
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor te guía mientras practicas con las herramientas.',
   },
   {
-    question: '¿Cuánto dura el programa de clases de IA?',
+    question: '¿Cuánto duran las clases de IA?',
     answer:
-      'El programa base son 16 horas repartidas en 8 encuentros. Para equipos armamos planes a medida, desde talleres intensivos de un día hasta acompañamientos mensuales.',
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Aprender a usar bien las herramientas no pide lo mismo que construir un asistente conectado a tus datos, y el ritmo lo marcan tu agenda y tu práctica entre clases. Preferimos ajustar el plan a ti antes que prometerte una cifra.',
   },
   {
-    question: '¿Qué herramientas de inteligencia artificial voy a aprender?',
+    question: '¿Qué herramientas voy a usar y qué necesito?',
     answer:
-      'Modelos de lenguaje como Claude y ChatGPT, generación de imágenes, automatizaciones con n8n y Make, asistentes conversacionales sobre WhatsApp y agentes de voz. Siempre aplicados a un caso real tuyo.',
+      'Modelos de lenguaje como ChatGPT y Claude, generación de imágenes y automatizaciones con n8n y Make, siempre aplicados a un caso real tuyo. Necesitas un computador con internet; muchas herramientas tienen plan gratuito y te ayudamos a decidir si te conviene pagar alguna.',
   },
   {
-    question: '¿Entregan certificado al finalizar?',
+    question: '¿Qué pasa en la primera clase?',
     answer:
-      'Sí. Al completar el programa entregamos un certificado de finalización de Sonmyd, con el detalle de los contenidos y la carga horaria.',
+      'Conversamos sobre tu objetivo y tu nivel, y probamos las herramientas sobre un caso real de tu trabajo. Al terminar sabes qué ruta te conviene (usar bien la IA o construir con ella) y qué practicar antes de la siguiente sesión.',
   },
 ];
 ---
@@ -57,79 +72,113 @@ const faqs = [
 <Layout metadata={metadata}>
   <StructuredData
     schema={[
-      courseSchema({
-        name: 'Clases de Inteligencia Artificial aplicada',
-        description:
-          'Programa de clases de IA en español para personas y equipos: prompt engineering, automatizaciones, asistentes y agentes aplicados a casos reales de trabajo.',
-        path: PATH,
-        modes: ['online', 'onsite'],
-      }),
+      courseSchema({ name: landing.name, description: landing.description, path: landingPath(landing.slug) }),
       faqSchema(faqs),
-      breadcrumbSchema([
-        { name: 'Inicio', path: '/' },
-        { name: 'Clases de IA', path: PATH },
-      ]),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
     ]}
   />
 
-  <Breadcrumbs
-    items={[
-      { name: 'Inicio', path: '/' },
-      { name: 'Clases de IA', path: '/clases-de-ia' },
-    ]}
-  />
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
 
   <Hero
-    tagline="Clases de IA"
+    tagline="Clases de IA 1 a 1"
     actions={[
-      { variant: 'primary', text: 'Reservar clase de prueba', href: '/booking', icon: 'tabler:calendar-plus' },
-      { text: 'Hablar con el profesor', href: '/contact', variant: 'tertiary' },
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el programa', href: '#programa' },
     ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Clases de inteligencia artificial con profesor en español',
-    }}
+    image={{ src: hero.src, alt: hero.alt }}
   >
     <Fragment slot="title">
-      Clases de IA con un <span class="text-accent">profesor de inteligencia artificial</span> que te acompaña de verdad
+      <span class="text-accent">Clases de inteligencia artificial</span> en Medellín, 1 a 1 y con casos reales
     </Fragment>
 
     <Fragment slot="subtitle">
-      Clases particulares y capacitaciones para empresas, en español y en vivo. Sin teoría vacía: aprendés sobre tu
-      propio trabajo, con ejercicios que resuelven un problema real de tu día a día desde la primera clase.
+      Aprende inteligencia artificial con un profesor que te acompaña: desde usar ChatGPT y escribir buenos prompts
+      hasta automatizar tareas y crear asistentes. Clases 1 a 1, en Medellín o en línea para toda Colombia, sobre
+      problemas reales de tu trabajo.
     </Fragment>
 
     <Fragment slot="trust">
-      <span>Primera clase sin costo</span>
-      <span>·</span>
-      <span>Online en vivo, en español</span>
-      <span>·</span>
-      <span>Certificado al finalizar</span>
+      <span>Clases 1 a 1</span>
+      <span>Sin programar para empezar</span>
+      <span>Con un ingeniero de software</span>
     </Fragment>
   </Hero>
+
+  <Content
+    isReversed
+    tagline="Clases particulares"
+    title="Un profesor de IA dedicado a tu caso"
+    items={[
+      {
+        title: 'Plan a tu medida',
+        description: 'Revisamos tu nivel real y qué quieres resolver. El plan sale de ahí, no de un temario enlatado.',
+      },
+      {
+        title: 'Ritmo y horario propios',
+        description: 'Eliges la frecuencia de las clases según tu agenda y avanzas a tu paso.',
+      },
+      {
+        title: 'Práctica sobre tu trabajo',
+        description: 'Los ejercicios parten de tus propios documentos, correos y procesos, no de ejemplos genéricos.',
+      },
+      {
+        title: 'Camino técnico, si lo quieres',
+        description: `Si ya programas, el itinerario avanzado incluye APIs de modelos, RAG y agentes. Si aún no, el punto de partida son las <a href="/clases-de-python" class="${link}">clases de Python</a>.`,
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2071&q=80',
+      alt: 'Tres personas conversan y sonríen alrededor de una mesa de madera con dos portátiles abiertos y una libreta',
+    }}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Muchas clases de inteligencia artificial son videos grabados que te dejan solo frente a la pantalla. Aquí hay
+        una persona al otro lado que corrige lo que haces, te frena cuando vas por el camino equivocado y te empuja
+        cuando puedes dar más.
+      </p>
+      <p class="mb-4">
+        Antes de armar el plan definimos a cuál de tres perfiles apuntas: usar bien las herramientas, sin programar;
+        construir con IA, conectando modelos a tus datos con Python; o entrenar modelos, que es investigación y pocos lo
+        necesitan. Las clases cubren los dos primeros. La ruta completa está en la guía para
+        <a href="/blog/aprender-inteligencia-artificial-desde-cero" class={link}
+          >aprender inteligencia artificial desde cero</a
+        >.
+      </p>
+      <p>
+        Las clases las da un ingeniero de software; <a href="/autor" class={link}>conoce a tu profesor</a>. Y si lo que
+        necesitas es que aprenda todo tu equipo, mira las
+        <a href="/capacitaciones" class={link}>capacitaciones en IA para empresas</a>.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
 
   <Features
     id="programa"
     tagline="Qué vas a aprender"
-    title="Un programa de IA que se aplica el mismo día"
+    title="Programa de clases de IA que se aplica el mismo día"
     subtitle="Seis bloques que van de lo fundamental a lo que hoy usan los equipos que trabajan con inteligencia artificial."
     items={[
       {
         title: 'Fundamentos de IA sin humo',
         description:
-          'Qué es realmente un modelo de lenguaje, qué puede y qué NO puede hacer, y por qué entender esto te evita el 90% de las frustraciones.',
+          'Qué es realmente un modelo de lenguaje, qué puede y qué NO puede hacer, y por qué entender esto te evita buena parte de las frustraciones.',
         icon: 'tabler:brain',
       },
       {
-        title: 'Prompt engineering en serio',
+        title: 'ChatGPT y prompt engineering en serio',
         description:
           'Estructura de instrucciones, contexto, ejemplos y verificación. La diferencia entre pedirle cosas a la IA y obtener resultados que sirvan.',
         icon: 'tabler:message-chatbot',
       },
       {
         title: 'Automatizaciones sin escribir código',
-        description:
-          'Conectá tus herramientas con n8n y Make para que las tareas repetitivas se resuelvan solas mientras vos hacés otra cosa.',
+        description: `Conecta tus herramientas con n8n y Make para que las tareas repetitivas se resuelvan solas mientras haces otra cosa. Para ir más a fondo, mira el <a href="/curso-de-n8n" class="${link}">curso de n8n</a>.`,
         icon: 'tabler:robot',
       },
       {
@@ -153,94 +202,18 @@ const faqs = [
     ]}
   />
 
-  <Content
-    isReversed
-    tagline="Clases particulares"
-    title="Un profesor de IA dedicado a tu caso"
-    items={[
-      {
-        title: 'Diagnóstico inicial gratuito',
-        description: 'Antes de la primera clase revisamos tu nivel real y qué querés resolver. El plan sale de ahí.',
-      },
-      {
-        title: 'Ritmo y horario propios',
-        description: 'Vos elegís la frecuencia. Si una semana no podés, se reprograma sin perder la clase.',
-      },
-      {
-        title: 'Material y grabación de cada encuentro',
-        description: 'Te quedás con las grabaciones, los ejercicios resueltos y las plantillas que armamos juntos.',
-      },
-      {
-        title: 'Soporte entre clases',
-        description:
-          'Canal directo para consultas mientras aplicás lo visto. Aprender solo frente a la pantalla no sirve.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2071&q=80',
-      alt: 'Profesor de IA dando una clase particular online',
-    }}
-  >
-    <Fragment slot="content">
-      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Clases de IA particulares, uno a uno
-      </h2>
-      La mayoría de los cursos de inteligencia artificial te dan video grabado y te dejan solo. Acá hay una persona del otro
-      lado que corrige lo que hacés, te frena cuando vas por el camino equivocado y te empuja cuando podés dar más.
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-surface"></div>
-    </Fragment>
-  </Content>
-
-  <Content
-    tagline="Para empresas"
-    title="Capacitaciones de IA para equipos"
-    items={[
-      {
-        title: 'Relevamiento previo de procesos',
-        description: 'Entrevistamos al equipo para detectar dónde la IA realmente ahorra horas, y dónde es puro ruido.',
-      },
-      {
-        title: 'Ejercicios con datos de la empresa',
-        description: 'Nada de ejemplos genéricos: se practica sobre los documentos y flujos reales de la compañía.',
-      },
-      {
-        title: 'Plan de adopción posterior',
-        description: 'La capacitación termina con un documento de qué automatizar primero y con qué retorno esperado.',
-      },
-      {
-        title: 'Modalidad online o presencial',
-        description: 'Online para equipos distribuidos, presencial cuando conviene juntar a todos en una sala.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Capacitación de inteligencia artificial para un equipo de empresa',
-    }}
-  >
-    <Fragment slot="content">
-      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Que tu equipo deje de improvisar con la IA
-      </h2>
-      El problema no es que tu gente no use inteligencia artificial. Es que la usa sin criterio: sin verificar, sin entender
-      los límites y, a veces, pegando información confidencial en una herramienta pública.
-    </Fragment>
-  </Content>
-
   <Steps
-    title="Cómo empezamos"
+    title="Cómo son las clases de IA 1 a 1"
     items={[
       {
-        title: 'Paso 1: <span class="font-medium">Clase de prueba</span>',
+        title: 'Paso 1: <span class="font-medium">Conversamos sobre tu objetivo</span>',
         description:
-          'Una sesión sin costo para medir tu nivel y entender qué querés lograr. Si no encaja, te lo decimos.',
-        icon: 'tabler:calendar-plus',
+          'Una sesión inicial para medir tu nivel y entender qué quieres lograr. Si estas clases no son lo que necesitas, te lo decimos.',
+        icon: 'tabler:compass',
       },
       {
         title: 'Paso 2: <span class="font-medium">Plan personalizado</span>',
-        description: 'Armamos el itinerario según tu punto de partida, tu objetivo y el tiempo del que disponés.',
+        description: 'Armamos el itinerario según tu punto de partida, tu objetivo y el tiempo del que dispones.',
         icon: 'tabler:map',
       },
       {
@@ -249,29 +222,56 @@ const faqs = [
         icon: 'tabler:school',
       },
       {
-        title: 'Paso 4: <span class="font-medium">Aplicación y certificado</span>',
-        description: 'Cerrás con un proyecto propio funcionando y el certificado de finalización.',
-        icon: 'tabler:certificate',
+        title: 'Paso 4: <span class="font-medium">Aplicas lo aprendido</span>',
+        description:
+          'Cierras con un proyecto propio funcionando: una automatización, un asistente o el flujo de trabajo con IA que necesitabas.',
+        icon: 'tabler:rocket',
       },
     ]}
     image={{
       src: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=2070&q=80',
-      alt: 'Estudiante aplicando lo aprendido en clases de IA',
+      alt: 'Dos personas revisan juntas código en una laptop y en una pantalla grande, en una oficina donde otros compañeros trabajan al fondo',
     }}
   />
 
+  <CallToAction
+    title="¿Quieres saber si estas clases son para ti?"
+    subtitle="Cuéntanos tu objetivo por WhatsApp o agenda una asesoría gratuita, y te decimos con honestidad si te sirven."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="clases-de-ia-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
   <FAQs
-    title="Preguntas frecuentes sobre las clases de IA"
+    title="Preguntas frecuentes sobre las clases de inteligencia artificial"
     tagline="Dudas comunes"
     classes={{ container: 'max-w-6xl' }}
     items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
   />
 
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
   <LeadCapture
     interest="clases-de-ia"
-    formId="lead-clases-ia"
-    title="Tu primera clase de IA es gratis"
-    subtitle="Una sesión para ver si te sirve. Sin compromiso y sin venderte humo: si creemos que no es para vos, te lo decimos."
-    button="Reservar clase de prueba"
+    formId="lead-clases-de-ia"
+    title="Agenda tu primera clase de IA"
+    subtitle="Cuéntanos qué quieres lograr con la inteligencia artificial. Te proponemos una ruta de aprendizaje y una cotización sin costo."
+    button="Quiero empezar"
+    bullets={[
+      'Asesoría gratuita para elegir tu ruta de aprendizaje',
+      'Clases 1 a 1, en Medellín o en línea',
+      'Empiezas sin programar y avanzas a tu ritmo',
+      'Cotización sin costo por WhatsApp',
+    ]}
   />
 </Layout>

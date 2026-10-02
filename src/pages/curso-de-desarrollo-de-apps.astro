@@ -1,0 +1,271 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+/**
+ * Landing de curso: "curso de desarrollo de apps".
+ *
+ * El título, la descripción, la keyword y los enlaces relacionados salen del
+ * registro (src/data/landings.ts); esta página solo aporta el contenido.
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ *
+ * Aclaración técnica que no se puede omitir: compilar y publicar apps de iOS
+ * exige macOS con Xcode, o un servicio de compilación en la nube.
+ */
+const landing = getLanding('curso-de-desarrollo-de-apps');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para empezar?',
+    answer:
+      'Conviene tener lógica de programación básica: variables, condicionales y funciones. Si partes de cero, empezamos por esos fundamentos con JavaScript o Dart antes de pasar a la app. Si ya programas, avanzamos más rápido hacia la interfaz, los datos y las funciones del celular.',
+  },
+  {
+    question: '¿Cuánto cuesta el curso de desarrollo de apps?',
+    answer:
+      'El precio depende del alcance: de tu punto de partida, de la app que quieras construir y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor revisa tu app mientras la construyes.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Una app sencilla no pide lo mismo que una con backend, notificaciones y publicación en las dos tiendas, y quien ya programa avanza más rápido que quien parte de cero. Preferimos ajustar el plan a ti antes que prometerte una cifra.',
+  },
+  {
+    question: '¿Qué equipo y cuentas necesito?',
+    answer:
+      'Un computador con buena memoria, porque los emuladores consumen recursos, y de preferencia un celular para probar. Para Android sirve Windows, macOS o Linux; para compilar y publicar apps de iOS hace falta macOS con Xcode, o un servicio de compilación en la nube. Las cuentas de desarrollador de Google y de Apple son de pago y van por tu cuenta.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conversamos sobre la app que quieres crear y sobre tu nivel, y dejamos listo tu entorno de trabajo con un emulador, o te explicamos qué necesitas preparar si aún no lo tienes. Al terminar sabes cuál es tu ruta y qué practicar antes de la siguiente sesión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({ name: landing.name, description: landing.description, path: landingPath(landing.slug) }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Clases de desarrollo de apps 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de desarrollo de apps</span> en Medellín: crea y publica tu app móvil
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Aprende a crear apps para Android e iOS con React Native, Flutter o desarrollo nativo (Kotlin y Swift), en clases
+      1 a 1 con un ingeniero de software, hasta publicarlas en Google Play y la App Store. En Medellín o en línea para
+      toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>Android e iOS</span>
+      <span>Con un ingeniero de software</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Para quién es"
+    title="Aprender a crear apps con criterio"
+    items={[
+      {
+        title: 'Una app tuya, publicada',
+        description: 'Terminas con una app funcionando en tus dispositivos y lista para enviar a las tiendas.',
+      },
+      {
+        title: 'Decisión informada',
+        description: 'Comparamos React Native, Flutter y nativo con tus requisitos reales, no con la moda del momento.',
+      },
+      {
+        title: 'Más que pantallas',
+        description: 'Aprendes también el backend, la autenticación y las APIs que hacen que una app sirva de verdad.',
+      },
+      {
+        title: 'Claridad sobre las tiendas',
+        description:
+          'Te explicamos las cuentas de desarrollador, la firma y la revisión de Google Play y la App Store antes de llegar a ese paso.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Un buen curso de desarrollo de apps empieza por la decisión que más se paga cuando se toma mal: qué tecnología
+        usar. React Native y Flutter comparten un solo código para Android e iOS; Kotlin y Swift dan el máximo control
+        en cada sistema. Aquí aprendes a elegir según tu proyecto y construyes con la opción que más te convenga.
+      </p>
+      <p class="mb-4">
+        Es para quien quiere lanzar su propia app, para quien ya programa para la web y da el salto a lo móvil, y para
+        quien busca un perfil más completo. Si partes de cero, empezamos por los fundamentos. React Native usa
+        JavaScript, así que el <a href="/clases-de-javascript" class={link}>curso de JavaScript</a> es un buen punto de partida.
+      </p>
+      <p>
+        Para decidir con criterio, lee <a href="/blog/app-nativa-vs-hibrida" class={link}>app nativa vs híbrida</a>. Las
+        clases las da un ingeniero de software; <a href="/autor" class={link}>conoce a tu profesor</a>.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Temario"
+    title="Temario del curso de desarrollo de apps, módulo a módulo"
+    subtitle="De lo básico a la publicación. El enfoque (React Native, Flutter o nativo) se decide contigo en el módulo 2."
+    items={[
+      {
+        title: 'Fundamentos móviles',
+        description:
+          'Cómo funciona una app, su ciclo de vida, los permisos y las diferencias entre Android e iOS. Configuras emuladores y tus propios dispositivos.',
+        icon: 'tabler:device-mobile',
+      },
+      {
+        title: 'Elegir el enfoque',
+        description:
+          'React Native (JavaScript), Flutter (Dart) o nativo con Kotlin y Swift: costos, rendimiento y equipo. Eliges con criterio y construyes con la opción que mejor encaje.',
+        icon: 'tabler:arrows-split',
+      },
+      {
+        title: 'Interfaz y navegación',
+        description:
+          'Componentes, listas, formularios y navegación entre pantallas, con un diseño que se adapta a distintos tamaños de pantalla.',
+        icon: 'tabler:layout-navbar',
+      },
+      {
+        title: 'Estado, datos y backend',
+        description:
+          'Manejo de estado, almacenamiento local, consumo de APIs y un backend sencillo con autenticación, para que tu app trabaje con datos reales.',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Notificaciones, cámara y GPS',
+        description:
+          'Funciones propias del celular: notificaciones push, cámara y ubicación, con los permisos que exigen Android e iOS.',
+        icon: 'tabler:bell',
+      },
+      {
+        title: 'Pruebas y publicación',
+        description:
+          'Pruebas en emuladores y dispositivos reales, y publicación en Google Play y la App Store. Compilar y publicar para iOS requiere macOS con Xcode, o un servicio de compilación en la nube.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo son las clases del curso de aplicaciones móviles"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Defines tu app</span>',
+        description:
+          'Hablamos de tu idea y escribimos qué debe hacer la primera versión. Ese alcance reducido es el que se construye.',
+        icon: 'tabler:bulb',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Eliges la tecnología</span>',
+        description:
+          'Comparamos opciones con tus requisitos: si necesitas Android e iOS o solo uno, qué equipo tienes y quién mantendrá la app.',
+        icon: 'tabler:arrows-split',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construyes por funciones</span>',
+        description:
+          'Pantalla a pantalla y función a función, con pruebas en emulador y en tu celular. Tu profesor revisa tu código en cada paso.',
+        icon: 'tabler:device-mobile',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Publicas</span>',
+        description: 'Preparas la ficha, las capturas y la firma, y envías la app a revisión en las tiendas.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <CallToAction
+    title="¿Tienes una idea de app?"
+    subtitle="Cuéntanos qué quieres construir por WhatsApp o agenda una asesoría gratuita, y definimos juntos el alcance de tu primera versión."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-desarrollo-de-apps-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el curso de desarrollo de apps"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-desarrollo-de-apps"
+    formId="lead-curso-de-desarrollo-de-apps"
+    title="Agenda tu primera clase de desarrollo de apps"
+    subtitle="Cuéntanos qué app quieres crear y cuál es tu nivel. Te proponemos una ruta de aprendizaje y una cotización sin costo."
+    button="Quiero crear mi app"
+    bullets={[
+      'Asesoría gratuita para definir el alcance de tu app',
+      'Clases 1 a 1, en Medellín o en línea',
+      'Temario ajustado a tu nivel y a tu proyecto',
+      'Cotización sin costo por WhatsApp',
+    ]}
+  />
+</Layout>

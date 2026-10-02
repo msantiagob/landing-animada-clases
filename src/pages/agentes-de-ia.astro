@@ -1,0 +1,342 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('agentes-de-ia');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+const LINK = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Qué datos ve el agente y cómo se protege la información?',
+    answer:
+      'Solo accede a lo necesario para su tarea, con permisos mínimos y credenciales propias que se pueden revocar. Reducimos lo que se envía al modelo de IA y registramos cada acción. En Colombia aplica la Ley 1581 de 2012 sobre datos personales; con datos sensibles, como los de salud, tu asesor legal debe validar la autorización.',
+  },
+  {
+    question: '¿Qué pasa si el agente se equivoca?',
+    answer:
+      'Puede equivocarse, como una persona. Por eso exigimos que cite el documento de origen, validamos con código lo verificable, escalamos los casos de baja confianza y dejamos la aprobación humana en las acciones de alto impacto. Antes de lanzar medimos la exactitud con casos reales y después revisamos por muestreo.',
+  },
+  {
+    question: '¿Cuánto cuesta implementar un agente de IA?',
+    answer:
+      'Depende del proceso, de los sistemas que toca y del volumen. Hacemos una cotización según alcance, sin costo. Aparte del desarrollo hay un costo recurrente por el uso del modelo de IA y del servidor, que estimamos con tu volumen real para que no te sorprenda cuando el agente ya esté funcionando.',
+  },
+  {
+    question: '¿Se integra con los sistemas que ya uso?',
+    answer:
+      'Sí. Conectamos por API con tu CRM, tu ERP, tu correo, Google Workspace y tus hojas de cálculo, y unimos las piezas con n8n y Python. No tienes que cambiar de software para empezar. Si algún sistema no tiene API, evaluamos alternativas durante el diagnóstico, antes de comprometer un alcance.',
+  },
+  {
+    question: '¿Cuánto tarda en estar funcionando?',
+    answer:
+      'Depende del alcance y de cuántos sistemas toque. Empezamos con un proceso acotado en modo sombra, donde el agente propone y una persona aprueba, y ampliamos cuando las métricas lo justifican. En la cotización te damos un cronograma por fases, sin prometer plazos que no podamos cumplir.',
+  },
+  {
+    question: '¿Trabajan con empresas de otras ciudades?',
+    answer:
+      'Sí. Estamos en Medellín y atendemos en persona en la ciudad y en municipios cercanos, pero el diagnóstico, el desarrollo y el seguimiento también se hacen de forma remota, por videollamada y WhatsApp. Así trabajamos con empresas de toda Colombia sin que la distancia cambie el proceso.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Implementación de agentes de inteligencia artificial para empresas',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Agentes de inteligencia artificial"
+    actions={[
+      { variant: 'primary', text: 'Evaluar un agente para mi empresa', href: '#contacto', icon: 'tabler:robot' },
+      { variant: 'tertiary', text: 'Agenda una asesoría gratuita', href: '/booking' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Agentes de IA para empresas</span>: automatiza pólizas, documentos y procesos
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Implementamos agentes de IA para empresas que leen documentos y correos, siguen las reglas que tú defines y actúan
+      sobre tus sistemas, con una persona que aprueba lo importante. Trabajamos desde Medellín, con empresas de toda
+      Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Una persona aprueba lo importante</span>
+      <span>·</span>
+      <span>Permisos mínimos y registro de acciones</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Qué es un agente de IA"
+    title="Agentes de inteligencia artificial: qué hacen y en qué se diferencian de un chatbot"
+    items={[
+      {
+        title: 'Actúa, no solo responde',
+        description:
+          'Clasifica un correo, extrae los datos de una factura o actualiza el CRM. Un chatbot conversa; un agente cumple tareas.',
+      },
+      {
+        title: 'Elige el camino según lo que encuentra',
+        description: 'A diferencia de una automatización de pasos fijos, maneja documentos y casos distintos entre sí.',
+      },
+      {
+        title: 'Pide ayuda cuando no está seguro',
+        description: 'Si la confianza es baja o el caso es atípico, lo escala a una persona con un resumen.',
+      },
+      {
+        title: 'Trabaja con tus herramientas',
+        description: 'Se conecta a tu CRM, tu ERP y tu correo, con permisos limitados a lo que necesita.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      La automatización clásica sigue siendo la mejor opción cuando el proceso es estable y los datos están ordenados.
+      Un agente se justifica cuando entran documentos libres, texto ambiguo o decisiones que dependen del contexto. Si
+      no lo necesitas, te lo decimos.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="mx-auto max-w-md rounded-2xl border border-line bg-page p-6 shadow-card sm:p-8">
+        <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+          <Icon name="tabler:file-text" class="h-6 w-6 shrink-0 text-primary" />
+          <span class="font-medium text-heading">Entra un documento o un correo</span>
+        </div>
+        <div class="flex justify-center py-2 text-muted">
+          <Icon name="tabler:arrow-down" class="h-5 w-5" />
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-[color:var(--aw-color-cta)] bg-surface px-4 py-3">
+          <Icon name="tabler:robot" class="h-6 w-6 shrink-0 text-primary" />
+          <span class="font-medium text-heading">Agente de IA: lee, decide y usa herramientas</span>
+        </div>
+        <div class="flex justify-center py-2 text-muted">
+          <Icon name="tabler:arrows-split-2" class="h-5 w-5" />
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+            <Icon name="tabler:plug-connected" class="h-6 w-6 shrink-0 text-primary" />
+            <span class="text-sm font-medium text-heading">Tus sistemas: CRM, ERP y correo</span>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+            <Icon name="tabler:user-check" class="h-6 w-6 shrink-0 text-primary" />
+            <span class="text-sm font-medium text-heading">Una persona aprueba y corrige</span>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="casos"
+    tagline="Casos de uso"
+    title="Automatización con agentes de IA para cada área de tu empresa"
+    subtitle="Ejemplos ilustrativos de procesos donde un agente aporta valor. No son proyectos de clientes."
+    items={[
+      {
+        title: 'Seguros y pólizas',
+        description:
+          'Lee pólizas y endosos, extrae vigencias y coberturas, actualiza el CRM, avisa las renovaciones y recibe los avisos de siniestro con los datos completos.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Finanzas y back office',
+        description:
+          'Lee facturas, las compara con las órdenes de compra, concilia pagos y prepara el cierre. Lo que no cuadra pasa a una persona.',
+        icon: 'tabler:receipt',
+      },
+      {
+        title: 'Ventas',
+        description:
+          'Investiga prospectos, completa sus datos en el CRM, redacta correos de seguimiento y recuerda cada próximo paso.',
+        icon: 'tabler:target-arrow',
+      },
+      {
+        title: 'Atención al cliente',
+        description:
+          'Clasifica solicitudes, responde las frecuentes con tu información y pasa a una persona las que requieren criterio.',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Procesamiento de documentos',
+        description:
+          'Contratos, formularios, hojas de vida o informes: los clasifica, extrae campos y resume, con la página de origen para verificar.',
+        icon: 'tabler:file-search',
+      },
+      {
+        title: 'Operaciones y reportes',
+        description:
+          'Reúne datos de varias fuentes, detecta inconsistencias y prepara el informe que hoy armas a mano cada semana.',
+        icon: 'tabler:report-analytics',
+      },
+    ]}
+  />
+
+  <Steps
+    id="polizas"
+    tagline="Seguros"
+    title="Automatización de pólizas con agentes de IA, del PDF al CRM"
+    items={[
+      {
+        title: 'Recibe y clasifica',
+        description:
+          'Revisa el buzón o la carpeta compartida y distingue pólizas nuevas, renovaciones, endosos, recibos y avisos de siniestro. Los escaneos pasan antes por OCR.',
+        icon: 'tabler:inbox',
+      },
+      {
+        title: 'Extrae los datos',
+        description:
+          'Lee tomador, aseguradora, ramo, vigencia, prima y coberturas, y entrega cada campo con su nivel de confianza y la página donde lo encontró.',
+        icon: 'tabler:text-scan-2',
+      },
+      {
+        title: 'Valida',
+        description:
+          'El código revisa fechas, duplicados y que el cliente exista en el CRM. El agente compara las coberturas con lo pedido y marca exclusiones inusuales.',
+        icon: 'tabler:checklist',
+      },
+      {
+        title: 'Actualiza y avisa',
+        description:
+          'Crea o actualiza la póliza en el CRM, adjunta el PDF y programa los avisos de vencimiento y renovación por WhatsApp o correo.',
+        icon: 'tabler:database-edit',
+      },
+      {
+        title: 'Escala lo dudoso',
+        description:
+          'Con baja confianza, datos que no coinciden o un siniestro de por medio, un asesor recibe el caso con un resumen y decide.',
+        icon: 'tabler:user-exclamation',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      Ejemplo ilustrativo para corredores y agencias de seguros, desarrollado en
+      <a href="/blog/que-es-un-agente-de-ia" class={LINK}>qué es un agente de IA y cómo automatiza pólizas</a>. El
+      agente propone y valida; las decisiones con consecuencias las toma una persona.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <Steps
+    tagline="Proceso"
+    title="Cómo implementamos agentes de IA de forma segura"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y permisos mínimos</span>',
+        description:
+          'Elegimos un proceso acotado, mapeamos los sistemas que toca y definimos a qué puede acceder el agente: solo lo indispensable, con credenciales revocables.',
+        icon: 'tabler:lock',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Diseño con aprobación humana</span>',
+        description:
+          'Definimos qué decide el agente, qué aprueba una persona y cuándo escala. Las acciones de alto impacto, como enviar un correo o modificar un registro, siempre requieren aprobación.',
+        icon: 'tabler:user-check',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Evaluación antes de lanzar</span>',
+        description:
+          'Probamos con casos reales etiquetados a mano, medimos la exactitud por campo y operamos en modo sombra: el agente propone y una persona decide.',
+        icon: 'tabler:test-pipe',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Producción con registro</span>',
+        description:
+          'Cada acción queda registrada: qué leyó, qué decidió y quién aprobó. Revisamos por muestreo, medimos errores y ampliamos el alcance solo cuando los resultados lo justifican.',
+        icon: 'tabler:history',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      Combinamos modelos de lenguaje (LLMs), flujos en <a href="/automatizacion-con-n8n" class={LINK}>n8n</a>, código en
+      Python y las APIs de tus sistemas, con la solución más simple que resuelva tu caso. ¿Prefieres aprender a hacerlo?
+      Mira las <a href="/clases-de-ia" class={LINK}>clases de IA</a>.
+    </Fragment>
+  </Steps>
+
+  <CallToAction title="¿Qué proceso te gustaría delegar a un agente?">
+    <Fragment slot="subtitle">
+      Cuéntanos qué haces hoy a mano y te decimos si un agente tiene sentido o si una automatización más simple alcanza.
+      Conoce <a href="/autor" class={LINK}>quién está detrás de Sonmyd</a>.
+    </Fragment>
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton message={landing.whatsapp} location="agentes-de-ia-mid" class="w-full sm:w-auto" />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+      </div>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre agentes de IA para empresas"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="agentes-de-ia"
+    formId="lead-agentes-de-ia"
+    title="Evaluemos qué puede hacer un agente en tu empresa"
+    subtitle="Cuéntanos el proceso que quieres automatizar y te respondemos con una propuesta según el alcance, sin costo."
+    button="Evaluar mi caso"
+    bullets={[
+      'Cotización según alcance, sin costo y sin compromiso',
+      'Si una automatización más simple alcanza, te lo decimos',
+      'Una persona de tu equipo aprueba lo importante',
+      'Atención remota para empresas de toda Colombia',
+    ]}
+  />
+</Layout>

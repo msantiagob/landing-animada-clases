@@ -58,7 +58,7 @@ export const PATCH: APIRoute = async ({ request }) => {
       return ok({ id, status });
     }
 
-    return badRequest('Tipo inválido: usá "contact" o "appointment"');
+    return badRequest('Tipo inválido: usa "contact" o "appointment"');
   } catch (error) {
     console.error('[api/admin/leads] Error actualizando estado:', error);
     return serverError();

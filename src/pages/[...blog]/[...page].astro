@@ -7,6 +7,7 @@ import Pagination from '~/components/blog/Pagination.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import { breadcrumbSchema, itemListSchema } from '~/utils/seo';
+import { BLOG_INDEX_TITLE, flattenBlogTopics, getBlogIndexSeo, getBlogTopics } from '~/utils/blog-seo';
 
 import { blogListRobots, getStaticPathsBlogList } from '~/utils/blog';
 
@@ -25,20 +26,15 @@ const currentPage = page.currentPage ?? 1;
  * Página pilar del blog.
  *
  * No es solo un listado: lleva texto propio que explica de qué trata el blog y
- * enlaza a las páginas de servicio. Un índice sin contenido no tiene nada por
- * lo que posicionar y no transmite autoridad hacia ningún lado.
+ * enlaza a los hubs y a las páginas de servicio. Un índice sin contenido no tiene
+ * nada por lo que posicionar y no transmite autoridad hacia ningún lado.
  *
  * Solo la primera página se indexa. Las paginadas tienen títulos y contenido
  * casi idénticos: indexarlas genera competencia interna sin sumar tráfico.
  */
 const metadata = {
-  title:
-    currentPage > 1
-      ? `Blog de IA, automatización y desarrollo — Página ${currentPage}`
-      : 'Blog: IA, Python, WhatsApp, automatización y seguridad | Sonmyd',
-  description:
-    'Artículos técnicos en español sobre inteligencia artificial, Python, WhatsApp Business API, automatización de procesos, servidores y ciberseguridad. Escritos desde proyectos reales.',
-  ignoreTitleTemplate: currentPage === 1,
+  ...getBlogIndexSeo(currentPage),
+  ignoreTitleTemplate: true,
   canonical: currentPage > 1 ? `/blog/${currentPage}` : '/blog',
   robots: {
     index: blogListRobots?.index && currentPage === 1,
@@ -49,20 +45,14 @@ const metadata = {
   },
 };
 
-const TEMAS = [
-  { name: 'Clases de IA', path: '/clases-de-ia' },
-  { name: 'Clases de Python', path: '/clases-de-python' },
-  { name: 'WhatsApp Business API', path: '/whatsapp-business-api' },
-  { name: 'Automatizaciones', path: '/automatizaciones' },
-  { name: 'Servidores y VPS', path: '/servidores-y-vps' },
-  { name: 'Ciberseguridad', path: '/ciberseguridad' },
-];
+/** Hubs y landings salen del registro (src/data/landings.ts): una landing nueva aparece aquí sin tocar la página. */
+const topics = getBlogTopics();
 ---
 
 <Layout metadata={metadata}>
   <StructuredData
     schema={[
-      itemListSchema(TEMAS),
+      itemListSchema(flattenBlogTopics(topics)),
       breadcrumbSchema([
         { name: 'Inicio', path: '/' },
         { name: 'Blog', path: '/blog' },
@@ -82,23 +72,23 @@ const TEMAS = [
       currentPage === 1 ? (
         <header>
           <p class="eyebrow">Blog</p>
-          <h1 class="mt-3 text-4xl font-bold tracking-tight text-heading sm:text-5xl">Cómo funciona esto por dentro</h1>
+          <h1 class="mt-3 text-4xl font-bold tracking-tight text-heading sm:text-5xl">{BLOG_INDEX_TITLE}</h1>
           <p class="mt-5 text-xl leading-relaxed text-muted">
-            Artículos técnicos en español sobre inteligencia artificial, Python, WhatsApp Business API, automatización,
-            servidores y seguridad. Salen de proyectos reales, no de repetir documentación.
+            Artículos técnicos en español sobre programación, inteligencia artificial, automatización, WhatsApp,
+            servidores, seguridad y marketing digital. Salen de proyectos reales, no de repetir documentación.
           </p>
           <p class="mt-4 text-muted">
-            Cuando la respuesta honesta es que no necesitás contratar nada, también está escrita. Un artículo que solo
+            Cuando la respuesta honesta es que no necesitas contratar nada, también está escrita. Un artículo que solo
             te empuja a comprar no es contenido: es un anuncio largo.
           </p>
 
           <nav aria-label="Temas del blog" class="mt-8">
             <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Temas</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
-              {TEMAS.map((tema) => (
+              {topics.hubs.map((hub) => (
                 <li>
-                  <a class="pill transition-colors hover:text-heading" href={tema.path}>
-                    {tema.name}
+                  <a class="pill transition-colors hover:text-heading" href={hub.path}>
+                    {hub.name}
                   </a>
                 </li>
               ))}
@@ -121,5 +111,39 @@ const TEMAS = [
       <BlogList posts={page.data} />
       <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
     </div>
+
+    {
+      currentPage === 1 && (
+        <section aria-labelledby="blog-cursos-servicios" class="mt-16 border-t border-line pt-12">
+          <h2 id="blog-cursos-servicios" class="text-2xl font-bold tracking-tight text-heading">
+            Cursos y servicios de Sonmyd
+          </h2>
+          <p class="mt-2 text-muted">
+            Si un artículo te dejó con ganas de aprender el tema a fondo o de delegarlo, estos son los cursos y
+            servicios relacionados.
+          </p>
+
+          <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {topics.groups.map((group) => (
+              <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-muted">{group.name}</h3>
+                <ul class="mt-3 space-y-2">
+                  {group.links.map((link) => (
+                    <li>
+                      <a
+                        class="underline-offset-4 transition-colors hover:text-heading hover:underline"
+                        href={link.path}
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </section>
 </Layout>

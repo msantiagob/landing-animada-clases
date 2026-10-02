@@ -1,0 +1,82 @@
+---
+import { Icon } from 'astro-icon/components';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { Landing } from '~/data/landings';
+import { landingPath, relatedLinksFor } from '~/utils/landings';
+
+/**
+ * Enlazado interno al final de cada landing: "También te puede interesar".
+ *
+ * Tres bloques, cada uno con una razón de SEO y de conversión:
+ * 1. La contraparte (aprender ↔ contratar). Separa las dos intenciones de
+ *    búsqueda en URLs distintas y deja que quien llegó a la equivocada
+ *    encuentre la otra sin volver al buscador.
+ * 2. Las hermanas del silo: refuerzan la jerarquía temática.
+ * 3. El regreso al hub, que distribuye autoridad hacia la página pilar.
+ *
+ * El texto ancla de cada enlace es el NOMBRE de la landing destino (descriptivo,
+ * no "ver más"). La tarjeta entera es clicable con un enlace extendido
+ * (`after:absolute after:inset-0`), así el ancla se mantiene corta.
+ */
+export interface Props {
+  landing: Landing;
+}
+
+const { landing } = Astro.props;
+const { pair, related, hub: hubLink } = relatedLinksFor(landing);
+
+const headingId = 'related-links-title';
+---
+
+<section aria-labelledby={headingId}>
+  <WidgetWrapper as="div" containerClass="max-w-6xl">
+    <h2
+      id={headingId}
+      class="mb-10 text-center font-heading text-3xl font-bold leading-[1.15] text-heading md:mb-12 md:text-4xl"
+    >
+      También te puede interesar
+    </h2>
+
+    <div
+      class="card relative mx-auto mb-10 max-w-3xl border-l-4 border-l-[color:var(--aw-color-cta)] focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]"
+    >
+      <h3 class="text-lg font-semibold text-heading">{pair.heading}</h3>
+      <p class="mt-2">
+        <a
+          href={landingPath(pair.landing.slug)}
+          class="text-lg font-semibold text-primary underline-offset-4 hover:underline focus:outline-none after:absolute after:inset-0"
+        >
+          {pair.landing.name}
+        </a>
+      </p>
+      <p class="mt-1 text-muted">{pair.landing.summary}</p>
+    </div>
+
+    {
+      related.length > 0 && (
+        <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((entry) => (
+            <li class="card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]">
+              <h3 class="text-lg font-semibold text-heading">
+                <a
+                  href={landingPath(entry.slug)}
+                  class="underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0"
+                >
+                  {entry.name}
+                </a>
+              </h3>
+              <p class="mt-2 text-muted">{entry.summary}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(hubLink.hub.slug)} class="btn-secondary">
+        {hubLink.label}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+</section>

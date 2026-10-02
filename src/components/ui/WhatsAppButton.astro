@@ -1,0 +1,47 @@
+---
+import { Icon } from 'astro-icon/components';
+import { twMerge } from 'tailwind-merge';
+import { WHATSAPP_DEFAULT_TEXT, whatsappAccessibleName, whatsappUrl } from '~/utils/whatsapp';
+
+/**
+ * Botón que abre un chat de WhatsApp con el número del negocio.
+ *
+ * Reutiliza las clases de Button (`btn-primary` / `btn-secondary`) para verse
+ * igual que el resto de llamadas a la acción. El clic lo mide el listener
+ * delegado de Layout: por eso lleva `data-whatsapp-location`, que viaja al
+ * dataLayer como `link_location` y dice en qué parte de la página estaba el
+ * botón.
+ */
+export interface Props {
+  /** Mensaje que llega prellenado en el chat. Sin él se abre el chat vacío. */
+  message?: string;
+  text?: string;
+  variant?: 'primary' | 'secondary';
+  /** Dónde está el botón (`hero`, `service-area`...). Es obligatorio: sin él no se puede medir qué botón convierte. */
+  location: string;
+  class?: string;
+}
+
+const { message, text = WHATSAPP_DEFAULT_TEXT, variant = 'primary', location, class: className = '' } = Astro.props;
+
+const variants = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+} as const;
+
+// El nombre accesible siempre menciona WhatsApp, aunque el texto visible sea
+// otro ("Cotizar ahora"). Si el texto ya lo dice no hace falta aria-label.
+const accessibleName = whatsappAccessibleName(text);
+---
+
+<a
+  href={whatsappUrl(message)}
+  target="_blank"
+  rel="noopener"
+  data-whatsapp-location={location}
+  aria-label={accessibleName !== text ? accessibleName : undefined}
+  class={twMerge(variants[variant] ?? variants.primary, className)}
+>
+  <Icon name="tabler:brand-whatsapp" class="h-5 w-5 shrink-0" aria-hidden="true" />
+  <span>{text}</span>
+</a>

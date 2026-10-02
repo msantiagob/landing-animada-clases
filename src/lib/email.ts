@@ -161,7 +161,7 @@ export const emailHelpers = {
           ['Hora', data.time],
           ['Duración', `${data.duration ?? 60} minutos`],
         ],
-        `<p style="margin-top:16px;color:#475569;">Te contactamos por este mismo medio si necesitamos reprogramar. Si querés cancelar, respondé este correo.</p>`
+        `<p style="margin-top:16px;color:#475569;">Te contactamos por este mismo medio si necesitamos reprogramar. Si quieres cancelar, responde este correo.</p>`
       ),
     }),
 };

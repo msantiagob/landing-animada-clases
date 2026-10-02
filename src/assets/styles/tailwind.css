@@ -137,9 +137,16 @@
   border-bottom: 1px solid var(--aw-color-border);
 }
 
+/*
+ * Menú móvil abierto: un panel fijo que arranca justo debajo de la fila del logo.
+ * `--aw-menu-top` la publica src/utils/menu.ts al tocar el botón del menú, porque
+ * con la barra de anuncio visible la cabecera no está pegada al borde superior y
+ * un `top` fijo dejaba el primer grupo encima del logo. 70px es la posición con la
+ * cabecera arriba del todo, y el respaldo si el script no corre.
+ */
 #header.expanded nav {
   position: fixed;
-  top: 70px;
+  top: var(--aw-menu-top, 70px);
   left: 0;
   right: 0;
   bottom: 70px !important;

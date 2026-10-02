@@ -1,0 +1,274 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getHub, hubBreadcrumbs, landingMetadata, landingPath, landingsForHub } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, itemListSchema } from '~/utils/seo';
+
+/**
+ * Página HUB del silo de marketing. Compite por "agencia de marketing digital" y
+ * reparte autoridad hacia las cuatro páginas de servicio, que salen del registro
+ * (`landingsForHub`): una landing nueva del silo aparece aquí sin tocar esta página.
+ */
+const hub = getHub('marketing-digital');
+const metadata = landingMetadata(hub);
+const hero = getSeoImage(hub.image);
+
+const services = landingsForHub(hub.slug);
+// Artículos de todos los servicios del silo, sin repetir.
+const postIds = [...new Set(services.flatMap((service) => service.posts))];
+
+const WHATSAPP_MESSAGE = 'Hola, quiero información sobre los servicios de marketing digital.';
+
+// Estilo de los enlaces que van dentro de textos HTML (descripciones de widgets y respuestas de FAQs).
+const inlineLinks = '[&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4';
+
+const faqs = [
+  {
+    question: '¿Qué hace una agencia de marketing digital?',
+    answer:
+      'Planifica, ejecuta y mide las acciones que llevan clientes a tu negocio por internet: publicidad pagada en Meta y Google, posicionamiento SEO, contenido y seguimiento de los contactos. Nosotros sumamos la parte técnica: medición con Google Tag Manager y GA4, automatización con WhatsApp e IA y páginas rápidas. El alcance exacto lo definimos según tu negocio.',
+  },
+  {
+    question: '¿Cuánto cuesta contratar una agencia de marketing digital en Medellín?',
+    answer:
+      'No hay una tarifa única: depende de los servicios que necesites, la cantidad de campañas y el nivel de medición y reportes. La inversión en pauta la pagas directamente a Meta o a Google; nuestra gestión se cotiza según el alcance, y la cotización no tiene costo. Los precios y las políticas de las plataformas cambian con frecuencia.',
+  },
+  {
+    question: '¿Por cuál servicio debería empezar?',
+    answer:
+      'Depende de cómo te compran tus clientes. Si vendes productos en una tienda online, suele convenir Google Shopping y Meta Ads. Si te buscan para un servicio cercano, el SEO local y Google Maps. Si necesitas contactar a una base de clientes o atender rápido a quien escribe, las llamadas y el asistente de WhatsApp con IA. En una asesoría gratuita lo definimos contigo.',
+  },
+  {
+    question: '¿Qué necesito para empezar?',
+    answer:
+      'Saber qué vendes, a quién y qué quieres lograr, y darnos acceso a tus cuentas (sitio web, redes, Google y Meta). Si algo no existe todavía, como el píxel, Google Analytics o un perfil de Google Business Profile, lo configuramos en cuentas de tu propiedad. Las cuentas y los datos son tuyos desde el primer día.',
+  },
+  {
+    question: '¿Pueden garantizarme resultados?',
+    answer:
+      'No. Nadie puede garantizar ventas, posiciones ni un costo por resultado, porque dependen de tu oferta, de tu competencia y de decisiones de plataformas ajenas. Lo que sí hacemos es medir bien desde el inicio, decidir con datos y mostrarte cada mes qué pasó con tu inversión y qué haríamos después.',
+  },
+  {
+    question: '¿Qué significa que tengan un enfoque técnico?',
+    answer:
+      'Además de marketing, desarrollamos software, páginas web y automatizaciones con IA. En la práctica significa medición bien instalada, anuncios conectados a WhatsApp con un asistente que responde, y páginas rápidas donde aterrizan tus clientes, todo con un mismo equipo en lugar de varios proveedores que coordinar.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      itemListSchema(services.map((service) => ({ name: service.name, path: landingPath(service.slug) }))),
+      faqSchema(faqs),
+      breadcrumbSchema(hubBreadcrumbs(hub)),
+    ]}
+  />
+
+  <Breadcrumbs items={hubBreadcrumbs(hub)} />
+
+  <Hero
+    tagline="Marketing digital"
+    actions={[
+      { variant: 'primary', text: 'Pedir una propuesta de marketing', href: '#contacto', icon: 'tabler:speakerphone' },
+      { text: 'Ver los servicios', href: '#servicios', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Agencia de marketing digital</span> en Medellín que mide y automatiza la captación de clientes
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Somos una agencia de marketing digital en Medellín con enfoque técnico: configuramos primero la medición,
+      gestionamos tu publicidad en Meta Ads, Google Shopping y SEO, y automatizamos el seguimiento de tus contactos por
+      WhatsApp con IA. Trabajamos con negocios de Medellín y de toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización sin costo</span>
+      <span>·</span>
+      <span>Tus cuentas publicitarias son tuyas</span>
+      <span>·</span>
+      <span>Medimos antes de invertir</span>
+    </Fragment>
+  </Hero>
+
+  <WidgetWrapper containerClass="max-w-4xl">
+    <Headline tagline="Quiénes somos" title="Una agencia de marketing digital con base en tecnología" />
+
+    <div class={`space-y-5 text-lg leading-relaxed text-muted ${inlineLinks}`}>
+      <p>
+        Sonmyd es un negocio de tecnología de Medellín: además de marketing, desarrollamos software, páginas web y
+        automatizaciones con IA, y enseñamos programación. Esa base técnica nos permite medir con precisión, conectar
+        tus anuncios con WhatsApp y llevar a tus clientes a páginas rápidas, todo dentro de un mismo equipo.
+      </p>
+      <p>
+        Nos importa lo que de verdad cuenta para tu negocio: cuántos contactos y cuántas ventas salieron de lo que
+        invertiste. Por eso no prometemos posiciones ni resultados: prometemos medición clara, decisiones basadas en
+        datos y reportes que puedas entender. Conoce <a href="/autor">quién está detrás de Sonmyd</a>.
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <WidgetWrapper id="servicios" containerClass="max-w-6xl">
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+
+    <Headline
+      tagline="Servicios de marketing"
+      title="Servicios de nuestra agencia de marketing digital"
+      subtitle="Cada servicio tiene su propia página con el detalle. Elige el que más se parezca a tu necesidad o cuéntanos tu caso y te orientamos."
+    />
+
+    <ul class="grid gap-6 sm:grid-cols-2">
+      {
+        services.map((service) => (
+          <li class="card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]">
+            <h3 class="text-xl font-semibold text-heading">
+              <a
+                href={landingPath(service.slug)}
+                class="underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0"
+              >
+                {service.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{service.summary}</p>
+            <p class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
+              Ver el servicio
+              <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </WidgetWrapper>
+
+  <Features
+    id="enfoque"
+    tagline="Nuestro enfoque"
+    title="Primero medir, después optimizar y automatizar"
+    subtitle="Así trabajamos todos los servicios, sin importar el canal."
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Medición antes que anuncios',
+        description:
+          'Configuramos Google Tag Manager, GA4, el píxel de Meta y la API de conversiones antes de invertir, para saber qué anuncio, búsqueda o página trae contactos y ventas.',
+        icon: 'tabler:chart-dots',
+      },
+      {
+        title: 'Un embudo, no canales sueltos',
+        description:
+          'Conectamos publicidad, sitio web, WhatsApp y seguimiento como un solo recorrido: atraer, convertir, atender y medir. Cada servicio refuerza a los demás.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Seguimiento con WhatsApp e IA',
+        description:
+          'Un <a href="/asistente-de-whatsapp">asistente de WhatsApp con IA</a> responde a quien escribe, califica el interés y agenda, y pasa a una persona cuando hace falta. Así no se enfrían los contactos que pagaste por conseguir.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Páginas rápidas que convierten',
+        description:
+          'La publicidad lleva a quien ya quiere comprar y una página lenta lo pierde. Desarrollamos <a href="/desarrollo-web">páginas web y landing pages</a> veloces y optimizadas para SEO.',
+        icon: 'tabler:bolt',
+      },
+      {
+        title: 'Reportes que se entienden',
+        description:
+          'Cada mes ves inversión, contactos o ventas, costo por resultado y próximos pasos, sin jerga y sin métricas de vanidad.',
+        icon: 'tabler:presentation-analytics',
+      },
+      {
+        title: 'Honestidad sobre los plazos',
+        description:
+          'El SEO toma meses y la pauta necesita datos para aprender. No prometemos posiciones, ventas ni plazos mágicos: te decimos qué esperar y cuándo lo medimos.',
+        icon: 'tabler:hourglass',
+      },
+    ]}
+  />
+
+  <WidgetWrapper id="aprender" containerClass="max-w-3xl">
+    <div class="card border-l-4 border-l-[color:var(--aw-color-cta)] md:p-8">
+      <h2 class="font-heading text-2xl font-bold leading-[1.15] text-heading md:text-3xl">
+        ¿Prefieres aprender a hacerlo tú mismo?
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        Si quieres llevar tu propio marketing, el curso de marketing digital te enseña campañas en Meta Ads y Google
+        Shopping, SEO y analítica, con un profesor, en persona u online.
+      </p>
+      <p class="mt-6">
+        <a href="/curso-de-marketing-digital" class="btn-secondary">
+          Ver el curso de marketing digital
+          <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <CallToAction title="¿No sabes por dónde empezar?">
+    <Fragment slot="subtitle">
+      Cuéntanos qué vendes y cómo te compran tus clientes: te decimos con honestidad qué servicio tiene sentido primero.
+      La inversión en pauta la pagas directamente a Meta o a Google; nuestra gestión se cotiza según el alcance, y la
+      cotización no tiene costo.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={WHATSAPP_MESSAGE} location="marketing-digital-mid" text="Hablar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind="servicio" message={WHATSAPP_MESSAGE} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre nuestra agencia de marketing digital"
+    tagline="Dudas comunes"
+    classes={{ container: `max-w-6xl ${inlineLinks}` }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </FAQs>
+
+  {
+    postIds.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={postIds}
+        title="Artículos de marketing digital"
+        linkText="Ver todos los artículos"
+      />
+    )
+  }
+
+  <LeadCapture
+    formId="lead-marketing-digital"
+    title="Cuéntanos tu negocio y te proponemos por dónde empezar"
+    subtitle="Revisamos tu caso y te enviamos una propuesta concreta de marketing digital, no un catálogo genérico."
+    button="Quiero una propuesta de marketing"
+    bullets={[
+      'Cotización sin costo y sin compromiso',
+      'Tus cuentas publicitarias y tus datos son tuyos',
+      'La inversión en pauta la pagas directamente a Meta y a Google',
+      'No prometemos resultados: medimos y te mostramos los números',
+    ]}
+  />
+</Layout>

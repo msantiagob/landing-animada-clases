@@ -1,0 +1,291 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('consultoria-aws');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces dentro del texto (los widgets pintan el copy con set:html).
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Los seis pilares del AWS Well-Architected Framework, que ilustran la columna de la imagen.
+const pillars = [
+  { icon: 'tabler:settings-cog', label: 'Excelencia operativa' },
+  { icon: 'tabler:shield-lock', label: 'Seguridad' },
+  { icon: 'tabler:activity', label: 'Fiabilidad' },
+  { icon: 'tabler:gauge', label: 'Eficiencia del rendimiento' },
+  { icon: 'tabler:pig-money', label: 'Optimización de costos' },
+  { icon: 'tabler:leaf', label: 'Sostenibilidad' },
+];
+
+const faqs = [
+  {
+    question: '¿Qué incluye una consultoría AWS?',
+    answer:
+      'Depende de tu punto de partida. Puede incluir un diagnóstico de tu cuenta, el diseño de la arquitectura, la migración de aplicaciones, la optimización de costos, la configuración de seguridad y la automatización de despliegues. Definimos el alcance contigo después de revisar tu caso y lo cotizamos por escrito, sin costo.',
+  },
+  {
+    question: '¿Cómo se cobra la consultoría y quién paga los servicios de AWS?',
+    answer:
+      'Cotizamos según el alcance, sin costo, y la propuesta detalla qué se entrega. Los servicios de AWS los pagas directamente a AWS desde tu propia cuenta, a tu nombre. Así conservas el control de los accesos y puedes seguir sin nosotros cuando quieras.',
+  },
+  {
+    question: '¿Cuánto tarda una migración a AWS?',
+    answer:
+      'Depende de cuántas aplicaciones migras, qué tan acopladas están y cuánto tiempo de inactividad toleras. Una aplicación simple en un solo servidor es muy distinta de un sistema con varias bases de datos. Tras el diagnóstico te damos un plan por etapas, sin prometer plazos antes de conocer tu caso.',
+  },
+  {
+    question: '¿Pueden ayudarme a reducir la factura de AWS?',
+    answer:
+      'Normalmente hay margen en cuentas que nunca se han revisado: instancias sobredimensionadas, volúmenes sin uso o consumo estable sin Savings Plans. No prometemos un porcentaje de ahorro. Primero medimos, luego proponemos cambios con su impacto estimado y tú decides cuáles aplicar.',
+  },
+  {
+    question: '¿AWS conviene más que un VPS?',
+    answer:
+      'No siempre. Para una aplicación pequeña y estable, un VPS bien administrado puede ser más simple y económico. AWS se justifica cuando necesitas servicios administrados, escalar según la demanda, alta disponibilidad o integrarte con otros servicios en la nube. Te lo decimos con honestidad, aunque implique que no necesites AWS.',
+  },
+  {
+    question: '¿Qué es el AWS Well-Architected Framework y por qué lo usan?',
+    answer:
+      'Es la guía de buenas prácticas de AWS, organizada en seis pilares: excelencia operativa, seguridad, fiabilidad, eficiencia del rendimiento, optimización de costos y sostenibilidad. La usamos como lista de revisión para detectar riesgos antes de que se conviertan en incidentes o en gastos innecesarios.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Consultoría en Amazon Web Services: migración, arquitectura, costos y DevOps',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Servicios AWS en Colombia"
+    actions={[
+      { variant: 'primary', text: 'Cotizar mi consultoría AWS', href: '#contacto', icon: 'tabler:cloud-cog' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Consultoría AWS</span>: tu nube segura, ordenada y con costos bajo control
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Nuestra consultoría AWS te ayuda a migrar tus aplicaciones a la nube, diseñar una arquitectura segura y escalable
+      y entender cuánto pagas y por qué. Trabajamos desde Medellín, sobre tu propia cuenta de AWS y en remoto con toda
+      Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Todo en tu propia cuenta de AWS</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+      <span>·</span>
+      <span>Arquitectura y decisiones documentadas</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Lo que suele salir mal"
+    title="Migración a AWS sin sorpresas en seguridad ni costos"
+    items={[
+      {
+        title: 'Facturas que nadie sabe explicar',
+        description:
+          'Instancias sobredimensionadas, volúmenes sin uso y servicios olvidados se suman cada mes, sin presupuestos ni alertas que avisen.',
+      },
+      {
+        title: 'Permisos y accesos demasiado amplios',
+        description:
+          'Usuarios con permisos de administrador, claves sin rotar y cuentas sin segundo factor son riesgos frecuentes en cuentas que crecieron sin orden.',
+      },
+      {
+        title: 'Un solo servidor y copias sin probar',
+        description:
+          'Un único punto de falla y respaldos que nunca se restauraron convierten una caída en una pérdida de datos.',
+      },
+      {
+        title: 'Cambios manuales que nadie puede repetir',
+        description:
+          'Configurar a mano en la consola hace que cada despliegue sea un riesgo y que cada entorno sea distinto.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      AWS ofrece cientos de servicios, y esa flexibilidad es justo lo que complica elegir bien. Una arquitectura en la
+      nube sin criterio termina costando más y protegiendo menos. Si tu carga es pequeña, quizá te baste un <a
+        href="/servidores-y-vps"
+        class={link}>VPS bien administrado</a
+      >: la consultoría sirve para decidirlo con datos.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="mx-auto max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-card-lg sm:p-8 md:mt-16">
+        <p class="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-muted">
+          Seis pilares Well-Architected
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          {
+            pillars.map(({ icon, label }) => (
+              <div class="flex flex-col items-center gap-2 rounded-xl border border-line bg-page px-3 py-4 text-center text-sm font-medium text-heading">
+                <Icon name={icon} class="h-7 w-7 text-primary" />
+                {label}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="Servicios AWS en Colombia, de la migración al DevOps"
+    subtitle="Trabajamos con tecnologías como EC2, S3, RDS, IAM, Lambda, CloudFormation, Terraform y GitHub Actions, según lo que tu aplicación necesite."
+    items={[
+      {
+        title: 'Migración a AWS',
+        description:
+          'Inventario de lo que tienes, estrategia por aplicación (rehost, replatform o refactor), pruebas y un corte coordinado con plan de reversa.',
+        icon: 'tabler:cloud-upload',
+      },
+      {
+        title: 'Arquitectura Well-Architected',
+        description:
+          'Diseño y revisión según el AWS Well-Architected Framework: seguridad, fiabilidad, rendimiento, costos, excelencia operativa y sostenibilidad.',
+        icon: 'tabler:sitemap',
+      },
+      {
+        title: 'Optimización de costos en AWS',
+        description:
+          'Rightsizing de instancias, Savings Plans cuando el consumo es estable, presupuestos y alertas con AWS Budgets, y etiquetado para saber qué cuesta cada cosa.',
+        icon: 'tabler:pig-money',
+      },
+      {
+        title: 'Seguridad en la nube',
+        description: `IAM con mínimo privilegio, segundo factor, cifrado con KMS, copias de seguridad y registro de actividad con CloudTrail. Si buscas ir más allá de la nube, mira la <a href="/ciberseguridad" class="${link}">ciberseguridad para pymes</a>.`,
+        icon: 'tabler:shield-lock',
+      },
+      {
+        title: 'DevOps e infraestructura como código',
+        description:
+          'Pipelines de CI/CD e infraestructura como código con Terraform o AWS CDK, para que cada entorno se pueda repetir, revisar y auditar.',
+        icon: 'tabler:git-merge',
+      },
+      {
+        title: 'Arquitecturas serverless',
+        description:
+          'Cuando encajan: Lambda, API Gateway, DynamoDB y S3 para pagar por uso y escalar sin administrar servidores.',
+        icon: 'tabler:bolt',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    title="Cómo trabajamos: del diagnóstico a una nube que tu equipo entiende"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Revisamos tu cuenta de AWS o tu infraestructura actual, en remoto o en persona si estás en Medellín: recursos, costos, accesos, copias de seguridad y puntos únicos de falla.',
+        icon: 'tabler:stethoscope',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Plan y cotización</span>',
+        description:
+          'Recibes una hoja de ruta priorizada por riesgo y ahorro, y una cotización según el alcance, sin costo.',
+        icon: 'tabler:list-numbers',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Implementación</span>',
+        description:
+          'Migramos o ajustamos por etapas, con pruebas y plan de reversa, siempre dentro de tu cuenta de AWS.',
+        icon: 'tabler:cloud-cog',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Traspaso y acompañamiento</span>',
+        description: `Documentamos la arquitectura, dejamos alertas de costos y capacitamos a tu equipo. ¿Prefieres aprender a hacerlo tú mismo? Mira el <a href="/curso-de-aws" class="${link}">curso de AWS</a>.`,
+        icon: 'tabler:school',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Hablamos de tu proyecto en AWS?</Fragment>
+    <Fragment slot="subtitle">
+      Escríbenos por WhatsApp o agenda una asesoría gratuita. Y si quieres saber con quién trabajarías, conoce <a
+        href="/autor"
+        class={link}>quién está detrás de Sonmyd</a
+      >.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="consultoria-aws-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre la consultoría AWS"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={landing.posts}
+        title="Artículos relacionados"
+        linkText="Ver todos los artículos"
+        classes={{ container: 'max-w-6xl' }}
+      />
+    )
+  }
+
+  <LeadCapture
+    interest="consultoria-aws"
+    formId="lead-consultoria-aws"
+    title="Cuéntanos cómo está tu nube hoy"
+    subtitle="Cuéntanos qué corre hoy, qué quieres llevar a AWS y qué te preocupa: costos, seguridad o disponibilidad. Desde Medellín te proponemos un plan de trabajo y una cotización según el alcance."
+    button="Cotizar mi consultoría AWS"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Todo queda en tu cuenta de AWS, a tu nombre',
+      'Arquitectura y decisiones documentadas para tu equipo',
+      'Si un VPS te alcanza, te lo decimos',
+    ]}
+  />
+</Layout>

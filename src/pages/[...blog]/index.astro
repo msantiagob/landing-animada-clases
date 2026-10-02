@@ -10,6 +10,7 @@ import ToBlogLink from '~/components/blog/ToBlogLink.astro';
 import { getCanonical, getPermalink } from '~/utils/permalinks';
 import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
 import { findImage } from '~/utils/images';
+import { getPostImageAlt } from '~/utils/post-image';
 import type { MetaData } from '~/types';
 import RelatedPosts from '~/components/blog/RelatedPosts.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
@@ -29,6 +30,8 @@ const { post } = Astro.props as Props;
 
 const url = getCanonical(getPermalink(post.permalink, 'post'));
 const image = (await findImage(post.image)) as ImageMetadata | string | undefined;
+// Computed from the raw frontmatter value: once resolved, the image no longer carries its file name.
+const imageAlt = getPostImageAlt(post, 'excerpt');
 
 const metadata = merge(
   {
@@ -79,7 +82,7 @@ const articlePath = getPermalink(post.permalink, 'post');
     ]}
   />
 
-  <SinglePost post={{ ...post, image: image }} url={url}>
+  <SinglePost post={{ ...post, image: image }} url={url} imageAlt={imageAlt}>
     {post.Content ? <post.Content /> : <Fragment set:html={post.content || ''} />}
   </SinglePost>
 

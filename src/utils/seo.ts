@@ -1,4 +1,5 @@
 import { SITE } from 'astrowind:config';
+import { BUSINESS } from '~/data/business';
 
 export const SITE_URL = (SITE?.site ?? 'https://sonmyd.co').replace(/\/$/, '');
 
@@ -7,36 +8,88 @@ export const absoluteUrl = (path = '/'): string => `${SITE_URL}${path.startsWith
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 const AUTHOR_ID = `${SITE_URL}/autor#person`;
 
+/** Acepta una URL absoluta o una ruta del sitio y devuelve siempre una URL absoluta. */
+const toAbsoluteUrl = (value: string): string => (/^https?:\/\//.test(value) ? value : absoluteUrl(value));
+
+/**
+ * Dirección postal SIN calle: el negocio no tiene una sede pública, y publicar
+ * una dirección inventada o ajena en el marcado es peor que no tenerla.
+ */
+const postalAddress = () => ({
+  '@type': 'PostalAddress',
+  addressLocality: BUSINESS.address.locality,
+  addressRegion: BUSINESS.address.region,
+  addressCountry: BUSINESS.address.country,
+});
+
+/**
+ * Dónde se presta el servicio: los municipios que se atienden en persona y
+ * Colombia completa, porque las clases y los servicios también se dan en línea.
+ * Reemplaza a la lista de países (AR, MX, ES, CL, PE) que no sustentábamos.
+ */
+const areaServed = () => [
+  ...BUSINESS.areaServed.map((name) => ({ '@type': 'City', name })),
+  { '@type': 'Country', name: 'Colombia' },
+];
+
 /**
  * Identidad de la marca. Se emite en todas las páginas para que Google
  * consolide las señales bajo una sola entidad en lugar de tratar cada URL
  * como si fuera de un negocio distinto.
+ *
+ * Es un `ProfessionalService` (subtipo de LocalBusiness) porque el negocio
+ * está en Medellín y esa señal local es la que se quiere posicionar. El `@id`
+ * se conserva: todos los demás nodos (cursos, servicios, artículos) apuntan a él.
+ * No lleva `sameAs`: solo se declaran perfiles verificados.
  */
 export const organizationSchema = () => ({
-  '@type': 'Organization',
+  '@type': 'ProfessionalService',
   '@id': ORGANIZATION_ID,
-  name: 'Sonmyd',
+  name: BUSINESS.name,
   url: SITE_URL,
   logo: absoluteUrl('/favicon.svg'),
   description:
-    'Clases de inteligencia artificial y Python, asistentes de WhatsApp sobre la API oficial de Meta, automatizaciones, desarrollo de software, administración de servidores y ciberseguridad.',
+    'Negocio de tecnología en Medellín, Colombia: enseña inteligencia artificial, programación, AWS, Linux, n8n y marketing digital, y desarrolla software, páginas web, apps, bots, agentes de IA, automatizaciones, servidores, ciberseguridad y publicidad en Meta Ads, Google Shopping y SEO.',
   slogan: 'Inteligencia artificial aplicada a tu negocio',
-  areaServed: ['CO', 'AR', 'MX', 'ES', 'CL', 'PE'],
+  telephone: BUSINESS.telephone,
+  address: postalAddress(),
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: BUSINESS.geo.latitude,
+    longitude: BUSINESS.geo.longitude,
+  },
+  areaServed: areaServed(),
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: BUSINESS.telephone,
+    contactType: 'customer service',
+    availableLanguage: 'es',
+    areaServed: 'CO',
+  },
   knowsAbout: [
     'Inteligencia artificial',
     'Clases de IA',
-    'Clases de Python',
+    'Agentes de IA',
+    'Python',
+    'JavaScript',
+    'Desarrollo web',
+    'Desarrollo de aplicaciones móviles',
+    'Desarrollo de software a medida',
+    'Bots y chatbots',
     'Asistente de WhatsApp con IA',
     'WhatsApp Business API',
-    'Meta Business',
     'Llamadas de marketing con IA',
     'Gestión de llamadas',
+    'n8n',
     'Automatización de procesos',
-    'Automatización con Google Workspace',
-    'Desarrollo de software a medida',
-    'Desarrollo de APIs',
+    'AWS',
+    'Linux',
     'Administración de servidores y VPS',
     'Ciberseguridad',
+    'Meta Ads',
+    'Google Shopping',
+    'Posicionamiento SEO',
+    'Marketing digital',
   ],
 });
 
@@ -76,11 +129,14 @@ export const serviceSchema = ({
   description,
   path,
   serviceType,
+  image,
 }: {
   name: string;
   description: string;
   path: string;
   serviceType: string;
+  /** URL absoluta o ruta del sitio; se emite siempre como URL absoluta. */
+  image?: string;
 }) => ({
   '@type': 'Service',
   '@id': `${absoluteUrl(path)}#service`,
@@ -89,23 +145,34 @@ export const serviceSchema = ({
   serviceType,
   url: absoluteUrl(path),
   provider: { '@id': ORGANIZATION_ID },
-  areaServed: ['CO', 'AR', 'MX', 'ES', 'CL', 'PE'],
+  areaServed: areaServed(),
   availableChannel: {
     '@type': 'ServiceChannel',
     serviceUrl: absoluteUrl('/contact'),
   },
+  ...(image ? { image: toAbsoluteUrl(image) } : {}),
 });
 
+/**
+ * Curso con dos modalidades: en línea (toda Colombia) y presencial en Medellín.
+ *
+ * Deliberadamente NO emite carga horaria (`courseWorkload`), duración ni
+ * precios: nunca se verificaron y en el marcado serían afirmaciones públicas.
+ * `offers` solo declara que el curso es de pago (`category: 'Paid'`), sin monto.
+ * El instructor va en cada `CourseInstance`, que es donde schema.org define la
+ * propiedad (en `Course` no existe).
+ */
 export const courseSchema = ({
   name,
   description,
   path,
-  modes,
+  image,
 }: {
   name: string;
   description: string;
   path: string;
-  modes: Array<'online' | 'onsite' | 'blended'>;
+  /** URL absoluta o ruta del sitio; se emite siempre como URL absoluta. */
+  image?: string;
 }) => ({
   '@type': 'Course',
   '@id': `${absoluteUrl(path)}#course`,
@@ -114,11 +181,25 @@ export const courseSchema = ({
   url: absoluteUrl(path),
   inLanguage: 'es',
   provider: { '@id': ORGANIZATION_ID },
-  hasCourseInstance: modes.map((mode) => ({
-    '@type': 'CourseInstance',
-    courseMode: mode,
-    courseWorkload: 'PT16H',
-  })),
+  offers: { '@type': 'Offer', category: 'Paid' },
+  hasCourseInstance: [
+    {
+      '@type': 'CourseInstance',
+      courseMode: 'Online',
+      instructor: { '@id': AUTHOR_ID },
+    },
+    {
+      '@type': 'CourseInstance',
+      courseMode: 'Onsite',
+      instructor: { '@id': AUTHOR_ID },
+      location: {
+        '@type': 'Place',
+        name: BUSINESS.address.locality,
+        address: postalAddress(),
+      },
+    },
+  ],
+  ...(image ? { image: toAbsoluteUrl(image) } : {}),
 });
 
 /** Las FAQs son la vía más directa a un rich result en buscadores en español. */
@@ -161,7 +242,7 @@ export const articleSchema = ({
   dateModified: dateModified ?? datePublished,
   author: { '@id': AUTHOR_ID },
   publisher: { '@id': ORGANIZATION_ID },
-  ...(image ? { image: image.startsWith('http') ? image : absoluteUrl(image) } : {}),
+  ...(image ? { image: toAbsoluteUrl(image) } : {}),
 });
 
 /**

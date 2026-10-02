@@ -1,0 +1,307 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('desarrollo-de-bots');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+const LINK = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿En qué canales puede funcionar un bot?',
+    answer:
+      'En WhatsApp, en Telegram y en un chat dentro de tu sitio web. Para WhatsApp usamos la API oficial de Meta, que exige verificar tu negocio y aprobar plantillas; nos encargamos del trámite. La lógica del bot se reutiliza entre canales, así que empezar por uno y sumar otro después no obliga a rehacerlo.',
+  },
+  {
+    question: '¿Cuánto cuesta el desarrollo de un bot?',
+    answer:
+      'Depende del alcance: canales, integraciones, casos de uso y volumen. Hacemos una cotización según alcance, sin costo. Aparte del desarrollo hay costos de terceros: Meta cobra por mensaje de plantilla según su categoría y cambia las condiciones con frecuencia, y el modelo de IA y el servidor se pagan por uso.',
+  },
+  {
+    question: '¿Cuánto tarda en estar listo?',
+    answer:
+      'Depende del alcance. Un bot con pocas intenciones y una sola integración sale antes que uno conectado a varios sistemas. Por eso empezamos con un primer caso de uso acotado, lo probamos con conversaciones reales y, en la cotización, te entregamos un cronograma por fases en lugar de una promesa genérica.',
+  },
+  {
+    question: '¿El bot puede pasar la conversación a una persona?',
+    answer:
+      'Sí, y siempre lo diseñamos así. Definimos contigo cuándo cede el bot: cuando el cliente lo pide, cuando se frustra, cuando falla dos veces seguidas o cuando el tema es delicado. La persona recibe un resumen de lo conversado y el bot deja de responder, para que nadie tenga que repetir lo que ya contó.',
+  },
+  {
+    question: '¿Con qué sistemas se conecta?',
+    answer:
+      'Con tu CRM, por ejemplo HubSpot o Pipedrive, con Google Calendar, Google Sheets, tu correo y cualquier sistema que tenga API, como un ERP o una plataforma propia. Si tu software no tiene API, revisamos alternativas durante el diagnóstico. Así cada conversación queda registrada donde tu equipo ya trabaja.',
+  },
+  {
+    question: '¿Qué pasa con los datos de mis clientes?',
+    answer:
+      'El bot recoge solo lo necesario, avisa que es un asistente virtual y no pide datos sensibles como contraseñas o números de tarjeta. En Colombia aplica la Ley 1581 de 2012 sobre datos personales: tu empresa define la política y la autorización, y conviene que tu asesor legal las revise. Diseñamos el bot para facilitarlo.',
+  },
+  {
+    question: '¿Trabajan con empresas de otras ciudades?',
+    answer:
+      'Sí. Estamos en Medellín y atendemos en persona en la ciudad y en municipios cercanos, pero el diagnóstico, el desarrollo y el seguimiento también se hacen de forma remota, por videollamada y WhatsApp. Así trabajamos con empresas de toda Colombia sin que la distancia cambie el proceso.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Desarrollo de bots y chatbots con inteligencia artificial',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Bots y chatbots con IA"
+    actions={[
+      { variant: 'primary', text: 'Cotizar mi bot', href: '#contacto', icon: 'tabler:message-chatbot' },
+      { variant: 'tertiary', text: 'Agenda una asesoría gratuita', href: '/booking' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Desarrollo de bots</span> y chatbots con IA en Medellín
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Con nuestro desarrollo de bots, tu empresa atiende por WhatsApp, Telegram y la web con un asistente de IA que
+      responde con tu información, califica prospectos y agenda citas, conectado a tu CRM y con paso a una persona
+      cuando hace falta.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>WhatsApp, Telegram y chat web</span>
+      <span>·</span>
+      <span>Paso a una persona cuando hace falta</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Por qué un bot"
+    title="Un chatbot con IA para empresas que atiende mientras tu equipo trabaja"
+    items={[
+      {
+        title: 'Mensajes sin respuesta fuera de horario',
+        description:
+          'Quien escribe de noche o en fin de semana y no recibe respuesta suele buscar a otra empresa. El bot contesta al instante y deja la conversación lista para tu equipo.',
+      },
+      {
+        title: 'Las mismas preguntas, todos los días',
+        description:
+          'Horarios, precios, requisitos y estado de un pedido se resuelven solos. Tu equipo se dedica a lo que sí necesita criterio.',
+      },
+      {
+        title: 'Prospectos perdidos en un celular',
+        description:
+          'Cada conversación y cada dato quedan guardados en tu CRM o en Google Sheets, no en el teléfono de una sola persona.',
+      },
+      {
+        title: 'Citas agendadas a mano',
+        description:
+          'El bot revisa tu Google Calendar, ofrece horarios libres y confirma la cita dentro de la misma conversación.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Un bot útil no es un menú de números: entiende mensajes escritos con libertad, consulta la información de tu
+      negocio y sabe cuándo ceder la conversación a una persona. Ejemplos ilustrativos, no clientes: una clínica que
+      confirma citas, una tienda online que informa el estado de un pedido, una inmobiliaria que califica interesados o
+      un restaurante que toma reservas.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="mx-auto max-w-md rounded-2xl border border-line bg-page p-6 shadow-card sm:p-8">
+        <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+          <Icon name="tabler:brand-whatsapp" class="h-6 w-6 shrink-0 text-primary" />
+          <span class="font-medium text-heading">WhatsApp, Telegram y chat web</span>
+        </div>
+        <div class="flex justify-center py-2 text-muted">
+          <Icon name="tabler:arrow-down" class="h-5 w-5" />
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-[color:var(--aw-color-cta)] bg-surface px-4 py-3">
+          <Icon name="tabler:message-chatbot" class="h-6 w-6 shrink-0 text-primary" />
+          <span class="font-medium text-heading">Bot con IA y tu base de conocimiento</span>
+        </div>
+        <div class="flex justify-center py-2 text-muted">
+          <Icon name="tabler:arrows-split-2" class="h-5 w-5" />
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+            <Icon name="tabler:plug-connected" class="h-6 w-6 shrink-0 text-primary" />
+            <span class="text-sm font-medium text-heading">CRM, Google Calendar y Google Sheets</span>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+            <Icon name="tabler:user-check" class="h-6 w-6 shrink-0 text-primary" />
+            <span class="text-sm font-medium text-heading">Una persona de tu equipo, cuando hace falta</span>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="capacidades"
+    tagline="Qué puede hacer"
+    title="Bot de WhatsApp, bot de Telegram y chat web a la medida de tu proceso"
+    items={[
+      {
+        title: 'Responde con tu información',
+        description:
+          'Contesta con tus catálogos, políticas y preguntas frecuentes, no con lo que el modelo suponga. Si no sabe algo, lo dice y pasa la conversación a una persona.',
+        icon: 'tabler:book',
+      },
+      {
+        title: 'Vende y cotiza',
+        description:
+          'Guía al cliente por tu catálogo, resuelve dudas y recoge los datos del pedido o de la cotización para que tu equipo cierre la venta.',
+        icon: 'tabler:shopping-cart',
+      },
+      {
+        title: 'Agenda en Google Calendar',
+        description:
+          'Consulta tu disponibilidad real, propone horarios y confirma la cita, con recordatorios para evitar olvidos.',
+        icon: 'tabler:calendar-check',
+      },
+      {
+        title: 'Califica prospectos',
+        description:
+          'Hace las preguntas que separan a un curioso de un cliente, como necesidad, ciudad o presupuesto, y entrega a tu equipo solo los contactos que valen la pena.',
+        icon: 'tabler:filter-check',
+      },
+      {
+        title: 'Atiende soporte',
+        description:
+          'Resuelve consultas frecuentes, revisa el estado de un pedido o un caso en tus sistemas y abre un ticket cuando hace falta una persona.',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Envía notificaciones',
+        description:
+          'Confirmaciones, recordatorios y avisos por WhatsApp con plantillas aprobadas por Meta, que son obligatorias para escribir primero fuera de la ventana de 24 horas.',
+        icon: 'tabler:bell-ringing',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      Elegimos el canal según dónde estén tus clientes y reutilizamos la lógica entre canales. En WhatsApp trabajamos
+      sobre la API oficial de Meta y nos encargamos de la
+      <a href="/whatsapp-business-api" class={LINK}>habilitación de la WhatsApp Business API</a>.
+    </Fragment>
+  </Features>
+
+  <Steps
+    tagline="Proceso"
+    title="Así es nuestro desarrollo de bots, paso a paso"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y alcance</span>',
+        description:
+          'Conversamos sobre el proceso que quieres atender, revisamos tus conversaciones y tus sistemas, y acordamos qué hará el bot y qué no. Con eso preparamos la cotización, sin costo.',
+        icon: 'tabler:clipboard-list',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Diseño de la conversación</span>',
+        description:
+          'Definimos los flujos, el tono de tu marca, la base de conocimiento y las reglas para pasar a una persona. Nada se programa sin que lo hayas revisado.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Desarrollo e integración</span>',
+        description:
+          'Construimos el bot en el canal elegido y lo conectamos a tu CRM, tu calendario y tus hojas de cálculo.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Pruebas, lanzamiento y mejora</span>',
+        description:
+          'Probamos con conversaciones reales, lanzamos de forma gradual y revisamos cada semana las que fallaron. Medimos el tiempo de respuesta, las conversaciones resueltas sin una persona, los traspasos y las citas.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      ¿Prefieres aprender a hacerlo tú mismo? Mira el <a href="/curso-de-n8n" class={LINK}>curso de n8n</a> o la guía para
+      <a href="/blog/como-crear-un-chatbot-de-whatsapp" class={LINK}>crear un chatbot de WhatsApp paso a paso</a>.
+    </Fragment>
+  </Steps>
+
+  <CallToAction title="¿Qué proceso quieres que atienda tu bot?">
+    <Fragment slot="subtitle">
+      Cuéntanos tu caso y te explicamos qué se puede automatizar y cómo se conectaría a tus sistemas. Antes de
+      escribirnos, conoce <a href="/autor" class={LINK}>quién está detrás de Sonmyd</a>.
+    </Fragment>
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton message={landing.whatsapp} location="desarrollo-de-bots-mid" class="w-full sm:w-auto" />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+      </div>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el desarrollo de bots"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="desarrollo-de-bots"
+    formId="lead-desarrollo-de-bots"
+    title="Cuéntanos qué bot necesitas"
+    subtitle="Describe el proceso que quieres automatizar y te respondemos con una propuesta según el alcance, sin costo."
+    button="Cotizar mi bot"
+    bullets={[
+      'Cotización según alcance, sin costo y sin compromiso',
+      'Bots para WhatsApp, Telegram y chat web, con paso a una persona',
+      'Hablas con quien diseña y construye tu bot',
+      'Atención remota para empresas de toda Colombia',
+    ]}
+  />
+</Layout>
