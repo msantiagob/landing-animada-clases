@@ -1,0 +1,262 @@
+---
+export const prerender = false;
+
+import '../../assets/styles/tailwind.css';
+import { authHelpers } from '../../lib/auth';
+
+// El middleware ya bloquea el acceso, pero necesitamos el usuario para la cabecera.
+const authData = authHelpers.requireAdmin(Astro.request);
+if (!authData) return Astro.redirect('/admin/login');
+---
+
+<html lang="es" class="bg-gray-50">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Panel — Sonmyd</title>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 text-gray-900">
+    <header class="border-b border-gray-200 bg-white">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div>
+          <h1 class="text-lg font-semibold">Panel de Sonmyd</h1>
+          <p class="text-sm text-gray-500">{authData.email}</p>
+        </div>
+        <button
+          id="logoutBtn"
+          type="button"
+          class="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-8">
+      <p id="loadingState" class="text-sm text-gray-500">Cargando datos…</p>
+      <p id="errorState" class="hidden rounded-md bg-red-50 p-4 text-sm text-red-700"></p>
+
+      <section id="content" class="hidden space-y-10">
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Contactos</p>
+            <p id="statContactTotal" class="text-2xl font-semibold">0</p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Sin leer</p>
+            <p id="statContactNew" class="text-2xl font-semibold text-blue-600">0</p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Citas</p>
+            <p id="statApptTotal" class="text-2xl font-semibold">0</p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-white p-4">
+            <p class="text-sm text-gray-500">Citas pendientes</p>
+            <p id="statApptPending" class="text-2xl font-semibold text-amber-600">0</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="mb-3 text-base font-semibold">Contactos</h2>
+          <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+                <tr>
+                  <th class="px-4 py-3">Fecha (hora de Colombia)</th>
+                  <th class="px-4 py-3">Nombre</th>
+                  <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Interés</th>
+                  <th class="px-4 py-3">Mensaje</th>
+                  <th class="px-4 py-3">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="contactRows" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="mb-3 text-base font-semibold">Citas</h2>
+          <div class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+                <tr>
+                  <th class="px-4 py-3">Fecha</th>
+                  <th class="px-4 py-3">Hora (Colombia)</th>
+                  <th class="px-4 py-3">Nombre</th>
+                  <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Servicio</th>
+                  <th class="px-4 py-3">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentRows" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      import { interestLabel } from '~/lib/interests';
+      import { formatBusinessDateTime } from '~/utils/business-time';
+
+      // Tipado explícito: los scripts inline de Astro pasan por astro check y sin
+      // esto cada acceso al DOM se marca como posiblemente null.
+      interface LeadRow {
+        id: string;
+        name: string;
+        email: string;
+        status: string;
+        created_at: string;
+        message?: string;
+        interest?: string | null;
+        date?: string;
+        time?: string;
+        service_type?: string;
+      }
+
+      const CONTACT_STATUSES = ['new', 'contacted', 'closed'];
+      const APPOINTMENT_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed'];
+
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
+
+      const escapeHtml = (value: unknown): string =>
+        String(value ?? '').replace(
+          /[&<>"']/g,
+          (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string
+        );
+
+      // Las fechas se guardan en ISO 8601 (UTC); acá se muestran SIEMPRE en hora de Colombia, la del
+      // negocio, y no en la del navegador de quien mira el panel (que puede estar en otro país).
+      const formatDate = (value: string): string => formatBusinessDateTime(value);
+
+      const statusSelect = (type: string, id: string, current: string, options: string[]) =>
+        `<select data-type="${type}" data-id="${id}" class="status-select rounded border border-gray-300 px-2 py-1 text-xs">
+          ${options
+            .map((option) => `<option value="${option}"${option === current ? ' selected' : ''}>${option}</option>`)
+            .join('')}
+        </select>`;
+
+      const showError = (message: string) => {
+        $('loadingState').classList.add('hidden');
+        const error = $('errorState');
+        error.textContent = message;
+        error.classList.remove('hidden');
+      };
+
+      const render = (data: {
+        stats: {
+          contactForms: { total: number; new: number };
+          appointments: { total: number; pending: number };
+        };
+        contactForms: LeadRow[];
+        appointments: LeadRow[];
+      }) => {
+        $('statContactTotal').textContent = String(data.stats.contactForms.total);
+        $('statContactNew').textContent = String(data.stats.contactForms.new);
+        $('statApptTotal').textContent = String(data.stats.appointments.total);
+        $('statApptPending').textContent = String(data.stats.appointments.pending);
+
+        $('contactRows').innerHTML = data.contactForms.length
+          ? data.contactForms
+              .map(
+                (row) => `<tr>
+                  <td class="px-4 py-3 whitespace-nowrap text-gray-500">${escapeHtml(formatDate(row.created_at))}</td>
+                  <td class="px-4 py-3">${escapeHtml(row.name)}</td>
+                  <td class="px-4 py-3"><a class="text-blue-600 hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a></td>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(interestLabel(row.interest))}</td>
+                  <td class="px-4 py-3 max-w-md">${escapeHtml(row.message)}</td>
+                  <td class="px-4 py-3">${statusSelect('contact', row.id, row.status, CONTACT_STATUSES)}</td>
+                </tr>`
+              )
+              .join('')
+          : '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Todavía no hay contactos.</td></tr>';
+
+        $('appointmentRows').innerHTML = data.appointments.length
+          ? data.appointments
+              .map(
+                (row) => `<tr>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(row.date)}</td>
+                  <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(row.time)}</td>
+                  <td class="px-4 py-3">${escapeHtml(row.name)}</td>
+                  <td class="px-4 py-3"><a class="text-blue-600 hover:underline" href="mailto:${escapeHtml(row.email)}">${escapeHtml(row.email)}</a></td>
+                  <td class="px-4 py-3">${escapeHtml(row.service_type)}</td>
+                  <td class="px-4 py-3">${statusSelect('appointment', row.id, row.status, APPOINTMENT_STATUSES)}</td>
+                </tr>`
+              )
+              .join('')
+          : '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">Todavía no hay citas.</td></tr>';
+
+        $('loadingState').classList.add('hidden');
+        $('content').classList.remove('hidden');
+      };
+
+      const load = async () => {
+        try {
+          const response = await fetch('/api/admin/leads');
+
+          if (response.status === 401) {
+            window.location.href = '/admin/login';
+            return;
+          }
+
+          const result = await response.json();
+          if (!result.success) throw new Error(result.error || 'Error cargando datos');
+
+          render(result);
+        } catch (error) {
+          console.error(error);
+          showError('No se pudieron cargar los datos. Recarga la página.');
+        }
+      };
+
+      document.addEventListener('change', async (event) => {
+        const select = (event.target as HTMLElement | null)?.closest('.status-select') as HTMLSelectElement | null;
+        if (!select) return;
+
+        const previous = select.dataset.previous ?? select.value;
+        select.disabled = true;
+
+        // Si el servidor explica el motivo (p. ej. reactivar una cita cuyo horario ya tomó otra), se muestra.
+        let reason = 'No se pudo actualizar el estado.';
+
+        try {
+          const response = await fetch('/api/admin/leads', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: select.dataset.type, id: select.dataset.id, status: select.value }),
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            reason = result.error || reason;
+            throw new Error(reason);
+          }
+
+          select.dataset.previous = select.value;
+          await load();
+        } catch (error) {
+          console.error(error);
+          select.value = previous;
+          showError(reason);
+        } finally {
+          select.disabled = false;
+        }
+      });
+
+      $('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'logout' }),
+        });
+        window.location.href = '/admin/login';
+      });
+
+      load();
+    </script>
+  </body>
+</html>

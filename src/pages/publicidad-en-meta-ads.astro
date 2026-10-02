@@ -1,0 +1,267 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('publicidad-en-meta-ads');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces que van dentro de textos HTML (descripciones de widgets y respuestas de FAQs).
+const inlineLinks = '[&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4';
+
+const faqs = [
+  {
+    question: '¿Cuánto debo invertir como mínimo en Meta Ads?',
+    answer:
+      'No hay una cifra única: depende de tu margen y de lo que te cuesta conseguir un resultado. Meta necesita acumular suficientes conversiones para optimizar, así que un presupuesto muy bajo suele dar datos poco útiles. En la guía <a href="/blog/cuanto-invertir-en-meta-ads">cuánto invertir en Meta Ads</a> explicamos cómo calcularlo desde tu costo por resultado objetivo. Esa inversión la pagas directamente a Meta.',
+  },
+  {
+    question: '¿En cuánto tiempo se ven los resultados?',
+    answer:
+      'Los primeros datos llegan en pocos días, pero decidir bien toma más: Meta pasa por una fase de aprendizaje y evaluamos con datos suficientes, no con diez clics. Las primeras semanas se dedican a medir, probar creativos y ajustar. No prometemos ventas en una fecha: cada mes te mostramos cuánto costó cada resultado, qué aprendimos y qué sigue.',
+  },
+  {
+    question: '¿De quién es la cuenta publicitaria?',
+    answer:
+      'Tuya. La cuenta de anuncios, el Business Manager, el píxel, las audiencias y los datos son de tu negocio, y nosotros trabajamos con acceso delegado. Si algún día dejamos de trabajar juntos, conservas el historial, la configuración de medición y todo lo construido, sin depender de una agencia para entrar a tu propia publicidad.',
+  },
+  {
+    question: '¿Cuánto cuesta la gestión de las campañas?',
+    answer:
+      'La inversión en pauta la pagas directamente a Meta, sin intermediarios. Nuestra gestión se cotiza según el alcance: cuántas campañas, qué creativos, qué medición y qué reportes necesitas. La cotización no tiene costo. Ten en cuenta que los precios y las políticas de Meta cambian con frecuencia, así que trabajamos con las condiciones vigentes.',
+  },
+  {
+    question: '¿Ustedes hacen los creativos o debo ponerlos yo?',
+    answer:
+      'Te acompañamos en ambos caminos. Definimos los ángulos, los textos y los guiones de video corto, y preparamos imágenes y carruseles. Los anuncios que mejor funcionan suelen usar material real de tu negocio, como productos, equipo y clientes con su permiso, así que te indicamos qué fotografiar o grabar. Si ya tienes diseñador, trabajamos con él.',
+  },
+  {
+    question: '¿Conviene más la publicidad en Instagram o en Facebook?',
+    answer:
+      'Depende de tu cliente y de tu oferta, y no lo decidimos a ojo. Con Meta Ads puedes mostrar tus anuncios en ambas plataformas y en Messenger. Empezamos con ubicaciones automáticas, miramos dónde convierte mejor cada anuncio y ajustamos con los datos de tu cuenta, no con suposiciones sobre qué red es mejor.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Gestión de campañas de publicidad en Meta Ads (Facebook e Instagram)',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Meta Ads · Facebook e Instagram"
+    actions={[
+      { variant: 'primary', text: 'Cotizar mis campañas en Meta Ads', href: '#contacto', icon: 'tabler:brand-meta' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Publicidad en Meta Ads</span> en Medellín: campañas en Facebook e Instagram que se miden
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Hacemos publicidad en Meta Ads para negocios de Medellín y de toda Colombia: medimos primero con el píxel y la API
+      de conversiones, lanzamos tus campañas en Facebook e Instagram y las conectamos a WhatsApp con un asistente de IA
+      que atiende a quien escribe.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización sin costo</span>
+      <span>·</span>
+      <span>Tu cuenta publicitaria es tuya</span>
+      <span>·</span>
+      <span>Píxel y API de conversiones desde el inicio</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Por qué se pierde dinero en pauta"
+    title="Publicidad en Meta Ads con medición desde el primer anuncio"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Meta optimiza a ciegas sin medición',
+        description:
+          'Si el píxel falla o faltan eventos, el algoritmo no aprende quién compra y optimiza hacia clics. Medimos con píxel y API de conversiones para que aprenda de leads y ventas reales.',
+      },
+      {
+        title: 'El presupuesto se reparte sin estrategia',
+        description:
+          'Muchas campañas con poco dinero cada una no juntan datos suficientes. Separamos prospección, retargeting y pruebas, con pocas campañas bien alimentadas.',
+      },
+      {
+        title: 'Los contactos se enfrían en WhatsApp',
+        description:
+          'Quien escribe y espera horas, compra en otro lado. Un asistente de IA responde, califica y agenda, y pasa a una persona cuando hace falta.',
+      },
+      {
+        title: 'Los anuncios se desgastan',
+        description:
+          'Con el tiempo el mismo anuncio cansa y el costo por resultado sube. Planeamos pruebas y renovación de creativos para que no dependas de una sola pieza.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Una campaña suele atascarse por lo que pasa antes y después del clic, no solo por el anuncio. Como agencia de Meta
+      Ads en Medellín, atacamos estas cuatro fugas:
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="servicio"
+    tagline="Qué incluye"
+    title="Publicidad en Facebook e Instagram: estrategia, creativos y medición en un solo equipo"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Estrategia y estructura de campañas',
+        description:
+          'Definimos el objetivo (leads, mensajes o ventas), tu oferta y el costo por resultado que tu margen soporta. Luego armamos pocas campañas: prospección, retargeting y pruebas.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Creativos que se prueban',
+        description:
+          'Ángulos, textos, guiones de video corto, imágenes y carruseles. Probamos varias versiones y dejamos las que funcionan, con material real de tu negocio.',
+        icon: 'tabler:photo',
+      },
+      {
+        title: 'Píxel, API de conversiones y analítica',
+        description:
+          'Configuramos el píxel de Meta, la API de conversiones, Google Tag Manager y GA4 para que cada lead y cada compra lleguen a la plataforma sin duplicarse.',
+        icon: 'tabler:chart-dots',
+      },
+      {
+        title: 'Audiencias y retargeting',
+        description:
+          'Audiencias de visitantes, clientes y personas que ya interactuaron, audiencias similares y segmentación por zona. Meta cambia sus opciones con frecuencia: usamos las vigentes.',
+        icon: 'tabler:users',
+      },
+      {
+        title: 'Anuncios a WhatsApp con IA',
+        description:
+          'Anuncios que abren una conversación en WhatsApp, atendida por un <a href="/asistente-de-whatsapp">asistente de WhatsApp con IA</a> que responde, califica y agenda las 24 horas.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Páginas de destino rápidas',
+        description:
+          'La pauta paga el clic, pero la página tiene que cerrar. Si la tuya es lenta o confusa, la mejoramos con nuestro servicio de <a href="/desarrollo-web">desarrollo de páginas web</a>.',
+        icon: 'tabler:bolt',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Nuestro proceso"
+    title="Cómo trabajamos tu pauta en redes sociales"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y medición</span>',
+        description:
+          'Revisamos tu oferta, tu sitio y tu cuenta publicitaria. Dejamos funcionando el píxel, la API de conversiones, GTM y GA4 antes de lanzar el primer anuncio.',
+        icon: 'tabler:report-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Estrategia</span>',
+        description:
+          'Definimos objetivo, público, presupuesto de partida y estructura de campañas. El presupuesto sale de tu margen y de tu costo por resultado objetivo, no de una cifra al azar.',
+        icon: 'tabler:target-arrow',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Ejecución y optimización</span>',
+        description:
+          'Lanzamos, esperamos datos suficientes antes de decidir y optimizamos con criterio: renovamos creativos, ajustamos audiencias y escalamos lo que funciona, sin cambiarlo todo cada día.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Reportes mensuales</span>',
+        description:
+          'Cada mes recibes un informe en lenguaje claro con inversión, leads o ventas, costo por resultado, aprendizajes y próximos pasos.',
+        icon: 'tabler:chart-bar',
+      },
+    ]}
+  />
+
+  <CallToAction title="¿Tu negocio está listo para anunciarse en Meta?" classes={{ container: inlineLinks }}>
+    <Fragment slot="subtitle">
+      Cuéntanos qué vendes y cuánto puedes invertir: te decimos con honestidad si Meta Ads tiene sentido para ti y por
+      dónde empezar. Desde Medellín trabajamos con negocios de toda Colombia. ¿Prefieres aprender a hacerlo? Mira el
+      <a href="/curso-de-marketing-digital">curso de marketing digital</a>, o conoce
+      <a href="/autor">quién está detrás de Sonmyd</a>.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="publicidad-en-meta-ads-mid" text="Cotizar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre publicidad en Meta Ads"
+    tagline="Dudas comunes"
+    classes={{ container: `max-w-6xl ${inlineLinks}` }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </FAQs>
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="publicidad-en-meta-ads"
+    formId="lead-publicidad-en-meta-ads"
+    title="Cuéntanos qué vendes y te proponemos cómo anunciarlo"
+    subtitle="Revisamos tu caso y te enviamos una propuesta concreta para tus campañas en Meta Ads, no un catálogo genérico."
+    button="Quiero cotizar mis campañas"
+    bullets={[
+      'Cotización sin costo y sin compromiso',
+      'Tu cuenta publicitaria y tus datos son tuyos',
+      'La inversión en pauta la pagas directamente a Meta',
+      'Medimos con píxel y API de conversiones desde el inicio',
+    ]}
+  />
+</Layout>

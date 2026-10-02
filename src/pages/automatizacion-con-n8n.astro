@@ -1,0 +1,299 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('automatizacion-con-n8n');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces dentro del texto (los widgets pintan el copy con set:html).
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Qué hace un consultor o agencia de n8n y qué incluye la implementación?',
+    answer:
+      'Diseña los flujos a partir de tus procesos, instala n8n en tu servidor, conecta tus herramientas por API, suma agentes de IA donde aportan y deja monitoreo con alertas. También migra flujos desde Zapier o Make, documenta cada flujo y capacita a tu equipo. El alcance exacto se define en un diagnóstico y se cotiza según lo que necesites.',
+  },
+  {
+    question: '¿Cuánto cuesta la automatización con n8n?',
+    answer:
+      'Depende del alcance: cuántos flujos, cuántos sistemas se conectan, si hay IA y qué volumen manejas. Cotizamos según ese alcance, sin costo. Aparte pagas el servidor y las APIs que uses, como WhatsApp o un modelo de IA, directamente a cada proveedor. La edición Community de n8n no tiene costo de licencia para uso interno.',
+  },
+  {
+    question: '¿Qué significa instalar n8n en mi propio servidor?',
+    answer:
+      'Significa que n8n corre en un servidor tuyo, sea un VPS o tu cuenta de nube, y que los datos de tus flujos quedan ahí. Tú decides quién accede y cuánto tiempo se guardan las ejecuciones. A cambio, alguien debe encargarse de las actualizaciones y las copias de seguridad; podemos hacerlo nosotros. Si un flujo llama a un modelo de IA en la nube, ese texto sí viaja al proveedor del modelo.',
+  },
+  {
+    question: '¿Pueden migrar mis flujos de Zapier o Make a n8n?',
+    answer:
+      'Sí. Los flujos se reconstruyen en n8n, no se importan automáticamente. Hacemos un inventario, empezamos por los que más consumen, probamos en paralelo para no duplicar correos ni facturas, actualizamos los webhooks y volvemos a autorizar las credenciales. El flujo original se apaga solo después de observar el nuevo durante un ciclo completo.',
+  },
+  {
+    question: '¿Qué pasa si un flujo falla o una API cambia?',
+    answer:
+      'Los flujos se diseñan asumiendo que algo va a fallar: llevan reintentos, registro de ejecuciones y un flujo de error que avisa por Telegram, Slack o correo. Cuando una API cambia, se ajusta el flujo afectado. El alcance del mantenimiento y los canales de atención se acuerdan por escrito antes de empezar.',
+  },
+  {
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y trabajamos de forma remota con empresas de toda Colombia: videollamadas, acceso seguro a tus herramientas y entregas por etapas. Para la instalación solo necesitamos un servidor o acceso a tu cuenta de nube.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Consultoría e implementación de automatización de procesos con n8n',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Consultoría e implementación de n8n"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Cotizar mi automatización con n8n',
+        href: '#contacto',
+        icon: 'tabler:arrows-shuffle',
+      },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Automatización con n8n</span>: flujos a medida en tu propio servidor
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Desde Medellín diseñamos, instalamos y mantenemos tu automatización con n8n para que tu CRM, WhatsApp, correo y
+      hojas de cálculo trabajen conectados, con tus datos bajo tu control y costos predecibles.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Instalado en tu servidor</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+      <span>·</span>
+      <span>Documentación y capacitación para tu equipo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Por qué n8n"
+    title="Implementación de n8n: control de datos y costos"
+    items={[
+      {
+        title: 'Tareas repetitivas que consumen horas',
+        description:
+          'Pasar leads del formulario al CRM, enviar recordatorios o armar el reporte semanal pasa a ser trabajo del flujo, no de una persona.',
+      },
+      {
+        title: 'Herramientas que no se hablan entre sí',
+        description:
+          'CRM, WhatsApp, Google Workspace, correo y tus sistemas propios quedan conectados por API, sin copiar y pegar entre pantallas.',
+      },
+      {
+        title: 'Costos que crecen con cada tarea',
+        description:
+          'Con n8n instalado por ti pagas el servidor y las APIs que uses, no una cuota por cada tarea o crédito. Sabes de antemano qué vas a pagar.',
+      },
+      {
+        title: 'Datos de clientes fuera de tu control',
+        description:
+          'En tu servidor decides dónde viven los datos, quién tiene acceso y cuánto tiempo se guardan las ejecuciones.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      n8n es una plataforma de flujos de trabajo con editor visual que conecta aplicaciones, APIs y modelos de IA, y que
+      puedes instalar en tu propio servidor. Si todavía no la conoces, empieza por <a
+        href="/blog/que-es-n8n"
+        class={link}>qué es n8n y para qué sirve</a
+      >. Estos son los problemas que resolvemos con ella.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div
+        class="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-2xl border border-line bg-surface p-6 shadow-card-lg sm:p-8"
+      >
+        <div class="flex w-full items-center gap-3 rounded-xl border border-line bg-page px-4 py-3">
+          <Icon name="tabler:forms" class="h-6 w-6 shrink-0 text-primary" />
+          <span class="font-medium text-heading">Formulario web</span>
+        </div>
+        <Icon name="tabler:arrow-narrow-down" class="h-6 w-6 text-muted" />
+        <div class="flex w-full items-center gap-3 rounded-xl border-2 border-primary bg-page px-4 py-4">
+          <Icon name="tabler:topology-star-3" class="h-8 w-8 shrink-0 text-primary" />
+          <div>
+            <span class="block font-semibold text-heading">n8n</span>
+            <span class="block text-sm text-muted">En tu propio servidor</span>
+          </div>
+        </div>
+        <Icon name="tabler:arrow-narrow-down" class="h-6 w-6 text-muted" />
+        <div class="grid w-full grid-cols-3 gap-3">
+          {
+            [
+              { icon: 'tabler:address-book', label: 'CRM' },
+              { icon: 'tabler:brand-whatsapp', label: 'WhatsApp' },
+              { icon: 'tabler:mail', label: 'Correo' },
+            ].map(({ icon, label }) => (
+              <div class="flex flex-col items-center gap-1.5 rounded-xl border border-line bg-page px-2 py-3 text-sm font-medium text-heading">
+                <Icon name={icon} class="h-6 w-6 text-primary" />
+                {label}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-incluye"
+    tagline="Qué incluye"
+    title="Lo que incluye nuestra automatización con n8n"
+    subtitle="Trabajamos con tecnologías como Docker, PostgreSQL, webhooks, APIs REST y modelos de IA de OpenAI, Anthropic o Google, según lo que tu proceso necesite."
+    items={[
+      {
+        title: 'Diseño de flujos',
+        description:
+          'Mapeamos tu proceso y lo convertimos en flujos con disparadores, validaciones, reintentos y datos limpios entre un paso y otro.',
+        icon: 'tabler:route',
+      },
+      {
+        title: 'Instalación self-hosted',
+        description: `n8n en tu servidor con Docker, base de datos PostgreSQL, HTTPS, clave de cifrado respaldada y copias de seguridad. Si no tienes servidor, te ayudamos con la <a href="/servidores-y-vps" class="${link}">administración de servidores</a>.`,
+        icon: 'tabler:server',
+      },
+      {
+        title: 'Migración desde Zapier o Make',
+        description: `Hacemos el inventario, reconstruimos los flujos en n8n, los probamos en paralelo sin duplicar envíos y apagamos el original al final. Compara antes en <a href="/blog/n8n-vs-zapier-vs-make" class="${link}">n8n vs Zapier vs Make</a>.`,
+        icon: 'tabler:arrows-exchange',
+      },
+      {
+        title: 'Agentes de IA dentro de n8n',
+        description:
+          'Agentes que clasifican mensajes, resumen documentos o responden consultas con el modelo que elijas, herramientas acotadas y aprobación humana para lo irreversible.',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Monitoreo, alertas y mantenimiento',
+        description:
+          'Flujos de error que te avisan por Telegram, Slack o correo cuando algo falla, revisión de ejecuciones, actualizaciones y ajustes cuando cambia una API.',
+        icon: 'tabler:bell-ringing',
+      },
+      {
+        title: 'Documentación y capacitación',
+        description: `Cada flujo queda documentado y tu equipo aprende a operarlo. ¿Prefieres aprender a hacerlo tú mismo? Mira el <a href="/curso-de-n8n" class="${link}">curso de n8n</a>.`,
+        icon: 'tabler:school',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    title="Cómo trabaja un consultor n8n: de la idea al flujo en producción"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Revisamos cómo trabajas hoy, qué herramientas intervienen y qué tareas valen la pena automatizar primero.',
+        icon: 'tabler:stethoscope',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Diseño y cotización</span>',
+        description:
+          'Te presentamos los flujos propuestos y una cotización según el alcance, sin costo. Tú decides si seguimos.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Implementación y pruebas</span>',
+        description: 'Instalamos n8n, construimos los flujos y los probamos con datos reales antes de publicarlos.',
+        icon: 'tabler:settings-cog',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Puesta en marcha y mantenimiento</span>',
+        description:
+          'Publicamos, vigilamos las primeras ejecuciones, documentamos y capacitamos a tu equipo. Después puedes mantenerlo tú o dejarlo con nosotros.',
+        icon: 'tabler:refresh',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">Cuéntanos qué quieres automatizar</Fragment>
+    <Fragment slot="subtitle">
+      Escríbenos por WhatsApp o agenda una asesoría gratuita. Y si quieres saber con quién trabajarías, conoce <a
+        href="/autor"
+        class={link}>quién está detrás de Sonmyd</a
+      >.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="automatizacion-con-n8n-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre la automatización con n8n"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={landing.posts}
+        title="Artículos relacionados"
+        linkText="Ver todos los artículos"
+        classes={{ container: 'max-w-6xl' }}
+      />
+    )
+  }
+
+  <LeadCapture
+    interest="automatizacion-con-n8n"
+    formId="lead-automatizacion-con-n8n"
+    title="Cuéntanos qué proceso quieres automatizar"
+    subtitle="Describe el proceso, las herramientas que usas hoy y dónde se pierde el tiempo. Con eso te proponemos un diseño de flujos y una cotización según el alcance."
+    button="Cotizar mi automatización con n8n"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'n8n instalado en tu servidor, con los accesos en tus manos',
+      'Documentación y capacitación para tu equipo',
+      'Si n8n no es la herramienta adecuada para tu caso, te lo decimos',
+    ]}
+  />
+</Layout>

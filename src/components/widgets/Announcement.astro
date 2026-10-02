@@ -1,0 +1,36 @@
+---
+import { Icon } from 'astro-icon/components';
+
+/**
+ * Barra superior de anuncio.
+ *
+ * Se quitó el botón de WhatsApp que apuntaba a `wa.me/1234567890`, un número
+ * de ejemplo del template. Un enlace de contacto roto en un sitio que vende
+ * asistentes de WhatsApp cuesta más que no tener el botón. Para reponerlo hace
+ * falta el número real; una vez que exista, se agrega acá.
+ */
+export interface Props {
+  label?: string;
+  text?: string;
+  href?: string;
+}
+
+const {
+  label = 'Nuevo',
+  text = 'Agenda una llamada sin costo y sal con un plan concreto',
+  href = '/booking',
+} = Astro.props;
+---
+
+<div class="border-b border-line bg-surface text-sm">
+  <a
+    href={href}
+    class="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-2.5 text-default transition-colors hover:text-heading"
+  >
+    <span class="rounded-full bg-[color:var(--aw-color-cta)] px-2 py-0.5 text-xs font-semibold uppercase text-white">
+      {label}
+    </span>
+    <span class="truncate">{text}</span>
+    <Icon name="tabler:arrow-right" class="hidden h-4 w-4 shrink-0 sm:block" />
+  </a>
+</div>

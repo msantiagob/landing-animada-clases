@@ -1,0 +1,44 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import ItemGrid from '~/components/ui/ItemGrid.astro';
+import Headline from '~/components/ui/Headline.astro';
+import type { Features as Props } from '~/types';
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  items = [],
+  columns = 2,
+
+  defaultIcon,
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} classes={classes?.headline as Record<string, string>} />
+  <!--
+    Tarjetas apiladas en lugar de una lista con icono al costado: en una grilla
+    de servicios cada elemento tiene que leerse como una unidad con su propio
+    límite y su propia acción, no como un párrafo suelto.
+  -->
+  <ItemGrid
+    items={items}
+    columns={columns}
+    defaultIcon={defaultIcon}
+    classes={{
+      container: 'gap-6 md:gap-6',
+      panel: 'card flex-col max-w-none h-full',
+      title: 'text-lg md:text-xl text-heading',
+      description: 'leading-relaxed',
+      icon: 'text-primary bg-subtle rounded-lg w-11 h-11 p-2.5 mb-4 mr-0 rtl:ml-0',
+      action: 'mt-4',
+      ...((classes?.items as Record<string, never>) ?? {}),
+    }}
+  />
+</WidgetWrapper>

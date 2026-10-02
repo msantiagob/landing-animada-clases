@@ -1,538 +1,494 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import HeroHome from "../components/HeroHome.astro";
-import TextMarquee from "../components/TextMarquee.astro";
-import Faqs from "../components/Faqs.astro";
-import StepsTimeline from "../components/StepsTimeline.astro";
-import Statements from "../components/Statements.astro";
-import Introducing from "../components/Introducing.astro";
-import GL from "../components/GL.astro";
-import GLPlaces from "../components/GlPlaces.astro";
-import ContactModal from "../components/ContactModal.astro";
-import FloatingBubbles from "../components/FloatingBubbles.astro";
+import { Icon } from 'astro-icon/components';
 
-import fotoMiguel from "../assets/img/foto_miguel.png";
+import Layout from '~/layouts/PageLayout.astro';
 
-const siteUrl = "https://sonmyd.co/";
+import Hero from '~/components/widgets/Hero.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Features from '~/components/widgets/Features.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Image from '~/components/common/Image.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
 
-const schemaFAQ = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "¿Qué puede automatizar Sonmyd en mi negocio?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sonmyd automatiza Google Calendar (citas, recordatorios y agendamiento), WhatsApp Business (respuestas automáticas, notificaciones y chatbots), creación y mantenimiento de sitios web, y cualquier flujo repetitivo de tu empresa usando inteligencia artificial.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cómo funciona la integración con Google Calendar?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Conectamos tu Google Calendar para agendar citas automáticamente, enviar recordatorios a tus clientes, bloquear horarios disponibles y sincronizar con tus herramientas existentes. Sin intervención manual.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "¿Qué tipo de automatizaciones hace Sonmyd con WhatsApp?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Implementamos chatbots inteligentes, respuestas automáticas 24/7, notificaciones de citas y pedidos, calificación de leads y escalado a humanos. Todo integrado con WhatsApp Business API.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "¿Necesito conocimientos técnicos para usar Sonmyd?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Sonmyd se encarga de toda la parte técnica. Tú defines qué quieres automatizar y nosotros construimos e implementamos la solución. Solo necesitas tener claros tus procesos de negocio.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "¿Cuánto tiempo tarda en estar lista mi automatización?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Depende del alcance. Una automatización básica de WhatsApp o Calendar puede estar lista en pocos días. Un sitio web completo con automatizaciones integradas puede tomar una a tres semanas.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "¿Hay una sesión gratuita para evaluar mi proyecto?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sí. La primera sesión de diagnóstico es completamente gratuita. Analizamos tus procesos, identificamos qué automatizar y te presentamos un plan concreto sin ningún compromiso.",
-      },
-    },
-  ],
+import { BUSINESS } from '~/data/business';
+import { HUBS, LANDINGS, SILOS } from '~/data/landings';
+import type { SiloId } from '~/data/landings';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { HUB_LINK_LABEL, getHub, landingPath, landingsBySilo, landingsForHub } from '~/utils/landings';
+import { faqSchema, itemListSchema } from '~/utils/seo';
+import { getSeoImage } from '~/utils/seo-images';
+import { formatList } from '~/utils/service-area';
+
+/**
+ * Inicio.
+ *
+ * Es la puerta de entrada a los tres hubs (clases, servicios y marketing) y
+ * reparte enlaces hacia todas las landings del registro. Todo lo que lista sale
+ * de `src/data/landings.ts`: una landing nueva aparece aquí sin tocar esta página.
+ *
+ * No lleva cifras, clientes ni reseñas: ninguna se ha verificado. Los datos del
+ * negocio (ciudad, teléfono, municipios) salen de `src/data/business.ts`.
+ */
+
+const homeImage = getSeoImage('home');
+const medellinImage = getSeoImage('medellin');
+
+// La imagen social se declara como `~/assets/...` y `adaptOpenGraphImages` la
+// resuelve al renderizar: es la misma convención que usa `landingMetadata()`.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
+const metadata = {
+  title: 'Software, IA y clases de programación en Medellín | Sonmyd',
+  description:
+    'Sonmyd, en Medellín: desarrollamos software, apps, páginas web, bots y automatizaciones con IA, y enseñamos programación, IA, AWS y Linux. Escríbenos.',
+  ignoreTitleTemplate: true,
+  canonical: '/',
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
 };
 
-const schemaBreadcrumb = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Inicio",
-      "item": siteUrl,
-    },
-  ],
-};
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
+const marketingHub = getHub('marketing-digital');
+
+const courses = landingsForHub(courseHub.slug);
+
+// Los silos que cuelgan del hub de servicios (marketing tiene su propio hub y su propia sección).
+const serviceGroups = (Object.keys(SILOS) as SiloId[])
+  .filter((silo) => SILOS[silo].hub === servicesHub.slug)
+  .map((silo) => ({ id: silo, name: SILOS[silo].name, landings: landingsBySilo(silo) }));
+
+const marketing = landingsBySilo('marketing');
+
+const COUNTRY_NAME = 'Colombia';
+
+const faqs = [
+  {
+    question: '¿Qué hace Sonmyd exactamente?',
+    answer:
+      'Dos cosas que se complementan: construimos y enseñamos. Desarrollamos software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores, seguridad y campañas de marketing digital, y damos clases 1 a 1 de programación, inteligencia artificial, AWS, Linux, n8n y marketing digital. Puedes empezar aprendiendo y terminar contratando, o al revés.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. Damos clases 1 a 1 en persona en Medellín y municipios cercanos, y también en línea y en vivo para estudiantes de toda Colombia. El plan se arma a partir de tu nivel actual y de lo que quieres lograr.',
+  },
+  {
+    question: '¿Atienden fuera de Medellín?',
+    answer: `Estamos en Medellín y atendemos en persona en ${formatList(BUSINESS.areaServed)}. Si estás en otra ciudad, trabajamos de forma remota con clientes y estudiantes de toda Colombia.`,
+  },
+  {
+    question: '¿Cuánto cuesta?',
+    answer:
+      'Depende de lo que necesites, y no damos un número sin haber entendido el problema. En los servicios, primero acotamos la versión más pequeña que ya te sirve y presentamos alcance, plazo y precio por escrito. En las clases, escríbenos y te contamos cómo se arma el plan y cuánto cuesta.',
+  },
+  {
+    question: '¿Necesito saber de tecnología para empezar?',
+    answer:
+      'No. Las clases parten de tu nivel actual, incluso desde cero. Y en los proyectos te explicamos en lenguaje claro lo que haga falta para que puedas decidir bien.',
+  },
+  {
+    question: '¿Cómo empiezo?',
+    answer:
+      'Agenda una asesoría gratuita, escríbenos por WhatsApp o deja tus datos en el formulario. Nos cuentas qué necesitas y te decimos si podemos ayudarte y cómo. Si no somos los indicados para tu caso, también te lo decimos.',
+  },
+];
+
+// Clases compartidas por las tarjetas de landings: la tarjeta entera es clicable
+// con un enlace extendido (`after:absolute after:inset-0`) y el ancla es el
+// nombre de la landing destino, que describe adónde lleva el enlace.
+const cardClass = 'card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]';
+const cardLinkClass =
+  'underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0';
+const seeAllClass = 'btn-secondary';
 ---
 
-<Layout title="Sonmyd — Automatizaciones con IA: WhatsApp, Google Calendar y Sitios Web">
-  <Fragment slot="head">
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaFAQ)}</script>`} />
-    <Fragment set:html={`<script type="application/ld+json">${JSON.stringify(schemaBreadcrumb)}</script>`} />
-  </Fragment>
-  <div id="inicio">
-    <HeroHome
-      title="Sonmyd: automatiza tu negocio con IA."
-      subtitle="Conecta Google Calendar, gestiona WhatsApp, crea tu sitio web y elimina el trabajo repetitivo. Tecnología que trabaja por ti, 24/7."
-      cta={{
-        title: "Empieza gratis",
-        url: "#contacto",
-      }}
-      ctaModalPlan="Sesión Gratuita"
-      whatsappUrl="https://wa.me/573106041144"
-    />
-    <div class="photo-inner">
-      <img src={fotoMiguel.src} alt="Miguel Zuluaga — Sonmyd" />
-    </div>
-  </div>
-
-  <div id="clases">
-    <Introducing
-      title="Sonmyd es tu equipo de automatización con IA"
-      text="Construimos integraciones inteligentes entre tus herramientas: agenda citas sola con Google Calendar, responde clientes en WhatsApp las 24 horas, publica tu sitio web en días. Todo con IA, sin código, sin complicaciones."
-      cta={{
-        title: "Ver todos los servicios",
-        url: "/servicios",
-      }}
-    />
-  </div>
-
-  <TextMarquee
-    class="marquee"
-    texts={[
-      "Google Calendar",
-      "WhatsApp Business",
-      "Sitios Web",
-      "Automatización IA",
-      "Chatbots",
-      "Integraciones",
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      faqSchema(faqs),
+      itemListSchema(
+        [...HUBS, ...LANDINGS].map(({ name, slug }) => ({
+          name,
+          path: landingPath(slug),
+        }))
+      ),
     ]}
   />
 
-  <div id="metodologia">
-    <StepsTimeline
-      title="Cómo funciona Sonmyd"
-      items={[
-        {
-          title: "Diagnóstico de procesos",
-          text: "Analizamos juntos qué tareas consumen tu tiempo: agendar citas, responder mensajes, actualizar tu web. Identificamos los puntos de mayor impacto.",
-        },
-        {
-          title: "Diseño de la automatización",
-          text: "Construimos flujos a medida: Calendar conectado a tu negocio, WhatsApp que responde solo, formularios que se convierten en acciones automáticas.",
-        },
-        {
-          title: "Implementación y pruebas",
-          text: "Ponemos todo en marcha, hacemos pruebas reales y ajustamos hasta que funcione perfecto. Tú lo apruebas antes de salir en vivo.",
-        },
-        {
-          title: "Monitoreo y soporte",
-          text: "Una vez activo, monitoreamos que todo funcione. Si algo cambia en tu negocio, ajustamos la automatización para que siempre esté al día.",
-        },
-      ]}
-    />
-  </div>
+  <!-- Hero ************************** -->
 
-  <Statements
+  <Hero tagline="Medellín, Colombia" image={homeImage}>
+    <Fragment slot="title">
+      Desarrollo de software, IA y clases de programación <span class="text-accent">en Medellín</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Desarrollamos software, apps, páginas web, bots y automatizaciones con IA, y enseñamos programación, IA, AWS y
+      Linux en clases 1 a 1. Hablas con quien hace el trabajo, no con un vendedor.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <Button
+          variant="primary"
+          text="Agenda una asesoría gratuita"
+          href="/booking"
+          icon="tabler:calendar-plus"
+          class="w-full sm:w-auto"
+        />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton
+          location="home-hero"
+          variant="secondary"
+          message="Hola, quiero información sobre las clases y los servicios de Sonmyd."
+          class="w-full sm:w-auto"
+        />
+      </div>
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Asesoría inicial gratuita</span>
+      <span>·</span>
+      <span>Clases 1 a 1, en Medellín o en línea</span>
+      <span>·</span>
+      <span>Si no somos los indicados, te lo decimos</span>
+    </Fragment>
+  </Hero>
+
+  <!-- Dos caminos ******************* -->
+
+  <WidgetWrapper id="caminos" containerClass="max-w-6xl">
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+
+    <Headline
+      tagline="Cómo podemos ayudarte"
+      title="Aprende a hacerlo tú o deja que lo hagamos por ti"
+      subtitle="Elige por dónde empezar. Puedes pasar de un camino al otro cuando quieras: lo que enseñamos es lo mismo que construimos."
+    />
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <article
+        class="card relative flex h-full flex-col focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]"
+      >
+        <Icon name="tabler:school" class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary" aria-hidden="true" />
+        <h3 class="text-2xl font-semibold text-heading">Aprende</h3>
+        <p class="mt-3 text-muted">
+          Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web y de apps, AWS, Linux, n8n y
+          marketing digital. En Medellín o en línea, con proyectos reales y a tu ritmo.
+        </p>
+        <p class="mt-auto pt-6">
+          <a
+            href={landingPath(courseHub.slug)}
+            class="inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline focus:outline-none after:absolute after:inset-0"
+          >
+            Ver las clases de programación
+            <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </p>
+      </article>
+
+      <article
+        class="card relative flex h-full flex-col focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]"
+      >
+        <Icon name="tabler:code" class="mb-4 h-11 w-11 rounded-lg bg-subtle p-2.5 text-primary" aria-hidden="true" />
+        <h3 class="text-2xl font-semibold text-heading">Lo hacemos por ti</h3>
+        <p class="mt-3 text-muted">
+          Software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores, seguridad y marketing
+          digital. Tú nos cuentas el problema; nosotros lo construimos y lo medimos.
+        </p>
+        <p class="mt-auto pt-6">
+          <a
+            href={landingPath(servicesHub.slug)}
+            class="inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline focus:outline-none after:absolute after:inset-0"
+          >
+            Ver los servicios
+            <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+          </a>
+        </p>
+      </article>
+    </div>
+  </WidgetWrapper>
+
+  <!-- Clases ************************ -->
+
+  <WidgetWrapper id="clases" containerClass="max-w-6xl">
+    <Headline
+      tagline="Clases"
+      title="Clases de programación 1 a 1 en Medellín y en línea"
+      subtitle="Elige un tema o cuéntanos tu objetivo y armamos el plan contigo."
+    />
+
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        courses.map((course) => (
+          <li class={cardClass}>
+            <h3 class="text-lg font-semibold text-heading">
+              <a href={landingPath(course.slug)} class={cardLinkClass}>
+                {course.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{course.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(courseHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[courseHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Servicios, por silo *********** -->
+
+  <WidgetWrapper id="servicios" containerClass="max-w-6xl">
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+
+    <Headline
+      tagline="Servicios"
+      title="Software, IA y tecnología para tu negocio"
+      subtitle="Desarrollo, automatización con IA, nube y seguridad, hechos desde Medellín para empresas y personas de toda Colombia."
+    />
+
+    <div class="space-y-12">
+      {
+        serviceGroups.map((group) => (
+          <div>
+            <h3 class="mb-5 text-xl font-bold text-heading">{group.name}</h3>
+            <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {group.landings.map((landing) => (
+                <li class={cardClass}>
+                  <h4 class="text-lg font-semibold text-heading">
+                    <a href={landingPath(landing.slug)} class={cardLinkClass}>
+                      {landing.name}
+                    </a>
+                  </h4>
+                  <p class="mt-2 text-muted">{landing.summary}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(servicesHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[servicesHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Marketing ********************* -->
+
+  <WidgetWrapper id="marketing" containerClass="max-w-6xl">
+    <Headline
+      tagline="Marketing digital"
+      title="Marketing digital para conseguir clientes"
+      subtitle="Campañas en Meta Ads, Google Shopping, posicionamiento SEO y llamadas con IA, con medición para saber qué funciona."
+    />
+
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        marketing.map((landing) => (
+          <li class={cardClass}>
+            <h3 class="text-lg font-semibold text-heading">
+              <a href={landingPath(landing.slug)} class={cardLinkClass}>
+                {landing.name}
+              </a>
+            </h3>
+            <p class="mt-2 text-muted">{landing.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-10 text-center">
+      <a href={landingPath(marketingHub.slug)} class={seeAllClass}>
+        {HUB_LINK_LABEL[marketingHub.slug]}
+        <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+      </a>
+    </p>
+  </WidgetWrapper>
+
+  <!-- Cómo trabajamos *************** -->
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Cómo trabajamos"
+    title="Un proceso simple, con las reglas claras desde el inicio"
     items={[
       {
-        title: "Google Calendar que agenda solo",
-        text: "Tus clientes reservan citas, reciben recordatorios automáticos y tú no mueves un dedo. Sin llamadas perdidas, sin dobles reservas.",
+        title: '1. Hablamos de tu caso',
+        description:
+          'Nos cuentas qué necesitas o qué quieres aprender, por WhatsApp, por el formulario o en una asesoría gratuita. Escuchamos antes de proponer nada.',
+        icon: 'tabler:messages',
       },
       {
-        title: "WhatsApp que trabaja las 24 horas",
-        text: "Un asistente inteligente responde, califica y atiende a tus clientes en WhatsApp mientras tú duermes. Escala a humanos cuando sea necesario.",
+        title: '2. Definimos el alcance',
+        description:
+          'Acotamos la versión más pequeña que ya te sirve y la dejamos por escrito: qué se hace, cuánto cuesta y en cuánto tiempo. En las clases, armamos el plan a partir de tu nivel y de tu objetivo.',
+        icon: 'tabler:file-description',
       },
       {
-        title: "Tu sitio web, listo en días",
-        text: "Creamos tu presencia digital profesional: rápida, optimizada para Google y conectada a tus automatizaciones desde el primer día.",
+        title: '3. Construimos o enseñamos, por etapas',
+        description:
+          'Avanzamos en entregas cortas para que veas resultados y puedas corregir el rumbo. En las clases se practica con proyectos reales, no con ejercicios de juguete.',
+        icon: 'tabler:code',
+      },
+      {
+        title: '4. Medimos y ajustamos',
+        description:
+          'Revisamos con datos si funcionó (clientes, ventas, horas ahorradas) y ajustamos lo que haga falta.',
+        icon: 'tabler:chart-bar',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <!-- Por qué Sonmyd **************** -->
+
+  <Features
+    id="por-que-sonmyd"
+    tagline="Por qué Sonmyd"
+    title="Lo que nos diferencia, sin exagerar"
+    subtitle="Cuatro razones concretas, sin cifras infladas ni promesas vacías."
+    columns={2}
+    items={[
+      {
+        title: 'Un ingeniero real, no un intermediario',
+        description:
+          'Santiago Bedoya, ingeniero de software e instructor, escribe el código y da las clases. No hay una capa de vendedores entre tú y el trabajo.',
+        icon: 'tabler:user-check',
+        callToAction: { text: 'Conoce a Santiago', href: '/autor' },
+      },
+      {
+        title: 'Clases 1 a 1, a tu medida',
+        description:
+          'El plan se arma a partir de tu nivel y de lo que quieres lograr, con proyectos reales en lugar de ejercicios de juguete. En Medellín o en línea.',
+        icon: 'tabler:school',
+      },
+      {
+        title: 'Enseñamos y construimos',
+        description:
+          'Lo que enseñamos sale de lo que construimos todos los días, y lo que construimos lo puedes aprender a operar. Puedes empezar por una cosa y pasar a la otra.',
+        icon: 'tabler:refresh',
+      },
+      {
+        title: 'Medimos lo que importa',
+        description:
+          'Antes de empezar acordamos cómo vamos a saber si funcionó (clientes, ventas, horas ahorradas) y lo revisamos con datos, no con opiniones.',
+        icon: 'tabler:target-arrow',
       },
     ]}
   />
 
-  <TextMarquee
-    class="marquee"
-    texts={[
-      "Agendamiento automático",
-      "Chatbots con IA",
-      "Formularios inteligentes",
-      "Notificaciones automáticas",
-      "Sitios web rápidos",
-      "Integraciones API",
-    ]}
-  />
+  <!-- Local: Medellín *************** -->
 
-  <div id="contacto">
-    <Faqs
-      title="Preguntas Frecuentes"
-      mobileTitle="FAQs"
-      subtitle="Lo que necesitas saber sobre Sonmyd y sus automatizaciones."
-      items={[
-        {
-          question: "¿Qué puede automatizar Sonmyd en mi negocio?",
-          answer:
-            "Sonmyd automatiza Google Calendar (citas, recordatorios y agendamiento), WhatsApp Business (respuestas automáticas, notificaciones y chatbots), creación y mantenimiento de sitios web, y cualquier flujo repetitivo de tu empresa usando inteligencia artificial.",
-        },
-        {
-          question: "¿Cómo funciona la integración con Google Calendar?",
-          answer:
-            "Conectamos tu Google Calendar para agendar citas automáticamente, enviar recordatorios a tus clientes, bloquear horarios disponibles y sincronizar con tus herramientas existentes. Sin intervención manual.",
-        },
-        {
-          question: "¿Qué tipo de automatizaciones hace Sonmyd con WhatsApp?",
-          answer:
-            "Implementamos chatbots inteligentes, respuestas automáticas 24/7, notificaciones de citas y pedidos, calificación de leads y escalado a humanos. Todo integrado con WhatsApp Business API.",
-        },
-        {
-          question: "¿Necesito conocimientos técnicos para usar Sonmyd?",
-          answer:
-            "No. Sonmyd se encarga de toda la parte técnica. Tú defines qué quieres automatizar y nosotros construimos e implementamos la solución. Solo necesitas tener claros tus procesos de negocio.",
-        },
-        {
-          question: "¿Cuánto tiempo tarda en estar lista mi automatización?",
-          answer:
-            "Depende del alcance. Una automatización básica de WhatsApp o Calendar puede estar lista en pocos días. Un sitio web completo con automatizaciones integradas puede tomar una a tres semanas.",
-        },
-        {
-          question: "¿Hay una sesión gratuita para evaluar mi proyecto?",
-          answer:
-            "Sí. La primera sesión de diagnóstico es completamente gratuita. Analizamos tus procesos, identificamos qué automatizar y te presentamos un plan concreto sin ningún compromiso.",
-        },
-      ]}
+  <div class="bg-surface">
+    <ServiceArea
+      id="medellin"
+      kind="servicio"
+      message="Hola, quiero información sobre las clases y los servicios de Sonmyd en Medellín."
     />
-  </div>
 
-  <div class="app-info u-container">
-    <p class="app-info__brand">Sonmyd</p>
-    <p class="app-info__desc">
-      Plataforma de automatización con inteligencia artificial: integraciones con Google Calendar, WhatsApp Business, creación de sitios web y automatización de procesos empresariales. Este sitio utiliza Google Analytics (a través de Google Tag Manager) para medir el tráfico web de forma anónima.
-    </p>
-    <nav class="app-info__links" aria-label="Legal">
-      <a href="/privacidad">Política de Privacidad</a>
-      <span aria-hidden="true">·</span>
-      <a href="/terminos">Términos de Uso</a>
-    </nav>
-  </div>
+    <WidgetWrapper containerClass="max-w-5xl pt-0 md:pt-0 lg:pt-0">
+      <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <Image
+          class="w-full rounded-2xl border border-line shadow-card-lg"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1023px) 100vw, 480px"
+          width={1024}
+          height={576}
+          {...medellinImage}
+        />
 
-  <!-- APP IDENTITY NOTICE — siempre en el HTML (Google lo lee sin JS).
-       El usuario puede descartarlo; se guarda en localStorage.           -->
-  <section class="app-id" id="app-id-notice" aria-labelledby="app-id-title">
-    <div class="u-container app-id__inner">
-      <div class="app-id__body">
-        <div class="app-id__brand">
-          <span class="app-id__name" id="app-id-title">Sonmyd</span>
-          <span class="app-id__sep" aria-hidden="true">·</span>
-          <span class="app-id__tagline">Plataforma de automatización con IA</span>
-        </div>
-        <p class="app-id__purpose">
-          <strong>Sonmyd</strong> accede a <strong>Google Calendar</strong> a través de OAuth para crear y gestionar citas automáticamente. También integra <strong>WhatsApp Business</strong> para responder clientes 24/7 y construye sitios web profesionales para tu negocio. <a href="/privacidad">Política de Privacidad</a> · <a href="/terminos">Términos de Uso</a>
-        </p>
+        <address class="card not-italic">
+          <p class="eyebrow">Datos del negocio</p>
+          <p class="mt-3 text-xl font-semibold text-heading">{BUSINESS.name}</p>
+          <p class="mt-1 text-muted">
+            {BUSINESS.address.locality}, {BUSINESS.address.region}, {COUNTRY_NAME}
+          </p>
+          <p class="mt-3 text-default">
+            WhatsApp: <strong class="font-semibold text-heading">{BUSINESS.telephone}</strong>
+          </p>
+          <p class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
+            <a class="text-primary underline underline-offset-4" href="/contact">Formulario de contacto</a>
+            <a class="text-primary underline underline-offset-4" href="/booking">Agenda una asesoría</a>
+          </p>
+        </address>
       </div>
-      <button class="app-id__accept" id="app-id-accept" aria-label="Cerrar aviso">
-        Aceptar
-      </button>
+    </WidgetWrapper>
+  </div>
+
+  <!-- FAQs ************************** -->
+
+  <FAQs
+    id="preguntas-frecuentes"
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes"
+    subtitle="Lo que suelen preguntar antes de escribirnos."
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <!-- Captura de leads ************** -->
+
+  <LeadCapture
+    formId="lead-home"
+    title="Empecemos por tu caso"
+    subtitle="Cuéntanos si quieres aprender o que lo hagamos por ti, y qué quieres lograr. Te decimos si podemos ayudarte, cómo y qué implica. Si no somos los indicados, también te lo decimos."
+    bullets={[
+      'Primera consulta sin costo y sin compromiso',
+      'Hablas con quien hace el trabajo, no con un vendedor',
+      'Si no somos los indicados para tu caso, te lo decimos',
+      'Tus datos no se venden ni se ceden a terceros',
+    ]}
+    button="Quiero que me contacten"
+  />
+
+  <!--
+    Información de la aplicación. Google la lee sin ejecutar JavaScript para
+    verificar la marca y el uso de Google Calendar en el OAuth: por eso es texto
+    visible, siempre en el HTML y sin ningún mecanismo para ocultarlo.
+  -->
+  <section id="sobre-la-plataforma" aria-label="Acerca de la plataforma Sonmyd" class="border-t border-line bg-page">
+    <div class="mx-auto flex max-w-3xl flex-col items-center gap-3 px-4 py-12 text-center sm:px-6">
+      <p class="text-sm font-bold uppercase tracking-widest text-heading">Sonmyd</p>
+      <p class="text-sm leading-relaxed text-muted">
+        Plataforma de tecnología, automatización e inteligencia artificial que opera desde Medellín, Colombia:
+        desarrollo de software, sitios web y aplicaciones, integraciones con WhatsApp Business y con Google Calendar
+        para el agendamiento de citas, automatización de procesos empresariales y clases de programación.
+      </p>
+      <p class="text-sm leading-relaxed text-muted">
+        Sonmyd accede a Google Calendar a través de OAuth, con la autorización del usuario, para crear y gestionar
+        citas. Este sitio utiliza Google Analytics, a través de Google Tag Manager, para medir el tráfico web.
+      </p>
+      <nav aria-label="Información legal" class="flex items-center gap-3 text-sm text-muted">
+        <a class="underline underline-offset-4 hover:text-heading" href="/privacidad">Política de privacidad</a>
+        <span aria-hidden="true">·</span>
+        <a class="underline underline-offset-4 hover:text-heading" href="/terminos">Términos y condiciones</a>
+      </nav>
     </div>
   </section>
-
-  <GL />
-  <GLPlaces />
-  <ContactModal />
 </Layout>
-
-<script>
-  // ── App notice dismiss ────────────────────────────────────────────────────
-  const NOTICE_KEY = "sonmyd-notice-v1";
-  const notice = document.getElementById("app-id-notice");
-  const btn = document.getElementById("app-id-accept");
-
-  if (notice) {
-    if (localStorage.getItem(NOTICE_KEY)) {
-      notice.classList.add("is-hidden");
-    }
-    btn?.addEventListener("click", () => {
-      notice.classList.add("is-hiding");
-      notice.addEventListener("transitionend", () => {
-        notice.classList.add("is-hidden");
-      }, { once: true });
-      localStorage.setItem(NOTICE_KEY, "1");
-    });
-  }
-</script>
-
-<script>
-  const EU = new Set([
-    "ES","FR","DE","IT","PT","NL","BE","AT","CH","SE","NO","DK","FI",
-    "IE","GR","PL","CZ","HU","RO","BG","HR","SK","SI","EE","LV","LT",
-    "LU","MT","CY","IS","LI","AL","RS","BA","ME","MK","MD",
-  ]);
-
-  type PriceEntry = {
-    amount: string;
-    duration: string;
-    savings?: string;
-  };
-  type CountryPricing = {
-    individual: PriceEntry;
-    paquete: PriceEntry;
-  };
-
-  const PRICING: Record<string, CountryPricing> = {
-    DEFAULT: {
-      individual: { amount: "$25",      duration: "session" },
-      paquete:    { amount: "$220",     duration: "10 hrs",   savings: "Te ahorras $30" },
-    },
-    CO: {
-      individual: { amount: "$80.000",  duration: "sesión" },
-      paquete:    { amount: "$750.000", duration: "10 horas" },
-    },
-    EU: {
-      individual: { amount: "€25",      duration: "sesión" },
-      paquete:    { amount: "€220",     duration: "10 horas", savings: "Te ahorras €30" },
-    },
-    MX: {
-      individual: { amount: "$450",     duration: "sesión" },
-      paquete:    { amount: "$4.000",   duration: "10 horas", savings: "Te ahorras $500" },
-    },
-    CL: {
-      individual: { amount: "$20.000",  duration: "sesión" },
-      paquete:    { amount: "$180.000", duration: "10 horas", savings: "Te ahorras $20.000" },
-    },
-    PE: {
-      individual: { amount: "S/ 85",   duration: "sesión" },
-      paquete:    { amount: "S/ 750",  duration: "10 horas" },
-    },
-  };
-
-  function applyPricing(pricing: CountryPricing) {
-    const plans = [pricing.individual, pricing.paquete];
-
-    plans.forEach((plan, i) => {
-      const amountEl = document.querySelector<HTMLElement>(`[data-plan-amount="${i}"]`);
-      const durationEl = document.querySelector<HTMLElement>(`[data-plan-duration="${i}"]`);
-      const savingsEl = document.querySelector<HTMLElement>(`[data-plan-savings="${i}"]`);
-
-      if (amountEl) amountEl.textContent = plan.amount;
-      if (durationEl) durationEl.textContent = `/${plan.duration}`;
-      if (savingsEl) {
-        savingsEl.textContent = plan.savings ?? "";
-        savingsEl.classList.toggle("visible", !!plan.savings);
-      }
-    });
-  }
-
-  async function getCountryCode(): Promise<string> {
-    // Cloudflare CDN trace — sin límites, sin CORS, 100% confiable
-    try {
-      const res = await fetch("https://cloudflare.com/cdn-cgi/trace");
-      const text = await res.text();
-      const match = text.match(/^loc=([A-Z]{2})$/m);
-      if (match?.[1]) return match[1];
-    } catch { /* fall through */ }
-
-    // Fallback: ipapi.co
-    try {
-      const res = await fetch("https://ipapi.co/json/");
-      const data = await res.json();
-      if (data.country_code) return data.country_code;
-    } catch { /* fall through */ }
-
-    return "DEFAULT";
-  }
-
-  async function detectAndApply() {
-    const countryCode = await getCountryCode();
-
-    let pricing: CountryPricing;
-    if (PRICING[countryCode]) {
-      pricing = PRICING[countryCode];
-    } else if (EU.has(countryCode)) {
-      pricing = PRICING.EU;
-    } else {
-      pricing = PRICING.DEFAULT;
-    }
-
-    applyPricing(pricing);
-  }
-
-  detectAndApply();
-</script>
-
-<style>
-  /* ── App Identity Notice ── */
-  .app-id {
-    overflow: hidden;
-    max-height: 12rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(10, 10, 22, 0.85);
-    backdrop-filter: blur(8px);
-    padding: 1.5rem 0;
-    opacity: 1;
-    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.4s ease;
-
-    &.is-hiding {
-      max-height: 0;
-      opacity: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    &.is-hidden {
-      display: none;
-    }
-  }
-  .app-id__inner {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .app-id__body {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .app-id__brand {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .app-id__name {
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #fff;
-  }
-  .app-id__sep {
-    color: rgba(255, 255, 255, 0.25);
-    font-size: 0.75rem;
-  }
-  .app-id__tagline {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-  }
-  .app-id__purpose {
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.45);
-    line-height: 1.5;
-    margin: 0;
-
-    strong { color: rgba(255, 255, 255, 0.75); font-weight: 600; }
-    a { color: rgba(50, 170, 255, 0.75); text-decoration: underline; text-underline-offset: 2px; }
-    a:hover { color: #32aaff; }
-  }
-  .app-id__accept {
-    flex-shrink: 0;
-    background: rgba(50, 170, 255, 0.12);
-    border: 1px solid rgba(50, 170, 255, 0.3);
-    border-radius: 0.5rem;
-    color: rgba(50, 170, 255, 0.9);
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 0.4rem 1rem;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-    white-space: nowrap;
-
-    &:hover {
-      background: rgba(50, 170, 255, 0.2);
-      border-color: rgba(50, 170, 255, 0.6);
-      color: #fff;
-    }
-  }
-
-  .app-info {
-    padding: 3rem 0 2rem;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .app-info__brand {
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-  }
-  .app-info__desc {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.3);
-    max-width: 46rem;
-    line-height: 1.6;
-  }
-  .app-info__links {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.3);
-  }
-  .app-info__links a {
-    color: rgba(255,255,255,0.45);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .app-info__links a:hover {
-    color: rgba(255,255,255,0.75);
-  }
-
-  .marquee {
-    padding: 2rem 0;
-    z-index: 9;
-  }
-
-  .photo-inner {
-    margin: auto;
-    position: relative;
-    z-index: 9;
-    width: 22rem;
-    height: 26rem;
-    border-radius: 2rem;
-    overflow: hidden;
-    border: 1.5px solid rgba(50, 170, 255, 0.5);
-    box-shadow:
-      0 0 60px rgba(50, 170, 255, 0.25),
-      0 0 120px rgba(235, 14, 56, 0.08),
-      inset 0 0 30px rgba(0, 0, 0, 0.5);
-
-    @media (--mq-tablet) {
-      width: 18rem;
-      height: 22rem;
-    }
-
-    @media (--mq-phone) {
-      width: 14rem;
-      height: 17rem;
-    }
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-  }
-</style>

@@ -1,0 +1,35 @@
+---
+import Headline from '~/components/ui/Headline.astro';
+import ItemGrid from '~/components/ui/ItemGrid.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { Faqs as Props } from '~/types';
+
+const {
+  title = '',
+  subtitle = '',
+  tagline = '',
+  items = [],
+  columns = 2,
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+  <ItemGrid
+    items={items}
+    columns={columns}
+    defaultIcon="tabler:chevron-right"
+    classes={{
+      container: `${columns === 1 ? 'max-w-4xl' : ''} gap-6 md:gap-6`,
+      panel: 'card max-w-none h-full items-start',
+      title: 'text-base md:text-lg text-heading',
+      description: 'text-[0.95rem] leading-relaxed',
+      icon: 'flex-shrink-0 mt-1 w-5 h-5 text-primary mr-3 rtl:ml-3 rtl:mr-0',
+    }}
+  />
+</WidgetWrapper>

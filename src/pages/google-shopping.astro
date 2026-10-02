@@ -1,0 +1,269 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('google-shopping');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces que van dentro de textos HTML (descripciones de widgets y respuestas de FAQs).
+const inlineLinks = '[&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4';
+
+const faqs = [
+  {
+    question: '¿Qué necesito para empezar con Google Shopping?',
+    answer:
+      'Una tienda con pago funcional, datos de contacto visibles, políticas de envío y devolución claras, precios en pesos colombianos y un catálogo con fotos limpias. Con eso abrimos o ordenamos tu cuenta de Merchant Center, verificamos tu sitio y cargamos el feed. Si algo falta, te decimos qué corregir antes de gastar en anuncios.',
+  },
+  {
+    question: '¿Funciona con Shopify y WooCommerce?',
+    answer:
+      'Sí. Ambas plataformas pueden enviar tu catálogo a Merchant Center mediante integraciones o archivos de productos. Revisamos que el feed incluya los atributos que Google exige, que los precios coincidan con tu tienda y que las variantes estén agrupadas. Si tu tienda es a la medida, armamos el feed desde tu propio sistema.',
+  },
+  {
+    question: '¿Cuánto cuesta anunciarse en Google Shopping?',
+    answer:
+      'Las fichas gratuitas no cobran por clic. Los anuncios de Shopping y Performance Max se pagan por clic, y esa inversión la pagas directamente a Google. Nuestra gestión se cotiza según el alcance, y la cotización no tiene costo. Para fijar un presupuesto parte de tu margen: en la <a href="/blog/como-vender-en-google-shopping-colombia">guía de Google Shopping en Colombia</a> explicamos el ROAS de equilibrio.',
+  },
+  {
+    question: '¿Qué diferencia hay entre Shopping y Performance Max?',
+    answer:
+      'Shopping estándar da más control sobre productos, pujas y búsquedas, y ayuda a entender qué se vende. Performance Max automatiza la entrega en varios canales de Google y necesita buenos datos y creatividades. Solemos empezar con Shopping y probar Performance Max cuando hay conversiones, comparando por ROAS. Google cambia estas campañas con frecuencia, así que lo verificamos con su documentación vigente.',
+  },
+  {
+    question: '¿Por qué Google rechazó mis productos?',
+    answer:
+      'Las causas más comunes son un precio o una disponibilidad que no coinciden con la página, un GTIN inválido o faltante, imágenes con texto promocional o marcas de agua, y políticas de devolución que no se ven. Leemos el mensaje exacto de cada producto, corregimos la causa y pedimos la revisión. La aprobación puede tardar varios días.',
+  },
+  {
+    question: '¿Cuánto tardo en empezar a vender?',
+    answer:
+      'No podemos prometer ventas en una fecha. La aprobación del feed puede tomar varios días y las campañas necesitan datos para optimizar. Lo que sí hacemos es medir bien desde el inicio: sabrás cuánto invertiste, cuánto vendiste y qué productos aportan margen. Con esa información decidimos contigo si conviene subir la inversión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Configuración de Google Merchant Center y gestión de campañas de Google Shopping',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Google Shopping · Merchant Center"
+    actions={[
+      { variant: 'primary', text: 'Cotizar Google Shopping', href: '#contacto', icon: 'tabler:shopping-cart' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Google Shopping</span> en Colombia: tus productos frente a quien ya los está buscando
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Con Google Shopping tus productos aparecen con foto, precio y tienda justo cuando alguien los busca. Desde
+      Medellín configuramos tu Merchant Center, ordenamos tu feed y gestionamos campañas de Shopping y Performance Max
+      para tiendas online de toda Colombia, con las ventas medidas en pesos.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización sin costo</span>
+      <span>·</span>
+      <span>Tu cuenta de Merchant Center es tuya</span>
+      <span>·</span>
+      <span>Shopify, WooCommerce y tiendas a la medida</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Lo que frena a una tienda online"
+    title="Anuncios de productos en Google que se miden por ventas, no por clics"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Productos rechazados o sin aprobar',
+        description:
+          'Un precio que no coincide con la página, un GTIN inválido, imágenes con texto o políticas ausentes frenan tu catálogo. Identificamos cada rechazo y lo corregimos en el origen.',
+      },
+      {
+        title: 'Un feed que no vende',
+        description:
+          'Con títulos genéricos y categorías incompletas, Google no sabe cuándo mostrarte. Reescribimos títulos, atributos y categorías para que coincidan con lo que la gente busca.',
+      },
+      {
+        title: 'Campañas que gastan sin saber qué venden',
+        description:
+          'Sin conversiones bien medidas no sabes qué productos dejan margen. Medimos las ventas con su valor en pesos y separamos los productos que rinden de los que solo consumen presupuesto.',
+      },
+      {
+        title: 'Una tienda que no transmite confianza',
+        description:
+          'Sin datos de contacto, políticas de devolución o un pago claro, Google puede rechazar tu cuenta y el cliente no compra. Si tu tienda necesita ajustes, los hacemos con nuestro servicio de <a href="/desarrollo-web">desarrollo web</a>.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Google Shopping no funciona como una campaña de búsqueda: no eliges palabras clave, Google relaciona lo que la
+      gente busca con los datos de tu catálogo. Por eso la calidad del feed decide si apareces. Lo explicamos paso a
+      paso en la guía <a href="/blog/como-vender-en-google-shopping-colombia"
+        >cómo vender con Google Shopping en Colombia</a
+      >. Estos son los problemas que resolvemos:
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="servicio"
+    tagline="Qué incluye"
+    title="Google Merchant Center y campañas de Shopping: qué incluye el servicio"
+    items={[
+      {
+        title: 'Configuración y verificación de Merchant Center',
+        description:
+          'Creamos u ordenamos tu cuenta, verificamos y reclamamos tu sitio, configuramos envíos y devoluciones coherentes con tu web y vinculamos Google Ads.',
+        icon: 'tabler:building-store',
+      },
+      {
+        title: 'Optimización del feed de productos',
+        description:
+          'Títulos, descripciones, imágenes, categorías, GTIN y variantes. Sincronizamos el catálogo desde Shopify, WooCommerce o tu propio sistema y lo mantenemos al día.',
+        icon: 'tabler:tags',
+      },
+      {
+        title: 'Fichas gratuitas',
+        description:
+          'Activamos y cuidamos las fichas gratuitas para sumar alcance sin pagar por clic. Google no garantiza que tus productos se muestren, pero un buen feed ayuda.',
+        icon: 'tabler:gift',
+      },
+      {
+        title: 'Campañas de Shopping y Performance Max',
+        description:
+          'Empezamos con Shopping estándar para entender qué se vende y probamos Performance Max, con presupuesto acotado, cuando hay datos de conversión.',
+        icon: 'tabler:ad-2',
+      },
+      {
+        title: 'Medición de conversiones y ROAS',
+        description:
+          'Etiqueta de Google, GA4 y valor de compra en pesos, sin duplicados. Calculamos tu ROAS de equilibrio con el margen real y lo comparamos con el de cada campaña.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Corrección de rechazos y suspensiones',
+        description:
+          'Leemos el mensaje exacto de cada producto con problemas, corregimos la causa y pedimos la revisión cuando corresponde.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Nuestro proceso"
+    title="Cómo trabajamos tus campañas de Shopping y Performance Max"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y medición</span>',
+        description:
+          'Auditamos tu tienda, tu catálogo y tu cuenta de Merchant Center. Dejamos listas las etiquetas de Google y GA4 para medir las compras antes de invertir.',
+        icon: 'tabler:report-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Estrategia</span>',
+        description:
+          'Definimos qué productos priorizar según su margen, cómo estructurar las campañas y un presupuesto de partida coherente con tu ROAS de equilibrio.',
+        icon: 'tabler:target-arrow',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Ejecución y optimización</span>',
+        description:
+          'Publicamos el feed, lanzamos las campañas y optimizamos producto por producto: pujas, exclusiones, títulos e imágenes, con datos y sin cambios impulsivos.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Reportes mensuales</span>',
+        description:
+          'Un informe claro con inversión, ventas, ROAS, productos que rinden y productos que solo gastan, más los próximos pasos.',
+        icon: 'tabler:chart-bar',
+      },
+    ]}
+  />
+
+  <CallToAction title="¿Quieres ver tus productos en Google Shopping?" classes={{ container: inlineLinks }}>
+    <Fragment slot="subtitle">
+      Cuéntanos qué vendes y en qué plataforma está tu tienda: revisamos si tu catálogo cumple lo básico y te decimos
+      por dónde empezar. Desde Medellín trabajamos con tiendas de toda Colombia. ¿Prefieres aprender a hacerlo? Mira el
+      <a href="/curso-de-marketing-digital">curso de marketing digital</a>, o conoce
+      <a href="/autor">quién está detrás de Sonmyd</a>.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="google-shopping-mid" text="Cotizar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre Google Shopping"
+    tagline="Dudas comunes"
+    classes={{ container: `max-w-6xl ${inlineLinks}` }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </FAQs>
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="google-shopping"
+    formId="lead-google-shopping"
+    title="Cuéntanos qué vendes y revisamos tu catálogo"
+    subtitle="Te decimos si tu tienda y tu feed están listos para Google Shopping, y qué corregir primero."
+    button="Quiero cotizar Google Shopping"
+    bullets={[
+      'Cotización sin costo y sin compromiso',
+      'Tu cuenta de Merchant Center y de Google Ads es tuya',
+      'La inversión en anuncios la pagas directamente a Google',
+      'Medimos ventas y ROAS desde el inicio',
+    ]}
+  />
+</Layout>

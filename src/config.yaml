@@ -1,0 +1,75 @@
+site:
+  name: Sonmyd
+  site: 'https://sonmyd.co'
+  base: '/'
+  trailingSlash: false
+
+  # Pegar aquí el token que da Google Search Console (Propiedad > Etiqueta HTML).
+  googleSiteVerificationId: ''
+
+# Default SEO metadata
+metadata:
+  title:
+    default: Clases de IA, Asistente de WhatsApp y Gestor de Llamadas | Sonmyd
+    template: '%s | Sonmyd'
+  description: 'Clases de inteligencia artificial con profesor especializado, asistentes de WhatsApp con IA, llamadas de marketing automatizadas y gestor de llamadas para empresas. Formación y automatización en español.'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: Sonmyd
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+  twitter:
+    handle: '@sonmyd'
+    site: '@sonmyd'
+    cardType: summary_large_image
+
+i18n:
+  language: es
+  textDirection: ltr
+
+apps:
+  blog:
+    isEnabled: true
+    postsPerPage: 6
+
+    post:
+      isEnabled: true
+      # Los artículos cuelgan de /blog/ a propósito: cada silo necesita que la
+      # URL muestre la jerarquía. Sueltos en la raíz compiten con las landings.
+      permalink: '/blog/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      robots:
+        index: true
+
+    list:
+      isEnabled: true
+      pathname: 'blog' # Ruta principal del blog, puedes cambiar esto a "articulos" (/articulos)
+      robots:
+        index: true
+
+    category:
+      isEnabled: true
+      pathname: 'categoria' # Ruta principal de categoría /categoria/alguna-categoria
+      robots:
+        index: true
+
+    tag:
+      isEnabled: true
+      pathname: 'etiqueta' # Ruta principal de etiqueta /etiqueta/alguna-etiqueta
+      robots:
+        index: false
+
+    isRelatedPostsEnabled: true
+    relatedPostsCount: 4
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: null # or "G-XXXXXXXXXX"
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

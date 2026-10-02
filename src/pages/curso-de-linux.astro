@@ -1,0 +1,279 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const landing = getLanding('curso-de-linux');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+const breadcrumbs = landingBreadcrumbs(landing);
+
+// Panel decorativo de la sección de contenido: sin texto propio, solo refuerza visualmente los temas del temario.
+const stack = [
+  { icon: 'tabler:terminal-2', label: 'Terminal y Bash' },
+  { icon: 'tabler:key', label: 'SSH y claves' },
+  { icon: 'tabler:brand-docker', label: 'Nginx y Docker' },
+  { icon: 'tabler:shield-lock', label: 'Firewall y fail2ban' },
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el curso de Linux?',
+    answer:
+      'Depende del alcance: de tu punto de partida, de lo que quieras lograr y de cuántas sesiones necesites. No manejamos una tarifa única; te damos una cotización sin costo por WhatsApp cuando conozcamos tu caso. El VPS del proyecto final lo contratas tú con el proveedor que elijas, y solo lo necesitas al llegar a ese módulo.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. En Medellín y en municipios cercanos podemos reunirnos en persona, en el lugar que acordemos contigo; en el resto de Colombia las clases son en línea y en vivo. En los dos casos son 1 a 1 y trabajas desde tu propio computador, conectado a una máquina virtual o a un servidor remoto.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y de tus objetivos; lo definimos en la primera sesión. Quien nunca abrió una terminal recorre un camino distinto al de un desarrollador que solo quiere desplegar su aplicación. Armamos un plan por módulos y lo ajustamos sobre la marcha, según tu ritmo.',
+  },
+  {
+    question: '¿Qué necesito para empezar y qué material usamos?',
+    answer:
+      'Un computador con internet. Practicamos en una máquina virtual o en un servidor remoto, así que no tienes que cambiar el sistema de tu equipo, y no hace falta experiencia previa. Tampoco necesitas comprar libros: usamos la documentación del propio sistema y ejercicios que armamos para tu caso.',
+  },
+  {
+    question: '¿Incluye un curso de Bash y necesito saber programar?',
+    answer:
+      'Sí, el temario incluye un módulo de Bash scripting, y no necesitas saber programar. Linux se administra desde la terminal y se aprende desde cero; los scripts se introducen con ejemplos de tareas reales, como las copias de respaldo. Si después quieres programar, las clases de Python son el siguiente paso natural.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conoces a tu profesor y hablamos de tu nivel y de lo que quieres lograr con Linux. Después abrimos la terminal y ejecutas tus primeros comandos en un sistema real, con tu profesor explicando cada paso. Terminas con un plan de módulos para las siguientes sesiones.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <Breadcrumbs items={breadcrumbs} />
+
+  <Hero
+    tagline="Clases de Linux 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario', icon: 'tabler:list-details' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de Linux</span> en Medellín: aprende la terminal y administra tu propio servidor
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Este curso de Linux te lleva de tus primeros comandos a configurar y proteger tu propio servidor VPS. Clases
+      personalizadas en Medellín o en línea para toda Colombia, con práctica en una terminal real desde la primera
+      sesión.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>·</span>
+      <span>Terminal real desde la primera clase</span>
+      <span>·</span>
+      <span>Proyecto final: tu propio VPS</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué aprender Linux"
+    title="Administración de servidores Linux: entender, no memorizar"
+    items={[
+      {
+        title: 'Terminal real desde la primera clase',
+        description:
+          'Trabajas en un sistema Linux de verdad, en una máquina virtual o en un servidor remoto, y no en un simulador.',
+      },
+      {
+        title: 'Diagnosticar, no solo ejecutar',
+        description: 'Leer logs, revisar procesos y seguir el rastro de un error te vuelve autónomo cuando algo falla.',
+      },
+      {
+        title: 'Un profesor que administra servidores',
+        description:
+          'Las clases las da un ingeniero de software que despliega y mantiene servidores. <a href="/autor" class="font-medium text-primary underline underline-offset-4 hover:no-underline">Conoce a tu profesor</a>.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Linux es el sistema operativo de buena parte de los servidores de internet: ahí corren sitios, APIs y
+        automatizaciones. Quien lo domina deja de depender de paneles y de terceros, porque puede instalar, configurar,
+        asegurar y arreglar su propia infraestructura.
+      </p>
+      <p>
+        En este curso de Linux no memorizas una lista de comandos: entiendes cómo se organizan los archivos, los
+        usuarios, los procesos y la red para poder razonar cuando algo falla. Es para estudiantes y desarrolladores que
+        quieren desplegar sus proyectos, para personas de soporte o TI que dan el salto a los servidores y para quienes
+        ya tienen un VPS y no se atreven a tocarlo. Para un adelanto, empieza con la guía de <a
+          href="/blog/comandos-basicos-de-linux"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline">comandos básicos de Linux</a
+        >.
+      </p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="hidden grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-6 md:grid">
+        {
+          stack.map(({ icon, label }) => (
+            <div class="flex flex-col items-center gap-3 rounded-xl border border-line bg-page p-6 text-center">
+              <Icon name={icon} class="h-10 w-10 text-primary" />
+              <span class="text-sm font-medium text-heading">{label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Temario del curso de Linux, módulo a módulo"
+    subtitle="Del primer comando a un servidor protegido, al ritmo que necesites."
+    items={[
+      {
+        title: 'Terminal y sistema de archivos',
+        description:
+          'Navegas, creas, copias, buscas y editas archivos, y entiendes la jerarquía de directorios, las redirecciones y las tuberías. Los comandos de Linux que usarás todos los días.',
+        icon: 'tabler:terminal-2',
+      },
+      {
+        title: 'Usuarios, grupos y permisos',
+        description:
+          'Cuentas, sudo, propietarios y permisos de archivos. Aplicas el principio de mínimo privilegio en casos concretos, no como teoría.',
+        icon: 'tabler:users',
+      },
+      {
+        title: 'Paquetes, procesos y systemd',
+        description:
+          'Instalas y actualizas software con el gestor de paquetes, ves y controlas procesos, y creas y administras servicios con systemd revisando sus logs.',
+        icon: 'tabler:package',
+      },
+      {
+        title: 'Bash scripting',
+        description:
+          'Variables, condicionales, bucles y funciones para automatizar tareas repetitivas, como copias de respaldo. Escribes tus propios scripts de Bash con ejercicios reales.',
+        icon: 'tabler:file-code',
+      },
+      {
+        title: 'Redes, SSH, Nginx y Docker',
+        description:
+          'Conceptos de red (IP, puertos y DNS), acceso remoto con SSH, Nginx como servidor web y proxy inverso, y contenedores con Docker para desplegar aplicaciones.',
+        icon: 'tabler:brand-docker',
+      },
+      {
+        title: 'Seguridad básica del servidor (hardening)',
+        description:
+          'Firewall, actualizaciones, acceso solo con claves SSH y fail2ban para frenar intentos de ingreso. Lo mínimo para exponer un servidor a internet con criterio.',
+        icon: 'tabler:shield-lock',
+      },
+    ]}
+  />
+
+  <Steps
+    tagline="Cómo son las clases"
+    title="Así trabajamos, del primer comando a tu servidor en línea"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y objetivo</span>',
+        description:
+          'Definimos tu punto de partida y tu meta: desplegar un proyecto, administrar servidores en tu trabajo o dejar de temerle a la terminal.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Práctica guiada en la terminal</span>',
+        description:
+          'En cada sesión se introduce un tema y lo practicas en vivo, con tu profesor viendo tu pantalla y corrigiendo sobre la marcha.',
+        icon: 'tabler:terminal-2',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Tu propio VPS, de cero a protegido</span>',
+        description:
+          'Configuras un VPS propio, que eliges y pagas tú con el proveedor que prefieras: instalas Nginx y Docker y lo proteges con firewall, claves SSH y fail2ban. Si dudas sobre qué contratar, lee <a href="/blog/que-es-un-vps-y-cuando-lo-necesitas" class="font-medium text-primary underline underline-offset-4 hover:no-underline">qué es un VPS y cuándo lo necesitas</a>.',
+        icon: 'tabler:server-cog',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Autonomía</span>',
+        description:
+          'Cierras con el servidor funcionando y con el criterio para mantenerlo: actualizar, revisar logs y resolver problemas por tu cuenta. Cuando quieras llevar tu proyecto a la nube, el <a href="/curso-de-aws" class="font-medium text-primary underline underline-offset-4 hover:no-underline">curso de AWS</a> es el paso siguiente.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Quieres saber si este curso es para ti?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos qué sabes hoy y qué quieres lograr, y te recomendamos un punto de partida, sin compromiso.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-linux-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes sobre el curso de Linux"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-linux"
+    formId="lead-curso-de-linux"
+    title="Empieza tu curso de Linux con un plan a tu medida"
+    subtitle="Cuéntanos qué sabes hoy y para qué quieres usar Linux. Te proponemos un punto de partida y una cotización sin costo."
+    button="Quiero empezar mi curso de Linux"
+    bullets={[
+      'Clases 1 a 1 en Medellín o en línea para toda Colombia',
+      'Terminal real y proyecto final con tu propio VPS',
+      'Seguridad básica del servidor: firewall, claves SSH y fail2ban',
+      'Cotización sin costo, según tu nivel y tu objetivo',
+    ]}
+  />
+</Layout>

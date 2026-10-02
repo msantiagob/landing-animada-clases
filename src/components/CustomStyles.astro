@@ -1,0 +1,118 @@
+---
+import '@fontsource-variable/inter';
+---
+
+<style is:inline>
+  /*
+   * Sistema de diseño de Sonmyd.
+   *
+   * Criterio: esto es un sitio B2B. Quien decide la compra evalúa si confiarle
+   * la atención de sus clientes a la empresa, así que la paleta es sobria y el
+   * color fuerte se reserva para las llamadas a la acción. Nada de gradientes
+   * de tres colores, glow ni animaciones que compitan con el contenido.
+   */
+  :root {
+    --aw-font-sans: 'Inter Variable';
+    --aw-font-serif: 'Inter Variable';
+    --aw-font-heading: 'Inter Variable';
+
+    /* Azul de marca para texto, iconos y enlaces */
+    --aw-color-primary: rgb(37 99 235);
+    --aw-color-secondary: rgb(15 23 42);
+    /* Acento cálido, solo para etiquetas y detalles puntuales */
+    --aw-color-accent: rgb(13 148 136);
+
+    /*
+     * Fondo de los botones sólidos. Es un token aparte de --aw-color-primary
+     * porque ese se aclara en modo oscuro para poder leerse sobre fondo negro,
+     * y un botón sólido necesita mantenerse oscuro para que el texto blanco
+     * conserve el contraste.
+     */
+    --aw-color-cta: rgb(37 99 235);
+    --aw-color-cta-hover: rgb(29 78 216);
+
+    --aw-color-text-heading: rgb(15 23 42);
+    --aw-color-text-default: rgb(51 65 85);
+    --aw-color-text-muted: rgb(100 116 139);
+
+    --aw-color-bg-page: rgb(255 255 255);
+    --aw-color-bg-surface: rgb(248 250 252);
+    --aw-color-bg-subtle: rgb(241 245 249);
+    --aw-color-border: rgb(226 232 240);
+    /*
+     * Fondo de tarjeta. En claro coincide con la página y la define el borde.
+     * En oscuro tiene que ser un tono por encima del fondo, porque un borde
+     * sutil sobre negro no se ve y las tarjetas desaparecen.
+     */
+    --aw-color-bg-card: rgb(255 255 255);
+
+    --aw-color-bg-page-dark: rgb(2 6 23);
+
+    --aw-shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+    --aw-shadow-md: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.04);
+    --aw-shadow-lg: 0 10px 24px -6px rgb(15 23 42 / 0.1), 0 4px 8px -4px rgb(15 23 42 / 0.06);
+
+    ::selection {
+      background-color: rgb(219 234 254);
+      color: rgb(15 23 42);
+    }
+  }
+
+  .dark {
+    --aw-color-primary: rgb(96 165 250);
+    --aw-color-secondary: rgb(226 232 240);
+    --aw-color-accent: rgb(45 212 191);
+
+    --aw-color-cta: rgb(37 99 235);
+    --aw-color-cta-hover: rgb(59 130 246);
+
+    --aw-color-text-heading: rgb(248 250 252);
+    --aw-color-text-default: rgb(203 213 225);
+    --aw-color-text-muted: rgb(148 163 184);
+
+    --aw-color-bg-page: rgb(2 6 23);
+    --aw-color-bg-surface: rgb(15 23 42);
+    --aw-color-bg-subtle: rgb(30 41 59);
+    --aw-color-border: rgb(51 65 85);
+    --aw-color-bg-card: rgb(15 23 42);
+
+    --aw-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --aw-shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+    --aw-shadow-lg: 0 10px 24px -6px rgb(0 0 0 / 0.5);
+
+    ::selection {
+      background-color: rgb(30 58 138);
+      color: rgb(248 250 252);
+    }
+  }
+
+  /* Tipografía: títulos apretados y con peso, cuerpo holgado para lectura. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--aw-color-text-heading);
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-weight: 700;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Respeta a quien pide menos movimiento en el sistema operativo. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>

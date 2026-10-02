@@ -1,0 +1,260 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('desarrollo-web');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Los widgets pintan el copy con set:html. Los enlaces se escriben como [texto](/ruta) y se convierten aquí:
+// la página recibe el <a> con estilo y el JSON-LD de las FAQs recibe el texto plano.
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
+const withLinks = (text: string) => text.replace(MARKDOWN_LINK, `<a href="$2" class="${link}">$1</a>`);
+const plainText = (text: string) => text.replace(MARKDOWN_LINK, '$1');
+
+const intro = [
+  'El desarrollo de páginas web no consiste en tener un sitio bonito, sino en que tus clientes te encuentren en Google, entiendan en segundos qué ofreces y te escriban. Muchos sitios fallan justo ahí: cargan lento, se ven mal en el celular o no ofrecen un camino claro para contactarte.',
+  'Nosotros diseñamos y programamos el sitio completo, con los formularios y el contacto por WhatsApp pensados desde el primer día. Los proyectos los lidera un ingeniero de software: conoce [quién está detrás de Sonmyd](/autor).',
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el desarrollo de una página web?',
+    answer:
+      'Depende del tipo de sitio, el diseño, el contenido y las integraciones, así que cotizamos según el alcance, sin costo: nos cuentas qué necesitas y te enviamos una propuesta con lo que incluye. Como referencia, revisa [cuánto cuesta una página web en Colombia](/blog/cuanto-cuesta-una-pagina-web-en-colombia), con rangos orientativos por tipo de sitio.',
+  },
+  {
+    question: '¿Podré editar yo mismo el contenido de mi sitio?',
+    answer:
+      'Sí. Si vas a actualizarlo seguido, lo construimos con un gestor de contenidos para que cambies textos, imágenes y entradas del blog sin programar. Si casi no cambia, es más simple mantenerlo en código y encargarnos nosotros de los ajustes. ¿Prefieres aprender a hacerlo tú mismo? Mira el [curso de desarrollo web](/curso-de-desarrollo-web).',
+  },
+  {
+    question: '¿El desarrollo de la página incluye SEO?',
+    answer:
+      'Incluye el SEO técnico: estructura de URLs, títulos y descripciones, datos estructurados, mapa del sitio, versión móvil y velocidad. El SEO continuo, como escribir contenido nuevo o trabajar el SEO local, es un trabajo aparte de [posicionamiento SEO](/posicionamiento-seo). Así tu sitio nace bien optimizado y después decides cuánto invertir en crecer.',
+  },
+  {
+    question: '¿Dónde se aloja la página y quién paga el hosting?',
+    answer:
+      'Te ayudamos a elegir y configurar el hosting según el tipo de sitio: uno informativo necesita muy poco y una tienda con tráfico necesita más. El dominio y el hosting se registran a tu nombre, con tus accesos, y te explicamos cada costo recurrente antes de empezar.',
+  },
+  {
+    question: '¿Cuánto tarda el desarrollo de una página web?',
+    answer:
+      'Depende del alcance: una landing page es mucho más corta que una tienda online con catálogo y pagos. No damos un plazo sin conocer tu proyecto; lo definimos en la propuesta, con fechas por etapas. También depende de ti: cuanto antes tengamos textos, fotos y comentarios, antes avanza el sitio.',
+  },
+  {
+    question: '¿Es mejor WordPress o una página web a medida?',
+    answer:
+      'Depende del caso. WordPress sirve cuando necesitas editar mucho contenido con un presupuesto ajustado, pero exige actualizar plugins y cuidar la velocidad. Un sitio a medida, con tecnologías como Astro o Next.js, suele cargar más rápido y darte más control, con mayor inversión inicial. Te recomendamos lo que se ajuste a tu negocio.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Diseño y desarrollo de páginas web',
+      }),
+      faqSchema(faqs.map(({ question, answer }) => ({ question, answer: plainText(answer) }))),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Desarrollo web a medida"
+    actions={[
+      { variant: 'primary', text: 'Pide tu cotización', href: '#contacto', icon: 'tabler:file-description' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      Diseño y <span class="text-accent">desarrollo de páginas web</span> en Medellín
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Hacemos el desarrollo de páginas web de tu negocio de principio a fin: sitios corporativos, landing pages y
+      tiendas online rápidas, adaptadas al celular, optimizadas para SEO y con contacto directo por WhatsApp.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización según el alcance, sin costo</span>
+      <span>·</span>
+      <span>Dominio y hosting a tu nombre</span>
+      <span>·</span>
+      <span>Hablas con quien desarrolla tu sitio</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Sitios web para negocios"
+    title="Diseño de páginas web en Medellín pensado para tu negocio"
+    content={intro.map((paragraph) => `<p class="mb-4 last:mb-0">${withLinks(paragraph)}</p>`).join('')}
+    items={[
+      {
+        title: 'Sitios corporativos',
+        description:
+          'Presentan tu empresa, tus servicios y tu equipo con un diseño propio, un blog opcional y formularios de contacto.',
+      },
+      {
+        title: 'Landing pages',
+        description:
+          'Una sola página enfocada en un objetivo, como captar contactos de una campaña, con un mensaje claro y una llamada a la acción.',
+      },
+      {
+        title: 'Tiendas online',
+        description: withLinks(
+          'Catálogo, carrito y pagos para vender por internet. Si luego quieres anunciar tus productos, las conectamos con [Google Shopping](/google-shopping).'
+        ),
+      },
+      {
+        title: 'Aplicaciones web',
+        description: withLinks(
+          'Portales de clientes, paneles y herramientas con lógica propia, cuando un sitio informativo se queda corto. Es parte de nuestro [desarrollo de software a medida](/desarrollo-de-software).'
+        ),
+      },
+    ]}
+  />
+
+  <Features
+    id="que-incluye"
+    tagline="Qué incluye"
+    title="Lo que incluye el desarrollo de páginas web con Sonmyd"
+    subtitle="No te entregamos solo un diseño: te entregamos un sitio publicado, medible y listo para recibir clientes."
+    items={[
+      {
+        title: 'Diseño UX/UI a tu medida',
+        description:
+          'Diseñamos la estructura y el aspecto del sitio alrededor de lo que tu cliente necesita encontrar, cómodo en el celular y en el computador.',
+        icon: 'tabler:layout',
+      },
+      {
+        title: 'Desarrollo con tecnologías modernas',
+        description:
+          'Programamos con tecnologías como Astro, React y TypeScript, según el proyecto, para lograr sitios rápidos, seguros y fáciles de mantener.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'SEO técnico y velocidad',
+        description:
+          'Optimizamos la estructura, los títulos y los datos estructurados para que Google entienda tu sitio, y cuidamos los Core Web Vitals para que cargue rápido.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Analítica con GTM y GA4',
+        description:
+          'Instalamos Google Tag Manager y GA4 para medir visitas, clics en WhatsApp y formularios enviados, y saber qué canal te trae clientes.',
+        icon: 'tabler:chart-bar',
+      },
+      {
+        title: 'Formularios y WhatsApp conectados',
+        description:
+          'Los formularios y el botón de WhatsApp llegan a donde ya trabajas: tu correo, tu CRM o tu hoja de cálculo, para que ningún contacto se pierda.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Dominio, hosting y mantenimiento',
+        description:
+          'Te ayudamos a registrar el dominio, publicar el sitio y mantenerlo actualizado y respaldado después del lanzamiento, con un plan acordado contigo.',
+        icon: 'tabler:server',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Cómo trabajamos"
+    title="De la idea al sitio publicado en cuatro pasos"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Hablamos de tu negocio, tus clientes y lo que quieres lograr con el sitio, en persona si estás en Medellín o por videollamada desde cualquier ciudad de Colombia. Si una web no es lo que necesitas, te lo decimos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Propuesta</span>',
+        description:
+          'Recibes una propuesta por escrito con alcance, etapas, tecnologías y costo, para que sepas qué incluye cada parte antes de decidir.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Desarrollo con demos semanales</span>',
+        description:
+          'Diseñamos y programamos por etapas. Cada semana ves el avance funcionando y pides ajustes cuando todavía es fácil hacerlos.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Lanzamiento y soporte</span>',
+        description:
+          'Publicamos el sitio, verificamos que todo funcione y seguimos disponibles para ajustes y mantenimiento.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Listo para cotizar tu página web?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos por WhatsApp qué necesitas y te orientamos sobre el tipo de sitio que más te conviene.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="desarrollo-web-mid" text="Cotiza tu sitio por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el desarrollo de páginas web"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: withLinks(answer) }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="desarrollo-web"
+    formId="lead-desarrollo-web"
+    title="Cuéntanos qué página web necesitas"
+    subtitle="Indícanos el tipo de sitio, para quién es y qué quieres lograr. Con eso te enviamos una propuesta según el alcance, sin costo."
+    button="Pide tu cotización"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Hablas con quien desarrolla tu sitio, no con un vendedor',
+      'Dominio, hosting y accesos a tu nombre',
+      'Si una página web no es lo que necesitas, te lo decimos',
+    ]}
+  />
+</Layout>

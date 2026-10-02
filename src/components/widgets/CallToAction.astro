@@ -1,0 +1,60 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { CallToAction, Widget } from '~/types';
+import Headline from '~/components/ui/Headline.astro';
+import Button from '~/components/ui/Button.astro';
+
+interface Props extends Widget {
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  callToAction?: CallToAction;
+  actions?: string | CallToAction[];
+}
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  actions = await Astro.slots.render('actions'),
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <!--
+    Bloque de cierre con fondo sólido: es el punto de conversión de la página y
+    tiene que despegarse visualmente del contenido que viene antes.
+  -->
+  <div class="mx-auto max-w-4xl rounded-2xl border border-line bg-surface px-6 py-12 text-center md:px-12 md:py-16">
+    <Headline
+      title={title}
+      subtitle={subtitle}
+      tagline={tagline}
+      classes={{
+        container: 'mb-0 md:mb-0 max-w-2xl',
+        title: 'text-3xl md:text-4xl font-bold font-heading',
+        subtitle: 'text-lg text-muted',
+      }}
+    />
+    {
+      actions && (
+        <div class="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
+          {Array.isArray(actions) ? (
+            actions.map((action) => (
+              <div class="flex w-full sm:w-auto">
+                <Button {...(action || {})} class="w-full sm:w-auto" />
+              </div>
+            ))
+          ) : (
+            <Fragment set:html={actions} />
+          )}
+        </div>
+      )
+    }
+  </div>
+</WidgetWrapper>

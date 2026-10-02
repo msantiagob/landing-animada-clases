@@ -1,0 +1,172 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Features from '~/components/widgets/Features.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getSeoImageMeta } from '~/data/seo-images';
+import { getHub, landingPath } from '~/utils/landings';
+import { breadcrumbSchema, personSchema } from '~/utils/seo';
+
+const PATH = '/autor';
+
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
+const metadata = {
+  title: 'Santiago Bedoya, autor y responsable técnico | Sonmyd',
+  description:
+    'Quién escribe y firma el contenido técnico de Sonmyd: desarrollo de software, automatización, inteligencia artificial, infraestructura y seguridad.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
+};
+
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      personSchema(),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Autor', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Autor', path: '/autor' },
+    ]}
+  />
+
+  <section class="mx-auto max-w-4xl px-4 pt-16 sm:px-6 md:pt-20">
+    <p class="eyebrow">Autor</p>
+    <h1 class="mt-3 text-4xl font-bold tracking-tight text-heading sm:text-5xl">Santiago Bedoya</h1>
+    <p class="mt-4 text-xl text-muted">
+      Ingeniero de software e instructor. Escribo y firmo el contenido técnico de este sitio.
+    </p>
+
+    <div class="mt-10 space-y-5 text-lg leading-relaxed text-page">
+      <p>
+        Trabajo construyendo software y automatizando procesos para empresas, y doy clases de programación e
+        inteligencia artificial en español. Las dos cosas se retroalimentan: enseñar te obliga a entender de verdad lo
+        que haces, y construir todos los días te evita enseñar cosas que en la práctica no funcionan.
+      </p>
+      <p>
+        Lo que publico aquí sale de proyectos reales, no de repetir documentación. Cuando algo no lo probé, lo digo. Y
+        cuando la respuesta honesta es "no necesitas esto que te quiero vender", también.
+      </p>
+      <p>
+        Tengo una obsesión declarada con los fundamentos. Veo mucha gente escribiendo código sin entender qué pasa por
+        debajo, copiando soluciones que no comprende y quedándose bloqueada al primer error que no está en el tutorial.
+        Por eso las clases arrancan por los conceptos aunque sea el camino más lento: es el único que después te deja
+        caminar solo.
+      </p>
+      <p>
+        Trabajo desde Medellín, Colombia. Doy
+        <a class="font-medium text-primary underline underline-offset-4" href={landingPath(courseHub.slug)}
+          >clases de programación</a
+        >
+        en persona en la ciudad y en línea para toda Colombia, y desarrollo software, automatizaciones y otros
+        <a class="font-medium text-primary underline underline-offset-4" href={landingPath(servicesHub.slug)}
+          >servicios de tecnología</a
+        > para empresas.
+      </p>
+    </div>
+  </section>
+
+  <Features
+    id="areas"
+    tagline="Áreas de trabajo"
+    title="Sobre qué escribo y trabajo"
+    subtitle="Los temas donde tengo experiencia directa y sobre los que vas a encontrar contenido firmado en este sitio."
+    columns={3}
+    items={[
+      {
+        title: 'Inteligencia artificial aplicada',
+        description:
+          'Asistentes conectados a sistemas reales, clasificación de documentos y automatización con modelos de lenguaje. Con criterio sobre dónde aporta y dónde es humo.',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Python y automatización',
+        description:
+          'Desde el script que ordena archivos hasta procesos que corren solos en producción. Es el lenguaje con el que más enseño y más construyo.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'WhatsApp Business API',
+        description:
+          'Habilitación con Meta, plantillas, verificación del negocio e integración con CRMs. Incluidos los trámites tediosos que nadie documenta bien.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Desarrollo de software',
+        description:
+          'Aplicaciones internas, APIs e integraciones en Python y TypeScript, con pruebas automatizadas y entregas incrementales.',
+        icon: 'tabler:app-window',
+      },
+      {
+        title: 'Infraestructura y servidores',
+        description:
+          'VPS, despliegues, backups probados y monitoreo. La parte aburrida que define si tu sistema sobrevive al día malo.',
+        icon: 'tabler:server',
+      },
+      {
+        title: 'Seguridad',
+        description:
+          'Accesos, segundo factor, endurecimiento de servidores y capacitación de equipos. Sin vender miedo ni herramientas innecesarias.',
+        icon: 'tabler:shield-lock',
+      },
+    ]}
+  />
+
+  <Features
+    id="trabajar-conmigo"
+    tagline="Trabajemos juntos"
+    title="Dos formas de trabajar conmigo"
+    subtitle="Puedes aprender a hacerlo tú o dejar que lo haga por ti."
+    columns={2}
+    items={[
+      {
+        title: 'Aprende conmigo',
+        description:
+          'Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web, apps, AWS, Linux, n8n y marketing digital, en Medellín o en línea.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver las clases de programación', href: landingPath(courseHub.slug) },
+      },
+      {
+        title: 'Lo hago por ti',
+        description:
+          'Software a medida, páginas web, apps, bots, agentes de IA, automatizaciones, servidores y seguridad para tu negocio.',
+        icon: 'tabler:code',
+        callToAction: { text: 'Ver los servicios', href: landingPath(servicesHub.slug) },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Features>
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Agendar una llamada', href: '/booking', icon: 'tabler:calendar' },
+      { text: 'Escribir un mensaje', href: '/contact', variant: 'tertiary' },
+    ]}
+  >
+    <Fragment slot="title">¿Trabajamos juntos?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntame qué estás tratando de resolver. Si puedo ayudar, te digo cómo; si no, te digo con quién.
+    </Fragment>
+  </CallToAction>
+</Layout>

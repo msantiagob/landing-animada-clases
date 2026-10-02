@@ -1,0 +1,226 @@
+---
+import type { Form as Props } from '~/types';
+import Button from '~/components/ui/Button.astro';
+
+const { inputs, textarea, disclaimer, button = 'Contáctanos', description = '' } = Astro.props;
+---
+
+<form id="contactForm" method="post" action="/api/contact">
+  <!-- Honeypot: invisible para personas, irresistible para bots. El backend
+       descarta en silencio cualquier envío que lo traiga completo. -->
+  <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+    <label for="website">No completar este campo</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+  </div>
+  <!-- Messages -->
+  <div
+    id="successMessage"
+    class="hidden mb-6 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+  >
+    <div class="flex">
+      <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+          clip-rule="evenodd"></path>
+      </svg>
+      <span id="successText">¡Formulario enviado correctamente! Te contactaremos pronto.</span>
+    </div>
+  </div>
+
+  <div
+    id="errorMessage"
+    class="hidden mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+  >
+    <div class="flex">
+      <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clip-rule="evenodd"></path>
+      </svg>
+      <span id="errorText">Error al enviar el formulario. Inténtalo más tarde.</span>
+    </div>
+  </div>
+
+  {
+    inputs &&
+      inputs.map(
+        ({ type = 'text', name, label = '', autocomplete = 'on', placeholder = '' }) =>
+          name && (
+            <div class="mb-6">
+              {label && (
+                <label for={name} class="field-label">
+                  {label}
+                </label>
+              )}
+              <input
+                type={type}
+                name={name}
+                id={name}
+                autocomplete={autocomplete}
+                placeholder={placeholder}
+                required={name === 'name' || name === 'email'}
+                class="field"
+              />
+            </div>
+          )
+      )
+  }
+
+  {
+    textarea && (
+      <div class="mb-5">
+        <label for="textarea" class="block text-sm font-medium">
+          {textarea.label}
+        </label>
+        <textarea
+          id="textarea"
+          name={textarea.name ? textarea.name : 'message'}
+          rows={textarea.rows ? textarea.rows : 4}
+          placeholder={textarea.placeholder}
+          required
+          class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    )
+  }
+
+  {
+    disclaimer && (
+      <div class="mt-3 flex items-start">
+        <div class="flex mt-0.5">
+          <input
+            id="disclaimer"
+            name="disclaimer"
+            type="checkbox"
+            required
+            class="cursor-pointer mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+        </div>
+        <div class="ml-3">
+          <label for="disclaimer" class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
+            {disclaimer.label}
+          </label>
+        </div>
+      </div>
+    )
+  }
+
+  {
+    button && (
+      <div class="mt-8 grid">
+        <Button variant="primary" type="submit" id="submitBtn">
+          {button}
+        </Button>
+      </div>
+    )
+  }
+
+  {
+    description && (
+      <div class="mt-3 text-center">
+        <p class="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+      </div>
+    )
+  }
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Los scripts inline de Astro pasan por astro check. Tipar la consulta al
+    // DOM una sola vez evita arrastrar decenas de "possibly null" más abajo.
+    const form = document.getElementById('contactForm') as HTMLFormElement | null;
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const successText = document.getElementById('successText');
+    const errorText = document.getElementById('errorText');
+
+    if (!form || !submitBtn || !successMessage || !errorMessage || !successText || !errorText) return;
+
+    // Prevenir envíos duplicados
+    let isSubmitting = false;
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      // Prevenir envíos duplicados
+      if (isSubmitting) {
+        return;
+      }
+
+      // Forzar que siempre sea POST
+      if (form.method !== 'post') {
+        form.method = 'post';
+      }
+
+      // Hide previous messages
+      successMessage.classList.add('hidden');
+      errorMessage.classList.add('hidden');
+
+      // Get form data
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || null,
+        company: formData.get('company') || null,
+        message: formData.get('message'),
+        website: formData.get('website') || '',
+      };
+
+      // Validate required fields. Ojo: el flag de envío se marca DESPUÉS de
+      // validar; si se marcaba antes, este return dejaba el formulario
+      // bloqueado para siempre.
+      if (!data.name || !data.email || !data.message) {
+        errorText.textContent = 'Por favor completa todos los campos obligatorios.';
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      isSubmitting = true;
+
+      // Loading state
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      try {
+        // Asegurar que siempre se use POST
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        // El backend devuelve el motivo en el cuerpo también con 400 o 429.
+        // Cortar por !response.ok escondía ese mensaje tras un error genérico.
+        const result = await response.json();
+
+        if (result.success) {
+          successText.textContent = result.message;
+          successMessage.classList.remove('hidden');
+          form.reset();
+
+          // Scroll to success message
+          successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          errorText.textContent = result.error || 'Error al enviar el formulario.';
+          errorMessage.classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        errorText.textContent = 'Error de conexión. Inténtalo más tarde.';
+        errorMessage.classList.remove('hidden');
+      } finally {
+        // Reset button state
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        isSubmitting = false;
+      }
+    });
+  });
+</script>

@@ -1,0 +1,271 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+/**
+ * Landing de curso: "curso de JavaScript".
+ *
+ * El título, la descripción, la keyword y los enlaces relacionados salen del
+ * registro (src/data/landings.ts); esta página solo aporta el contenido.
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ */
+const landing = getLanding('clases-de-javascript');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para empezar?',
+    answer:
+      'No. Puedes empezar desde cero. Conviene tener nociones de HTML y CSS porque JavaScript trabaja sobre páginas web, y si no las tienes las vemos al inicio. Lo que sí necesitas es practicar entre clases: se aprende escribiendo código, no mirándolo.',
+  },
+  {
+    question: '¿Cuánto cuesta el curso de JavaScript?',
+    answer:
+      'El precio depende del alcance: de tu punto de partida, de lo que quieras aprender y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor revisa tu código mientras lo escribes.',
+  },
+  {
+    question: '¿Cuánto dura el curso de JavaScript?',
+    answer:
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Quien ya programa avanza más rápido que quien parte de cero, y no es lo mismo estudiar dos veces por semana que una. Preferimos ajustar el plan a ti antes que prometerte una cifra sin conocerte.',
+  },
+  {
+    question: '¿Qué necesito para tomar las clases?',
+    answer:
+      'Un computador con conexión a internet (Windows, macOS o Linux). Las herramientas que usamos son gratuitas: Visual Studio Code, Node.js, Git y un navegador. Te ayudamos a instalarlas en la primera clase y trabajas siempre en tu propio equipo, para que después puedas seguir por tu cuenta.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conversamos sobre tu objetivo y tu nivel, dejamos listo tu entorno de trabajo (editor, Node.js y Git) y escribes tus primeras líneas de JavaScript con tu profesor al lado. Al terminar sabes cuál es tu ruta de estudio y qué practicar antes de la siguiente sesión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({ name: landing.name, description: landing.description, path: landingPath(landing.slug) }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Clases de JavaScript 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de JavaScript</span> en Medellín: de cero a crear aplicaciones reales
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Clases de JavaScript 1 a 1 con un ingeniero de software: de los fundamentos a TypeScript, React y Node.js, con
+      proyectos que terminan en tu GitHub. En Medellín o en línea para toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>A tu ritmo</span>
+      <span>Con un ingeniero de software</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Por qué un curso con profesor"
+    title="Aprender JavaScript con un plan claro"
+    items={[
+      {
+        title: 'Orden antes que frameworks',
+        description: 'Fundamentos, DOM, asincronía y, solo después, React. Cada etapa se apoya en la anterior.',
+      },
+      {
+        title: 'Tu código, revisado',
+        description: 'Tu profesor lee lo que escribes y te evita días atascado en un error que se resuelve en minutos.',
+      },
+      {
+        title: 'Proyectos con sentido',
+        description:
+          'Construyes una lista de tareas, un buscador que consume una API y una aplicación completa que puedes mostrar.',
+      },
+      {
+        title: 'Entiendes lo que escribes',
+        description: 'Usamos la IA como apoyo, no como muleta: tienes que poder explicar tu propio código.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Un buen curso de JavaScript no es una lista de videos: es un orden. Mucha gente salta a React sin entender
+        funciones ni asincronía y termina frustrada, porque cada error suena a otro idioma. Aquí fijamos el orden
+        juntos, según tu nivel y tu meta, y cada etapa se valida construyendo algo.
+      </p>
+      <p class="mb-4">
+        Es para quien busca su primer empleo como desarrollador, para quien trabaja en otra área y quiere cambiar de
+        carrera o automatizar su trabajo, y para quien tiene una idea y quiere construirla. Para empezar solo necesitas
+        un computador con internet y ganas de practicar; si ya programas, saltamos lo que domines.
+      </p>
+      <p>
+        Las clases las da un ingeniero de software que construye con estas herramientas;
+        <a href="/autor" class={link}>conoce a tu profesor</a>. Antes de decidir, puedes leer la ruta completa en
+        nuestra guía para
+        <a href="/blog/como-aprender-javascript-desde-cero" class={link}>aprender JavaScript desde cero</a>, o revisar
+        el <a href="/curso-de-desarrollo-web" class={link}>curso de desarrollo web</a> si tu meta es publicar sitios completos.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Temario"
+    title="Temario del curso de JavaScript, módulo a módulo"
+    subtitle="Este es el esqueleto del programa. El orden y la profundidad se ajustan a tu nivel y a tu objetivo."
+    items={[
+      {
+        title: 'Fundamentos del lenguaje',
+        description:
+          'Variables, tipos de datos, condicionales, funciones, arrays y objetos. La base que separa a quien entiende JavaScript de quien copia y pega.',
+        icon: 'tabler:brand-javascript',
+      },
+      {
+        title: 'DOM y eventos',
+        description:
+          'Selecciona y modifica elementos, responde a clics y formularios, y guarda datos en el navegador. Aquí el lenguaje se vuelve visible.',
+        icon: 'tabler:click',
+      },
+      {
+        title: 'Asincronía y APIs',
+        description:
+          'Promesas, async/await y fetch para pedir datos a un servidor, con manejo de errores y estados de carga.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Git, npm, Vite y TypeScript',
+        description:
+          'Control de versiones con Git y GitHub, paquetes con npm, un entorno moderno con Vite y tipos con TypeScript para detectar errores antes de ejecutar.',
+        icon: 'tabler:brand-typescript',
+      },
+      {
+        title: 'React',
+        description:
+          'Componentes, props, estado y hooks para construir interfaces que se mantienen sincronizadas con los datos.',
+        icon: 'tabler:brand-react',
+      },
+      {
+        title: 'Node.js, APIs REST y proyecto final',
+        description:
+          'Un servidor con Node.js y una API REST con datos persistentes. Cierras con una aplicación completa y desplegada, con React al frente.',
+        icon: 'tabler:brand-nodejs',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo son las clases de JavaScript 1 a 1"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Conversamos sobre tu objetivo</span>',
+        description:
+          'Vemos desde dónde partes y qué quieres lograr: tu primer empleo, un cambio de carrera o tu propio producto. Con eso armamos tu ruta.',
+        icon: 'tabler:compass',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Aprendes escribiendo código</span>',
+        description:
+          'Cada clase combina una explicación corta con práctica en vivo. Escribes tú; tu profesor corrige y te explica el porqué de cada decisión.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construyes proyectos</span>',
+        description:
+          'Una lista de tareas, un buscador que consume una API y una aplicación completa. Todo queda en tu repositorio de GitHub.',
+        icon: 'tabler:git-branch',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Publicas y sigues solo</span>',
+        description:
+          'Terminas con una aplicación desplegada y con el criterio para leer documentación, depurar errores y seguir aprendiendo por tu cuenta.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
+
+  <CallToAction
+    title="¿Dudas sobre tu nivel o por dónde empezar?"
+    subtitle="Cuéntanos tu objetivo por WhatsApp o agenda una asesoría gratuita, y definimos juntos tu punto de partida."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="clases-de-javascript-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el curso de JavaScript"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="clases-de-javascript"
+    formId="lead-clases-de-javascript"
+    title="Agenda tu primera clase de JavaScript"
+    subtitle="Cuéntanos tu nivel y tu objetivo. Con eso te proponemos una ruta de aprendizaje y una cotización sin costo."
+    button="Quiero empezar"
+    bullets={[
+      'Asesoría gratuita para definir tu ruta de aprendizaje',
+      'Clases 1 a 1, en Medellín o en línea',
+      'Temario ajustado a tu nivel y a tu meta',
+      'Cotización sin costo por WhatsApp',
+    ]}
+  />
+</Layout>

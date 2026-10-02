@@ -1,0 +1,297 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('llamadas-de-marketing');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces que van dentro de textos HTML (descripciones de widgets y respuestas de FAQs).
+const inlineLinks = '[&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4';
+
+const faqs = [
+  {
+    question: '¿Qué son las llamadas de marketing con IA?',
+    answer:
+      'Son campañas de llamadas salientes que ejecuta un agente de voz con inteligencia artificial. El agente llama, conversa en español, presenta la propuesta, responde objeciones frecuentes, califica al contacto y agenda una reunión o lo pasa a un vendedor. Si lo que necesitas es atender las llamadas que recibes, mira el <a href="/gestor-de-llamadas">gestor de llamadas con IA</a>.',
+  },
+  {
+    question: '¿Se nota que es una IA?',
+    answer:
+      'Puede notarse, y no intentamos ocultarlo. Recomendamos que el agente se presente como asistente virtual al comenzar la llamada: es lo honesto y evita malentendidos con el contacto. La calidad de la voz y de la conversación depende del guion y de la tecnología usada, y la validamos escuchando llamadas reales antes de escalar.',
+  },
+  {
+    question: '¿Es legal hacer llamadas automáticas a clientes?',
+    answer:
+      'Depende del origen de la base, del consentimiento de los contactos y de las normas vigentes en Colombia sobre datos personales y contacto comercial, que cambian con el tiempo. No damos asesoría legal: consulta con un abogado. Nosotros configuramos horarios, límite de reintentos y la opción de no volver a llamar; la base y su autorización son responsabilidad de tu empresa.',
+  },
+  {
+    question: '¿Cuántas llamadas puede hacer una campaña?',
+    answer:
+      'Muchas más que un equipo humano en el mismo tiempo, porque el agente puede sostener varias conversaciones a la vez. En la práctica el volumen lo define el tamaño de tu base, las reglas de horarios y reintentos que acordemos y tu capacidad de atender a los interesados que la campaña genera, no solo la tecnología.',
+  },
+  {
+    question: '¿Qué métricas obtengo de la campaña?',
+    answer:
+      'Llamadas realizadas, contactos efectivos, duración media, motivos de rechazo, objeciones más repetidas, reuniones agendadas y costo por reunión. Además queda la transcripción de cada conversación, para que puedas revisar qué se dijo y ajustar el guion. Los reportes te llegan cada mes.',
+  },
+  {
+    question: '¿Cuánto cuesta una campaña de llamadas?',
+    answer:
+      'Se cotiza según el alcance: tamaño de la base, guion, integraciones (como tu CRM) y reportes. La cotización no tiene costo y la propuesta detalla qué incluye cada concepto. Los precios de las plataformas y de la telefonía cambian con el tiempo, así que preferimos cotizar tu caso concreto antes que dar una tarifa genérica.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Campañas de llamadas de marketing automatizadas con agentes de voz con IA',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Llamadas de marketing con IA"
+    actions={[
+      { variant: 'primary', text: 'Cotizar una campaña de llamadas', href: '#contacto', icon: 'tabler:phone-call' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Llamadas de marketing</span> con IA: campañas de voz que contactan, califican y agendan
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Diseñamos llamadas de marketing con agentes de voz de IA que contactan a quienes aceptaron ser contactados,
+      presentan tu propuesta en español, responden las objeciones de siempre y agendan reuniones con quien muestra
+      interés. Desde Medellín, para empresas de toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización sin costo</span>
+      <span>·</span>
+      <span>Piloto antes de escalar</span>
+      <span>·</span>
+      <span>Costo por reunión medible</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué las campañas tradicionales se rompen"
+    title="Telemarketing con IA para dejar de marcar números a mano"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Marcar a mano consume horas',
+        description:
+          'Llamar a una base grande y filtrar quién contesta y quién tiene interés ocupa a tu equipo comercial en tareas repetitivas. El agente se encarga de esa primera conversación.',
+      },
+      {
+        title: 'La calidad cambia de una llamada a otra',
+        description:
+          'El cansancio y la rotación degradan el discurso. El agente sigue el mismo guion y las mismas respuestas a las objeciones en cada llamada.',
+      },
+      {
+        title: 'Sin datos no se puede mejorar el pitch',
+        description:
+          'Con el registro de cada llamada ves qué objeciones se repiten y en qué momento se pierde el interés, y ajustas el discurso con evidencia.',
+      },
+      {
+        title: 'El seguimiento llega tarde',
+        description:
+          'Un interesado que no recibe respuesta pronto se enfría. El agente propone horarios y agenda la reunión durante la misma llamada.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Dos compañeros conversan frente a sus laptops en una mesa de trabajo, en una fotografía en blanco y negro',
+    }}
+  >
+    <Fragment slot="content">
+      No se trata de reemplazar a tus vendedores. Se trata de que dejen de gastar horas marcando números y hablen solo
+      con quien ya mostró interés.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="servicio"
+    tagline="Qué hace el agente"
+    title="Campañas de llamadas automatizadas: de la base de contactos a la reunión agendada"
+    subtitle="El agente no lee un guion rígido: conversa, escucha la respuesta y decide el siguiente paso."
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Conversa, no reproduce un audio',
+        description:
+          'Entiende las respuestas, maneja interrupciones y adapta el discurso. No es una locución pregrabada.',
+        icon: 'tabler:microphone',
+      },
+      {
+        title: 'Responde las objeciones de siempre',
+        description:
+          '"Es caro", "ya tengo proveedor", "envíame un correo". Las preparamos de antemano con tus mejores respuestas.',
+        icon: 'tabler:message-circle-question',
+      },
+      {
+        title: 'Califica antes de pasar el contacto',
+        description:
+          'Presupuesto, plazo y poder de decisión. Tu vendedor recibe interesados que cumplen tus criterios, no una lista de teléfonos.',
+        icon: 'tabler:filter-check',
+      },
+      {
+        title: 'Agenda en la misma llamada',
+        description:
+          'Consulta la agenda de tu equipo comercial y propone horarios para cerrar la reunión en el momento.',
+        icon: 'tabler:calendar-check',
+      },
+      {
+        title: 'Registra y transcribe cada llamada',
+        description:
+          'Cada conversación queda transcrita y clasificada. Puedes auditar qué se dijo, qué objeción apareció y por qué se perdió un contacto.',
+        icon: 'tabler:file-text',
+      },
+      {
+        title: 'Se conecta con tu CRM',
+        description:
+          'Toma los contactos de tu CRM y devuelve el resultado de cada llamada y el estado del contacto, para que el seguimiento continúe donde ya trabajas.',
+        icon: 'tabler:plug-connected',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Nuestro proceso"
+    title="Cómo armamos tu campaña de llamadas"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y medición</span>',
+        description:
+          'Definimos qué cuenta como éxito, por ejemplo una reunión agendada, y revisamos con tu equipo el origen y la calidad de la base de contactos antes de marcar.',
+        icon: 'tabler:report-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Estrategia</span>',
+        description:
+          'Escribimos el guion con tu equipo comercial, cargamos las respuestas a las objeciones reales y definimos horarios permitidos, reintentos y cuándo pasar el contacto a una persona.',
+        icon: 'tabler:script',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Ejecución y optimización</span>',
+        description:
+          'Arrancamos con una muestra pequeña, escuchamos las grabaciones y ajustamos el guion antes de escalar el volumen.',
+        icon: 'tabler:test-pipe',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Reportes mensuales</span>',
+        description:
+          'Cada mes recibes llamadas realizadas, contactos efectivos, reuniones agendadas, objeciones frecuentes y costo por reunión, con las transcripciones disponibles.',
+        icon: 'tabler:chart-line',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Cuatro personas se toman de los antebrazos sobre una mesa con documentos, en señal de trabajo en equipo',
+    }}
+  />
+
+  <WidgetWrapper id="uso-responsable" containerClass="max-w-4xl">
+    <div class="card border-l-4 border-l-[color:var(--aw-color-cta)] md:p-8">
+      <h2 class="font-heading text-2xl font-bold leading-[1.15] text-heading md:text-3xl">
+        Uso responsable de las llamadas automatizadas
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        Las llamadas de marketing solo deben dirigirse a personas que aceptaron ser contactadas. En Colombia el contacto
+        comercial está regulado: la Ley 1581 de 2012 regula el tratamiento de datos personales y, en general, exige la
+        autorización de su titular, y otras normas, como la Ley 2300 de 2023, fijan reglas sobre los horarios y los
+        canales para contactar a los consumidores.
+      </p>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        Las normas cambian y esto no es asesoría legal: consulta con un abogado qué aplica a tu caso. Nosotros
+        configuramos horarios permitidos, límite de reintentos y la opción de no volver a llamar, pero el origen de la
+        base y la autorización de los contactos son responsabilidad de tu empresa.
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <CallToAction title="¿Tiene sentido una campaña de llamadas para tu empresa?" classes={{ container: inlineLinks }}>
+    <Fragment slot="subtitle">
+      Cuéntanos a quién quieres llamar y qué quieres lograr: te decimos con honestidad si conviene y por dónde empezar.
+      Desde Medellín trabajamos con empresas de toda Colombia. ¿Prefieres aprender a hacerlo? Mira el
+      <a href="/curso-de-marketing-digital">curso de marketing digital</a>, o conoce
+      <a href="/autor">quién está detrás de Sonmyd</a>.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="llamadas-de-marketing-mid" text="Cotizar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre llamadas de marketing con IA"
+    tagline="Dudas comunes"
+    classes={{ container: `max-w-6xl ${inlineLinks}` }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </FAQs>
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="llamadas-de-marketing"
+    formId="lead-llamadas-de-marketing"
+    title="Cuéntanos a quién quieres llamar"
+    subtitle="Revisamos tu caso y te decimos si una campaña de llamadas con IA tiene sentido para tu empresa y cómo la empezaríamos."
+    button="Quiero cotizar una campaña"
+    bullets={[
+      'Cotización sin costo y sin compromiso',
+      'Revisamos contigo el origen de la base y la autorización de los contactos',
+      'Empezamos con una muestra pequeña antes de escalar',
+      'Reportes con el resultado de cada llamada',
+    ]}
+  />
+</Layout>

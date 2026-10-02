@@ -1,0 +1,45 @@
+---
+/**
+ * Caja de autor al pie de cada artículo.
+ *
+ * El schema Person ya declara quién firma, pero los datos estructurados
+ * describen lo que la página muestra: sin una firma visible, el marcado no
+ * tiene respaldo. Y para los buscadores de IA, que citan fuentes, un artículo
+ * con autor identificable y enlazado se atribuye mejor que uno anónimo.
+ *
+ * El enlace a /autor es el que consolida la entidad: todos los artículos
+ * apuntan al mismo lugar en vez de repetir una biografía suelta.
+ */
+export interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<aside class={`mx-auto max-w-3xl px-6 sm:px-6 ${className}`}>
+  <div class="rounded-xl border border-line bg-surface p-6 sm:flex sm:items-start sm:gap-5">
+    <div
+      class="mb-4 flex h-14 w-14 flex-none items-center justify-center rounded-full bg-page text-xl font-bold text-heading shadow-card sm:mb-0"
+      aria-hidden="true"
+    >
+      SB
+    </div>
+
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wider text-muted">Escrito por</p>
+      <p class="mt-1 text-lg font-bold text-heading">
+        <a class="underline-offset-4 hover:underline" href="/autor" rel="author">Santiago Bedoya</a>
+      </p>
+      <p class="mt-2 text-muted">
+        Ingeniero de software e instructor de inteligencia artificial. Escribe sobre lo que construye: automatización,
+        Python, WhatsApp Business API, infraestructura y seguridad. Si algo no lo probó, lo dice.
+      </p>
+      <p class="mt-3 text-sm">
+        <a class="font-medium underline underline-offset-4 hover:text-heading" href="/contact">
+          ¿Tienes dudas sobre este tema? Escríbenos
+        </a>
+      </p>
+    </div>
+  </div>
+</aside>

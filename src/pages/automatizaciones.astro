@@ -1,0 +1,287 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('automatizaciones');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces dentro del texto (los widgets pintan el copy con set:html).
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Recorrido que ilustra la columna de la imagen: una consulta de WhatsApp que avanza sola por tus herramientas.
+const chain = [
+  { icon: 'tabler:brand-whatsapp', label: 'Llega una consulta por WhatsApp' },
+  { icon: 'tabler:table', label: 'Se registra en una hoja de cálculo' },
+  { icon: 'tabler:address-book', label: 'Se crea el contacto en tu CRM' },
+  { icon: 'tabler:mail', label: 'Se avisa al responsable por correo' },
+];
+
+const faqs = [
+  {
+    question: '¿Qué procesos conviene automatizar primero?',
+    answer:
+      'Los repetitivos, con reglas claras, que se hacen seguido: cargar a mano un formulario en el CRM, armar el mismo reporte cada lunes o copiar datos entre dos sistemas. Un proceso que cambia cada vez y depende del criterio de una persona aún no está listo para automatizarse.',
+  },
+  {
+    question: '¿Usan herramientas como Zapier o Make, o programan a medida?',
+    answer:
+      'Las dos, según el caso. Para flujos simples y de bajo volumen, una herramienta sin código suele salir más barata. Si hay lógica compleja, volumen alto o el costo por operación se dispara, conviene n8n en tu servidor o código propio. Te decimos cuál corresponde aunque implique facturarte menos.',
+  },
+  {
+    question: '¿Qué pasa si el sistema que uso no tiene API?',
+    answer:
+      'Se busca una vía alternativa: exportaciones automáticas, acceso a la base de datos, webhooks o automatización de la interfaz. Son soluciones más frágiles, porque se rompen cuando el proveedor cambia algo, y lo decimos de entrada. Si el sistema es crítico y cerrado, a veces conviene cambiarlo.',
+  },
+  {
+    question: '¿Cuánto cuesta y cuánto tarda una automatización?',
+    answer:
+      'Depende del alcance: cuántos sistemas se conectan, qué reglas de negocio hay y qué volumen manejas. Cotizamos según ese alcance, sin costo, con un cronograma por etapas; no prometemos plazos antes de entender el proceso. Lo que cobran terceros (WhatsApp, un modelo de IA, el servidor) lo pagas directamente a cada proveedor.',
+  },
+  {
+    question: '¿Qué pasa cuando una automatización falla?',
+    answer:
+      'Se diseña asumiendo que va a fallar, porque las APIs se caen y los datos llegan sucios. Cada flujo lleva reintentos, registro de lo ocurrido y un aviso a una persona cuando algo queda trabado. Una automatización que falla en silencio hace más daño que no tener ninguna.',
+  },
+  {
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y trabajamos de forma remota con empresas de toda Colombia: videollamadas, acceso seguro a tus herramientas y entregas por etapas.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Automatización de procesos de negocio e integración de sistemas',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Automatización de procesos empresariales"
+    actions={[
+      { variant: 'primary', text: 'Contar mi proceso', href: '#contacto', icon: 'tabler:arrows-shuffle' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Automatización de procesos</span> con IA que le devuelve horas a tu equipo
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Desde Medellín hacemos la automatización de procesos de tu empresa: conectamos WhatsApp, Google Workspace, tu CRM
+      y tus sistemas para que los datos no pasen de una pantalla a otra copiados a mano. Trabajamos con empresas de toda
+      Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Accesos y documentación son tuyos</span>
+      <span>·</span>
+      <span>Con manejo de errores y alertas</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="El costo invisible"
+    title="Automatizar tareas repetitivas: lo que cuesta copiar y pegar"
+    items={[
+      {
+        title: 'Horas que nadie contabiliza',
+        description:
+          'Pasar datos de una pantalla a otra toma minutos, pero se repite todos los días. Nadie factura ese tiempo, pero se paga igual.',
+      },
+      {
+        title: 'Errores de digitación con consecuencias',
+        description:
+          'Una cifra mal escrita en un precio, una letra cambiada en un correo. La carga manual falla tarde o temprano: es cuestión de volumen.',
+      },
+      {
+        title: 'Información que llega tarde',
+        description:
+          'Si el reporte se arma a mano cada lunes, el lunes decides con datos del viernes. Las buenas decisiones necesitan datos frescos.',
+      },
+      {
+        title: 'Conocimiento en la cabeza de una sola persona',
+        description:
+          'Cuando el proceso vive en la memoria de quien lo hace, cada vacación es un riesgo operativo y cada renuncia, una crisis.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Automatizar un proceso es lograr que un flujo haga los pasos repetitivos que hoy hace una persona. Construimos
+      esos flujos con <a href="/automatizacion-con-n8n" class={link}>n8n</a> cuando encaja y con código propio cuando el
+      caso lo pide, y sumamos <a href="/agentes-de-ia" class={link}>agentes de IA</a> si el proceso incluye documentos o
+      texto libre.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div
+        class="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-2xl border border-line bg-surface p-6 shadow-card-lg sm:p-8 md:mt-24"
+      >
+        <p class="text-sm font-semibold uppercase tracking-wider text-muted">Un proceso, conectado</p>
+        {
+          chain.map(({ icon, label }, index) => (
+            <Fragment>
+              {index > 0 && <Icon name="tabler:arrow-narrow-down" class="h-6 w-6 text-muted" />}
+              <div class="flex w-full items-center gap-3 rounded-xl border border-line bg-page px-4 py-3">
+                <Icon name={icon} class="h-6 w-6 shrink-0 text-primary" />
+                <span class="font-medium text-heading">{label}</span>
+              </div>
+            </Fragment>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-conectamos"
+    tagline="Qué conectamos"
+    title="Las integraciones de WhatsApp, Google y CRM que más nos piden"
+    items={[
+      {
+        title: 'WhatsApp con tu CRM',
+        description:
+          'Cada consulta que entra por WhatsApp se convierte en un contacto con su historial, su origen y su responsable asignado.',
+        icon: 'tabler:brand-whatsapp',
+      },
+      {
+        title: 'Google Workspace y hojas de cálculo',
+        description: `Hojas que se llenan solas, Drive que se ordena solo, Gmail que dispara avisos y Calendar que agenda sin intervención. Un buen punto de partida: <a href="/blog/automatizar-google-workspace" class="${link}">automatizar Google Workspace</a>.`,
+        icon: 'tabler:brand-google',
+      },
+      {
+        title: 'Formularios y reportes automáticos',
+        description:
+          'Lo que carga un cliente en tu web entra validado a tu sistema, y el informe de cada lunes se genera solo y llega por correo o WhatsApp.',
+        icon: 'tabler:report-analytics',
+      },
+      {
+        title: 'Facturación y cobros',
+        description:
+          'Si tu sistema de facturación expone una API, el seguimiento de comprobantes y los recordatorios de vencimiento se conectan con tu operación.',
+        icon: 'tabler:receipt',
+      },
+      {
+        title: 'Sistemas propios vía API',
+        description:
+          'Tu ERP, tu sistema a medida o esa base de datos que mantiene alguien desde hace años: si expone datos, lo integramos.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Procesos con IA',
+        description:
+          'Clasificar mensajes, resumir documentos o extraer los datos de una factura con modelos de IA, y una persona que revisa lo importante.',
+        icon: 'tabler:brain',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    title="Cómo hacemos la automatización de procesos, paso a paso"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Mapa del proceso real</span>',
+        description:
+          'Miramos cómo se hace hoy, no cómo dice el manual que se hace. Casi siempre aparecen pasos que nadie recordaba.',
+        icon: 'tabler:map-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Simplificar antes de automatizar</span>',
+        description: 'Automatizar un proceso malo solo acelera el desorden. Primero se poda lo que no aporta.',
+        icon: 'tabler:scissors',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construcción por partes</span>',
+        description:
+          'Entregamos el primer tramo funcionando y lo validamos con uso real antes de seguir, en lugar de entregar todo al final.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Monitoreo y entrega</span>',
+        description: `Alertas cuando algo falla, documentación y traspaso a tu equipo: la automatización tiene que sobrevivir sin nosotros. ¿Prefieres aprender a hacerlo tú mismo? Mira el <a href="/curso-de-n8n" class="${link}">curso de n8n</a>.`,
+        icon: 'tabler:checkup-list',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">Cuéntanos qué proceso quieres automatizar</Fragment>
+    <Fragment slot="subtitle">
+      Escríbenos por WhatsApp o agenda una asesoría gratuita. Y si quieres saber con quién trabajarías, conoce <a
+        href="/autor"
+        class={link}>quién está detrás de Sonmyd</a
+      >.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="automatizaciones-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre la automatización de procesos"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={landing.posts}
+        title="Artículos relacionados"
+        linkText="Ver todos los artículos"
+        classes={{ container: 'max-w-6xl' }}
+      />
+    )
+  }
+
+  <LeadCapture
+    interest="automatizaciones"
+    formId="lead-automatizaciones"
+    title="Cuéntanos qué proceso te está quitando tiempo"
+    subtitle="Describe el proceso y las herramientas que usas hoy. Te decimos si conviene automatizarlo y con qué herramienta, y te cotizamos según el alcance."
+    button="Contar mi proceso"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Si no conviene automatizarlo, te lo decimos',
+      'Accesos y documentación a tu nombre',
+      'Atención remota para empresas de toda Colombia',
+    ]}
+  />
+</Layout>

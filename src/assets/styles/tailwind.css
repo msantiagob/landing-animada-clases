@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .bg-page {
+    background-color: var(--aw-color-bg-page);
+  }
+  .bg-dark {
+    background-color: var(--aw-color-bg-page-dark);
+  }
+  .bg-light {
+    background-color: var(--aw-color-bg-page);
+  }
+  /* Fondo de un tono, para alternar secciones y darles ritmo a la página. */
+  .bg-surface {
+    background-color: var(--aw-color-bg-surface);
+  }
+  .bg-subtle {
+    background-color: var(--aw-color-bg-subtle);
+  }
+  .border-line {
+    border-color: var(--aw-color-border);
+  }
+  .text-page {
+    color: var(--aw-color-text-page);
+  }
+  .text-muted {
+    color: var(--aw-color-text-muted);
+  }
+  .text-heading {
+    color: var(--aw-color-text-heading);
+  }
+  .shadow-card {
+    box-shadow: var(--aw-shadow-md);
+  }
+  .shadow-card-lg {
+    box-shadow: var(--aw-shadow-lg);
+  }
+}
+
+@layer components {
+  /*
+   * Botones.
+   *
+   * Un solo estilo sólido para la acción principal y uno con borde para la
+   * secundaria. Sin gradientes de varios colores ni hover:scale: en un sitio
+   * comercial el botón tiene que leerse como un control fiable, no como un
+   * efecto. El foco visible es obligatorio para navegación por teclado.
+   */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border text-center text-base font-medium leading-snug
+           transition-colors duration-150 px-5 py-3 cursor-pointer
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           focus-visible:ring-[color:var(--aw-color-cta)] focus-visible:ring-offset-[color:var(--aw-color-bg-page)];
+  }
+
+  .btn-primary {
+    @apply btn font-semibold text-white border-transparent shadow-card;
+    background-color: var(--aw-color-cta);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--aw-color-cta-hover);
+  }
+
+  .btn-secondary {
+    @apply btn font-medium bg-page text-heading shadow-sm;
+    border-color: var(--aw-color-border);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--aw-color-bg-surface);
+  }
+
+  .btn-tertiary {
+    @apply btn border-transparent bg-transparent text-muted shadow-none;
+  }
+
+  .btn-tertiary:hover {
+    color: var(--aw-color-text-heading);
+    background-color: var(--aw-color-bg-surface);
+  }
+
+  /*
+   * Tarjetas. La elevación se consigue con borde más sombra suave: es lo que
+   * se lee como interfaz de producto, a diferencia del glassmorphism, que en
+   * modo claro baja el contraste del texto.
+   */
+  .card {
+    @apply rounded-xl border p-6 transition-shadow duration-200 shadow-card;
+    background-color: var(--aw-color-bg-card);
+    border-color: var(--aw-color-border);
+  }
+
+  .card:hover {
+    box-shadow: var(--aw-shadow-lg);
+  }
+
+  /* Etiqueta de sección. Reemplaza al tagline suelto en mayúsculas. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider;
+    color: var(--aw-color-accent);
+  }
+
+  /* Píldora para métricas, garantías y señales de confianza. */
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium;
+    border-color: var(--aw-color-border);
+    background-color: var(--aw-color-bg-surface);
+    color: var(--aw-color-text-default);
+  }
+
+  /* Campos de formulario, unificados entre el contacto y el agendamiento. */
+  .field {
+    @apply block w-full rounded-lg border px-4 py-3 text-base text-default
+           transition-colors duration-150 placeholder:text-muted
+           focus:outline-none focus:ring-2 focus:ring-[color:var(--aw-color-cta)] focus:border-transparent;
+    background-color: var(--aw-color-bg-card);
+    border-color: var(--aw-color-border);
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-heading;
+  }
+}
+
+/* Cabecera: el fondo translúcido aparece solo al hacer scroll. */
+#header.scroll > div:first-child {
+  @apply bg-page md:bg-white/85 md:backdrop-blur-md;
+  border-bottom: 1px solid var(--aw-color-border);
+}
+
+.dark #header.scroll > div:first-child,
+#header.scroll.dark > div:first-child {
+  @apply bg-page md:bg-[#020617d9];
+  border-bottom: 1px solid var(--aw-color-border);
+}
+
+/*
+ * Menú móvil abierto: un panel fijo que arranca justo debajo de la fila del logo.
+ * `--aw-menu-top` la publica src/utils/menu.ts al tocar el botón del menú, porque
+ * con la barra de anuncio visible la cabecera no está pegada al borde superior y
+ * un `top` fijo dejaba el primer grupo encima del logo. 70px es la posición con la
+ * cabecera arriba del todo, y el respaldo si el script no corre.
+ */
+#header.expanded nav {
+  position: fixed;
+  top: var(--aw-menu-top, 70px);
+  left: 0;
+  right: 0;
+  bottom: 70px !important;
+  padding: 0 5px;
+}
+
+.dropdown:focus .dropdown-menu,
+.dropdown:focus-within .dropdown-menu,
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+[astro-icon].icon-light > * {
+  stroke-width: 1.2;
+}
+
+[astro-icon].icon-bold > * {
+  stroke-width: 2.4;
+}
+
+[data-aw-toggle-menu] path {
+  @apply transition;
+}
+
+[data-aw-toggle-menu].expanded g > path:first-child {
+  @apply -rotate-45 translate-y-[15px] translate-x-[-3px];
+}
+
+[data-aw-toggle-menu].expanded g > path:last-child {
+  @apply rotate-45 translate-y-[-8px] translate-x-[14px];
+}
+
+.dd *:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .btn {
+    @apply px-4 py-2.5 text-[0.95rem];
+  }
+}

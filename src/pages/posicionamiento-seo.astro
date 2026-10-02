@@ -1,0 +1,267 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('posicionamiento-seo');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces que van dentro de textos HTML (descripciones de widgets y respuestas de FAQs).
+const inlineLinks = '[&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4';
+
+const faqs = [
+  {
+    question: '¿Cuánto tarda el posicionamiento SEO en dar resultados?',
+    answer:
+      'Se habla de meses, no de semanas, y depende de tu competencia, de la antigüedad del sitio y de cuánto haya que mejorar. Lo técnico y el perfil local suelen mostrar cambios antes que el contenido nuevo. Nadie puede garantizar una posición ni un plazo exacto; lo que sí hacemos es medir el avance cada mes con Search Console y GA4.',
+  },
+  {
+    question: '¿Pueden garantizar el primer lugar en Google?',
+    answer:
+      'No, y desconfía de quien lo haga. Google decide las posiciones con muchos factores, cambia sus sistemas con frecuencia y muestra resultados distintos según quién busca y desde dónde. Lo que sí controlamos es la calidad técnica, el contenido y la autoridad de tu sitio, y te mostramos el avance con datos: impresiones, clics y contactos.',
+  },
+  {
+    question: '¿Qué es el SEO local y me sirve en Medellín?',
+    answer:
+      'Es el trabajo para aparecer en Google Maps y en búsquedas con intención cercana, como "dentista en Laureles". Incluye tu Google Business Profile, datos de contacto consistentes, reseñas reales y páginas locales útiles. Si atiendes clientes en el Valle de Aburrá, suele ser lo primero que conviene trabajar. Lo explicamos en la <a href="/blog/seo-local-medellin">guía de SEO local en Medellín</a>.',
+  },
+  {
+    question: '¿Qué es el SEO para buscadores con IA?',
+    answer:
+      'Es preparar tu sitio para que herramientas como los resúmenes con IA de Google o ChatGPT search puedan entenderlo y citarlo: contenido claro y verificable, datos estructurados, autoría visible y un archivo llms.txt. Es un campo nuevo que cambia rápido, así que no prometemos aparecer en esas respuestas; sí reducimos lo que lo impide.',
+  },
+  {
+    question: '¿Cuánto cuesta contratar una agencia o un consultor SEO?',
+    answer:
+      'Depende del alcance: tamaño del sitio, competencia, cantidad de contenido y si incluye SEO local. Nuestra gestión se cotiza según ese alcance y la cotización no tiene costo. Primero revisamos tu sitio para decirte qué conviene hacer y en qué orden; no existe una tarifa única que sirva para todos los negocios.',
+  },
+  {
+    question: '¿Pueden trabajar con mi sitio actual o necesito uno nuevo?',
+    answer:
+      'En muchos casos podemos mejorar el sitio que ya tienes. Si está construido de una forma que limita el SEO, por ejemplo muy lento o imposible de rastrear, te lo decimos con evidencia y, si hace falta, lo rehacemos con nuestro servicio de <a href="/desarrollo-web">desarrollo de páginas web</a>, optimizado para buscadores desde el código.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Posicionamiento SEO, SEO local y optimización para buscadores con IA',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Posicionamiento SEO · SEO local"
+    actions={[
+      { variant: 'primary', text: 'Pedir una revisión SEO', href: '#contacto', icon: 'tabler:search' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Posicionamiento SEO</span> en Medellín: aparece cuando tus clientes buscan lo que vendes
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Hacemos posicionamiento SEO en Medellín con un enfoque técnico y honesto: auditamos tu sitio, creamos contenido
+      que responde lo que tus clientes preguntan, cuidamos tu perfil en Google Maps y preparamos tu web para los
+      buscadores con IA. El SEO toma meses y nadie puede garantizar posiciones.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Cotización sin costo</span>
+      <span>·</span>
+      <span>Reportes con Search Console y GA4</span>
+      <span>·</span>
+      <span>Sin promesas de posiciones</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Por qué tu sitio no aparece"
+    title="Agencia SEO en Medellín: lo que hace falta para que Google te entienda"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Un sitio lento o difícil de rastrear',
+        description:
+          'Si carga lento en el celular o Google no puede rastrear tus páginas, el mejor contenido no sirve. Empezamos por la base técnica.',
+      },
+      {
+        title: 'Contenido que no responde lo que buscan',
+        description:
+          'Páginas escritas para contar lo que haces y no para resolver lo que el cliente pregunta. Investigamos las búsquedas reales y creamos contenido útil para cada intención.',
+      },
+      {
+        title: 'Invisible en Google Maps',
+        description:
+          'Un perfil de Google Business Profile incompleto, datos inconsistentes o pocas reseñas te sacan del mapa cuando alguien busca cerca. Trabajamos tu SEO local.',
+      },
+      {
+        title: 'Sin medición de lo que importa',
+        description:
+          'Sin Search Console y GA4 bien configurados no sabes qué búsquedas traen clientes. Medimos visitas, consultas, llamadas y contactos.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      El SEO no es un truco ni una lista de palabras clave: es lograr que Google entienda tu sitio, confíe en él y lo
+      muestre a quien busca lo que ofreces. Estos son los problemas que atacamos:
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="servicio"
+    tagline="Qué incluye"
+    title="Posicionamiento web en Medellín: qué incluye nuestro servicio de SEO"
+    classes={{ container: inlineLinks }}
+    items={[
+      {
+        title: 'Auditoría técnica',
+        description:
+          'Rastreo, indexación, velocidad en celular, datos estructurados, enlaces rotos y estructura de URLs. Priorizamos lo que más pesa.',
+        icon: 'tabler:report-search',
+      },
+      {
+        title: 'Investigación de palabras clave',
+        description:
+          'Buscamos lo que tus clientes escriben, su intención y la competencia, y lo convertimos en un mapa de páginas y contenidos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Contenido y SEO on-page',
+        description:
+          'Títulos, descripciones, encabezados, enlaces internos y páginas de servicio que responden preguntas reales, no texto de relleno.',
+        icon: 'tabler:article',
+      },
+      {
+        title: 'SEO local',
+        description:
+          'Google Business Profile, nombre, dirección y teléfono consistentes, reseñas reales y páginas locales útiles. Más detalle en la <a href="/blog/seo-local-medellin">guía de SEO local en Medellín</a>.',
+        icon: 'tabler:map-pin',
+      },
+      {
+        title: 'Enlaces éticos',
+        description:
+          'Menciones y enlaces de calidad, ganados con contenido y relaciones reales. No compramos enlaces ni usamos redes de sitios, porque van contra las políticas de Google.',
+        icon: 'tabler:link',
+      },
+      {
+        title: 'SEO para buscadores con IA',
+        description:
+          'Contenido claro y verificable, datos estructurados, autoría visible y archivo llms.txt para que AI Overviews y ChatGPT search entiendan tu sitio. Nadie puede asegurar que te citen.',
+        icon: 'tabler:sparkles',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Nuestro proceso"
+    title="Cómo trabajamos tu posicionamiento SEO"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y medición</span>',
+        description:
+          'Auditoría técnica, revisión de tu contenido y de tu perfil local. Configuramos Search Console, GA4 y los eventos de contacto para tener una línea base.',
+        icon: 'tabler:report-search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Estrategia</span>',
+        description:
+          'Priorizamos palabras clave y páginas según el negocio que pueden traer, y armamos un plan de mejoras técnicas y de contenido con orden y plazos realistas.',
+        icon: 'tabler:target-arrow',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Ejecución y optimización</span>',
+        description:
+          'Corregimos lo técnico, optimizamos y creamos páginas, trabajamos tu perfil local y tus enlaces, y ajustamos con lo que vamos viendo en los datos.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Reportes mensuales</span>',
+        description:
+          'Informe con Search Console y GA4: consultas, clics, páginas que crecen, contactos generados y próximos pasos. Medimos avances, no prometemos posiciones.',
+        icon: 'tabler:chart-bar',
+      },
+    ]}
+  />
+
+  <CallToAction title="¿Quieres saber cómo está tu sitio en Google?" classes={{ container: inlineLinks }}>
+    <Fragment slot="subtitle">
+      Cuéntanos tu negocio y tu web: te decimos con honestidad qué mejorar primero y qué esperar. Desde Medellín
+      trabajamos con negocios de toda Colombia. ¿Prefieres aprender a hacerlo? Mira el
+      <a href="/curso-de-marketing-digital">curso de marketing digital</a>, o conoce
+      <a href="/autor">quién está detrás de Sonmyd</a>.
+    </Fragment>
+
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="posicionamiento-seo-mid" text="Cotizar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre posicionamiento SEO"
+    tagline="Dudas comunes"
+    classes={{ container: `max-w-6xl ${inlineLinks}` }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </FAQs>
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="posicionamiento-seo"
+    formId="lead-posicionamiento-seo"
+    title="Pide una revisión de tu sitio"
+    subtitle="Cuéntanos tu negocio y tu web: te decimos qué mejorar primero y qué esperar, sin prometer posiciones."
+    button="Quiero una revisión SEO"
+    bullets={[
+      'Cotización sin costo y sin compromiso',
+      'No prometemos posiciones: medimos el avance con datos',
+      'Reportes con Search Console y GA4',
+      'Tus accesos y tu contenido siguen siendo tuyos',
+    ]}
+  />
+</Layout>

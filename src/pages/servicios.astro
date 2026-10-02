@@ -1,305 +1,319 @@
 ---
-import LayoutPage from "../layouts/LayoutPage.astro";
-import { getLangFromUrl } from "../i18n/utils";
-import { getHomePath } from "../i18n/paths";
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import type { Landing, SiloId } from '~/data/landings';
+import { getHub, hubBreadcrumbs, landingMetadata, landingPath, landingsBySilo, landingsForHub } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, itemListSchema } from '~/utils/seo';
 
-const lang = getLangFromUrl(Astro.url);
-const homeHref = getHomePath(lang);
+/**
+ * Página HUB de los servicios. Compite por "servicios de software" y reparte autoridad hacia
+ * cada página de servicio, que sale del registro: una landing nueva de estos silos aparece aquí
+ * sin tocar esta página. El marketing digital cuelga de su propio hub (`marketing-digital`),
+ * así que se lista en su propia sección y se enlaza a ese hub.
+ */
+const hub = getHub('servicios');
+const metadata = landingMetadata(hub);
+const hero = getSeoImage(hub.image);
 
-const WHATSAPP_FREE = "https://wa.me/573106041144?text=Hola%2C+quiero+reservar+mi+sesi%C3%B3n+gratuita+de+diagn%C3%B3stico.";
+// Servicios que cuelgan de este hub (desarrollo, IA y automatización, cloud y seguridad) y los de marketing.
+const technical = landingsForHub(hub.slug);
+const marketing = landingsForHub('marketing-digital');
 
-const services = [
+interface Section {
+  id: string;
+  tagline: string;
+  title: string;
+  subtitle: string;
+  services: Landing[];
+  /** Enlace opcional al pie de la sección. */
+  more?: { text: string; href: string };
+}
+
+const SILO_SECTIONS: Array<Omit<Section, 'services'> & { silo: SiloId }> = [
   {
-    icon: "🎁",
-    title: "Diagnóstico Gratuito",
-    desc: "30 minutos sin costo para evaluar tu nivel, definir tus metas y trazar el camino de aprendizaje ideal para ti.",
-    url: "/servicios/diagnostico",
-    badge: "Gratis",
+    silo: 'desarrollo',
+    id: 'desarrollo',
+    tagline: 'Desarrollo',
+    title: 'Servicios de software a medida: sistemas, sitios web, apps y bots',
+    subtitle:
+      'Construimos lo que tu negocio necesita, de un sistema interno a una tienda online, con entregas por etapas y el código a tu nombre.',
   },
   {
-    icon: "🐍",
-    title: "Python para IA",
-    desc: "Aprende Python con foco total en IA: NumPy, Pandas, visualización y preprocesamiento de datos para proyectos reales.",
-    url: "/servicios/python-para-ia",
-    badge: "Desde cero",
+    silo: 'ia-automatizacion',
+    id: 'ia-y-automatizacion',
+    tagline: 'IA y automatización',
+    title: 'Automatización de procesos, agentes de IA y WhatsApp',
+    subtitle:
+      'Conectamos tus herramientas y ponemos la inteligencia artificial a trabajar en lo repetitivo: atención, documentos, reportes y seguimiento.',
   },
   {
-    icon: "🤖",
-    title: "Machine Learning",
-    desc: "Algoritmos supervisados y no supervisados, evaluación de modelos y proyectos reales con scikit-learn.",
-    url: "/servicios/machine-learning",
-    badge: "Intermedio",
+    silo: 'cloud-seguridad',
+    id: 'cloud-y-seguridad',
+    tagline: 'Cloud y seguridad',
+    title: 'Servidores, nube y ciberseguridad para pymes',
+    subtitle:
+      'La infraestructura donde corre tu negocio, bien administrada, con copias de seguridad probadas y protegida.',
+  },
+];
+
+const sections: Section[] = [
+  // Cada silo muestra solo las landings que realmente cuelgan de este hub.
+  ...SILO_SECTIONS.map(({ silo, ...section }) => ({
+    ...section,
+    services: landingsBySilo(silo).filter((landing) => technical.includes(landing)),
+  })),
+  {
+    id: 'marketing',
+    tagline: 'Marketing digital',
+    title: 'Marketing digital con enfoque técnico',
+    subtitle: 'Publicidad en Meta y Google, SEO y llamadas con IA, con la medición instalada antes de invertir.',
+    services: marketing,
+    more: { text: 'Conoce nuestra agencia de marketing digital', href: landingPath('marketing-digital') },
+  },
+];
+
+// Todo lo que lista la página, en el orden en que aparece.
+const listed = sections.flatMap((section) => section.services);
+
+// Tres columnas solo cuando las tarjetas llenan filas completas. Con cuatro, una cuadrícula de 2 x 2
+// evita que quede una tarjeta sola en la última fila.
+const gridClass = (count: number) =>
+  count % 3 === 0 ? 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'grid gap-6 sm:grid-cols-2';
+
+const WHATSAPP_MESSAGE = 'Hola, quiero información sobre los servicios de software y tecnología.';
+
+// Estilo de los enlaces dentro del texto (el reset de Tailwind los deja sin color ni subrayado).
+const LINK = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Fondo que alterna entre secciones, para que la lista no sea una pared del mismo color.
+const SURFACE = '<div class="absolute inset-0 bg-surface"></div>';
+
+const faqs = [
+  {
+    question: '¿Qué servicios de software ofrecen?',
+    answer:
+      'Desarrollo de software a medida, páginas web, apps móviles y bots; automatización de procesos, agentes de IA, n8n y asistentes de WhatsApp; administración de servidores, consultoría AWS y ciberseguridad para pymes; y marketing digital. Cada servicio tiene su propia página con el detalle.',
   },
   {
-    icon: "🧠",
-    title: "LLMs & IA Generativa",
-    desc: "GPT, Claude, Llama, Prompt Engineering, RAG y APIs de IA integradas en aplicaciones reales.",
-    url: "/servicios/llms-ia-generativa",
-    badge: "Intermedio · Avanzado",
+    question: '¿Cuánto cuestan los servicios?',
+    answer:
+      'No hay una tarifa única: depende del alcance de cada proyecto. Cotizamos según el alcance, sin costo, y la propuesta detalla qué se entrega. Lo que cobran terceros, como el servidor, la nube, las APIs o la publicidad, lo pagas directamente a cada proveedor.',
   },
   {
-    icon: "⚙️",
-    title: "Automatización con Agentes",
-    desc: "Construye agentes autónomos con LangChain y CrewAI que razonan, deciden y ejecutan tareas complejas.",
-    url: "/servicios/automatizacion-agentes",
-    badge: "Avanzado",
+    question: '¿Por dónde empiezo si no sé qué necesito?',
+    answer:
+      'Cuéntanos el problema, no la solución. En una asesoría gratuita revisamos tu caso y te decimos qué servicio tiene sentido primero. Si lo que necesitas es algo más simple, o ni siquiera necesitas software, también te lo decimos.',
   },
   {
-    icon: "🌐",
-    title: "Aplicaciones Web",
-    desc: "Desarrollo de apps web modernas, rápidas y escalables. Desde landing pages hasta plataformas completas con backend e IA.",
-    url: "/servicios/aplicaciones-web",
-    badge: "Full Stack",
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y trabajamos de forma remota con empresas de toda Colombia: videollamadas, acceso seguro a tus herramientas y entregas por etapas.',
   },
   {
-    icon: "🔄",
-    title: "Automatizaciones",
-    desc: "Flujos automáticos que conectan tus herramientas, eliminan trabajo manual y escalan tu negocio sin contratar más personas.",
-    url: "/servicios/automatizaciones",
-    badge: "No-code · Custom",
+    question: '¿Con quién hablo y de quién queda lo que construyen?',
+    answer:
+      'Hablas con quien hace el trabajo, no con un intermediario. Lo que construimos queda a tu nombre: el código, las cuentas y los accesos son tuyos, y puedes seguir con otro equipo cuando quieras.',
   },
   {
-    icon: "☁️",
-    title: "Soluciones Cloud",
-    desc: "Infraestructura escalable y segura en AWS, GCP o Azure. Deploy, contenedores, serverless y arquitecturas de producción.",
-    url: "/servicios/soluciones-cloud",
-    badge: "AWS · GCP · Azure",
-  },
-  {
-    icon: "📱",
-    title: "Aplicaciones Nativas",
-    desc: "Apps móviles iOS y Android y aplicaciones de escritorio nativas con rendimiento máximo y IA embebida.",
-    url: "/servicios/aplicaciones-nativas",
-    badge: "iOS · Android · Desktop",
+    question: '¿Qué diferencia hay entre contratar un servicio y tomar clases?',
+    answer:
+      'Con un servicio, nosotros hacemos el trabajo y te lo entregamos documentado. Con las clases, aprendes a hacerlo tú, 1 a 1 y a tu ritmo. También puedes combinar las dos: que construyamos algo y que tu equipo aprenda a mantenerlo.',
   },
 ];
 ---
 
-<LayoutPage
-  title="Servicios de IA | Sonmyd — Miguel Zuluaga"
-  description="Mentoría 1 a 1 en Inteligencia Artificial: Python para IA, Machine Learning, LLMs, IA Generativa y Automatización con Agentes. Clases online personalizadas."
->
-  <section class="page-hero">
-    <div class="hero-bg"></div>
-    <div class="u-container">
-      <a href={homeHref} class="back-link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg>
-        {lang === "en" ? "Home" : "Inicio"}
-      </a>
-      <h1 class="u-heading page-title" data-sy-reveal="words">Servicios de<br />Mentoría en IA</h1>
-      <p class="page-sub u-text" data-sy-reveal="lines">
-        Clases 1 a 1, completamente online. Elige el área que más te interesa o empieza con el diagnóstico gratuito para que diseñemos tu camino juntos.
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      itemListSchema(listed.map((service) => ({ name: service.name, path: landingPath(service.slug) }))),
+      faqSchema(faqs),
+      breadcrumbSchema(hubBreadcrumbs(hub)),
+    ]}
+  />
+
+  <Breadcrumbs items={hubBreadcrumbs(hub)} />
+
+  <Hero
+    tagline="Servicios de tecnología"
+    actions={[
+      { variant: 'primary', text: 'Pedir una propuesta', href: '#contacto', icon: 'tabler:message-circle' },
+      { text: 'Ver los servicios', href: '#desarrollo', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Servicios de software</span> en Medellín para construir, automatizar y proteger tu negocio
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Estos son nuestros servicios de software y tecnología: desarrollamos software a medida, páginas web, apps y bots;
+      automatizamos procesos con IA; administramos servidores y la nube; protegemos tu empresa y gestionamos su
+      marketing digital. Trabajamos con empresas de Medellín y de toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Asesoría gratuita</span>
+      <span>·</span>
+      <span>Hablas con quien hace el trabajo</span>
+      <span>·</span>
+      <span>Lo que construimos queda a tu nombre</span>
+    </Fragment>
+  </Hero>
+
+  <WidgetWrapper id="intro" containerClass="max-w-4xl">
+    <Headline tagline="Quiénes somos" title="Un solo lugar para construir, automatizar y sostener tu tecnología" />
+
+    <div class="mx-auto max-w-3xl space-y-4 text-lg leading-relaxed">
+      <p>
+        Sonmyd es un negocio de tecnología de Medellín. Hablas con quien hace el trabajo, y lo que construimos queda a
+        tu nombre: el código, las cuentas y los accesos son tuyos. Preferimos recomendarte la solución más simple que
+        resuelva tu problema, aunque eso signifique venderte menos.
+      </p>
+      <p>
+        Trabajamos con tecnologías como Python, TypeScript, PostgreSQL, n8n, AWS y Linux, y con modelos de IA, según lo
+        que cada proyecto necesite. Cada servicio tiene su propia página con el detalle, las preguntas frecuentes y la
+        forma de trabajo. Conoce <a href="/autor" class={LINK}>quién está detrás de Sonmyd</a>.
+      </p>
+      <p>
+        ¿No sabes por dónde empezar? Si te frenan las tareas repetitivas, mira la
+        <a href={landingPath('automatizaciones')} class={LINK}>automatización de procesos</a>; si quieres que tus
+        clientes te encuentren y te escriban, el <a href={landingPath('desarrollo-web')} class={LINK}>desarrollo web</a>
+        y el <a href={landingPath('marketing-digital')} class={LINK}>marketing digital</a>; y si te preocupa la
+        infraestructura, los <a href={landingPath('servidores-y-vps')} class={LINK}>servidores Linux y VPS</a> y la
+        <a href={landingPath('ciberseguridad')} class={LINK}>ciberseguridad para pymes</a>.
       </p>
     </div>
-  </section>
+  </WidgetWrapper>
 
-  <section class="services-grid u-container">
-    {services.map((s) => (
-      <a href={s.url} class="service-card">
-        <div class="card-head">
-          <span class="card-icon" aria-hidden="true">{s.icon}</span>
-          <span class="card-badge u-text">{s.badge}</span>
-        </div>
-        <h2 class="u-text card-title">{s.title}</h2>
-        <p class="u-text card-desc">{s.desc}</p>
-        <span class="card-arrow" aria-hidden="true">→</span>
-      </a>
-    ))}
-  </section>
+  {
+    sections.map((section, index) => (
+      <WidgetWrapper id={section.id} containerClass="max-w-6xl" bg={index % 2 === 0 ? SURFACE : undefined}>
+        <Headline tagline={section.tagline} title={section.title} subtitle={section.subtitle} />
 
-  <section class="cta-sec u-container">
-    <h2 class="u-heading cta-title" data-sy-reveal="words">¿No sabes por dónde empezar?</h2>
-    <p class="u-text cta-text">La sesión de diagnóstico es gratis. Hablamos 30 minutos y definimos el camino ideal para ti.</p>
-    <a href={WHATSAPP_FREE} target="_blank" rel="noopener noreferrer" class="cta-btn">
-      Reserva tu sesión gratuita →
-    </a>
-  </section>
-</LayoutPage>
+        <ul class={gridClass(section.services.length)}>
+          {section.services.map((service) => (
+            <li class="card relative focus-within:ring-2 focus-within:ring-[color:var(--aw-color-cta)]">
+              <h3 class="text-lg font-semibold text-heading">
+                <a
+                  href={landingPath(service.slug)}
+                  class="underline-offset-4 hover:text-primary hover:underline focus:outline-none after:absolute after:inset-0"
+                >
+                  {service.name}
+                </a>
+              </h3>
+              <p class="mt-2 text-muted">{service.summary}</p>
+            </li>
+          ))}
+        </ul>
 
-<style>
-  /* Hero */
-  .page-hero {
-    position: relative;
-    padding: 9rem 0 5rem;
-    overflow: hidden;
+        {section.more && (
+          <p class="mt-10 text-center">
+            <a href={section.more.href} class="btn-secondary">
+              {section.more.text}
+              <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+            </a>
+          </p>
+        )}
+      </WidgetWrapper>
+    ))
   }
 
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 70% 60% at 75% 30%, rgba(235, 14, 56, 0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 25% 65%, rgba(50, 170, 255, 0.14) 0%, transparent 55%),
-      radial-gradient(ellipse 90% 60% at 50% 0%, rgba(50, 170, 255, 0.09) 0%, transparent 50%);
-    mask: linear-gradient(180deg, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 100%);
-  }
+  <WidgetWrapper id="aprender" containerClass="max-w-3xl">
+    <div class="card border-l-4 border-l-[color:var(--aw-color-cta)] md:p-8">
+      <h2 class="font-heading text-2xl font-bold leading-[1.15] text-heading md:text-3xl">
+        ¿Quieres aprender a hacerlo tú mismo?
+      </h2>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        También damos clases 1 a 1 de programación, inteligencia artificial, AWS, Linux, n8n y marketing digital, en
+        persona en Medellín o en línea para toda Colombia.
+      </p>
+      <p class="mt-6">
+        <a href={landingPath('clases-de-programacion')} class="btn-secondary">
+          Ver las clases de programación
+          <Icon name="tabler:arrow-right" class="h-4 w-4" aria-hidden="true" />
+        </a>
+      </p>
+    </div>
+  </WidgetWrapper>
 
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    color: rgba(240, 240, 250, 0.45);
-    font-size: 0.82rem;
-    margin-bottom: 1.75rem;
-    text-decoration: none;
-    transition: color 0.2s;
-    position: relative;
+  <Steps
+    id="como-trabajamos"
+    tagline="Proceso"
+    title="Cómo trabajamos, sea cual sea el servicio"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Nos cuentas el problema</span>',
+        description:
+          'Describes qué necesitas resolver, no la solución. Lo hacemos por WhatsApp o en una asesoría gratuita.',
+        icon: 'tabler:message-circle',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Definimos el alcance</span>',
+        description:
+          'Proponemos la versión más pequeña que ya te sirve y la cotizamos por escrito según el alcance, sin costo.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Construimos por etapas</span>',
+        description: 'Entregamos por partes, con avances que puedes ver y probar, y las cuentas quedan a tu nombre.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Entregamos y acompañamos</span>',
+        description:
+          'Documentamos, capacitamos a tu equipo y, si lo quieres, seguimos manteniéndolo. La decisión es tuya.',
+        icon: 'tabler:package-export',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Steps>
 
-    svg {
-      width: 1em;
-      height: 1em;
-    }
+  <CallToAction title="¿No sabes por dónde empezar?">
+    <Fragment slot="subtitle">
+      Cuéntanos el problema y te decimos qué servicio tiene sentido primero. Cotizamos según el alcance, sin costo.
+    </Fragment>
 
-    &:hover {
-      color: rgba(240, 240, 250, 0.85);
-    }
-  }
+    <Fragment slot="actions">
+      <WhatsAppButton message={WHATSAPP_MESSAGE} location="servicios-mid" text="Hablar por WhatsApp" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
 
-  .page-title {
-    --fs: 3.75rem;
-    --lh: 1.05;
-    position: relative;
+  <ServiceArea kind="servicio" message={WHATSAPP_MESSAGE} />
 
-    @media (--mq-phone) {
-      --fs: 2.5rem;
-    }
-  }
+  <FAQs
+    id="preguntas"
+    title="Preguntas frecuentes sobre nuestros servicios de software"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
 
-  .page-sub {
-    --fs: var(--font-size-lg);
-    color: var(--color-text-alt);
-    max-width: 36em;
-    margin-top: 1.25rem;
-    line-height: 1.65;
-    position: relative;
-  }
-
-  /* Services grid */
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    padding: 4rem 0 5rem;
-
-    @media (--mq-tablet) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media (--mq-phone) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .service-card {
-    background: rgba(var(--rgb-brand-3), 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 1.25rem;
-    padding: 1.75rem;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    transition: border-color 0.2s, background 0.2s, transform 0.2s;
-
-    &:hover {
-      border-color: rgba(50, 170, 255, 0.25);
-      background: rgba(var(--rgb-brand-3), 1);
-      transform: translateY(-3px);
-    }
-
-    /* First card (free session) gets a subtle highlight */
-    &:first-child {
-      border-color: rgba(50, 170, 255, 0.18);
-      background: rgba(var(--rgb-brand-3), 0.9);
-    }
-  }
-
-  .card-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .card-icon {
-    font-size: 2rem;
-    line-height: 1;
-  }
-
-  .card-badge {
-    --fs: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: rgb(var(--rgb-brand-2));
-    border: 1px solid rgba(50, 170, 255, 0.25);
-    border-radius: 999px;
-    padding: 0.2em 0.75em;
-    background: rgba(50, 170, 255, 0.06);
-  }
-
-  .card-title {
-    --fs: 1.05rem;
-    font-weight: 600;
-    color: rgb(var(--rgb-text));
-    margin-bottom: 0.5rem;
-  }
-
-  .card-desc {
-    --fs: var(--font-size-sm);
-    color: var(--color-text-alt);
-    line-height: 1.65;
-    flex: 1;
-  }
-
-  .card-arrow {
-    display: block;
-    margin-top: 1.25rem;
-    color: rgb(var(--rgb-brand-2));
-    font-size: 1.1rem;
-    transition: transform 0.2s;
-
-    .service-card:hover & {
-      transform: translateX(4px);
-    }
-  }
-
-  /* CTA */
-  .cta-sec {
-    text-align: center;
-    padding-bottom: 9rem;
-  }
-
-  .cta-title {
-    --fs: 2.25rem;
-    margin-bottom: 0.85rem;
-
-    @media (--mq-phone) {
-      --fs: 1.75rem;
-    }
-  }
-
-  .cta-text {
-    --fs: var(--font-size-lg);
-    color: var(--color-text-alt);
-  }
-
-  .cta-btn {
-    display: inline-block;
-    padding: 1rem 2.25rem;
-    background: #1855cc;
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 999px;
-    text-decoration: none;
-    box-shadow: 0 0 24px rgba(24, 85, 204, 0.4);
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    margin-top: 1.75rem;
-
-    &:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-      box-shadow: 0 0 36px rgba(24, 85, 204, 0.55);
-    }
-  }
-</style>
+  <LeadCapture
+    formId="lead-servicios"
+    title="Cuéntanos tu problema y te orientamos"
+    subtitle="Describe qué quieres resolver y con qué herramientas trabajas hoy. Te respondemos con una recomendación concreta de por dónde empezar y una cotización según el alcance."
+    button="Quiero que me orienten"
+    bullets={[
+      'Asesoría gratuita y cotización sin costo',
+      'Si no necesitas lo que ofrecemos, te lo decimos',
+      'Hablas con quien va a hacer el trabajo',
+      'Atención en Medellín y remota para toda Colombia',
+    ]}
+  />
+</Layout>

@@ -1,0 +1,278 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('desarrollo-de-software');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Los widgets pintan el copy con set:html. Los enlaces se escriben como [texto](/ruta) y se convierten aquí:
+// la página recibe el <a> con estilo y el JSON-LD de las FAQs recibe el texto plano.
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+const MARKDOWN_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
+const withLinks = (text: string) => text.replace(MARKDOWN_LINK, `<a href="$2" class="${link}">$1</a>`);
+const plainText = (text: string) => text.replace(MARKDOWN_LINK, '$1');
+
+const intro = [
+  'El desarrollo de software a medida casi nunca falla por la tecnología. Los proyectos no se caen porque el lenguaje era el equivocado: se caen porque nadie definió qué había que construir y porque la primera versión usable llegó demasiado tarde.',
+  'Quizá buscas una empresa de desarrollo de software en Medellín o una fábrica de software; lo que cambia es cómo trabaja cada una. Aquí cada proyecto lo lidera un ingeniero de software y hablas con quien escribe el código. Conoce [quién está detrás de Sonmyd](/autor).',
+];
+
+const faqs = [
+  {
+    question: '¿Cuándo conviene el software a medida y cuándo comprar uno hecho?',
+    answer:
+      'Si existe un producto que cubre casi todo lo que necesitas, cómpralo: saldrá más barato y estará mejor mantenido. El software a medida se justifica cuando tu proceso es lo que te diferencia, ningún producto encaja sin deformar tu operación o las licencias por usuario se salieron de control. Para elegir entre herramientas sin código y código propio, lee [Zapier, Make o código propio](/blog/zapier-make-o-codigo-propio).',
+  },
+  {
+    question: '¿Cuánto cuesta desarrollar un sistema a medida?',
+    answer:
+      'Depende del alcance, y desconfía de quien te dé un número sin haber entendido el problema. Cotizamos según el alcance, sin costo: definimos la versión más pequeña que ya te sirve, la presupuestamos con precisión y solo después discutimos el resto. Para ver cómo se arma un presupuesto, backend incluido, lee [cuánto cuesta una app en Colombia](/blog/cuanto-cuesta-una-app-en-colombia).',
+  },
+  {
+    question: '¿Cuánto tarda el desarrollo y cómo sé que van avanzando?',
+    answer:
+      'Depende del alcance; lo definimos en la propuesta, con fechas por etapas. Mientras se desarrolla lo ves funcionando: hacemos demostraciones semanales sobre software real, no sobre diapositivas de avance. Si pasan semanas y no hay nada que puedas usar o probar, algo se está haciendo mal.',
+  },
+  {
+    question: '¿El código queda mío?',
+    answer:
+      'Sí, sin asteriscos. El repositorio, la documentación y los accesos quedan a tu nombre desde el primer día, no al final del proyecto. Si mañana quieres seguir con otro equipo, puedes hacerlo sin pedirnos permiso. Retener clientes por dependencia técnica es una práctica que no ejercemos.',
+  },
+  {
+    question: '¿En qué tecnologías trabajan y hacen pruebas automatizadas?',
+    answer:
+      'Trabajamos con tecnologías como Python y TypeScript, bases de datos como PostgreSQL o SQLite según el volumen y despliegue en contenedores: son tecnologías maduras, con comunidad grande y gente disponible en el mercado. Incluimos pruebas automatizadas, porque un sistema sin pruebas es barato de escribir y carísimo de cambiar.',
+  },
+  {
+    question: '¿Dan mantenimiento después de entregar?',
+    answer:
+      'Sí, con un alcance y un horario acordados por escrito. Puedes mantener el sistema con tu propio equipo, porque el código y la documentación son tuyos, o contratar con nosotros correcciones, actualizaciones y mejoras. No prometemos soporte 24/7 porque no podríamos cumplirlo. ¿Prefieres que tu equipo aprenda a hacerlo? Mira las [clases de Python](/clases-de-python).',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Desarrollo de software a medida',
+      }),
+      faqSchema(faqs.map(({ question, answer }) => ({ question, answer: plainText(answer) }))),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Sistemas, APIs e integraciones"
+    actions={[
+      { variant: 'primary', text: 'Cuéntanos tu proyecto', href: '#contacto', icon: 'tabler:code' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Desarrollo de software</span> a medida en Medellín
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Hacemos el desarrollo de software que tu negocio necesita: sistemas internos, APIs, integraciones y funciones de
+      inteligencia artificial. Entregas por partes, pruebas automatizadas y código documentado que queda en tu
+      repositorio desde el primer día.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>El código es tuyo</span>
+      <span>·</span>
+      <span>Con pruebas automatizadas</span>
+      <span>·</span>
+      <span>Demos semanales con software real</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Lo que sale mal"
+    title="Por qué fracasan los proyectos de software a medida"
+    content={intro.map((paragraph) => `<p class="mb-4 last:mb-0">${withLinks(paragraph)}</p>`).join('')}
+    items={[
+      {
+        title: 'Alcance que nunca se cerró',
+        description:
+          'Se empieza a programar sin definir qué es “terminado”. Cada semana aparece algo más y el proyecto no llega nunca.',
+      },
+      {
+        title: 'Seis meses sin nada usable',
+        description:
+          'Todo se entrega al final. Cuando por fin se ve, el negocio ya cambió y la mitad no sirve. Se descubre tarde y caro.',
+      },
+      {
+        title: 'Sin pruebas, sin cambios',
+        description:
+          'Sale más rápido al principio. Después nadie se anima a tocar nada porque no hay forma de saber qué se rompe.',
+      },
+      {
+        title: 'El conocimiento se va con el proveedor',
+        description:
+          'Sin documentación ni acceso al repositorio, cambiar de equipo significa reescribir todo desde cero.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Un grupo de personas trabaja con computadores portátiles alrededor de una mesa de madera, con código en las pantallas',
+    }}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-construimos"
+    tagline="Qué construimos"
+    title="Desarrollo de software que resuelve un problema concreto"
+    items={[
+      {
+        title: 'Aplicaciones internas',
+        description:
+          'Paneles de gestión, sistemas de citas y turnos, seguimiento de pedidos, control de inventario. Todo lo que hoy vive en hojas de cálculo compartidas.',
+        icon: 'tabler:layout-dashboard',
+      },
+      {
+        title: 'Desarrollo de APIs e integraciones',
+        description:
+          'Servicios que conectan tus sistemas entre sí o exponen tus datos a terceros, con autenticación y control de acceso.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Portales para clientes',
+        description:
+          'Espacios donde tus clientes consultan su estado, descargan documentos o cargan información sin llamar por teléfono.',
+        icon: 'tabler:users',
+      },
+      {
+        title: 'Procesos con IA integrada',
+        description: withLinks(
+          'Clasificación de documentos, extracción de datos, resúmenes y asistentes conectados a tus sistemas, donde aportan valor real. Conoce nuestros [agentes de IA para empresas](/agentes-de-ia).'
+        ),
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Migraciones y rescates',
+        description:
+          'Sistemas viejos que nadie quiere tocar, hechos por alguien que ya no está. Los documentamos, los estabilizamos y los movemos.',
+        icon: 'tabler:transfer',
+      },
+      {
+        title: 'Plataformas web y apps móviles',
+        description: withLinks(
+          'Cuando un sitio necesita lógica propia o tu sistema necesita una app, lo desarrollamos como parte de la plataforma. Mira también el [desarrollo web](/desarrollo-web) y el [desarrollo de aplicaciones móviles](/desarrollo-de-aplicaciones-moviles).'
+        ),
+        icon: 'tabler:world-www',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    tagline="Cómo trabajamos"
+    title="Del problema al software funcionando"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Antes de hablar de tecnología, entendemos el proceso y qué duele, en persona si estás en Medellín o por videollamada desde cualquier ciudad de Colombia. A veces la conclusión es que no necesitas software: eso también lo decimos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Propuesta</span>',
+        description:
+          'Definimos la versión más pequeña que ya te sirve y la presupuestamos por escrito, con alcance, etapas y costo. Como el alcance está acotado de verdad, el presupuesto también.',
+        icon: 'tabler:target',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Desarrollo con demos semanales</span>',
+        description:
+          'Ciclos cortos con software funcionando y demostrable. Ves avance real cada semana, no informes de avance.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Lanzamiento y soporte</span>',
+        description:
+          'Despliegue, documentación y traspaso a tu equipo. Si quieres que sigamos manteniéndolo, es una decisión tuya, no una necesidad.',
+        icon: 'tabler:package-export',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Una mano conecta con hilo y chinchetas las pantallas impresas de una aplicación móvil en una pared, para mapear el flujo de uso',
+    }}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Listo para cotizar tu desarrollo de software?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos tu proceso por WhatsApp y te decimos si conviene desarrollarlo a medida, comprar algo hecho o resolverlo
+      con herramientas más simples.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton
+        message={landing.whatsapp}
+        location="desarrollo-de-software-mid"
+        text="Cotiza tu software por WhatsApp"
+      />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el desarrollo de software a medida"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: withLinks(answer) }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="desarrollo-de-software"
+    formId="lead-desarrollo-de-software"
+    title="Cuéntanos qué problema quieres resolver"
+    subtitle="No hace falta que traigas la solución: con el problema bien descrito alcanza para empezar. Te respondemos con una propuesta según el alcance, sin costo."
+    button="Cuéntanos tu proyecto"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Te decimos si conviene comprar algo hecho en vez de desarrollarlo',
+      'El código y la documentación son tuyos desde el primer día',
+      'Demostraciones semanales con software que puedes usar',
+    ]}
+  />
+</Layout>

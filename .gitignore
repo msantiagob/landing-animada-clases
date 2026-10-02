@@ -1,7 +1,6 @@
 # build output
 dist/
-# generated types
-.astro/
+.output/
 
 # dependencies
 node_modules/
@@ -20,8 +19,15 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# jetbrains setting folder
-.idea/
+pnpm-lock.yaml
 
+.astro
 # Local Netlify folder
 .netlify
+
+# base de datos local (solo la raíz: sin la barra inicial el patrón también
+# ignoraba src/data/, donde vive el contenido del sitio)
+/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

@@ -1,0 +1,277 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+/**
+ * Landing de curso: "curso de Python".
+ *
+ * El título, la descripción, la keyword y los enlaces relacionados salen del
+ * registro (src/data/landings.ts); esta página solo aporta el contenido.
+ * No se afirman precios, duraciones, certificados ni garantías: nada de eso
+ * está verificado y en una página comercial sería una promesa pública.
+ */
+const landing = getLanding('clases-de-python');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+/** Estilo de los enlaces dentro del copy (el reset de Tailwind los deja sin color ni subrayado). */
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Necesito saber programar para empezar?',
+    answer:
+      'No. Puedes empezar sin haber escrito nunca una línea de código: partimos desde cero, con un ritmo adaptado a tu nivel. Si vienes de Excel, del área administrativa o de marketing, tus propios archivos son el mejor material de práctica. Solo te pedimos practicar entre clases.',
+  },
+  {
+    question: '¿Cuánto cuesta el curso de Python?',
+    answer:
+      'El precio depende del alcance: de tu punto de partida, de lo que quieras automatizar o aprender y de la frecuencia de las clases. Como cada plan se arma a tu medida, te damos una cotización sin costo por WhatsApp, sin compromiso, para que sepas qué incluye antes de decidir.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas, siempre 1 a 1. En Medellín y en municipios cercanos como Envigado, Sabaneta o Itagüí puedes tomarlas en persona. En línea, en vivo, funcionan igual desde cualquier ciudad de Colombia: compartes pantalla y tu profesor revisa tu código mientras lo escribes.',
+  },
+  {
+    question: '¿Cuánto dura el curso de Python?',
+    answer:
+      'Depende de tu nivel y objetivos; lo definimos en la primera sesión. Automatizar una tarea sencilla no pide lo mismo que analizar datos o consumir APIs, y no es lo mismo estudiar dos veces por semana que una. Preferimos ajustar el plan a ti antes que prometerte una cifra sin conocerte.',
+  },
+  {
+    question: '¿Qué versión de Python y qué herramientas usamos?',
+    answer:
+      'Python 3 actual, instalado en tu propio computador y no en un simulador del navegador. Aprender a manejar el intérprete, los entornos virtuales y el editor es parte del oficio: es lo que te permite seguir solo cuando terminan las clases. Todo el software que usamos es gratuito.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conversamos sobre tu objetivo y tu nivel, instalamos Python y el editor en tu computador, y escribes tus primeras líneas de código con tu profesor al lado. Al terminar sabes cuál es tu ruta de estudio y qué practicar antes de la siguiente sesión.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({ name: landing.name, description: landing.description, path: landingPath(landing.slug) }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Clases de Python 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de Python</span> en Medellín: clases 1 a 1 desde cero
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Aprende Python desde cero con clases 1 a 1 y un profesor que te acompaña en cada paso. Empiezas con lo básico y
+      terminas automatizando tareas que hoy haces a mano. En Medellín o en línea para toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Desde cero, sin requisitos</span>
+      <span>Clases 1 a 1</span>
+      <span>Con un ingeniero de software</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué Python"
+    title="Aprender Python desde cero, sin teoría vacía"
+    items={[
+      {
+        title: 'Se lee casi como inglés',
+        description:
+          'Su sintaxis es de las más legibles: muchas personas escriben algo que funciona en la primera clase.',
+      },
+      {
+        title: 'Automatiza lo que hoy haces a mano',
+        description:
+          'Planillas, archivos, reportes, descargas, correos. Lo repetitivo que te quita horas cada semana se puede resolver con pocas líneas.',
+      },
+      {
+        title: 'Es la puerta de entrada a la IA',
+        description:
+          'Python para IA es el camino natural: gran parte del ecosistema de inteligencia artificial está en este lenguaje.',
+      },
+      {
+        title: 'Se usa en muchos campos',
+        description:
+          'Datos, backend, automatización e infraestructura: Python aparece en todos, así que lo que aprendes te abre varias rutas.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Código en Python con resaltado de colores en la pantalla de un portátil, con funciones y un método de clase visibles',
+    }}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Un buen curso de Python parte de un problema real, no de la teoría. El temario se arma alrededor de tu trabajo:
+        si vives en planillas, empezamos por planillas. Así lo que aprendes se usa desde las primeras clases, y eso es
+        lo que fija el conocimiento.
+      </p>
+      <p class="mb-4">
+        Es para quien nunca ha programado y quiere automatizar su trabajo, para quien quiere entrar al mundo de los
+        datos o la inteligencia artificial y para quien busca una base sólida antes de especializarse. No necesitas
+        experiencia previa: solo un computador con internet y ganas de practicar.
+      </p>
+      <p>
+        Si tu destino es la inteligencia artificial, mira las
+        <a href="/clases-de-ia" class={link}>clases de IA</a>; y si quieres ver cómo se empieza a automatizar, lee
+        <a href="/blog/python-para-automatizar-tareas" class={link}>Python para automatizar tareas</a>. Las clases las
+        da un ingeniero de software; <a href="/autor" class={link}>conoce a tu profesor</a>.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Temario del curso de Python, del primer script a la automatización"
+    subtitle="El recorrido se adapta a tu punto de partida y a tu objetivo. Esto es el esqueleto."
+    items={[
+      {
+        title: 'Fundamentos del lenguaje',
+        description:
+          'Variables, tipos, condicionales, bucles, funciones y estructuras de datos. La base sin la cual todo lo demás es copiar y pegar a ciegas.',
+        icon: 'tabler:code',
+      },
+      {
+        title: 'Archivos y planillas',
+        description:
+          'Leer y escribir CSV, Excel y JSON. Consolidar varios archivos en uno, limpiar datos sucios, generar reportes automáticos.',
+        icon: 'tabler:file-spreadsheet',
+      },
+      {
+        title: 'Automatización de tareas',
+        description:
+          'Scripts que renombran, ordenan, descargan, envían correos y corren solos en un horario. El retorno más inmediato del curso.',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Consumo de APIs',
+        description:
+          'Traer datos de servicios externos, autenticarse, manejar errores y límites. La llave para conectar sistemas entre sí.',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Análisis de datos y Python para IA',
+        description:
+          'Cargar, filtrar, agrupar y cruzar tablas grandes con pandas. Y, según tu destino, el paso natural hacia las librerías y las APIs de inteligencia artificial.',
+        icon: 'tabler:chart-histogram',
+      },
+      {
+        title: 'Buenas prácticas',
+        description:
+          'Entornos virtuales, control de versiones con Git, estructura de proyecto y pruebas. Lo que separa un script de algo que se puede mantener.',
+        icon: 'tabler:git-branch',
+      },
+    ]}
+  />
+
+  <Steps
+    title="Cómo son las clases de Python 1 a 1"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Conversamos sobre tu objetivo</span>',
+        description: 'Vemos desde dónde partes y qué quieres resolver. De ahí sale el plan, no de un temario enlatado.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Fundamentos con ejercicios propios</span>',
+        description:
+          'Aprendes la base practicando sobre tus archivos y tus procesos. Nada de ejercicios de juguete que no se parecen a nada.',
+        icon: 'tabler:book',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Proyecto real</span>',
+        description:
+          'Construyes algo que usas de verdad: un automatizador, un reporte, una integración. Es lo que fija el conocimiento.',
+        icon: 'tabler:tools',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Autonomía</span>',
+        description:
+          'Terminas sabiendo leer documentación, depurar tus propios errores y seguir solo. El objetivo es que cada vez nos necesites menos.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Una joven sonríe y sostiene contra el pecho un cuaderno naranja frente a un fondo color crema',
+    }}
+  />
+
+  <CallToAction
+    title="¿No sabes si Python es lo tuyo?"
+    subtitle="Cuéntanos tu objetivo por WhatsApp o agenda una asesoría gratuita, y definimos juntos tu punto de partida."
+  >
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="clases-de-python-mid" class="w-full sm:w-auto" />
+      <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el curso de Python"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="clases-de-python"
+    formId="lead-clases-de-python"
+    title="Agenda tu primera clase de Python"
+    subtitle="Cuéntanos desde dónde partes y qué quieres lograr. Te proponemos una ruta de aprendizaje y una cotización sin costo."
+    button="Quiero empezar"
+    bullets={[
+      'Asesoría gratuita para definir tu punto de partida',
+      'Clases 1 a 1, en Medellín o en línea',
+      'Plan armado sobre tu caso, no un temario enlatado',
+      'Cotización sin costo por WhatsApp',
+    ]}
+  />
+</Layout>

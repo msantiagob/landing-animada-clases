@@ -1,0 +1,37 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import type { LandingKind } from '~/data/landings';
+import { serviceAreaCopy } from '~/utils/service-area';
+
+/**
+ * Bloque de SEO local: dónde trabajamos.
+ *
+ * Responde a quien busca "… en Medellín" y le dice, con los nombres de los
+ * municipios (que es lo que se busca), que atendemos en persona en la zona y en
+ * línea en toda Colombia. El texto sale de `serviceAreaCopy`, que se apoya
+ * solo en los datos verificados de BUSINESS y NUNCA afirma una oficina o
+ * dirección física: no hay una pública.
+ */
+export interface Props {
+  kind: LandingKind;
+  /** Mensaje prellenado del botón; normalmente `landing.whatsapp`. Sin él se usa uno genérico del tipo de página. */
+  message?: string;
+  id?: string;
+}
+
+const { kind, message, id } = Astro.props;
+const copy = serviceAreaCopy(kind);
+---
+
+<WidgetWrapper id={id} containerClass="max-w-4xl">
+  <div class="text-center">
+    <h2 class="font-heading text-3xl font-bold leading-[1.15] text-heading md:text-4xl">{copy.title}</h2>
+
+    {copy.paragraphs.map((paragraph) => <p class="mt-4 text-lg leading-relaxed text-muted">{paragraph}</p>)}
+
+    <div class="mt-8 flex justify-center">
+      <WhatsAppButton location="service-area" message={message ?? copy.whatsappMessage} variant="secondary" />
+    </div>
+  </div>
+</WidgetWrapper>

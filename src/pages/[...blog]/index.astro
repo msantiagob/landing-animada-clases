@@ -1,0 +1,93 @@
+---
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
+
+import merge from 'lodash.merge';
+import type { ImageMetadata } from 'astro';
+import Layout from '~/layouts/PageLayout.astro';
+import SinglePost from '~/components/blog/SinglePost.astro';
+import ToBlogLink from '~/components/blog/ToBlogLink.astro';
+
+import { getCanonical, getPermalink } from '~/utils/permalinks';
+import { getStaticPathsBlogPost, blogPostRobots } from '~/utils/blog';
+import { findImage } from '~/utils/images';
+import { getPostImageAlt } from '~/utils/post-image';
+import type { MetaData } from '~/types';
+import RelatedPosts from '~/components/blog/RelatedPosts.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import AuthorBox from '~/components/blog/AuthorBox.astro';
+import { articleSchema, breadcrumbSchema, personSchema } from '~/utils/seo';
+
+export const prerender = true;
+
+export const getStaticPaths = (async () => {
+  return await getStaticPathsBlogPost();
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { post } = Astro.props as Props;
+
+const url = getCanonical(getPermalink(post.permalink, 'post'));
+const image = (await findImage(post.image)) as ImageMetadata | string | undefined;
+// Computed from the raw frontmatter value: once resolved, the image no longer carries its file name.
+const imageAlt = getPostImageAlt(post, 'excerpt');
+
+const metadata = merge(
+  {
+    title: post.title,
+    description: post.excerpt,
+    robots: {
+      index: blogPostRobots?.index,
+      follow: blogPostRobots?.follow,
+    },
+    openGraph: {
+      type: 'article',
+      ...(image
+        ? { images: [{ url: image, width: (image as ImageMetadata)?.width, height: (image as ImageMetadata)?.height }] }
+        : {}),
+    },
+  },
+  { ...(post?.metadata ? { ...post.metadata, canonical: post.metadata?.canonical || url } : {}) }
+) as MetaData;
+
+const articlePath = getPermalink(post.permalink, 'post');
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      articleSchema({
+        headline: post.title,
+        description: post.excerpt ?? '',
+        path: articlePath,
+        datePublished: post.publishDate.toISOString(),
+        dateModified: post.updateDate?.toISOString(),
+        image: typeof image === 'string' ? image : (image as ImageMetadata | undefined)?.src,
+      }),
+      personSchema(),
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Blog', path: '/blog' },
+        { name: post.title, path: articlePath },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Blog', path: '/blog' },
+      { name: post.title, path: articlePath },
+    ]}
+  />
+
+  <SinglePost post={{ ...post, image: image }} url={url} imageAlt={imageAlt}>
+    {post.Content ? <post.Content /> : <Fragment set:html={post.content || ''} />}
+  </SinglePost>
+
+  <AuthorBox class="mt-12" />
+
+  <ToBlogLink />
+  <RelatedPosts post={post} />
+</Layout>

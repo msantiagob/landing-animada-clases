@@ -1,0 +1,279 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const landing = getLanding('curso-de-marketing-digital');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+const breadcrumbs = landingBreadcrumbs(landing);
+
+// Panel decorativo de la sección de contenido: sin texto propio, solo refuerza visualmente los canales del temario.
+const stack = [
+  { icon: 'tabler:brand-meta', label: 'Meta Ads' },
+  { icon: 'tabler:brand-google', label: 'Google Ads y Shopping' },
+  { icon: 'tabler:search', label: 'SEO y Google Business' },
+  { icon: 'tabler:chart-line', label: 'GA4 y conversiones' },
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el curso de marketing digital?',
+    answer:
+      'Depende del alcance: de tu punto de partida, de los canales que quieras trabajar y de cuántas sesiones necesites. Te damos una cotización sin costo por WhatsApp cuando conozcamos tu caso. El presupuesto de publicidad no está incluido: esa inversión la haces tú en tus cuentas, y te ayudamos a definir una cifra razonable para empezar.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. En Medellín y en municipios cercanos podemos reunirnos en persona, en el lugar que acordemos contigo; en el resto de Colombia las clases son en línea y en vivo. En los dos casos son 1 a 1 y trabajas sobre tus propias cuentas, con tu profesor guiándote en tiempo real.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y de tus objetivos; lo definimos en la primera sesión. El plan para lanzar tus primeras campañas es distinto al de quien quiere cubrir también SEO, analítica y automatización. Armamos el plan por módulos y lo ajustamos sobre la marcha, según tu ritmo y el tiempo del que dispongas.',
+  },
+  {
+    question: '¿Necesito un negocio o experiencia previa?',
+    answer:
+      'No necesitas experiencia. Sí conviene tener un negocio, una idea o un proyecto sobre el cual practicar, porque aplicamos cada módulo a un caso real. Necesitas un computador con internet y cuentas propias en Meta y Google; te ayudamos a crearlas. Usamos la documentación oficial de cada plataforma y ejercicios hechos para tu caso.',
+  },
+  {
+    question: '¿Es un curso de Facebook Ads, de Google Ads y de SEO a la vez?',
+    answer:
+      'Sí, en un mismo recorrido. Trabajamos Meta Ads (Facebook e Instagram), Google Ads y Google Shopping, SEO con analítica y la automatización de ventas por WhatsApp. Defines cuánto profundizar en cada canal según tu negocio y tu objetivo, y en la primera sesión acordamos el orden de los módulos.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conocemos tu negocio, tus canales actuales y lo que quieres lograr: más clientes, más ventas en tu tienda o más visibilidad local. Revisamos qué mides hoy y qué cuentas y herramientas ya tienes, y definimos el orden de los módulos. Terminas con un plan claro para las siguientes sesiones.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <Breadcrumbs items={breadcrumbs} />
+
+  <Hero
+    tagline="Marketing digital 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario', icon: 'tabler:list-details' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de marketing digital</span> en Medellín: Meta Ads, Google y SEO para conseguir clientes
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Este curso de marketing digital te enseña a planear una estrategia, lanzar campañas en Meta Ads y Google,
+      posicionar tu sitio y medir qué funciona. Clases 1 a 1 en Medellín o en línea para toda Colombia, aplicadas a tu
+      negocio.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>·</span>
+      <span>Práctica sobre tu propio negocio</span>
+      <span>·</span>
+      <span>Meta Ads, Google, SEO y analítica</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué este curso"
+    title="Un curso de Meta Ads, Google Ads y SEO que parte de tu negocio"
+    items={[
+      {
+        title: 'Estrategia antes que anuncios',
+        description:
+          'Defines a quién le vendes, qué ofreces y cómo se recorre el camino hasta la compra, antes de gastar un peso en pauta.',
+      },
+      {
+        title: 'Práctica sobre tu propio negocio',
+        description:
+          'Aplicas cada módulo a tu negocio o proyecto, con tus propias cuentas publicitarias, para practicar con datos reales.',
+      },
+      {
+        title: 'Un profesor que construye software',
+        description:
+          'Las clases las da un ingeniero de software, así que la medición y la automatización se explican con rigor técnico. <a href="/autor" class="font-medium text-primary underline underline-offset-4 hover:no-underline">Conoce a tu profesor</a>.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Muchos negocios invierten en publicidad sin saber qué funciona: pagan por clics que no se vuelven clientes, no
+        miden las ventas que llegan por cada canal y no entienden sus propios números. Este curso de marketing digital
+        te da el criterio para decidir dónde invertir y cómo comprobar el resultado. No prometemos ventas, porque nadie
+        puede hacerlo: te enseñamos a planear, medir y optimizar con método.
+      </p>
+      <p>
+        Es para dueños de negocio y emprendedores que manejan su propia publicidad, para quienes trabajan en marketing y
+        quieren profesionalizarse y para estudiantes que buscan una ruta práctica. Si todavía no tienes sitio web, el <a
+          href="/curso-de-desarrollo-web"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline">curso de desarrollo web</a
+        > es un buen complemento.
+      </p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="hidden grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-6 md:grid">
+        {
+          stack.map(({ icon, label }) => (
+            <div class="flex flex-col items-center gap-3 rounded-xl border border-line bg-page p-6 text-center">
+              <Icon name={icon} class="h-10 w-10 text-primary" />
+              <span class="text-sm font-medium text-heading">{label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Temario del curso de marketing digital, módulo a módulo"
+    subtitle="De la estrategia a la medición. El orden se ajusta a tu negocio y a los canales que más te convengan."
+    items={[
+      {
+        title: 'Estrategia y embudo de ventas',
+        description:
+          'Cliente ideal, propuesta de valor y recorrido de compra: de la atención a la venta y la recompra. Defines objetivos y métricas antes de invertir.',
+        icon: 'tabler:target-arrow',
+      },
+      {
+        title: 'Meta Ads: Facebook e Instagram',
+        description:
+          'Portafolio comercial de Meta, píxel y API de conversiones, públicos, creativos y estructura de campañas en Facebook e Instagram. Para calcular tu presupuesto, lee <a href="/blog/cuanto-invertir-en-meta-ads" class="font-medium text-primary underline underline-offset-4 hover:no-underline">cuánto invertir en Meta Ads</a>.',
+        icon: 'tabler:brand-meta',
+      },
+      {
+        title: 'Google Ads y Google Shopping',
+        description:
+          'Campañas de búsqueda en Google Ads, Merchant Center, feed de productos y Performance Max para vender en tiendas online.',
+        icon: 'tabler:brand-google',
+      },
+      {
+        title: 'SEO: palabras clave, on-page y local',
+        description:
+          'Investigación de palabras clave, optimización de páginas y SEO local con Google Business Profile, para aparecer cuando te buscan cerca. Empieza con la <a href="/blog/seo-local-medellin" class="font-medium text-primary underline underline-offset-4 hover:no-underline">guía de SEO local</a>.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Analítica y conversiones',
+        description:
+          'GA4 y Google Tag Manager: eventos, conversiones y reportes para saber qué canal vende y cuánto cuesta conseguir cada cliente.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Automatización de ventas',
+        description:
+          'WhatsApp y CRM para responder rápido, dar seguimiento a cada contacto y no perder ventas por falta de orden.',
+        icon: 'tabler:brand-whatsapp',
+      },
+    ]}
+  />
+
+  <Steps
+    tagline="Cómo son las clases"
+    title="Así trabajamos, de tu negocio a tus primeras campañas"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico de tu negocio</span>',
+        description:
+          'Revisamos tu oferta, tus canales y tus números actuales para definir por dónde empezar y qué medir.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Módulos con práctica en vivo</span>',
+        description:
+          'Cada tema se explica y se aplica en vivo sobre tu negocio: configuras, lanzas y revisas con tu profesor al lado.',
+        icon: 'tabler:keyboard',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Un plan de punta a punta</span>',
+        description:
+          'Armas un plan con embudo, campañas, medición y seguimiento por WhatsApp, listo para ejecutar con tu presupuesto.',
+        icon: 'tabler:map',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Seguimiento y mejora</span>',
+        description:
+          'Aprendes a leer los resultados, a ajustar y a decidir qué escalar, para que mejores con datos y no a ciegas.',
+        icon: 'tabler:chart-line',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿No sabes por dónde empezar con tu marketing?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos qué vendes y cómo consigues clientes hoy, y te recomendamos un punto de partida, sin compromiso.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-marketing-digital-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes sobre el curso de marketing digital"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-marketing-digital"
+    formId="lead-curso-de-marketing-digital"
+    title="Empieza tu curso de marketing digital con un plan a tu medida"
+    subtitle="Cuéntanos qué vendes y cómo consigues clientes hoy. Te proponemos un punto de partida y una cotización sin costo."
+    button="Quiero empezar mi curso de marketing"
+    bullets={[
+      'Clases 1 a 1 en Medellín o en línea para toda Colombia',
+      'Meta Ads, Google Ads, SEO y analítica sobre tu propio negocio',
+      'Estrategia y medición antes de invertir en pauta',
+      'Cotización sin costo, según tu nivel y tu objetivo',
+    ]}
+  />
+</Layout>

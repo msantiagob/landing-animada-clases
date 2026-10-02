@@ -1,0 +1,206 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Button from '~/components/ui/Button.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+
+import { getSeoImageMeta } from '~/data/seo-images';
+import { getHub, landingPath } from '~/utils/landings';
+import { breadcrumbSchema } from '~/utils/seo';
+
+/**
+ * Sobre Sonmyd.
+ *
+ * Solo afirma lo que se puede sostener: quién lo dirige, dónde está y qué hace.
+ * No hay cifras de clientes, años de experiencia, certificaciones, socios ni
+ * oficinas: ninguna se ha verificado, y esta página es donde un lector decide
+ * si confiar. Los principios describen cómo se trabaja, no resultados.
+ */
+const PATH = '/about';
+
+// Tarjeta social del sitio. Sin una imagen propia, la página heredaría la imagen
+// por defecto de `config.yaml`, que es una captura de pantalla de la plantilla original.
+const socialImage = getSeoImageMeta('home');
+if (!socialImage) throw new Error('Missing SEO image metadata for "home"');
+
+const metadata = {
+  title: 'Sobre Sonmyd: software, IA y formación en Medellín',
+  description:
+    'Conoce a Sonmyd, el negocio de tecnología de Santiago Bedoya en Medellín: desarrollamos software e IA y damos clases 1 a 1 de programación, AWS y Linux.',
+  ignoreTitleTemplate: true,
+  canonical: PATH,
+  openGraph: {
+    images: [{ url: `~/assets/images/seo/${socialImage.file}`, width: socialImage.width, height: socialImage.height }],
+  },
+};
+
+const courseHub = getHub('clases-de-programacion');
+const servicesHub = getHub('servicios');
+const marketingHub = getHub('marketing-digital');
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      breadcrumbSchema([
+        { name: 'Inicio', path: '/' },
+        { name: 'Sobre Sonmyd', path: PATH },
+      ]),
+    ]}
+  />
+
+  <Breadcrumbs
+    items={[
+      { name: 'Inicio', path: '/' },
+      { name: 'Sobre Sonmyd', path: PATH },
+    ]}
+  />
+
+  <Hero
+    tagline="Sobre Sonmyd"
+    actions={[
+      { variant: 'primary', text: 'Agenda una asesoría gratuita', href: '/booking', icon: 'tabler:calendar-plus' },
+      { text: 'Conoce al autor', href: '/autor', variant: 'tertiary' },
+    ]}
+  >
+    <Fragment slot="title">
+      Construimos software y enseñamos tecnología <span class="text-accent">desde Medellín</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Sonmyd lo dirige Santiago Bedoya, ingeniero de software e instructor de inteligencia artificial. Desarrollamos
+      software, IA y automatizaciones para negocios, y damos clases 1 a 1 de programación, IA, AWS y Linux. Las dos
+      cosas se retroalimentan.
+    </Fragment>
+  </Hero>
+
+  <WidgetWrapper id="quien" containerClass="max-w-4xl pt-0 md:pt-0 lg:pt-0">
+    <Headline tagline="Quién está detrás" title="Una persona real detrás de cada proyecto y cada clase" />
+
+    <div class="space-y-5 text-lg leading-relaxed text-default">
+      <p>
+        Sonmyd lo dirige
+        <a class="font-medium text-primary underline underline-offset-4" href="/autor">Santiago Bedoya</a>, ingeniero de
+        software e instructor de inteligencia artificial. Es quien escribe el código, da las clases y responde cuando
+        nos escribes: no hay una capa de vendedores entre tú y el trabajo.
+      </p>
+      <p>
+        Hacemos las dos cosas porque se retroalimentan. Enseñar te obliga a entender de verdad lo que haces, y construir
+        todos los días evita enseñar cosas que en la práctica no funcionan.
+      </p>
+    </div>
+  </WidgetWrapper>
+
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="Enseñamos, construimos y medimos"
+    subtitle="Tres frentes de trabajo, todos desde Medellín."
+    columns={3}
+    items={[
+      {
+        title: 'Enseñamos',
+        description:
+          'Clases 1 a 1 de inteligencia artificial, Python, JavaScript, desarrollo web, apps, AWS, Linux, n8n y marketing digital, en Medellín o en línea. También capacitaciones para equipos.',
+        icon: 'tabler:school',
+        callToAction: { text: 'Ver las clases de programación', href: landingPath(courseHub.slug) },
+      },
+      {
+        title: 'Construimos',
+        description:
+          'Software a medida, páginas web, apps móviles, bots, agentes de IA, automatizaciones con n8n, servidores en AWS y Linux, y ciberseguridad para pymes.',
+        icon: 'tabler:code',
+        callToAction: { text: 'Ver los servicios', href: landingPath(servicesHub.slug) },
+      },
+      {
+        title: 'Marketing digital',
+        description:
+          'Publicidad en Meta Ads, Google Shopping, posicionamiento SEO y llamadas de marketing con IA, con medición para saber qué funciona.',
+        icon: 'tabler:chart-line',
+        callToAction: { text: 'Ver marketing digital', href: landingPath(marketingHub.slug) },
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Features>
+
+  <Features
+    id="principios"
+    tagline="Cómo trabajamos"
+    title="Los principios con los que trabajamos"
+    subtitle="Las reglas que usamos para decidir qué hacer y qué decirte."
+    columns={2}
+    items={[
+      {
+        title: 'Conceptos antes que herramientas',
+        description:
+          'Las herramientas cambian cada año; los fundamentos, mucho menos. Por eso las clases arrancan por entender qué pasa por debajo y no por copiar código.',
+        icon: 'tabler:bulb',
+      },
+      {
+        title: 'Alcance claro antes de empezar',
+        description:
+          'Acotamos la versión más pequeña que ya te sirve y la presentamos con alcance, plazo y precio por escrito. Si el alcance todavía es difuso, lo acotamos antes de poner un número.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Medimos lo que importa',
+        description:
+          'Acordamos desde el inicio cómo vamos a saber si funcionó y lo revisamos con datos, no con opiniones.',
+        icon: 'tabler:chart-bar',
+      },
+      {
+        title: 'Hablas con quien hace el trabajo',
+        description:
+          'Sin intermediarios: la persona que te responde es la que va a construir o enseñar lo que se acuerde.',
+        icon: 'tabler:messages',
+      },
+      {
+        title: 'Honestidad antes que una venta',
+        description:
+          'Si no somos los indicados para tu caso, o si lo que quieres contratar no lo necesitas, te lo decimos y, si podemos, te orientamos hacia dónde mirar.',
+        icon: 'tabler:eye-check',
+      },
+      {
+        title: 'El conocimiento se queda contigo',
+        description:
+          'En las clases, el objetivo es que aprendas a seguir solo cuando terminan. En los proyectos, te explicamos lo que construimos para que no dependas de una caja negra.',
+        icon: 'tabler:school',
+      },
+    ]}
+  />
+
+  <ServiceArea id="medellin" kind="servicio" message="Hola, quiero información sobre Sonmyd." />
+
+  <CallToAction>
+    <Fragment slot="title">¿Hablamos?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos qué necesitas o qué quieres aprender. Si podemos ayudarte, te decimos cómo; si no, te orientamos hacia
+      dónde mirar.
+    </Fragment>
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <Button
+          variant="primary"
+          text="Agenda una asesoría gratuita"
+          href="/booking"
+          icon="tabler:calendar-plus"
+          class="w-full sm:w-auto"
+        />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton location="about-cta" variant="secondary" class="w-full sm:w-auto" />
+      </div>
+    </Fragment>
+  </CallToAction>
+</Layout>

@@ -1,0 +1,138 @@
+---
+import { Icon } from 'astro-icon/components';
+import { SITE } from 'astrowind:config';
+import { getHomePermalink } from '~/utils/permalinks';
+
+interface Link {
+  text?: string;
+  href?: string;
+  ariaLabel?: string;
+  icon?: string;
+}
+
+interface Links {
+  title?: string;
+  links: Array<Link>;
+}
+
+export interface Props {
+  links: Array<Links>;
+  secondaryLinks: Array<Link>;
+  socialLinks: Array<Link>;
+  footNote?: string;
+  description?: string;
+  theme?: string;
+}
+
+const {
+  socialLinks = [],
+  secondaryLinks = [],
+  links = [],
+  footNote = '',
+  description = '',
+  theme = 'light',
+} = Astro.props;
+
+// La franja inferior solo se pinta si tiene algo que mostrar: vacía queda como
+// una línea suelta con aire de sobra.
+const hasBottomBar = Boolean(footNote) || secondaryLinks.length > 0 || socialLinks.length > 0;
+
+/*
+ * El botón flotante de WhatsApp (WhatsAppFloat: 3.5rem de lado, a 1rem de los
+ * bordes) queda fijo sobre la esquina inferior derecha. Al llegar al final de la
+ * página tapaba la franja inferior, que es lo último que se ve.
+ *
+ * - Móvil: la franja es una columna. `pb-24` (6rem) deja el último texto por
+ *   encima del botón, que ocupa los 4.5rem de abajo (5.6rem si algún día se activa
+ *   `viewport-fit=cover` y un iPhone suma su barra de inicio).
+ * - Desde md: enlaces y redes van a la derecha, justo donde está el botón.
+ *   `md:pr-20` (5rem) les reserva ese costado, y el relleno inferior vuelve a ser
+ *   el normal porque ya no queda nada debajo del botón.
+ *
+ * tests/navigation.test.ts compara estas medidas con las del botón.
+ */
+const bottomBarClass =
+  'flex flex-col gap-4 border-t border-line pt-6 pb-24 md:flex-row md:items-center md:justify-between md:pb-6 md:pr-20';
+---
+
+<footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-line not-prose bg-surface']}>
+  <div
+    class="relative mx-auto max-w-7xl px-4 sm:px-6 intersect-once intersect-no-queue motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+  >
+    <div class="py-14 md:py-16">
+      <div class="max-w-md">
+        <a class="inline-block text-xl font-bold text-heading" href={getHomePermalink()}>{SITE?.name}</a>
+        {description && <p class="mt-3 text-sm leading-relaxed text-muted" set:html={description} />}
+      </div>
+
+      {
+        /*
+          Seis columnas: cinco silos y la empresa. En el celular van de a dos, en
+          tablet de a tres y desde lg todas en una fila. Con la marca arriba a
+          todo el ancho, las columnas no compiten con ella por espacio.
+        */
+      }
+      <div class="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-6">
+        {
+          links.map(({ title, links: columnLinks }) => (
+            <div>
+              <div class="mb-3 text-sm font-semibold text-heading">{title}</div>
+              {columnLinks && Array.isArray(columnLinks) && columnLinks.length > 0 && (
+                <ul class="space-y-2.5 text-sm">
+                  {columnLinks.map(({ text, href, ariaLabel }) => (
+                    <li>
+                      <a
+                        class="text-muted transition-colors duration-150 hover:text-heading"
+                        href={href}
+                        aria-label={ariaLabel}
+                      >
+                        <Fragment set:html={text} />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    {
+      hasBottomBar && (
+        <div class={bottomBarClass}>
+          <div class="text-sm text-muted">
+            <Fragment set:html={footNote} />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {secondaryLinks.length > 0 && (
+              <div class="flex gap-x-4 text-sm">
+                {secondaryLinks.map(({ text, href }) => (
+                  <a class="text-muted transition-colors duration-150 hover:text-heading" href={href} set:html={text} />
+                ))}
+              </div>
+            )}
+
+            {socialLinks.length > 0 && (
+              <ul class="flex items-center gap-1">
+                {socialLinks.map(({ ariaLabel, href, text, icon }) => (
+                  <li>
+                    <a
+                      class="inline-flex items-center rounded-lg p-2 text-muted transition-colors hover:bg-subtle hover:text-heading focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      aria-label={ariaLabel}
+                      href={href}
+                    >
+                      {icon && <Icon name={icon} class="h-5 w-5" />}
+                      <Fragment set:html={text} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</footer>

@@ -1,0 +1,292 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('ciberseguridad');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces dentro del texto (los widgets pintan el copy con set:html).
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Ejemplo de cómo se ordenan las prioridades en el informe: ilustra la columna de la imagen.
+const priorities = [
+  { icon: 'tabler:key', when: 'Esta semana', what: 'Accesos y segundo factor' },
+  { icon: 'tabler:database-export', when: 'Este mes', what: 'Copias probadas y correo' },
+  { icon: 'tabler:users', when: 'Este trimestre', what: 'Equipo y plan de incidentes' },
+];
+
+const faqs = [
+  {
+    question: '¿Por qué atacarían a una empresa pequeña?',
+    answer:
+      'Porque casi nunca es personal. La mayoría de los ataques son automáticos: escanean internet buscando sistemas sin actualizar o contraseñas débiles, sin importar de quién sean. Las pymes suelen quedar expuestas justamente porque suponen que nadie las mira.',
+  },
+  {
+    question: '¿Qué incluye una auditoría de seguridad informática?',
+    answer:
+      'Revisión de cómo se accede a los sistemas y con qué permisos, actualizaciones de servidores y equipos, configuración del correo, servicios expuestos a internet, contraseñas, segundo factor y estado real de las copias de seguridad. Termina en un informe priorizado por riesgo. El alcance se define por escrito y se cotiza según ese alcance, sin costo.',
+  },
+  {
+    question: '¿Hacen pruebas de intrusión?',
+    answer:
+      'Hacemos pruebas técnicas sobre sistemas propios del cliente, siempre con autorización firmada y alcance definido por escrito. Aun así, para la mayoría de las pymes lo que cambia el riesgo no es una prueba de intrusión sino cerrar lo básico: segundo factor, copias de seguridad y accesos.',
+  },
+  {
+    question: '¿Nos ayudan si ya tuvimos un incidente?',
+    answer:
+      'Sí. Lo primero es contener el problema y preservar la evidencia, sin apurarse a borrar y reinstalar, porque eso destruye el rastro de cómo entraron. Después vienen la recuperación desde copias limpias y el cierre de la puerta que usaron.',
+  },
+  {
+    question: '¿Esto sirve para la protección de datos y la Ley 1581 de 2012?',
+    answer:
+      'Ayuda a proteger los datos, pero no es una asesoría legal ni certifica cumplimiento. La Ley 1581 de 2012 regula el tratamiento de datos personales en Colombia e incluye un principio de seguridad: proteger la información de pérdidas y de accesos no autorizados. Nosotros revisamos la parte técnica; las obligaciones legales confírmalas con tu asesor legal.',
+  },
+  {
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y la auditoría también se puede hacer en remoto para empresas de toda Colombia: por videollamada y con los accesos que tú autorizas por escrito y puedes revocar.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Auditoría y asesoría en ciberseguridad para pymes',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Auditoría de seguridad informática"
+    actions={[
+      { variant: 'primary', text: 'Pedir una auditoría', href: '#contacto', icon: 'tabler:shield-lock' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Ciberseguridad para pymes</span>, sin humo y sin sembrar miedo
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Nuestra ciberseguridad para pymes empieza con una auditoría de tus accesos, servidores y correo, y termina en un
+      plan ordenado por riesgo real, sin venderte herramientas que no necesitas para resolver problemas que no tienes.
+      Trabajamos desde Medellín y en remoto con toda Colombia.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Informe priorizado por riesgo</span>
+      <span>·</span>
+      <span>Sin jerga innecesaria</span>
+      <span>·</span>
+      <span>Alcance acordado por escrito</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="El error de base"
+    title="Seguridad informática para empresas: se practica, no se compra"
+    items={[
+      {
+        title: 'El antivirus no es un plan',
+        description:
+          'Sirve, pero cubre una fracción del riesgo. Buena parte de los incidentes actuales no entra por un archivo infectado sino por una credencial robada.',
+      },
+      {
+        title: 'La contraseña sola ya no alcanza',
+        description:
+          'Se filtran en brechas de terceros, se repiten entre servicios y se adivinan. Sin segundo factor, una clave es una sola puerta.',
+      },
+      {
+        title: 'La copia de seguridad es el último seguro',
+        description:
+          'Frente a un secuestro de datos, lo único que te devuelve la operación es una copia limpia, guardada aparte y probada.',
+      },
+      {
+        title: 'Tu equipo es la superficie más grande',
+        description:
+          'Las herramientas se compran; el criterio se entrena. Un rato bien invertido en el equipo suele bajar el riesgo más que muchas licencias.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Rara vez te van a hackear como en una película: lo habitual es que entren por una clave repetida. La
+      ciberseguridad real es rutina: accesos ordenados, actualizaciones al día, copias probadas y gente entrenada. Si
+      quieres empezar por lo básico, lee las <a href="/blog/seguridad-informatica-para-pymes" class={link}
+        >siete medidas de seguridad informática para pymes</a
+      >.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="mx-auto max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-card-lg sm:p-8 md:mt-32">
+        <p class="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-muted">
+          Tu informe, ordenado por riesgo
+        </p>
+        <div class="space-y-3">
+          {
+            priorities.map(({ icon, when, what }) => (
+              <div class="flex items-center gap-3 rounded-xl border border-line bg-page px-4 py-3">
+                <Icon name={icon} class="h-7 w-7 shrink-0 text-primary" />
+                <div>
+                  <span class="block font-semibold text-heading">{when}</span>
+                  <span class="block text-sm text-muted">{what}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <p class="mt-4 text-center text-xs text-muted">Ejemplo ilustrativo</p>
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="Lo que de verdad reduce el riesgo en tu empresa"
+    subtitle="Empezamos por lo básico, que en muchas pymes sigue pendiente, y solo después por lo sofisticado."
+    items={[
+      {
+        title: 'Auditoría de accesos y segundo factor',
+        description:
+          'Quién entra a qué, con qué permisos y desde dónde. Suelen aparecer cuentas de gente que ya no trabaja contigo y permisos de administrador de más. Luego activamos el segundo factor en correo, banca, servidores, redes y panel del sitio.',
+        icon: 'tabler:key',
+      },
+      {
+        title: 'Protección de servidores',
+        description: `Superficie expuesta mínima, firewall, actualizaciones y registro de actividad. Si necesitas que alguien los mantenga, mira la <a href="/servidores-y-vps" class="${link}">administración de servidores Linux y VPS</a>.`,
+        icon: 'tabler:server-cog',
+      },
+      {
+        title: 'Seguridad del correo',
+        description:
+          'SPF, DKIM y DMARC bien configurados para que nadie envíe correos haciéndose pasar por tu dominio y para que los tuyos tengan menos probabilidad de caer en spam.',
+        icon: 'tabler:mail-check',
+      },
+      {
+        title: 'Plan de copias de seguridad',
+        description:
+          'Copias fuera de línea, con una frecuencia acordada según cuántos datos puedes perder, y con la restauración probada de verdad.',
+        icon: 'tabler:database-export',
+      },
+      {
+        title: 'Capacitación del equipo',
+        description:
+          'Sesiones prácticas con casos reales de engaño, para que aprendan a dudar del mensaje urgente que pide una transferencia y a reportar un error sin miedo a que los castiguen.',
+        icon: 'tabler:users',
+      },
+      {
+        title: 'Plan de respuesta a incidentes',
+        description:
+          'Un documento corto que dice quién hace qué si algo pasa: a quién llamar, cómo contener el problema sin borrar la evidencia, cómo recuperar desde copias limpias y a quién avisar.',
+        icon: 'tabler:alert-triangle',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    title="Cómo trabajamos la ciberseguridad para pymes"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Alcance por escrito</span>',
+        description:
+          'Se define qué se revisa, cómo y con qué autorización, y se cotiza según ese alcance, sin costo. En seguridad, trabajar sin un alcance acordado por escrito no es agilidad: es un riesgo legal.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Inventario y revisión</span>',
+        description:
+          'Inventario de sistemas, accesos y datos sensibles, porque no se puede proteger lo que no se sabe que existe. Lo hacemos en persona si estás en Medellín o en remoto desde cualquier ciudad de Colombia.',
+        icon: 'tabler:list-search',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Informe priorizado</span>',
+        description:
+          'Hallazgos ordenados por riesgo y esfuerzo, en un lenguaje que entienda cualquiera: qué hacer primero y qué puede esperar.',
+        icon: 'tabler:report',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Implementación y revisión</span>',
+        description: `Aplicamos las medidas con tu equipo, o lo acompañamos para que las aplique, y más adelante revisamos que se sostengan. ¿Prefieres aprender a hacerlo tú mismo? El <a href="/curso-de-linux" class="${link}">curso de Linux</a> enseña terminal, SSH y administración de servidores.`,
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Quieres saber en qué punto está tu empresa?</Fragment>
+    <Fragment slot="subtitle">
+      Escríbenos por WhatsApp o agenda una asesoría gratuita. Y si quieres saber con quién trabajarías, conoce <a
+        href="/autor"
+        class={link}>quién está detrás de Sonmyd</a
+      >.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="ciberseguridad-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre ciberseguridad para pymes"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={landing.posts}
+        title="Artículos relacionados"
+        linkText="Ver todos los artículos"
+        classes={{ container: 'max-w-6xl' }}
+      />
+    )
+  }
+
+  <LeadCapture
+    interest="ciberseguridad"
+    formId="lead-ciberseguridad"
+    title="Empecemos por saber cómo estás"
+    subtitle="Una conversación inicial alcanza para detectar los riesgos más grandes. Si estás bien, te lo decimos y listo. Con tu caso armamos una propuesta de auditoría según el alcance."
+    button="Pedir una auditoría"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Informe priorizado por riesgo, entendible por cualquiera',
+      'Sin venderte herramientas que no necesitas',
+      'Alcance y autorización siempre por escrito',
+    ]}
+  />
+</Layout>

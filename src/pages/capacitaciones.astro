@@ -1,0 +1,294 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const landing = getLanding('capacitaciones');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+const breadcrumbs = landingBreadcrumbs(landing);
+
+// Panel decorativo de la sección de contenido: sin texto propio, solo refuerza visualmente las áreas del equipo.
+const areas = [
+  { icon: 'tabler:brain', label: 'IA en el trabajo diario' },
+  { icon: 'tabler:chart-bar', label: 'Ventas' },
+  { icon: 'tabler:building', label: 'Operaciones y administración' },
+  { icon: 'tabler:shield-check', label: 'Uso seguro de IA' },
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta una capacitación en IA para mi empresa?',
+    answer:
+      'Depende del alcance: del número de personas, de las áreas que participen, de la modalidad y de cuántos talleres necesites. Por eso no manejamos tarifas fijas. Cuéntanos tu caso por WhatsApp y te damos una cotización sin costo y sin compromiso de contratar.',
+  },
+  {
+    question: '¿La capacitación es presencial o virtual?',
+    answer:
+      'Las dos. En Medellín y en municipios cercanos podemos dictarla en persona, en el lugar que acordemos contigo. Para equipos en otras ciudades o repartidos en varias sedes hacemos sesiones virtuales en vivo, para toda Colombia. En ambos casos el contenido se prepara a la medida de tu equipo.',
+  },
+  {
+    question: '¿Cuánto dura una capacitación?',
+    answer:
+      'Depende de tu equipo y de tus objetivos; lo definimos en la primera conversación. Puede ser un taller puntual sobre un tema o un acompañamiento por etapas con varios grupos. Armamos el calendario contigo, respetando los tiempos de trabajo de tu equipo.',
+  },
+  {
+    question: '¿Qué necesita mi equipo para participar?',
+    answer:
+      'No hacen falta conocimientos técnicos. Cada persona necesita su computador con internet y acceso a las herramientas que usemos; si alguna requiere cuenta, te avisamos antes de empezar y trabajamos con versiones gratuitas cuando existan. Si tu empresa ya tiene políticas de manejo de datos, las usamos como punto de partida.',
+  },
+  {
+    question: '¿Pueden adaptar los talleres de IA para empresas a mi sector?',
+    answer:
+      'Sí, esa es la idea. En la conversación inicial identificamos los procesos y las tareas de tu equipo, y construimos los talleres con ejemplos de ese trabajo. Antes de usar información real, acordamos qué datos pueden usarse en los ejercicios; si lo prefieres, trabajamos con datos de ejemplo.',
+  },
+  {
+    question: '¿Qué pasa en la primera conversación?',
+    answer:
+      'Agendas una asesoría gratuita: conocemos tu empresa, tu equipo, los procesos que más tiempo consumen y el uso que ya hacen de la IA. Con eso te proponemos un alcance y una cotización, sin compromiso. Si una capacitación no es lo que necesitas, te lo decimos.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <Breadcrumbs items={breadcrumbs} />
+
+  <Hero
+    tagline="Talleres para equipos de trabajo"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Solicitar propuesta para mi equipo',
+        href: '#contacto',
+        icon: 'tabler:presentation',
+      },
+      { variant: 'secondary', text: 'Ver los talleres', href: '#talleres', icon: 'tabler:list-details' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Capacitación en IA para empresas</span> en Medellín: tu equipo usa la IA con criterio
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Esta capacitación en IA para empresas se diseña a la medida de tu equipo: talleres prácticos, presenciales en
+      Medellín o virtuales para toda Colombia. Tu gente aprende a usar la inteligencia artificial en su trabajo diario,
+      con casos de ventas, operaciones y administración, y con reglas claras de uso seguro.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Talleres a la medida de tu equipo</span>
+      <span>·</span>
+      <span>Presencial o virtual</span>
+      <span>·</span>
+      <span>Políticas de uso seguro de IA</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué un taller a la medida"
+    title="Capacitación en inteligencia artificial para el trabajo real"
+    items={[
+      {
+        title: 'Talleres a la medida de tu equipo',
+        description: 'El contenido parte de tus procesos y del nivel de cada grupo, no de un temario enlatado.',
+      },
+      {
+        title: 'Casos de uso por área',
+        description: 'Ventas, operaciones y administración practican con ejercicios de su propio trabajo.',
+      },
+      {
+        title: 'Políticas de uso seguro de IA',
+        description:
+          'Definimos qué información no se comparte con herramientas públicas y cómo se verifica lo que responde la IA.',
+      },
+      {
+        title: 'Presencial o virtual',
+        description:
+          'Si tu equipo está cerca, nos reunimos en persona; si está en otra ciudad o repartido en varias sedes, trabajamos en sesiones virtuales en vivo.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        Muchos equipos ya usan inteligencia artificial, pero cada persona por su cuenta: sin criterios comunes, sin
+        saber qué verificar y, a veces, pegando información confidencial en herramientas públicas. Una capacitación en
+        IA para empresas ordena ese uso: define para qué sirve, cómo se hace bien y qué datos nunca deben salir de la
+        empresa.
+      </p>
+      <p>
+        No vendemos un curso genérico. Antes de dictar nada conversamos con quien lidera el equipo, entendemos sus
+        procesos y armamos talleres sobre las tareas que de verdad consumen tiempo. Los dicta un ingeniero de software:
+        <a href="/autor" class="font-medium text-primary underline underline-offset-4 hover:no-underline"
+          >conoce a tu profesor</a
+        >. Y si prefieres una formación individual, mira las <a
+          href="/clases-de-ia"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline">clases de IA 1 a 1</a
+        >.
+      </p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="hidden grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-6 md:grid">
+        {
+          areas.map(({ icon, label }) => (
+            <div class="flex flex-col items-center gap-3 rounded-xl border border-line bg-page p-6 text-center">
+              <Icon name={icon} class="h-10 w-10 text-primary" />
+              <span class="text-sm font-medium text-heading">{label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="talleres"
+    tagline="Qué aprende tu equipo"
+    title="Formación empresarial en tecnología: los talleres que combinamos"
+    subtitle="Cada empresa elige y ordena los módulos según su equipo. Estos son los temas base."
+    items={[
+      {
+        title: 'Fundamentos de IA para todo el equipo',
+        description:
+          'Qué es un modelo de lenguaje, qué puede y qué no puede hacer, y cómo reconocer errores y respuestas inventadas. Si quieres un panorama antes de decidir, lee <a href="/blog/aprender-inteligencia-artificial-desde-cero" class="font-medium text-primary underline underline-offset-4 hover:no-underline">cómo aprender inteligencia artificial desde cero</a>.',
+        icon: 'tabler:brain',
+      },
+      {
+        title: 'Prompts y herramientas de trabajo',
+        description:
+          'Cómo pedirle bien a ChatGPT y a otros asistentes: contexto, ejemplos y verificación, aplicados a tareas reales del equipo.',
+        icon: 'tabler:message-chatbot',
+      },
+      {
+        title: 'IA para ventas',
+        description:
+          'Preparar propuestas, responder consultas, resumir llamadas y dar seguimiento a clientes con apoyo de la IA, sin perder el trato humano.',
+        icon: 'tabler:chart-bar',
+      },
+      {
+        title: 'IA para operaciones y administración',
+        description:
+          'Redactar y resumir documentos, ordenar información, preparar informes y reducir las tareas repetitivas del día a día.',
+        icon: 'tabler:building',
+      },
+      {
+        title: 'Automatización de tareas',
+        description:
+          'Una introducción a conectar herramientas con n8n para que las tareas repetitivas se hagan solas. Para profundizar, está el <a href="/curso-de-n8n" class="font-medium text-primary underline underline-offset-4 hover:no-underline">curso de n8n</a>.',
+        icon: 'tabler:robot',
+      },
+      {
+        title: 'Uso seguro y políticas de IA',
+        description:
+          'Datos confidenciales, privacidad, derechos de autor y revisión humana. Construimos con tu equipo una guía de uso seguro adaptada a tu empresa.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <Steps
+    tagline="Cómo es el proceso"
+    title="Así trabajamos con tu empresa"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Conversación y diagnóstico</span>',
+        description:
+          'Hablamos con quien lidera el equipo, entendemos sus procesos y definimos objetivos concretos para la capacitación.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Programa a la medida</span>',
+        description:
+          'Armamos los talleres con casos de cada área y acordamos la modalidad (presencial o virtual), las fechas y los grupos.',
+        icon: 'tabler:adjustments',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Talleres prácticos</span>',
+        description:
+          'Tu equipo trabaja con ejercicios sobre su propio trabajo, con un profesor que corrige y resuelve dudas en el momento.',
+        icon: 'tabler:presentation',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Plan para usar lo aprendido</span>',
+        description:
+          'Cerramos con una guía de uso seguro y con los primeros procesos que conviene automatizar, para que lo aprendido se use en el día a día.',
+        icon: 'tabler:checklist',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Dos personas trabajan juntas frente a una laptop: una señala la pantalla mientras la otra usa el panel táctil',
+    }}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Quieres una propuesta para tu equipo?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos cuántas personas son y qué áreas participan, y te orientamos sobre el alcance, sin compromiso.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="capacitaciones-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes sobre la capacitación en IA para empresas"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="capacitaciones"
+    formId="lead-capacitaciones"
+    title="Pide una propuesta de capacitación para tu equipo"
+    subtitle="Cuéntanos cuántas personas son, qué áreas participan y qué quieres lograr. Te proponemos un alcance y una cotización sin costo."
+    button="Solicitar propuesta"
+    bullets={[
+      'Talleres a la medida de tu equipo y de tus procesos',
+      'Presencial en Medellín o virtual para toda Colombia',
+      'Casos de uso por área y políticas de uso seguro de IA',
+      'Cotización sin costo, según el alcance que definamos',
+    ]}
+  />
+</Layout>

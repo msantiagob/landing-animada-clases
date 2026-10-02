@@ -1,0 +1,279 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, courseSchema, faqSchema } from '~/utils/seo';
+
+const landing = getLanding('curso-de-aws');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+const breadcrumbs = landingBreadcrumbs(landing);
+
+// Panel decorativo de la sección de contenido: sin texto propio, solo refuerza visualmente los servicios del temario.
+const stack = [
+  { icon: 'tabler:server', label: 'EC2 y Lambda' },
+  { icon: 'tabler:database', label: 'S3, RDS y DynamoDB' },
+  { icon: 'tabler:network', label: 'VPC y subredes' },
+  { icon: 'tabler:lock', label: 'IAM y MFA' },
+];
+
+const faqs = [
+  {
+    question: '¿Cuánto cuesta el curso de AWS?',
+    answer:
+      'Depende del alcance: de tu punto de partida, de tu objetivo y de cuántas sesiones necesites. No manejamos una tarifa única; te damos una cotización sin costo por WhatsApp cuando conozcamos tu caso. Los recursos que crees en AWS se cobran en tu cuenta, así que activamos presupuestos y alertas desde la primera clase.',
+  },
+  {
+    question: '¿Las clases son presenciales o en línea?',
+    answer:
+      'Ambas. En Medellín y en municipios cercanos podemos reunirnos en persona, en el lugar que acordemos contigo; si vives en otra ciudad, las clases son en línea y en vivo para toda Colombia. En los dos casos son 1 a 1 y practicas sobre tu propia cuenta de AWS.',
+  },
+  {
+    question: '¿Cuánto dura el curso?',
+    answer:
+      'Depende de tu nivel y de tus objetivos; lo definimos en la primera sesión. Prepararte para Cloud Practitioner exige un plan distinto al de desplegar un sistema o avanzar hacia Solutions Architect. Armamos el plan por módulos y lo ajustamos según tu ritmo.',
+  },
+  {
+    question: '¿Qué necesito para empezar y qué material usamos?',
+    answer:
+      'Un computador con internet y ganas de practicar; no hace falta experiencia previa en la nube. Usas una cuenta de AWS propia: crearla no tiene costo, aunque AWS puede pedirte una tarjeta para verificarla. No necesitas comprar libros: usamos la documentación oficial de AWS y ejercicios hechos para tu caso.',
+  },
+  {
+    question: '¿Me preparan para la certificación de AWS?',
+    answer:
+      'Sí, te preparamos para AWS Certified Cloud Practitioner y avanzamos hacia Solutions Architect – Associate, repasando los temas de cada examen con práctica real. El examen y el certificado los administra y emite AWS, no Sonmyd, y nadie puede garantizar que apruebes: eso depende de tu estudio y de tu práctica.',
+  },
+  {
+    question: '¿Qué pasa en la primera clase?',
+    answer:
+      'Conoces a tu profesor y hablamos de tu nivel, de tu objetivo y del uso que le darás a AWS. Después revisamos tu cuenta con buenas prácticas: usuario de IAM, autenticación multifactor y alertas de presupuesto. Terminas con un plan de módulos para las siguientes sesiones.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      courseSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <Breadcrumbs items={breadcrumbs} />
+
+  <Hero
+    tagline="Clases de AWS 1 a 1"
+    actions={[
+      { variant: 'primary', text: 'Agenda tu primera clase', href: '#contacto', icon: 'tabler:calendar-plus' },
+      { variant: 'secondary', text: 'Ver el temario', href: '#temario', icon: 'tabler:list-details' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Curso de AWS</span> en Medellín: aprende la nube con un profesor 1 a 1
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Este curso de AWS te lleva de abrir tu cuenta de forma segura a desplegar una aplicación real en la nube. Clases 1
+      a 1 en Medellín o en línea para toda Colombia, con práctica en tu propia cuenta y preparación para las
+      certificaciones.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Clases 1 a 1</span>
+      <span>·</span>
+      <span>Práctica en tu propia cuenta</span>
+      <span>·</span>
+      <span>Cloud Practitioner y Solutions Architect</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="Por qué aprender AWS"
+    title="Clases de AWS para construir, no para memorizar"
+    items={[
+      {
+        title: 'Práctica en tu propia cuenta de AWS',
+        description:
+          'Creas, configuras y arreglas recursos reales en lugar de mirar capturas de pantalla. Así entiendes cómo se comporta cada servicio.',
+      },
+      {
+        title: 'Control de costos desde la primera clase',
+        description:
+          'Activas presupuestos y alertas de facturación antes de lanzar nada, para que aprender no te traiga sorpresas en la factura.',
+      },
+      {
+        title: 'Un profesor que construye software',
+        description:
+          'Las clases las da un ingeniero de software que desarrolla y despliega sistemas para empresas. <a href="/autor" class="font-medium text-primary underline underline-offset-4 hover:no-underline">Conoce a tu profesor</a>.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      <p class="mb-4">
+        La nube es donde corre buena parte del software moderno, pero entrar a la consola de AWS sin guía abruma:
+        demasiados servicios, nombres parecidos y una factura que puede crecer sin avisar. Este curso de cloud computing
+        te da un camino ordenado, de la cuenta segura a una aplicación desplegada.
+      </p>
+      <p>
+        Es para estudiantes y desarrolladores que quieren trabajar en la nube, para personas de TI que buscan
+        certificarse y para dueños de negocio que quieren entender dónde vive su software. Si todavía no manejas la
+        terminal, el <a
+          href="/curso-de-linux"
+          class="font-medium text-primary underline underline-offset-4 hover:no-underline">curso de Linux</a
+        > es un buen complemento.
+      </p>
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="hidden grid-cols-2 gap-4 rounded-2xl border border-line bg-surface p-6 md:grid">
+        {
+          stack.map(({ icon, label }) => (
+            <div class="flex flex-col items-center gap-3 rounded-xl border border-line bg-page p-6 text-center">
+              <Icon name={icon} class="h-10 w-10 text-primary" />
+              <span class="text-sm font-medium text-heading">{label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="temario"
+    tagline="Qué vas a aprender"
+    title="Temario del curso de AWS, módulo a módulo"
+    subtitle="El recorrido se adapta a tu nivel y a tu objetivo."
+    items={[
+      {
+        title: 'Fundamentos de la nube y una cuenta segura',
+        description:
+          'Regiones, zonas de disponibilidad y modelo de responsabilidad compartida. Configuras IAM con usuarios y roles, activas MFA y creas presupuestos con alertas de facturación para empezar con orden.',
+        icon: 'tabler:cloud-lock',
+      },
+      {
+        title: 'Cómputo y almacenamiento: EC2, Lambda, S3 y EBS',
+        description:
+          'Lanzas servidores virtuales con EC2, ejecutas código sin administrar servidores con Lambda y guardas datos en S3 y EBS. Aprendes cuándo conviene cada opción.',
+        icon: 'tabler:server',
+      },
+      {
+        title: 'Redes: VPC, subredes y security groups',
+        description:
+          'Diseñas una VPC con subredes públicas y privadas y controlas el tráfico con security groups. Entiendes qué recurso puede hablar con cuál, y por qué.',
+        icon: 'tabler:network',
+      },
+      {
+        title: 'Bases de datos: RDS y DynamoDB',
+        description:
+          'Creas una base de datos relacional con RDS y una tabla NoSQL en DynamoDB, y aprendes a elegir según los datos y las consultas que necesite tu aplicación.',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Despliegue, monitoreo y control de costos',
+        description:
+          'Despliegas una aplicación real, la vigilas con métricas, logs y alarmas de CloudWatch y revisas qué cuesta cada recurso para mantener tu factura bajo control.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Preparación para las certificaciones de AWS',
+        description:
+          'Repasamos los temas de AWS Certified Cloud Practitioner y de AWS Solutions Architect – Associate. Nosotros te preparamos; el examen y el certificado los administra y emite AWS. Para un adelanto, lee la <a href="/blog/certificacion-aws-cloud-practitioner" class="font-medium text-primary underline underline-offset-4 hover:no-underline">guía de la certificación AWS Cloud Practitioner</a>.',
+        icon: 'tabler:certificate',
+      },
+    ]}
+  />
+
+  <Steps
+    tagline="Cómo son las clases"
+    title="Así trabajamos, de la primera sesión al examen"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico y objetivo</span>',
+        description:
+          'Hablamos de tu nivel y de lo que quieres lograr: certificarte, migrar un proyecto o cambiar de carrera. De ahí sale tu plan de módulos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Teoría breve y práctica en vivo</span>',
+        description:
+          'En cada sesión se explica un concepto y lo aplicas de inmediato en tu cuenta de AWS, con tu profesor corrigiendo en el momento.',
+        icon: 'tabler:keyboard',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Un proyecto real en la nube</span>',
+        description:
+          'Construyes una aplicación en AWS con su red, su base de datos, su monitoreo y su control de costos, y la dejas funcionando.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Repaso para la certificación</span>',
+        description:
+          'Repasamos los temas del examen que elijas y resolvemos tus dudas. Presentarlo y aprobarlo depende de ti y de AWS, que administra la certificación.',
+        icon: 'tabler:certificate',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Quieres saber por dónde empezar con AWS?</Fragment>
+    <Fragment slot="subtitle">
+      Cuéntanos tu nivel y tu objetivo y te recomendamos un punto de partida, sin compromiso.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="curso-de-aws-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    tagline="Dudas comunes"
+    title="Preguntas frecuentes sobre el curso de AWS"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="curso-de-aws"
+    formId="lead-curso-de-aws"
+    title="Empieza tu curso de AWS con un plan a tu medida"
+    subtitle="Cuéntanos tu nivel y qué quieres lograr con AWS. Te proponemos un punto de partida y una cotización sin costo."
+    button="Quiero empezar mi curso de AWS"
+    bullets={[
+      'Clases 1 a 1 en Medellín o en línea para toda Colombia',
+      'Práctica en tu propia cuenta de AWS, con control de costos',
+      'Preparación para Cloud Practitioner y Solutions Architect',
+      'Cotización sin costo, según tu nivel y tu objetivo',
+    ]}
+  />
+</Layout>

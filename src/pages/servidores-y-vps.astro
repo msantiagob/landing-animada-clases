@@ -1,0 +1,292 @@
+---
+import { Icon } from 'astro-icon/components';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('servidores-y-vps');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+// Estilo de los enlaces dentro del texto (los widgets pintan el copy con set:html).
+const link = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+// Lo que tiene un servidor bien administrado: ilustra la columna de la imagen.
+const checks = [
+  { icon: 'tabler:database-export', label: 'Copias fuera del servidor' },
+  { icon: 'tabler:key', label: 'Acceso solo con llaves SSH' },
+  { icon: 'tabler:refresh', label: 'Actualizaciones al día' },
+  { icon: 'tabler:bell-ringing', label: 'Monitoreo con alertas' },
+];
+
+const faqs = [
+  {
+    question: '¿Qué proveedor de VPS recomiendan?',
+    answer:
+      'Depende del caso. Comparamos ubicación, recursos, copias que ofrece el proveedor y soporte. Si no quieres administrar el sistema, plataformas gestionadas como Railway o Render simplifican mucho; AWS se justifica cuando necesitas sus servicios específicos. Recomendamos lo que encaje contigo, no lo más caro.',
+  },
+  {
+    question: '¿Cuánto cuesta administrar un servidor?',
+    answer:
+      'Son dos costos. El servidor lo pagas directamente al proveedor, según los recursos que necesites, más el dominio y el espacio para las copias. La administración la cotizamos según el alcance, sin costo: cuántos servidores, qué aplicaciones y qué monitoreo. Lo caro nunca es el servidor: es el día que se cae y nadie sabe por qué.',
+  },
+  {
+    question: '¿Hacen copias de seguridad y cada cuánto?',
+    answer:
+      'Sí, automáticas y guardadas fuera del servidor: una copia en el mismo disco se pierde junto con el original. La frecuencia depende de cuántos datos puedes tolerar perder, y probamos la restauración, porque una copia que nunca se restauró es una suposición.',
+  },
+  {
+    question: '¿Qué pasa si el servidor se cae de madrugada?',
+    answer:
+      'El monitoreo avisa cuando el servidor deja de responder, no cuando lo nota un cliente. Quién atiende el aviso y en qué horarios se acuerda por escrito antes de empezar, para que nadie descubra los límites durante una caída. No prometemos soporte 24/7.',
+  },
+  {
+    question: '¿Se encargan también de la seguridad del servidor?',
+    answer:
+      'Sí, en lo que le corresponde al servidor: firewall, acceso solo con llave SSH, usuarios sin privilegios innecesarios, actualizaciones de seguridad y certificados que se renuevan solos. Es el mínimo indispensable: un servidor expuesto con una contraseña débil recibe intentos de acceso a los minutos de encenderse.',
+  },
+  {
+    question: '¿Trabajan con empresas fuera de Medellín?',
+    answer:
+      'Sí. Atendemos en persona en Medellín y municipios cercanos, y trabajamos de forma remota con empresas de toda Colombia: acceso por SSH con tus llaves, videollamadas y cambios documentados. La cuenta con el proveedor sigue siendo tuya.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Administración de servidores Linux y VPS',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Servidores VPS en Colombia"
+    actions={[
+      { variant: 'primary', text: 'Revisar mi infraestructura', href: '#contacto', icon: 'tabler:server' },
+      { text: 'Agenda una asesoría gratuita', href: '/booking', variant: 'tertiary' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      <span class="text-accent">Administración de servidores Linux</span>: tu VPS funcionando, respaldado y vigilado
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Nos encargamos de la administración de servidores Linux de tu empresa, desde Medellín y en remoto con toda
+      Colombia: instalación, seguridad, despliegue de tus aplicaciones, copias de seguridad fuera del servidor,
+      monitoreo con alertas y actualizaciones. Tú te encargas del negocio.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Copias probadas, no dadas por hechas</span>
+      <span>·</span>
+      <span>Monitoreo con alertas</span>
+      <span>·</span>
+      <span>Sin atarte a un proveedor</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    tagline="Lo que suele estar mal"
+    title="Soporte de servidores Linux: los cuatro problemas más comunes"
+    items={[
+      {
+        title: 'Copias de seguridad que nadie probó restaurar',
+        description:
+          'O no existen, o están en el mismo disco, o nunca se verificaron. El día del incidente se descubre que el archivo estaba vacío desde hace meses.',
+      },
+      {
+        title: 'Acceso por contraseña y usuario root',
+        description:
+          'Puerto SSH abierto al mundo y protegido solo con una contraseña. Los bots escanean internet de forma permanente y prueban combinaciones sin descanso.',
+      },
+      {
+        title: 'Sistema sin actualizar durante años',
+        description:
+          'Versiones con vulnerabilidades públicas y documentadas. No hace falta que te ataquen a ti en particular: los escaneos automáticos las buscan solas.',
+      },
+      {
+        title: 'Nadie se entera cuando se cae',
+        description:
+          'Sin monitoreo, el aviso llega por el cliente que no pudo comprar. Eso ya es tarde y se paga en reputación.',
+      },
+    ]}
+  >
+    <Fragment slot="content">
+      Un servidor puede funcionar durante años y estar a un incidente de perder datos para siempre: “funciona” no es lo
+      mismo que “está bien”, y la diferencia se ve el día malo. Si aún no tienes claro qué necesitas, empieza por <a
+        href="/blog/que-es-un-vps-y-cuando-lo-necesitas"
+        class={link}>qué es un VPS y cuándo lo necesitas</a
+      >; y si tu carga ya pide servicios administrados o escalar según la demanda, mira la <a
+        href="/consultoria-aws"
+        class={link}>consultoría AWS</a
+      >.
+    </Fragment>
+
+    <Fragment slot="image">
+      <div class="mx-auto max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-card-lg sm:p-8 md:mt-40">
+        <p class="mb-4 text-center text-sm font-semibold uppercase tracking-wider text-muted">
+          Un servidor bien administrado
+        </p>
+        <div class="grid grid-cols-2 gap-3">
+          {
+            checks.map(({ icon, label }) => (
+              <div class="flex flex-col items-center gap-2 rounded-xl border border-line bg-page px-3 py-4 text-center text-sm font-medium text-heading">
+                <Icon name={icon} class="h-7 w-7 text-primary" />
+                {label}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="que-hacemos"
+    tagline="Qué hacemos"
+    title="Lo que incluye la administración de servidores Linux"
+    subtitle="Trabajamos con tecnologías como Linux, SSH, Nginx, Docker y PostgreSQL, en un VPS o en tu propia cuenta de nube, según lo que tu aplicación necesite."
+    items={[
+      {
+        title: 'Instalación y puesta a punto',
+        description:
+          'Sistema actualizado, usuarios con los privilegios justos, zona horaria correcta y un servidor listo para tu aplicación, sea nuevo o uno que ya tienes funcionando.',
+        icon: 'tabler:settings-cog',
+      },
+      {
+        title: 'Seguridad del servidor',
+        description: `Acceso solo con llave SSH, firewall cerrado salvo lo necesario y registro de actividad. Si buscas ir más allá del servidor, mira la <a href="/ciberseguridad" class="${link}">ciberseguridad para pymes</a>.`,
+        icon: 'tabler:shield-lock',
+      },
+      {
+        title: 'Copias de seguridad automáticas y probadas',
+        description:
+          'Copias periódicas guardadas fuera del servidor, con restauración verificada. Una copia sin prueba de restauración no cuenta.',
+        icon: 'tabler:database-export',
+      },
+      {
+        title: 'Monitoreo y alertas',
+        description:
+          'Disponibilidad, disco, memoria y procesos vigilados. Si algo se desvía, llega el aviso antes de que lo note un cliente.',
+        icon: 'tabler:activity',
+      },
+      {
+        title: 'Despliegue de aplicaciones y DevOps',
+        description:
+          'Tu aplicación corriendo con reinicio automático, variables de entorno bien guardadas, HTTPS con renovación automática del certificado y despliegues repetibles, no manuales.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Actualizaciones y mantenimiento',
+        description:
+          'Parches de seguridad al día, con una ventana de mantenimiento acordada. Actualizar sin avisar es tan malo como no actualizar nunca.',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <Steps
+    id="como-trabajamos"
+    title="Cómo trabajamos: del diagnóstico al mantenimiento continuo"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Revisamos qué tienes hoy: proveedor, versiones, accesos, copias de seguridad y puntos únicos de falla, en remoto o en persona si estás en Medellín. Sale un informe en español, no una lista de comandos.',
+        icon: 'tabler:stethoscope',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Plan y cotización</span>',
+        description:
+          'Se ordena por riesgo real: primero lo que puede hacerte perder datos, después lo que puede tumbar el servicio y al final lo deseable. La cotización es según el alcance, sin costo.',
+        icon: 'tabler:list-numbers',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Puesta a punto</span>',
+        description:
+          'Saneamos o migramos el servidor actual, con una ventana coordinada para no cortar el servicio en el peor momento.',
+        icon: 'tabler:tool',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Mantenimiento y traspaso</span>',
+        description: `Monitoreo, parches, revisión de copias e informes de qué pasó y qué se hizo, o todo documentado para que lo operes tú. ¿Prefieres aprender a hacerlo tú mismo? Mira el <a href="/curso-de-linux" class="${link}">curso de Linux</a>.`,
+        icon: 'tabler:refresh',
+      },
+    ]}
+  />
+
+  <CallToAction>
+    <Fragment slot="title">¿Hablamos de tu servidor?</Fragment>
+    <Fragment slot="subtitle">
+      Escríbenos por WhatsApp o agenda una asesoría gratuita. Y si quieres saber con quién trabajarías, conoce <a
+        href="/autor"
+        class={link}>quién está detrás de Sonmyd</a
+      >.
+    </Fragment>
+    <Fragment slot="actions">
+      <WhatsAppButton message={landing.whatsapp} location="servidores-y-vps-mid" />
+      <a href="/booking" class="btn-secondary">Agenda una asesoría gratuita</a>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre la administración de servidores Linux"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts
+        postIds={landing.posts}
+        title="Artículos relacionados"
+        linkText="Ver todos los artículos"
+        classes={{ container: 'max-w-6xl' }}
+      />
+    )
+  }
+
+  <LeadCapture
+    interest="servidores-y-vps"
+    formId="lead-servidores-y-vps"
+    title="Empecemos por el diagnóstico"
+    subtitle="Cuéntanos qué tienes hoy (proveedor, aplicaciones y cómo haces las copias) y te decimos qué está en riesgo, qué es urgente y qué puede esperar."
+    button="Revisar mi infraestructura"
+    bullets={[
+      'Cotización según el alcance, sin costo',
+      'Informe en español, no una lista de comandos',
+      'Priorizado por riesgo real, no por lo que más factura',
+      'Las cuentas y los accesos siguen siendo tuyos',
+    ]}
+  />
+</Layout>

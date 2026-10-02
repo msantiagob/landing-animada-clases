@@ -1,0 +1,285 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import ServiceArea from '~/components/widgets/ServiceArea.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import RelatedLinks from '~/components/widgets/RelatedLinks.astro';
+import BlogHighlightedPosts from '~/components/widgets/BlogHighlightedPosts.astro';
+import LeadCapture from '~/components/widgets/LeadCapture.astro';
+import WhatsAppButton from '~/components/ui/WhatsAppButton.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getLanding, landingBreadcrumbs, landingMetadata, landingPath } from '~/utils/landings';
+import { getSeoImage } from '~/utils/seo-images';
+import { breadcrumbSchema, faqSchema, serviceSchema } from '~/utils/seo';
+
+const landing = getLanding('asistente-de-whatsapp');
+const metadata = landingMetadata(landing);
+const hero = getSeoImage(landing.image);
+
+const LINK = 'font-medium text-primary underline underline-offset-4 hover:text-heading';
+
+const faqs = [
+  {
+    question: '¿Qué es un asistente de WhatsApp con IA?',
+    answer:
+      'Es un programa que atiende los mensajes de tu número de WhatsApp: entiende lo que escribe el cliente en lenguaje natural, responde con información de tu negocio, califica la consulta y agenda o deriva a una persona cuando corresponde. Funciona las 24 horas sobre la API oficial de WhatsApp Business.',
+  },
+  {
+    question: '¿Usa la API oficial de WhatsApp Business?',
+    answer:
+      'Sí. Trabajamos sobre la API oficial de Meta y no usamos herramientas no oficiales que simulan un teléfono, porque van contra los términos de WhatsApp y pueden provocar el bloqueo del número. Meta fija las reglas, los precios y las plantillas, y los cambia con frecuencia; nos encargamos de la verificación y de la configuración.',
+  },
+  {
+    question: '¿Qué pasa si no sabe la respuesta o el cliente quiere hablar con una persona?',
+    answer:
+      'Está configurado para reconocer su límite y derivar en lugar de inventar. Responde solo con la información que cargamos de tu negocio. Si no la encuentra, si el cliente se frustra, si pide a una persona o si el tema es delicado, pasa la conversación con el historial completo y deja de responder, para que nadie repita lo que ya contó.',
+  },
+  {
+    question: '¿Cuánto cuesta un asistente de WhatsApp con IA?',
+    answer:
+      'Hacemos una cotización según alcance, sin costo. Aparte del desarrollo hay costos de terceros: Meta cobra por mensaje de plantilla según su categoría y cambia las condiciones con frecuencia, y el modelo de IA y el servidor se pagan por uso. Te ayudamos a estimarlos con tu volumen real de conversaciones.',
+  },
+  {
+    question: '¿Se integra con mi CRM o mi calendario?',
+    answer:
+      'Sí. Conectamos con CRMs como HubSpot o Pipedrive, con Google Calendar, Google Sheets y con sistemas propios por API. Cada conversación queda registrada donde tu equipo ya trabaja y las citas se agendan en tu calendario real, sin que nadie tenga que copiar datos a mano.',
+  },
+  {
+    question: '¿Qué pasa con los datos de mis clientes?',
+    answer:
+      'El asistente pide solo los datos necesarios, avisa que es un asistente virtual y no solicita información sensible como claves o números de tarjeta. En Colombia aplica la Ley 1581 de 2012 sobre datos personales: tu empresa define la política y la autorización, y conviene que tu asesor legal las revise.',
+  },
+  {
+    question: '¿Trabajan con empresas de otras ciudades?',
+    answer:
+      'Sí. Estamos en Medellín y atendemos en persona en la ciudad y en municipios cercanos, pero el diagnóstico, la configuración y el seguimiento también se hacen de forma remota, por videollamada y WhatsApp. Así trabajamos con empresas de toda Colombia sin que la distancia cambie el proceso.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData
+    schema={[
+      serviceSchema({
+        name: landing.name,
+        description: landing.description,
+        path: landingPath(landing.slug),
+        serviceType: 'Automatización de la atención al cliente por WhatsApp con inteligencia artificial',
+      }),
+      faqSchema(faqs),
+      breadcrumbSchema(landingBreadcrumbs(landing)),
+    ]}
+  />
+
+  <Breadcrumbs items={landingBreadcrumbs(landing)} />
+
+  <Hero
+    tagline="Asistente de WhatsApp con IA"
+    actions={[
+      { variant: 'primary', text: 'Cotizar mi asistente', href: '#contacto', icon: 'tabler:brand-whatsapp' },
+      { variant: 'tertiary', text: 'Agenda una asesoría gratuita', href: '/booking' },
+    ]}
+    image={{ src: hero.src, alt: hero.alt }}
+  >
+    <Fragment slot="title">
+      Un <span class="text-accent">asistente de WhatsApp</span> con IA que atiende, califica y agenda por ti
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Nuestro asistente de WhatsApp responde a tus clientes en lenguaje natural, califica a los interesados y agenda
+      citas en Google Calendar las 24 horas, y pasa la conversación a una persona cuando hace falta. Lo implementamos
+      desde Medellín, conectado a tu CRM.
+    </Fragment>
+
+    <Fragment slot="trust">
+      <span>Sobre la API oficial de WhatsApp Business</span>
+      <span>·</span>
+      <span>Paso a una persona con el historial</span>
+      <span>·</span>
+      <span>Cotización según alcance, sin costo</span>
+    </Fragment>
+  </Hero>
+
+  <Content
+    isReversed
+    tagline="El problema real"
+    title="Atención automática por WhatsApp para que ningún mensaje se quede sin respuesta"
+    items={[
+      {
+        title: 'Consultas fuera de horario',
+        description:
+          'De noche, en fines de semana y en festivos nadie contesta, y el cliente escribe a la competencia. El asistente responde en segundos.',
+      },
+      {
+        title: 'La primera respuesta pesa',
+        description:
+          'Quien contesta primero suele quedarse con el cliente. Responder rápido deja de depender de que alguien esté mirando el celular.',
+      },
+      {
+        title: 'Las mismas respuestas, todos los días',
+        description:
+          'Precios, horarios, requisitos y estado de pedidos: el asistente los resuelve y tu equipo atiende lo que requiere criterio.',
+      },
+      {
+        title: 'Mensajes dispersos en varios celulares',
+        description:
+          'Cada conversación queda registrada en tu CRM o en una hoja de cálculo, con los datos del cliente, para hacer seguimiento y medir.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Persona con un celular en la mano frente a una laptop con una aplicación de mensajería abierta',
+    }}
+  >
+    <Fragment slot="content">
+      Para muchas empresas WhatsApp es el canal principal, pero se atiende a mano, desde el celular de una persona. Ese
+      cuello de botella no se arregla contratando a alguien más. Un chatbot de WhatsApp con IA toma la primera línea y
+      tu equipo se queda con lo que necesita criterio. Ejemplos ilustrativos, no clientes: una clínica que confirma
+      citas, una inmobiliaria que califica interesados o una tienda que informa el estado de un pedido.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-surface"></div>
+    </Fragment>
+  </Content>
+
+  <Features
+    id="capacidades"
+    tagline="Qué hace"
+    title="Un chatbot de WhatsApp con IA que entiende lo que escriben tus clientes"
+    items={[
+      {
+        title: 'Responde en lenguaje natural',
+        description:
+          'Tus clientes escriben como siempre, con errores y frases a medias. El asistente entiende la intención, no solo palabras clave.',
+        icon: 'tabler:message-chatbot',
+      },
+      {
+        title: 'Califica a los interesados',
+        description:
+          'Hace las preguntas que definen si un contacto sirve, como necesidad, ciudad o presupuesto, y le entrega a tu equipo solo los que valen la pena.',
+        icon: 'tabler:filter-check',
+      },
+      {
+        title: 'Agenda citas en Google Calendar',
+        description:
+          'Consulta tu disponibilidad real y confirma la cita dentro de la misma conversación, sin enviar enlaces ni ir y venir de mensajes.',
+        icon: 'tabler:calendar-check',
+      },
+      {
+        title: 'Pasa a una persona',
+        description:
+          'Cuando el caso es delicado o el cliente lo pide, entrega la conversación con el historial completo. Nadie repite lo que ya contó.',
+        icon: 'tabler:user-check',
+      },
+      {
+        title: 'Responde con tu documentación',
+        description:
+          'Cargamos catálogos, precios, políticas y preguntas frecuentes. Si no encuentra la respuesta, lo reconoce y deriva en vez de inventar.',
+        icon: 'tabler:book',
+      },
+      {
+        title: 'Se conecta a tu CRM',
+        description:
+          'Cada conversación queda en HubSpot, Pipedrive, Google Sheets o tu sistema propio, con los datos que recogió el asistente.',
+        icon: 'tabler:plug-connected',
+      },
+    ]}
+  >
+    <Fragment slot="subtitle">
+      No es un menú con números: responde con la información real de tu negocio, sobre la
+      <a href="/whatsapp-business-api" class={LINK}>WhatsApp Business API</a> oficial de Meta. Si tu caso necesita algo más
+      específico, mira el <a href="/desarrollo-de-bots" class={LINK}>desarrollo de bots a la medida</a>.
+    </Fragment>
+  </Features>
+
+  <Steps
+    tagline="Cómo trabajamos"
+    title="Cómo implementamos tu asistente de WhatsApp"
+    items={[
+      {
+        title: 'Paso 1: <span class="font-medium">Diagnóstico</span>',
+        description:
+          'Revisamos tus conversaciones reales de los últimos meses para saber qué te preguntan de verdad, no lo que suponemos.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Paso 2: <span class="font-medium">Base de conocimiento</span>',
+        description:
+          'Cargamos productos, precios, políticas y tono de marca, y definimos qué responde el asistente y cuándo pasa a una persona.',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Paso 3: <span class="font-medium">Habilitación y pruebas</span>',
+        description:
+          'Dejamos lista la API oficial de WhatsApp y probamos con tráfico controlado y supervisión humana, ajustando con casos reales.',
+        icon: 'tabler:test-pipe',
+      },
+      {
+        title: 'Paso 4: <span class="font-medium">Puesta en marcha y mejora</span>',
+        description:
+          'Queda operando las 24 horas, con reportes de conversaciones resueltas, traspasos y citas, y ajustes continuos.',
+        icon: 'tabler:rocket',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=2070&q=80',
+      alt: 'Dos colegas sonrientes chocan las manos en una reunión de trabajo, con una laptop y documentos sobre la mesa',
+    }}
+  >
+    <Fragment slot="subtitle">
+      ¿Prefieres aprender a hacerlo tú mismo? Mira nuestras <a href="/clases-de-ia" class={LINK}>clases de IA</a>.
+    </Fragment>
+  </Steps>
+
+  <CallToAction title="¿Cómo quedaría el asistente en tu WhatsApp?">
+    <Fragment slot="subtitle">
+      Cuéntanos qué te preguntan tus clientes y te explicamos cómo lo resolvería el asistente. Antes de escribirnos,
+      conoce <a href="/autor" class={LINK}>quién está detrás de Sonmyd</a>.
+    </Fragment>
+    <Fragment slot="actions">
+      <div class="flex w-full sm:w-auto">
+        <WhatsAppButton message={landing.whatsapp} location="asistente-de-whatsapp-mid" class="w-full sm:w-auto" />
+      </div>
+      <div class="flex w-full sm:w-auto">
+        <a href="/booking" class="btn-secondary w-full sm:w-auto">Agenda una asesoría gratuita</a>
+      </div>
+    </Fragment>
+  </CallToAction>
+
+  <ServiceArea kind={landing.kind} message={landing.whatsapp} />
+
+  <FAQs
+    title="Preguntas frecuentes sobre el asistente de WhatsApp"
+    tagline="Dudas comunes"
+    classes={{ container: 'max-w-6xl' }}
+    items={faqs.map(({ question, answer }) => ({ title: question, description: answer }))}
+  />
+
+  <RelatedLinks landing={landing} />
+
+  {
+    landing.posts.length > 0 && (
+      <BlogHighlightedPosts postIds={landing.posts} title="Artículos relacionados" linkText="Ver todos los artículos" />
+    )
+  }
+
+  <LeadCapture
+    interest="asistente-de-whatsapp"
+    formId="lead-asistente-de-whatsapp"
+    title="Pide la cotización de tu asistente de WhatsApp"
+    subtitle="Describe cómo atiendes hoy por WhatsApp y te respondemos con una propuesta según el alcance, sin costo."
+    button="Cotizar mi asistente"
+    bullets={[
+      'Cotización según alcance, sin costo y sin compromiso',
+      'Sobre la API oficial de WhatsApp Business, sin herramientas no oficiales',
+      'Hablas con quien diseña y construye el asistente',
+      'Atención remota para empresas de toda Colombia',
+    ]}
+  />
+</Layout>
