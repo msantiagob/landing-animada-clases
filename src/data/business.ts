@@ -23,4 +23,17 @@ export const BUSINESS = {
   /** Municipalities served in person; online classes and services cover all of Colombia */
   areaServed: ['Medellín', 'Envigado', 'Sabaneta', 'Itagüí', 'Bello', 'La Estrella', 'Rionegro'],
   gtmId: 'GTM-KNZPFWXB',
+  /**
+   * Zona horaria del negocio: la de Colombia. Las citas se agendan SIEMPRE en esta hora, esté
+   * donde esté el servidor (Netlify corre en UTC) o quien reserva.
+   */
+  timezone: 'America/Bogota',
+  /**
+   * Desfase de `timezone` respecto de UTC, en minutos. Es fijo porque Colombia usa UTC-5 todo el
+   * año, sin horario de verano; tests/business-time.test.ts comprueba que `Intl` siga diciendo lo mismo.
+   */
+  utcOffsetMinutes: -300,
 } as const;
+
+/** Atajo de `BUSINESS.timezone`: el identificador IANA que entiende `Intl`. */
+export const BUSINESS_TIMEZONE = BUSINESS.timezone;

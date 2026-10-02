@@ -12,8 +12,9 @@ import { whatsappUrl } from '~/utils/whatsapp';
  * Esta URL es la que Google tiene registrada para la verificación de la
  * aplicación OAuth de Sonmyd: tiene que seguir existiendo y responder 200.
  * El texto parte de la política del sitio anterior; solo se actualizó lo que
- * describe la recolección de datos de ESTE sitio (formularios en servidor
- * propio, GTM / Google Analytics, enlaces a WhatsApp) y el responsable.
+ * describe la recolección de datos de ESTE sitio (formularios guardados en el
+ * servicio de almacenamiento del proveedor de alojamiento, Netlify; GTM / Google
+ * Analytics; enlaces a WhatsApp) y el responsable.
  *
  * La política anterior NO tenía ningún texto sobre datos de usuario de Google,
  * Google API Services, Limited Use ni alcances de OAuth (se comprobó contra el
@@ -24,7 +25,7 @@ import { whatsappUrl } from '~/utils/whatsapp';
  * cómo se usan los datos, con lo que apruebe el dueño.
  */
 const PATH = '/privacidad';
-const LAST_UPDATED = '1 de octubre de 2026';
+const LAST_UPDATED = '2 de octubre de 2026';
 
 const metadata = {
   title: 'Política de privacidad | Sonmyd',
@@ -106,7 +107,7 @@ const whatsapp = whatsappUrl();
         <p>
           Adicionalmente, recopilamos de forma automática datos técnicos como la dirección IP, el tipo de navegador,
           páginas visitadas y tiempo de permanencia, a través de herramientas de análisis de terceros. Cuando envías el
-          formulario de contacto, también guardamos en nuestro servidor la dirección IP, el tipo de navegador y la
+          formulario de contacto, también guardamos, junto con tu consulta, la dirección IP, el tipo de navegador y la
           página desde la que lo enviaste, para prevenir abusos y entender desde qué página nos escribes.
         </p>
 
@@ -133,10 +134,9 @@ const whatsapp = whatsappUrl();
 
         <h2>5. Almacenamiento de datos</h2>
         <p>
-          Los datos de los formularios de contacto y de agendamiento de citas se almacenan en la base de datos de
-          nuestro propio servidor, que funciona sobre la infraestructura de un proveedor de alojamiento en la nube. Solo
-          el responsable del tratamiento accede a estos datos; el proveedor de alojamiento solo presta la
-          infraestructura.
+          Los datos de los formularios de contacto y de agendamiento de citas se almacenan en el servicio de
+          almacenamiento de nuestro proveedor de alojamiento en la nube (Netlify). Solo el responsable del tratamiento
+          accede a estos datos; el proveedor de alojamiento solo presta la infraestructura.
         </p>
         <p>
           Conservamos tus datos mientras exista una relación comercial activa o mientras sean necesarios para los fines
@@ -165,8 +165,8 @@ const whatsapp = whatsappUrl();
         <ul>
           <li><strong>Google (Analytics / Tag Manager)</strong> — análisis de tráfico web.</li>
           <li>
-            <strong>Proveedor de alojamiento en la nube</strong> — infraestructura donde funciona el sitio y se guarda su
-            base de datos.
+            <strong>Proveedor de alojamiento en la nube (Netlify)</strong> — infraestructura donde funciona el sitio y servicio
+            de almacenamiento donde se guardan los datos de los formularios.
           </li>
           <li>
             <strong>Proveedor de correo electrónico</strong> — envío del aviso de cada consulta y de la confirmación de las

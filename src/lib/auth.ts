@@ -1,109 +1,106 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { getDb } from './database';
+import { createHash, timingSafeEqual } from 'node:crypto';
+import { isPasswordHash, verifyPassword } from './password';
+import { MIN_SECRET_LENGTH, SESSION_TTL_SECONDS, isUsableSecret, signSession, verifySession } from './session';
 
 /**
- * 10 rondas en producción. Configurable porque en los tests hacer decenas de
- * hashes a 10 rondas cuesta segundos y provoca timeouts intermitentes; con un
- * costo menor se sigue ejercitando bcrypt de verdad, solo que más rápido.
+ * Autenticación del panel SIN base de datos.
+ *
+ * Hay un único administrador y sus credenciales viven en variables de entorno
+ * de Netlify:
+ * - ADMIN_EMAIL: su correo.
+ * - ADMIN_PASSWORD_HASH: el hash de su contraseña (`npm run hash-password`).
+ * - SESSION_SECRET: el secreto con el que se firma la cookie de sesión.
+ *
+ * La sesión es una cookie firmada sin estado (session.ts). Si falta alguna de
+ * las tres variables, nadie puede entrar (el login responde 503) pero el resto
+ * del sitio sigue funcionando.
  */
-const SALT_ROUNDS = Number.parseInt(process.env.BCRYPT_ROUNDS || '', 10) || 10;
-const TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
+
 export const AUTH_COOKIE = 'auth-token';
 
-export interface User {
-  id: number;
+export interface AdminConfig {
   email: string;
-  name: string;
-  role: string;
-  created_at: string;
-  updated_at: string;
+  passwordHash: string;
+  secret: string;
 }
 
-export interface AuthTokenPayload {
-  userId: number;
+export type AdminConfigStatus = { configured: true; config: AdminConfig } | { configured: false; missing: string[] };
+
+export interface AdminSession {
   email: string;
-  role: string;
+  role: 'admin';
+  /** Vence en (segundos desde 1970). */
+  exp: number;
 }
 
-/**
- * Nunca hay un secreto por defecto. Un fallback tipo 'change-me' hace que en
- * producción cualquiera pueda firmarse un token válido de admin.
- */
-const getJwtSecret = (): string => {
-  const secret = process.env.JWT_SECRET;
+/** Se lee del entorno en cada llamada: cambiar una variable en Netlify no exige tocar el código. */
+const readConfig = (): AdminConfigStatus => {
+  const email = (process.env.ADMIN_EMAIL ?? '').trim().toLowerCase();
+  const passwordHash = (process.env.ADMIN_PASSWORD_HASH ?? '').trim();
+  const secret = process.env.SESSION_SECRET ?? '';
 
-  if (!secret || secret.length < 32) {
-    throw new Error('JWT_SECRET no está configurado o es demasiado corto (mínimo 32 caracteres).');
-  }
+  const missing: string[] = [];
+  if (!email) missing.push('ADMIN_EMAIL');
+  // Un hash con otro formato (p. ej. uno de bcrypt) se trata como "sin configurar": si no, todo
+  // intento de login daría "credenciales inválidas" y parecería que la contraseña está mal.
+  if (!passwordHash) missing.push('ADMIN_PASSWORD_HASH');
+  else if (!isPasswordHash(passwordHash))
+    missing.push('ADMIN_PASSWORD_HASH (formato no válido: usa npm run hash-password)');
+  if (!isUsableSecret(secret))
+    missing.push(secret ? `SESSION_SECRET (mínimo ${MIN_SECRET_LENGTH} caracteres)` : 'SESSION_SECRET');
 
-  return secret;
+  return missing.length > 0
+    ? { configured: false, missing }
+    : { configured: true, config: { email, passwordHash, secret } };
 };
 
+/** Compara en tiempo constante sin importar el largo: compara los SHA-256 de ambos textos. */
+const safeEqual = (a: string, b: string): boolean =>
+  timingSafeEqual(createHash('sha256').update(a).digest(), createHash('sha256').update(b).digest());
+
+/**
+ * `Secure` siempre, salvo en el servidor de desarrollo (http://localhost, donde
+ * Safari no guarda cookies Secure). Se decide al revés que lo habitual (`=== 'production'`)
+ * a propósito: si NODE_ENV no llega a la función serverless, la cookie debe
+ * salir Secure igual, no sin protección.
+ */
+const cookieAttributes = (maxAgeSeconds: number): string =>
+  [
+    'HttpOnly',
+    ...(process.env.NODE_ENV === 'development' ? [] : ['Secure']),
+    'Path=/',
+    `Max-Age=${maxAgeSeconds}`,
+    'SameSite=Lax',
+  ].join('; ');
+
+export const buildAuthCookie = (token: string): string =>
+  `${AUTH_COOKIE}=${token}; ${cookieAttributes(SESSION_TTL_SECONDS)}`;
+
+export const buildLogoutCookie = (): string => `${AUTH_COOKIE}=; ${cookieAttributes(0)}`;
+
 export const authHelpers = {
-  hashPassword: (password: string): Promise<string> => bcrypt.hash(password, SALT_ROUNDS),
+  /** Si el panel tiene todo lo necesario para funcionar. Nunca incluye valores, solo nombres de variables. */
+  configStatus: (): AdminConfigStatus => readConfig(),
 
-  verifyPassword: (password: string, hashedPassword: string): Promise<boolean> =>
-    bcrypt.compare(password, hashedPassword),
+  login: async (
+    email: string,
+    password: string
+  ): Promise<{ user: { email: string; role: 'admin' }; token: string } | null> => {
+    const status = readConfig();
+    if (!status.configured) return null;
 
-  generateToken: (payload: AuthTokenPayload): string =>
-    jwt.sign(payload, getJwtSecret(), { expiresIn: TOKEN_TTL_SECONDS }),
+    const { config } = status;
 
-  verifyToken: (token: string): AuthTokenPayload | null => {
-    try {
-      return jwt.verify(token, getJwtSecret()) as AuthTokenPayload;
-    } catch {
-      return null;
-    }
-  },
+    // Las dos comprobaciones se hacen SIEMPRE, sin cortar en la primera que
+    // falla: así el tiempo de respuesta no revela si el correo existe.
+    const emailMatches = safeEqual(email.trim().toLowerCase(), config.email);
+    const passwordMatches = await verifyPassword(password, config.passwordHash);
 
-  /**
-   * No hay endpoint público de registro. Los usuarios se crean únicamente
-   * desde el script de seed (`scripts/create-admin.mjs`).
-   */
-  createUser: async (email: string, password: string, name: string, role = 'admin'): Promise<number> => {
-    const hashedPassword = await authHelpers.hashPassword(password);
-    const result = getDb()
-      .prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)')
-      .run(email.trim().toLowerCase(), hashedPassword, name, role);
-
-    return result.lastInsertRowid as number;
-  },
-
-  getUserByEmail: (email: string): (User & { password: string }) | null =>
-    (getDb().prepare('SELECT * FROM users WHERE email = ?').get(email.trim().toLowerCase()) as
-      | (User & { password: string })
-      | undefined) ?? null,
-
-  getUserById: (id: number): User | null =>
-    (getDb().prepare('SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = ?').get(id) as
-      | User
-      | undefined) ?? null,
-
-  login: async (email: string, password: string): Promise<{ user: User; token: string } | null> => {
-    const user = authHelpers.getUserByEmail(email);
-
-    if (!user) {
-      // Hash de descarte: iguala el tiempo de respuesta con el de un usuario
-      // existente para no filtrar qué emails están registrados.
-      await bcrypt.compare(password, '$2a$10$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinv');
-      return null;
-    }
-
-    if (!(await authHelpers.verifyPassword(password, user.password))) return null;
-
-    const userWithoutPassword: User = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      created_at: user.created_at,
-      updated_at: user.updated_at,
-    };
+    if (!emailMatches || !passwordMatches) return null;
 
     return {
-      user: userWithoutPassword,
-      token: authHelpers.generateToken({ userId: user.id, email: user.email, role: user.role }),
+      user: { email: config.email, role: 'admin' },
+      token: signSession(config.email, config.secret),
     };
   },
 
@@ -120,28 +117,28 @@ export const authHelpers = {
     return null;
   },
 
-  requireAuthFromCookies: (request: Request): AuthTokenPayload | null => {
+  /**
+   * La sesión de la petición, o `null`. Además de la firma y el vencimiento se
+   * exige que siga siendo el administrador configurado: cambiar ADMIN_EMAIL
+   * cierra la sesión del anterior.
+   */
+  requireAuthFromCookies: (request: Request): AdminSession | null => {
     const token = authHelpers.getTokenFromCookies(request);
     if (!token) return null;
 
-    return authHelpers.verifyToken(token);
+    const status = readConfig();
+    if (!status.configured) return null;
+
+    const claims = verifySession(token, status.config.secret);
+    if (!claims || !safeEqual(claims.sub, status.config.email)) return null;
+
+    return { email: claims.sub, role: claims.role, exp: claims.exp };
   },
 
-  /** Autenticación + control de rol para endpoints de administración. */
-  requireAdmin: (request: Request): AuthTokenPayload | null => {
-    const payload = authHelpers.requireAuthFromCookies(request);
-    if (!payload || payload.role !== 'admin') return null;
+  /** Autenticación + control de rol para endpoints y páginas de administración. */
+  requireAdmin: (request: Request): AdminSession | null => {
+    const session = authHelpers.requireAuthFromCookies(request);
 
-    return payload;
+    return session?.role === 'admin' ? session : null;
   },
-};
-
-export const buildAuthCookie = (token: string): string => {
-  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
-  return `${AUTH_COOKIE}=${token}; HttpOnly;${secure} Path=/; Max-Age=${TOKEN_TTL_SECONDS}; SameSite=Strict`;
-};
-
-export const buildLogoutCookie = (): string => {
-  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
-  return `${AUTH_COOKIE}=; HttpOnly;${secure} Path=/; Max-Age=0; SameSite=Strict`;
 };

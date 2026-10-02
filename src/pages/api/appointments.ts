@@ -1,36 +1,48 @@
 import type { APIRoute } from 'astro';
-import { addHours, isBefore, isValid, parse } from 'date-fns';
-import { dbHelpers } from '../../lib/database';
+import { BUSINESS_TIMEZONE } from '../../data/business';
 import { emailHelpers } from '../../lib/email';
+import { findTooLongField, tooLongMessage } from '../../lib/lead-validation';
+import { runInBackground } from '../../lib/netlify';
+import { getLeadStore } from '../../lib/storage';
+import {
+  BOOKING_CLOSING_HOUR,
+  BOOKING_MIN_LEAD_HOURS,
+  BOOKING_OPENING_HOUR,
+  buildDaySlots,
+  checkBookingRequest,
+  type BookingRejection,
+} from '../../utils/booking';
+import { BUSINESS_TIME_LABEL } from '../../utils/business-time';
 import {
   EMAIL_REGEX,
   asOptionalString,
   asTrimmedString,
   badRequest,
   conflict,
+  failureResponse,
   getClientIp,
   ok,
   parseBody,
   rateLimit,
-  serverError,
   tooManyRequests,
 } from '../../lib/http';
 
 export const prerender = false;
 
-const OPENING_HOUR = 9;
-const CLOSING_HOUR = 18;
-const MIN_LEAD_TIME_HOURS = 2;
 const DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
-const TIME_FORMAT = /^\d{2}:\d{2}$/;
 
-export const buildDaySlots = (): string[] =>
-  Array.from(
-    { length: CLOSING_HOUR - OPENING_HOUR + 1 },
-    (_, index) => `${(OPENING_HOUR + index).toString().padStart(2, '0')}:00`
-  );
+/**
+ * Por qué se rechaza un turno. Las reglas viven en `checkBookingRequest` (utils/booking.ts):
+ * fecha y hora son SIEMPRE hora de Colombia y se comparan como instantes, así que la zona
+ * en la que corra el servidor (Netlify usa UTC) no cambia el veredicto.
+ */
+const REJECTION_MESSAGES: Record<BookingRejection, string> = {
+  'invalid-datetime': 'Formato de fecha u hora inválido',
+  'too-soon': `La cita debe agendarse con al menos ${BOOKING_MIN_LEAD_HOURS} horas de anticipación`,
+  'outside-hours': `El horario de atención es de ${BOOKING_OPENING_HOUR}:00 a ${BOOKING_CLOSING_HOUR}:00 (${BUSINESS_TIME_LABEL})`,
+};
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await parseBody(request);
 
@@ -44,70 +56,67 @@ export const POST: APIRoute = async ({ request }) => {
     const serviceType = asTrimmedString(body.serviceType);
     const date = asTrimmedString(body.date);
     const time = asTrimmedString(body.time);
+    const phone = asOptionalString(body.phone);
+    const company = asOptionalString(body.company);
+    const message = asOptionalString(body.message);
 
     if (!name || !email || !serviceType || !date || !time) {
       return badRequest('Nombre, email, tipo de servicio, fecha y hora son obligatorios');
     }
 
+    // Los topes van ANTES que el formato del email: no tiene sentido probar la expresión regular
+    // sobre un texto de megabytes, y cada campo que se guarda queda acotado.
+    const tooLong = findTooLongField({ name, email, phone, company, message, serviceType });
+    if (tooLong) return badRequest(tooLongMessage(tooLong));
+
     if (!EMAIL_REGEX.test(email)) return badRequest('Formato de email inválido');
-    if (!DATE_FORMAT.test(date) || !TIME_FORMAT.test(time)) return badRequest('Formato de fecha u hora inválido');
 
-    const appointmentDateTime = parse(`${date} ${time}`, 'yyyy-MM-dd HH:mm', new Date());
-    if (!isValid(appointmentDateTime)) return badRequest('Formato de fecha u hora inválido');
-
-    if (isBefore(appointmentDateTime, addHours(new Date(), MIN_LEAD_TIME_HOURS))) {
-      return badRequest(`La cita debe agendarse con al menos ${MIN_LEAD_TIME_HOURS} horas de anticipación`);
-    }
-
-    if (!buildDaySlots().includes(time)) {
-      return badRequest(`El horario de atención es de ${OPENING_HOUR}:00 a ${CLOSING_HOUR}:00`);
-    }
-
-    const isTaken = dbHelpers
-      .getAppointmentsByDate(date)
-      .some((appointment) => appointment.time === time && appointment.status !== 'cancelled');
-
-    if (isTaken) return conflict('Ese horario ya no está disponible. Elige otro, por favor.');
+    const booking = checkBookingRequest(date, time);
+    if (!booking.ok) return badRequest(REJECTION_MESSAGES[booking.reason]);
 
     const appointmentData = {
       name,
       email,
-      phone: asOptionalString(body.phone),
-      company: asOptionalString(body.company),
+      phone,
+      company,
       serviceType,
       date,
       time,
-      timezone: asTrimmedString(body.timezone) || 'America/Bogota',
+      // Fecha y hora son hora de Colombia, la mande el cliente como la mande: guardar otra zona
+      // sería afirmar algo que no es cierto del turno.
+      timezone: BUSINESS_TIMEZONE,
       duration: Number.parseInt(asTrimmedString(body.duration), 10) || 60,
-      message: asOptionalString(body.message),
+      message,
     };
 
-    const result = dbHelpers.insertAppointment(appointmentData);
+    // Reservar el horario y guardar la cita es una sola operación atómica del
+    // store: no hay un "consultar si está libre" aparte, que dejaría una ventana
+    // para que dos personas reserven a la vez el mismo turno.
+    const result = await getLeadStore(locals).createAppointment(appointmentData);
 
-    void emailHelpers.sendAppointmentConfirmation(appointmentData);
-    void emailHelpers.sendAppointmentNotification(appointmentData);
+    if (!result.created) return conflict('Ese horario ya no está disponible. Elige otro, por favor.');
+
+    runInBackground(locals, emailHelpers.sendAppointmentConfirmation(appointmentData));
+    runInBackground(locals, emailHelpers.sendAppointmentNotification(appointmentData));
 
     return ok({
       message: 'Cita agendada correctamente. Vas a recibir un email de confirmación.',
-      appointment: { id: result.lastInsertRowid, date, time, duration: appointmentData.duration },
+      appointment: { id: result.appointment.id, date, time, duration: appointmentData.duration },
     });
   } catch (error) {
     console.error('[api/appointments] Error procesando cita:', error);
-    return serverError();
+    return failureResponse(error);
   }
 };
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
   try {
     const date = url.searchParams.get('date');
 
     if (!date) return badRequest('La fecha es requerida');
     if (!DATE_FORMAT.test(date)) return badRequest('Formato de fecha inválido');
 
-    const bookedSlots = dbHelpers
-      .getAppointmentsByDate(date)
-      .filter((appointment) => appointment.status !== 'cancelled')
-      .map((appointment) => appointment.time);
+    const bookedSlots = await getLeadStore(locals).getTakenSlots(date);
 
     return ok({
       date,
@@ -116,6 +125,6 @@ export const GET: APIRoute = async ({ url }) => {
     });
   } catch (error) {
     console.error('[api/appointments] Error obteniendo disponibilidad:', error);
-    return serverError();
+    return failureResponse(error);
   }
 };

@@ -1,6 +1,7 @@
 ---
 import Button from '~/components/ui/Button.astro';
 import { groupInterestsBySilo } from '~/lib/interests';
+import { FIELD_LIMITS } from '~/lib/lead-validation';
 
 /**
  * Formulario de captación de leads.
@@ -98,6 +99,7 @@ const { groups: interestGroups, other: otherInterest } = groupInterestsBySilo();
           name="name"
           autocomplete="name"
           placeholder="Juana Pérez"
+          maxlength={FIELD_LIMITS.name}
           required
           aria-describedby={`${field('name')}-error`}
         />
@@ -113,6 +115,7 @@ const { groups: interestGroups, other: otherInterest } = groupInterestsBySilo();
           name="email"
           autocomplete="email"
           placeholder="juana@empresa.com"
+          maxlength={FIELD_LIMITS.email}
           required
           aria-describedby={`${field('email')}-error`}
         />
@@ -130,6 +133,7 @@ const { groups: interestGroups, other: otherInterest } = groupInterestsBySilo();
           name="phone"
           autocomplete="tel"
           placeholder="+57 300 000 0000"
+          maxlength={FIELD_LIMITS.phone}
           aria-describedby={`${field('phone')}-error`}
         />
         <p class="field-error hidden" id={`${field('phone')}-error`} data-field-error></p>
@@ -165,6 +169,7 @@ const { groups: interestGroups, other: otherInterest } = groupInterestsBySilo();
         name="message"
         rows="4"
         placeholder="Ej: recibimos unos 200 mensajes por WhatsApp al día y no damos abasto."
+        maxlength={FIELD_LIMITS.message}
         required
         aria-describedby={`${field('message')}-error`}></textarea>
       <p class="field-error hidden" id={`${field('message')}-error`} data-field-error></p>

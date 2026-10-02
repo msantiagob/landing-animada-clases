@@ -1,7 +1,9 @@
 ---
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
+import { FIELD_LIMITS } from '~/lib/lead-validation';
 import { SERVICE_TYPE_OPTIONS } from '~/utils/booking';
+import { BUSINESS_TIME_LABEL } from '~/utils/business-time';
 
 const {
   title = 'Agenda tu Consulta Gratuita',
@@ -63,7 +65,8 @@ const {
 
       <!-- Time Slots -->
       <div id="timeSlots" class="mt-6 hidden">
-        <h4 class="mb-3 text-base font-semibold text-heading">Horarios disponibles</h4>
+        <h4 class="mb-1 text-base font-semibold text-heading">Horarios disponibles</h4>
+        <p class="mb-3 text-sm text-muted">Todos en {BUSINESS_TIME_LABEL} (UTC-5).</p>
         <div id="availableSlots" class="grid grid-cols-2 gap-2">
           <!-- Time slots will be loaded here -->
         </div>
@@ -118,22 +121,52 @@ const {
         <div class="space-y-4">
           <div>
             <label for="name" class="field-label"> Nombre completo * </label>
-            <input type="text" id="name" name="name" required class="field" placeholder="Tu nombre completo" />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              maxlength={FIELD_LIMITS.name}
+              class="field"
+              placeholder="Tu nombre completo"
+            />
           </div>
 
           <div>
             <label for="email" class="field-label"> Email * </label>
-            <input type="email" id="email" name="email" required class="field" placeholder="tu@email.com" />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              maxlength={FIELD_LIMITS.email}
+              class="field"
+              placeholder="tu@email.com"
+            />
           </div>
 
           <div>
             <label for="phone" class="field-label"> Teléfono </label>
-            <input type="tel" id="phone" name="phone" class="field" placeholder="+57 300 123 4567" />
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              maxlength={FIELD_LIMITS.phone}
+              class="field"
+              placeholder="+57 300 123 4567"
+            />
           </div>
 
           <div>
             <label for="company" class="field-label"> Empresa </label>
-            <input type="text" id="company" name="company" class="field" placeholder="Nombre de tu empresa" />
+            <input
+              type="text"
+              id="company"
+              name="company"
+              maxlength={FIELD_LIMITS.company}
+              class="field"
+              placeholder="Nombre de tu empresa"
+            />
           </div>
 
           <div>
@@ -150,6 +183,7 @@ const {
               id="message"
               name="message"
               rows="3"
+              maxlength={FIELD_LIMITS.message}
               class="field"
               placeholder="Cuéntanos sobre tu proyecto o necesidades específicas..."></textarea>
           </div>
@@ -179,7 +213,14 @@ const {
 </WidgetWrapper>
 
 <script>
-  import { BOOKING_MESSAGES, buildAppointmentPayload, formatMonthYear, toLocalIsoDate } from '~/utils/booking';
+  import {
+    BOOKING_MESSAGES,
+    buildAppointmentPayload,
+    formatMonthYear,
+    isSelectableDay,
+    toLocalIsoDate,
+  } from '~/utils/booking';
+  import { BUSINESS_TIME_LABEL, businessDateOf } from '~/utils/business-time';
   import { markBound, postJson } from '~/utils/forms';
   import { trackLead } from '~/utils/tracking';
 
@@ -198,10 +239,12 @@ const {
     const appointmentForm = el('appointmentForm') as HTMLFormElement | null;
     if (!appointmentForm || !markBound(appointmentForm)) return;
 
+    // El calendario arranca en el mes en que está Colombia, que es la hora en que atiende el
+    // negocio y en que el servidor valida el turno, y no en el de la zona del navegador.
     // Se ancla al día 1: con `new Date()` y setMonth(), estando el 31 de octubre
     // "el mes siguiente" desbordaba a diciembre y el calendario se saltaba noviembre.
-    const now = new Date();
-    const currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [todayYear, todayMonth] = businessDateOf().split('-').map(Number);
+    const currentDate = new Date(todayYear, todayMonth - 1, 1);
     let selectedDate: Date | null = null;
     let selectedTime: string | null = null;
     let isSubmitting = false;
@@ -224,7 +267,9 @@ const {
 
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
-      const today = new Date();
+      // `yyyy-MM-dd` de hoy en Colombia: los días son fechas de calendario, así que se comparan
+      // como texto y no como instantes del navegador.
+      const today = businessDateOf();
 
       // First day of the month and number of days
       const firstDay = new Date(year, month, 1);
@@ -246,11 +291,8 @@ const {
         dayElement.className = 'p-2 rounded-lg text-sm font-medium transition-colors';
         dayElement.textContent = String(day);
 
-        // Disable past dates and weekends
-        const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
-        const isPast = dayDate < today;
-
-        if (isPast || isWeekend) {
+        // Se deshabilitan los días pasados, hoy y los fines de semana (ver isSelectableDay).
+        if (!isSelectableDay(dayDate, today)) {
           dayElement.className += ' text-muted/50 cursor-not-allowed';
           dayElement.disabled = true;
         } else {
@@ -362,7 +404,7 @@ const {
         });
 
         if (selectedTime) {
-          selectedTimeText.textContent = selectedTime;
+          selectedTimeText.textContent = `${selectedTime} (${BUSINESS_TIME_LABEL})`;
           selectedDateTimeDiv.classList.remove('hidden');
         } else {
           selectedDateTimeDiv.classList.add('hidden');

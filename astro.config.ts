@@ -2,7 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import netlify from '@astrojs/netlify';
 
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
@@ -25,13 +25,35 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 
 export default defineConfig({
   output: 'server',
-  adapter: node({ mode: 'standalone' }),
+
+  /**
+   * Netlify: las páginas con `prerender = false` (casi todo el sitio y la API)
+   * corren en una función serverless; las prerenderizadas (el blog) son archivos
+   * estáticos. El almacenamiento de leads es Netlify Blobs (src/lib/storage).
+   */
+  adapter: netlify(),
+
+  /**
+   * `file` y no `directory` (el valor por defecto). Netlify hace que el
+   * comportamiento de la barra final siga a la estructura de archivos:
+   * - `blog/index.html` (directory): `/blog` responde 301 a `/blog/`.
+   * - `blog.html` (file): `/blog` responde 200 y `/blog/` va con 301 a `/blog`.
+   * El sitio usa `trailingSlash: 'never'` (src/config.yaml): el canonical y el
+   * sitemap listan `/blog`, y una URL del sitemap que redirige, cuyo destino
+   * declara como canonical la de partida, es justo lo que Search Console
+   * reporta como "Página con redirección". Solo cambia el blog (lo único
+   * prerenderizado). Ojo: con `file`, `Astro.url.pathname` de esas páginas
+   * termina en `.html` durante el build; ver `stripHtmlExtension`.
+   */
+  build: { format: 'file' },
 
   /**
    * 301 desde las URLs del sitio anterior que Google ya conoce (lista en
-   * src/data/legacy-redirects.ts). En modo servidor se resuelven en tiempo de
-   * ejecución. Un origen reemplaza a la página real que tenga esa ruta, así que
-   * ninguno puede coincidir con una página existente.
+   * src/data/legacy-redirects.ts). El adaptador de Netlify las escribe como
+   * reglas de plataforma en `dist/_redirects` (`/origen  /destino  301`) y,
+   * como respaldo, Astro las resuelve también dentro de la función. Un origen
+   * reemplaza a la página real que tenga esa ruta, así que ninguno puede
+   * coincidir con una página existente.
    */
   redirects: Object.fromEntries(
     Object.entries(LEGACY_REDIRECTS).map(([from, destination]) => [from, { status: 301 as const, destination }])

@@ -1,59 +1,83 @@
 import type { APIRoute } from 'astro';
 import { authHelpers } from '../../../lib/auth';
-import { dbHelpers } from '../../../lib/database';
-import { asTrimmedString, badRequest, json, ok, parseBody, serverError, unauthorized } from '../../../lib/http';
+import { getLeadStore, isAppointmentStatus, isContactStatus, summarizeLeads } from '../../../lib/storage';
+import { isValidId } from '../../../lib/storage/ids';
+import {
+  asTrimmedString,
+  badRequest,
+  conflict,
+  failureResponse,
+  json,
+  ok,
+  parseBody,
+  unauthorized,
+} from '../../../lib/http';
 
 export const prerender = false;
 
-const CONTACT_STATUSES = new Set(['new', 'contacted', 'closed']);
-const APPOINTMENT_STATUSES = new Set(['pending', 'confirmed', 'cancelled', 'completed']);
+const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
 
 /** Única pantalla de administración: leads de contacto + citas agendadas. */
-export const GET: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = async ({ request, url, locals }) => {
   try {
     if (!authHelpers.requireAdmin(request)) return unauthorized();
 
-    const limit = Math.min(Number.parseInt(url.searchParams.get('limit') || '50', 10) || 50, MAX_LIMIT);
+    // Todo lo que no sea un entero positivo (texto, 0, negativos) vuelve al valor por defecto: un
+    // `limit` negativo llegaba intacto a `slice(0, -n)` y devolvía casi todo, saltándose el tope.
+    const requested = Number.parseInt(url.searchParams.get('limit') ?? '', 10);
+    const limit = requested > 0 ? Math.min(requested, MAX_LIMIT) : DEFAULT_LIMIT;
     const offset = Math.max(Number.parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
+    // Las estadísticas son de TODOS los leads, no de la página que se pide: por
+    // eso se lee la lista completa y se recorta después. Cuesta una lectura por
+    // lead; para el volumen de este sitio (decenas al mes) es despreciable.
+    const store = getLeadStore(locals);
+    const [contacts, appointments] = await Promise.all([store.listContacts(), store.listAppointments()]);
+
     return ok({
-      stats: dbHelpers.getStats(),
-      contactForms: dbHelpers.getContactForms(limit, offset),
-      appointments: dbHelpers.getAppointments(limit, offset),
+      stats: summarizeLeads(contacts, appointments),
+      contactForms: contacts.slice(offset, offset + limit),
+      appointments: appointments.slice(offset, offset + limit),
     });
   } catch (error) {
     console.error('[api/admin/leads] Error obteniendo leads:', error);
-    return serverError();
+    return failureResponse(error);
   }
 };
 
 /** Cambia el estado de un lead o de una cita. */
-export const PATCH: APIRoute = async ({ request }) => {
+export const PATCH: APIRoute = async ({ request, locals }) => {
   try {
     if (!authHelpers.requireAdmin(request)) return unauthorized();
 
     const body = await parseBody(request);
     const type = asTrimmedString(body.type);
     const status = asTrimmedString(body.status);
-    const id = Number.parseInt(asTrimmedString(body.id) || String(body.id ?? ''), 10);
+    const id = asTrimmedString(body.id);
 
-    if (!Number.isInteger(id) || id <= 0) return badRequest('Id inválido');
+    if (!isValidId(id)) return badRequest('Id inválido');
+
+    const store = getLeadStore(locals);
 
     if (type === 'contact') {
-      if (!CONTACT_STATUSES.has(status)) return badRequest('Estado inválido para un contacto');
+      if (!isContactStatus(status)) return badRequest('Estado inválido para un contacto');
 
-      const result = dbHelpers.updateContactFormStatus(id, status);
-      if (result.changes === 0) return json({ success: false, error: 'Contacto no encontrado' }, 404);
+      const updated = await store.updateContactStatus(id, status);
+      if (!updated) return json({ success: false, error: 'Contacto no encontrado' }, 404);
 
       return ok({ id, status });
     }
 
     if (type === 'appointment') {
-      if (!APPOINTMENT_STATUSES.has(status)) return badRequest('Estado inválido para una cita');
+      if (!isAppointmentStatus(status)) return badRequest('Estado inválido para una cita');
 
-      const result = dbHelpers.updateAppointmentStatus(id, status);
-      if (result.changes === 0) return json({ success: false, error: 'Cita no encontrada' }, 404);
+      const result = await store.updateAppointmentStatus(id, status);
+
+      if (result.outcome === 'not-found') return json({ success: false, error: 'Cita no encontrada' }, 404);
+      if (result.outcome === 'slot-taken') {
+        return conflict('Ese horario ya lo tomó otra cita, así que esta no se puede reactivar.');
+      }
 
       return ok({ id, status });
     }
@@ -61,6 +85,6 @@ export const PATCH: APIRoute = async ({ request }) => {
     return badRequest('Tipo inválido: usa "contact" o "appointment"');
   } catch (error) {
     console.error('[api/admin/leads] Error actualizando estado:', error);
-    return serverError();
+    return failureResponse(error);
   }
 };

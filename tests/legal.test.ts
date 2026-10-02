@@ -1,10 +1,11 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import Database from 'better-sqlite3';
-import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
+import ts from 'typescript';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BUSINESS } from '~/data/business';
-import { applySchema } from '~/lib/database';
+import { KeyValueLeadStore } from '~/lib/storage/core';
+import { MemoryBackend, createMemoryStore } from '~/lib/storage/memory';
 import { BOOKING_DURATION_MINUTES } from '~/utils/booking';
 import { personSchema } from '~/utils/seo';
 import { trackLead, trackWhatsAppClick } from '~/utils/tracking';
@@ -22,8 +23,9 @@ import { findVoseo } from './voseo';
  * Qué se comprueba y por qué:
  * - Los compromisos de la política y los términos del sitio anterior siguen ahí
  *   (derechos, plazos, "no vendemos ni cedemos", condiciones comerciales...).
- * - Cada dato personal que el sitio guarda en la base está declarado en la política.
- *   Si alguien agrega una columna, este test obliga a decidir si hay que declararla.
+ * - Cada dato personal que el sitio guarda (los campos de ContactRecord y AppointmentRecord,
+ *   en src/lib/storage/types.ts) está declarado en la política. Si alguien agrega un campo,
+ *   este test obliga a decidir si hay que declararlo.
  * - Las frases sobre medición se contrastan con lo que el código realmente envía.
  * - La duración que digan los términos es la del turno de reserva.
  * - El bloque informativo del inicio (marca, Google Calendar, enlaces legales) es
@@ -189,11 +191,28 @@ describe('/privacidad: describe ESTE sitio y no el anterior', () => {
     expect(privacyText).not.toMatch(/Miguel|Zuluaga|Supabase|SOC 2|mentoría|Firebase/i);
   });
 
-  it('dice dónde se guardan los formularios: la base de nuestro servidor, sobre infraestructura en la nube', () => {
+  it('dice dónde se guardan los formularios: el servicio de almacenamiento del proveedor de alojamiento (Netlify)', () => {
     expect(privacyText).toMatch(
-      /formularios de contacto y de agendamiento de citas se almacenan en la base de datos de nuestro propio servidor/
+      /formularios de contacto y de agendamiento de citas se almacenan en el servicio de almacenamiento de nuestro proveedor de alojamiento en la nube \(Netlify\)/
     );
     expect(privacyText).toMatch(/proveedor de alojamiento en la nube/);
+  });
+
+  // Los datos vivían en una base de datos del propio servidor del sitio anterior. Ya no: están en el
+  // almacenamiento de Netlify (Netlify Blobs, ver src/lib/storage). Decir lo contrario sería falso.
+  it('ya no afirma que los datos viven en una base de datos ni en un servidor propio', () => {
+    expect(privacyText).not.toMatch(/base de datos/i);
+    expect(privacyText).not.toMatch(/nuestro (?:propio )?servidor|servidor propio|propio servidor/i);
+  });
+
+  // El proveedor que nombra la política tiene que ser el que el sitio de verdad usa: el adaptador de
+  // despliegue y el almacenamiento son de Netlify.
+  it('el proveedor que nombra es el que el sitio usa: hospedaje y almacenamiento de Netlify', () => {
+    const { dependencies } = JSON.parse(read('package.json')) as { dependencies: Record<string, string> };
+
+    expect(dependencies).toHaveProperty(['@astrojs/netlify']);
+    expect(dependencies).toHaveProperty(['@netlify/blobs']);
+    expect(privacyText).toContain('(Netlify)');
   });
 
   it('lista como proveedores a Google, al alojamiento y al correo, y avisa de que WhatsApp es de Meta', () => {
@@ -205,6 +224,10 @@ describe('/privacidad: describe ESTE sitio y no el anterior', () => {
     expect(sharing).toMatch(/Google \(Analytics \/ Tag Manager\)/);
     expect(sharing).toMatch(/Proveedor de alojamiento en la nube/);
     expect(sharing).toMatch(/Proveedor de correo electrónico/);
+    // Y dice qué hace el alojamiento con los datos: ahí vive el almacenamiento de los formularios.
+    expect(sharing).toMatch(
+      /Proveedor de alojamiento en la nube \(Netlify\) — infraestructura donde funciona el sitio y servicio de almacenamiento donde se guardan los datos de los formularios/
+    );
     expect(sharing).toMatch(/WhatsApp.*\(Meta\)/);
   });
 
@@ -225,12 +248,13 @@ describe('/privacidad: describe ESTE sitio y no el anterior', () => {
 
 describe('/privacidad: declara cada dato personal que el sitio guarda', () => {
   /**
-   * Columnas de las tablas donde se guardan los formularios y las citas → frase de la
-   * política que las declara. Si se agrega una columna y no está acá, el test falla:
+   * Campos de los registros donde se guardan los formularios y las citas
+   * (`ContactRecord` y `AppointmentRecord`, src/lib/storage/types.ts) → frase de la
+   * política que los declara. Si se agrega un campo y no está acá, el test falla:
    * hay que decidir si es un dato personal y, si lo es, decirlo en /privacidad.
    */
   const DECLARED: Record<string, Record<string, RegExp>> = {
-    contact_forms: {
+    ContactRecord: {
       name: /Nombre completo/,
       email: /Correo electrónico/,
       phone: /Número de teléfono \/ WhatsApp \(opcional\)/,
@@ -241,7 +265,7 @@ describe('/privacidad: declara cada dato personal que el sitio guarda', () => {
       user_agent: /dirección IP, el tipo de navegador y la página desde la que lo enviaste/,
       source_page: /dirección IP, el tipo de navegador y la página desde la que lo enviaste/,
     },
-    appointments: {
+    AppointmentRecord: {
       name: /Nombre completo/,
       email: /Correo electrónico/,
       phone: /Número de teléfono \/ WhatsApp \(opcional\)/,
@@ -253,53 +277,145 @@ describe('/privacidad: declara cada dato personal que el sitio guarda', () => {
     },
   };
 
-  /** Columnas técnicas o fijadas por el servidor: la persona no las escribe. */
+  /** Campos técnicos o fijados por el servidor: la persona no los escribe. */
   const NOT_PERSONAL = new Set(['id', 'status', 'created_at', 'updated_at', 'timezone', 'duration']);
 
-  const db = applySchema(new Database(':memory:'));
-  const columnsOf = (table: string) =>
-    (db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>).map((column) => column.name);
+  /**
+   * Los campos de una interfaz de src/lib/storage/types.ts, leídos del código fuente
+   * (los tipos no existen en tiempo de ejecución). Se parsea con el compilador de
+   * TypeScript y no con una expresión regular: no depende de cómo estén escritos
+   * los comentarios ni el formato.
+   */
+  const fieldsOf = (interfaceName: string): string[] => {
+    const sourceFile = ts.createSourceFile(
+      'types.ts',
+      read('src/lib/storage/types.ts'),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TS
+    );
+    const declaration = sourceFile.statements.find(
+      (statement): statement is ts.InterfaceDeclaration =>
+        ts.isInterfaceDeclaration(statement) && statement.name.text === interfaceName
+    );
 
-  afterAll(() => {
-    db.close();
+    if (!declaration) throw new Error(`No existe la interfaz ${interfaceName} en src/lib/storage/types.ts`);
+
+    return declaration.members.filter(ts.isPropertySignature).map((member) => member.name.getText(sourceFile));
+  };
+
+  it('lee los campos de las dos interfaces de types.ts', () => {
+    // Si el parser dejara de encontrarlos, los demás tests pasarían en vacío.
+    expect(fieldsOf('ContactRecord')).toEqual(expect.arrayContaining(['id', 'name', 'email', 'message', 'ip_address']));
+    expect(fieldsOf('AppointmentRecord')).toEqual(
+      expect.arrayContaining(['id', 'name', 'email', 'service_type', 'date', 'time'])
+    );
   });
 
-  it.each(Object.keys(DECLARED))('%s: cada columna personal tiene su frase en la política', (table) => {
-    const personal = columnsOf(table).filter((column) => !NOT_PERSONAL.has(column));
+  it.each(Object.keys(DECLARED))('%s: cada campo personal tiene su frase en la política', (record) => {
+    const personal = fieldsOf(record).filter((field) => !NOT_PERSONAL.has(field));
 
     expect(
-      personal.filter((column) => !(column in DECLARED[table])),
-      `columnas de ${table} sin declarar en /privacidad: agrégalas a la política y a este test`
+      personal.filter((field) => !(field in DECLARED[record])),
+      `campos de ${record} sin declarar en /privacidad: agrégalos a la política y a este test`
     ).toEqual([]);
   });
 
-  it.each(Object.keys(DECLARED))('%s: la política contiene cada frase declarada', (table) => {
-    Object.entries(DECLARED[table]).forEach(([column, pattern]) => {
-      expect(privacyText, `${table}.${column}`).toMatch(pattern);
+  it.each(Object.keys(DECLARED))('%s: la política contiene cada frase declarada', (record) => {
+    Object.entries(DECLARED[record]).forEach(([field, pattern]) => {
+      expect(privacyText, `${record}.${field}`).toMatch(pattern);
     });
   });
 
-  it.each(Object.keys(DECLARED))('%s: no declara columnas que ya no existen', (table) => {
-    const existing = new Set(columnsOf(table));
+  it.each(Object.keys(DECLARED))('%s: no declara campos que ya no existen', (record) => {
+    const existing = new Set(fieldsOf(record));
 
-    Object.keys(DECLARED[table]).forEach((column) => expect(existing.has(column), `${table}.${column}`).toBe(true));
+    Object.keys(DECLARED[record]).forEach((field) => expect(existing.has(field), `${record}.${field}`).toBe(true));
   });
 
   it('el formulario de contacto solo guarda IP, navegador y página además de lo que escribe la persona', () => {
-    const technical = columnsOf('contact_forms').filter(
-      (column) =>
-        !NOT_PERSONAL.has(column) && !['name', 'email', 'phone', 'company', 'interest', 'message'].includes(column)
+    const technical = fieldsOf('ContactRecord').filter(
+      (field) =>
+        !NOT_PERSONAL.has(field) && !['name', 'email', 'phone', 'company', 'interest', 'message'].includes(field)
     );
 
     expect(technical.sort()).toEqual(['ip_address', 'source_page', 'user_agent']);
   });
 
   it('la IP y el navegador se guardan SOLO con el formulario de contacto, como dice la política', () => {
-    expect(columnsOf('appointments')).not.toContain('ip_address');
-    expect(columnsOf('appointments')).not.toContain('user_agent');
+    expect(fieldsOf('AppointmentRecord')).not.toContain('ip_address');
+    expect(fieldsOf('AppointmentRecord')).not.toContain('user_agent');
     expect(privacyText).toMatch(
-      /Cuando envías el formulario de contacto, también guardamos en nuestro servidor la dirección IP/
+      /Cuando envías el formulario de contacto, también guardamos, junto con tu consulta, la dirección IP/
     );
+  });
+
+  // types.ts es el contrato, pero lo que cuenta para la privacidad es lo que el store de verdad
+  // escribe. Si core.ts guardara un campo que no está en la interfaz, este test lo delata.
+  describe('lo que el store escribe coincide con types.ts', () => {
+    const contact = {
+      name: 'Persona Contacto',
+      email: 'persona.contacto@example.com',
+      message: 'Hola',
+      phone: '+57 300 000 0001',
+      company: 'Acme',
+      interest: 'otro',
+      ip: '203.0.113.7',
+      userAgent: 'Vitest/1.0',
+      sourcePage: '/contacto',
+    };
+    const appointment = {
+      name: 'Persona Cita',
+      email: 'persona.cita@example.com',
+      phone: '+57 300 000 0002',
+      company: 'Acme',
+      serviceType: 'Otro',
+      date: '2099-03-02',
+      time: '10:00',
+      timezone: 'America/Bogota',
+      duration: 60,
+      message: 'Hola',
+    };
+
+    it('un contacto guardado tiene exactamente los campos de ContactRecord', async () => {
+      const store = createMemoryStore();
+
+      const created = await store.createContact(contact);
+      const [listed] = await store.listContacts();
+
+      expect(Object.keys(created).sort()).toEqual(fieldsOf('ContactRecord').sort());
+      expect(Object.keys(listed).sort()).toEqual(fieldsOf('ContactRecord').sort());
+    });
+
+    it('una cita guardada tiene exactamente los campos de AppointmentRecord', async () => {
+      const store = createMemoryStore();
+
+      const result = await store.createAppointment(appointment);
+      const [listed] = await store.listAppointments();
+
+      expect(result.created).toBe(true);
+      expect(Object.keys(listed).sort()).toEqual(fieldsOf('AppointmentRecord').sort());
+    });
+
+    it('los datos personales solo viven en los registros declarados: el índice de horarios no los copia', async () => {
+      const backend = new MemoryBackend();
+      const store = new KeyValueLeadStore(backend, { backend: 'memory', scope: 'process' });
+      await store.createContact(contact);
+      await store.createAppointment(appointment);
+
+      const keys = await backend.keys('');
+
+      // Solo existen estas clases de claves: una nueva (un índice por correo, por ejemplo)
+      // obliga a pensar si guarda datos personales y si hay que declararlo.
+      expect(new Set(keys.map((key) => key.split('/')[0]))).toEqual(new Set(['appointment', 'contact', 'slot']));
+
+      const slots = keys.filter((key) => key.startsWith('slot/'));
+      expect(slots).toHaveLength(1);
+
+      for (const key of slots) {
+        expect(JSON.stringify(await backend.get(key))).not.toMatch(/Persona|example\.com|\+57|203\.0\.113|Vitest|Acme/);
+      }
+    });
   });
 });
 

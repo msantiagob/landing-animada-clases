@@ -27,6 +27,16 @@ export const TAG_BASE = cleanSlug(APP_BLOG?.tag?.pathname) || 'tag';
 
 export const POST_PERMALINK_PATTERN = trimSlash(APP_BLOG?.post?.permalink || `${BLOG_BASE}/%slug%`);
 
+/**
+ * Con `build.format: 'file'` Astro construye cada página prerenderizada con una
+ * URL que termina en `.html` (`/blog.html`), y esa es la que `Astro.url` expone
+ * durante el build. Las URL públicas del sitio, en cambio, no llevan extensión:
+ * Netlify sirve `blog.html` en `/blog`. Todo lo que se derive de `Astro.url`
+ * (el canonical por defecto, el enlace activo del menú) tiene que pasar por acá,
+ * o las páginas del blog saldrían con un canonical que apunta a `/blog.html`.
+ */
+export const stripHtmlExtension = (pathname: string): string => pathname.replace(/\.html$/, '');
+
 /** */
 export const getCanonical = (path = ''): string | URL => {
   const url = String(new URL(path, SITE.site));

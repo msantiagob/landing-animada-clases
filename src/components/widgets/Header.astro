@@ -9,7 +9,7 @@ import { getHomePermalink } from '~/utils/permalinks';
 // getAsset se usa dentro de una expresión de plantilla más abajo; el parser de
 // ESLint para Astro no inspecciona esas expresiones y lo da por no usado.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { trimSlash, getAsset } from '~/utils/permalinks';
+import { trimSlash, getAsset, stripHtmlExtension } from '~/utils/permalinks';
 import type { CallToAction } from '~/types';
 
 interface Link {
@@ -48,7 +48,7 @@ const {
   position = 'center',
 } = Astro.props;
 
-const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
+const currentPath = `/${trimSlash(stripHtmlExtension(new URL(Astro.url).pathname))}`;
 
 /*
  * Punto de corte del menú: por debajo de xl (1280 px) se muestra el menú móvil.

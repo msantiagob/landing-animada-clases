@@ -1,69 +1,151 @@
-import type Database from 'better-sqlite3';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import { GET, POST } from '~/pages/api/auth';
 import { authHelpers } from '~/lib/auth';
-import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
+import { resetRateLimit } from '~/lib/http';
+import * as passwordModule from '~/lib/password';
+import { SESSION_TTL_SECONDS, verifySession } from '~/lib/session';
+import {
+  TEST_ADMIN_EMAIL,
+  TEST_ADMIN_PASSWORD as PASSWORD,
+  TEST_SESSION_SECRET,
+  configureAdminEnv,
+  jsonRequest,
+  readJson,
+  rejectedSessions,
+  resetTestEnvironment,
+  testPasswordHash,
+} from './helpers';
 import { findVoseo } from './voseo';
 
 const ENDPOINT = 'https://sonmyd.co/api/auth';
-const PASSWORD = 'una-password-larga-123';
 
 const post = (body: unknown, headers: Record<string, string> = {}) =>
   POST({ request: jsonRequest(ENDPOINT, body, { headers }) } as never);
 
-describe('POST /api/auth', () => {
-  let db: Database.Database;
+const login = (headers: Record<string, string> = {}) =>
+  post({ action: 'login', email: TEST_ADMIN_EMAIL, password: PASSWORD }, headers);
 
+const failedLogin = (headers: Record<string, string> = {}) =>
+  post({ action: 'login', email: TEST_ADMIN_EMAIL, password: 'mala' }, headers);
+
+/** `Set-Cookie` de una respuesta: el valor y sus atributos por separado. */
+const parseSetCookie = (response: Response) => {
+  const [pair, ...attributes] = (response.headers.get('set-cookie') ?? '').split('; ');
+  const [name, ...value] = pair.split('=');
+
+  return { name, value: value.join('='), attributes };
+};
+
+describe('POST /api/auth', () => {
   beforeEach(async () => {
-    db = createTestDb();
-    await authHelpers.createUser('admin@sonmyd.test', PASSWORD, 'Admin');
+    resetRateLimit();
+    await configureAdminEnv();
   });
 
-  afterEach(() => closeTestDb(db));
+  afterEach(resetTestEnvironment);
 
-  it('loguea con credenciales válidas y setea la cookie httpOnly', async () => {
-    const response = await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD });
+  it('loguea con credenciales válidas y setea una cookie de sesión httpOnly, Secure y firmada', async () => {
+    const response = await login();
     const payload = await readJson(response);
-    const cookie = response.headers.get('set-cookie') ?? '';
+    const cookie = parseSetCookie(response);
 
     expect(response.status).toBe(200);
-    expect(payload.user.email).toBe('admin@sonmyd.test');
-    expect(cookie).toContain('auth-token=');
-    expect(cookie).toContain('HttpOnly');
-    expect(cookie).toContain('SameSite=Strict');
+    expect(payload).toEqual({ success: true, user: { email: TEST_ADMIN_EMAIL, role: 'admin' } });
+    expect(cookie.name).toBe('auth-token');
+    expect(cookie.attributes.sort()).toEqual(['HttpOnly', 'Max-Age=604800', 'Path=/', 'SameSite=Lax', 'Secure'].sort());
+
+    // La cookie lleva una sesión que el servidor reconoce: del administrador y por 7 días.
+    const claims = verifySession(cookie.value, TEST_SESSION_SECRET);
+    expect(claims).toMatchObject({ sub: TEST_ADMIN_EMAIL, role: 'admin' });
+    expect(claims!.exp - claims!.iat).toBe(SESSION_TTL_SECONDS);
   });
 
-  it('nunca devuelve el token ni el hash de la contraseña en el body', async () => {
-    const payload = await readJson(await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD }));
+  // Secure siempre, salvo en el servidor de desarrollo (Safari no guarda cookies Secure en http://localhost).
+  // Que NODE_ENV falte no puede dejar la cookie sin proteger.
+  it.each(['test', 'production', undefined])('con NODE_ENV=%s la cookie de sesión lleva Secure', async (nodeEnv) => {
+    vi.stubEnv('NODE_ENV', nodeEnv);
 
-    expect(payload.token).toBeUndefined();
-    expect(payload.user.password).toBeUndefined();
+    const { attributes } = parseSetCookie(await login());
+
+    expect(attributes).toContain('Secure');
+    expect(attributes).toContain('HttpOnly');
+  });
+
+  it('en el servidor de desarrollo (NODE_ENV=development) la cookie va sin Secure para funcionar en http://localhost', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+
+    const { attributes } = parseSetCookie(await login());
+
+    expect(attributes).not.toContain('Secure');
+    expect(attributes).toContain('HttpOnly');
+  });
+
+  it('nunca devuelve el token, el hash ni el secreto en el body', async () => {
+    const response = await login();
+    const body = JSON.stringify(await readJson(response));
+
+    expect(body).not.toContain(parseSetCookie(response).value);
+    expect(body).not.toContain(await testPasswordHash());
+    expect(body).not.toContain(TEST_SESSION_SECRET);
+    expect(body).not.toMatch(/token|password|hash/i);
   });
 
   it('normaliza el email: mayúsculas y espacios no rompen el login', async () => {
-    const response = await post({ action: 'login', email: '  ADMIN@SONMYD.TEST ', password: PASSWORD });
+    const response = await post({ action: 'login', email: `  ${TEST_ADMIN_EMAIL.toUpperCase()} `, password: PASSWORD });
 
     expect(response.status).toBe(200);
+    expect((await readJson(response)).user.email).toBe(TEST_ADMIN_EMAIL);
   });
 
-  it('devuelve 401 con contraseña incorrecta', async () => {
-    const response = await post({ action: 'login', email: 'admin@sonmyd.test', password: 'incorrecta' });
+  it('devuelve 401 con contraseña incorrecta, sin cookie', async () => {
+    const response = await failedLogin();
 
     expect(response.status).toBe(401);
+    expect((await readJson(response)).error).toBe('Credenciales inválidas');
     expect(response.headers.get('set-cookie')).toBeNull();
   });
 
-  it('devuelve 401 con un usuario inexistente, con el mismo mensaje que una password mala', async () => {
-    const unknown = await readJson(await post({ action: 'login', email: 'nadie@sonmyd.test', password: PASSWORD }));
-    const wrong = await readJson(await post({ action: 'login', email: 'admin@sonmyd.test', password: 'x' }));
+  it('la contraseña se compara tal cual: un espacio de más ya es otra contraseña', async () => {
+    const response = await post({ action: 'login', email: TEST_ADMIN_EMAIL, password: `${PASSWORD} ` });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('devuelve 401 con un usuario inexistente, con el mismo mensaje que una contraseña mala', async () => {
+    const unknown = await post({ action: 'login', email: 'nadie@sonmyd.test', password: PASSWORD });
+    const wrong = await failedLogin();
 
     // No debe filtrar qué emails existen.
-    expect(unknown.error).toBe(wrong.error);
+    expect(unknown.status).toBe(401);
+    expect((await readJson(unknown)).error).toBe((await readJson(wrong)).error);
+    expect(unknown.headers.get('set-cookie')).toBeNull();
+  });
+
+  // Si un correo desconocido cortara el login antes de calcular el hash, el tiempo de
+  // respuesta delataría cuál de los dos datos falló.
+  it('verifica la contraseña aunque el correo no coincida, para no revelar cuál de los dos falló', async () => {
+    const verify = vi.spyOn(passwordModule, 'verifyPassword');
+
+    await post({ action: 'login', email: 'nadie@sonmyd.test', password: PASSWORD });
+
+    expect(verify).toHaveBeenCalledTimes(1);
   });
 
   it('exige email y contraseña', async () => {
-    expect((await post({ action: 'login', email: 'admin@sonmyd.test' })).status).toBe(400);
+    expect((await post({ action: 'login', email: TEST_ADMIN_EMAIL })).status).toBe(400);
     expect((await post({ action: 'login', password: PASSWORD })).status).toBe(400);
+    expect((await post({ action: 'login', email: '   ', password: PASSWORD })).status).toBe(400);
+  });
+
+  it.each([
+    ['un número', 12345],
+    ['un objeto', { $ne: '' }],
+    ['un arreglo', [PASSWORD]],
+  ])('trata una contraseña que es %s como si faltara', async (_caso, password) => {
+    const response = await post({ action: 'login', email: TEST_ADMIN_EMAIL, password });
+
+    expect(response.status).toBe(400);
+    expect((await readJson(response)).error).toBe('Email y contraseña son obligatorios');
   });
 
   it('NO expone registro público: la acción register ya no existe', async () => {
@@ -76,7 +158,11 @@ describe('POST /api/auth', () => {
 
     expect(response.status).toBe(400);
     expect((await readJson(response)).error).toMatch(/no válida/i);
-    expect(authHelpers.getUserByEmail('atacante@evil.test')).toBeNull();
+    expect(response.headers.get('set-cookie')).toBeNull();
+
+    // Y esas credenciales no abren nada: el único administrador sale del entorno.
+    const attempt = await post({ action: 'login', email: 'atacante@evil.test', password: 'password-larga-123' });
+    expect(attempt.status).toBe(401);
   });
 
   it('rechaza cualquier acción desconocida', async () => {
@@ -104,82 +190,205 @@ describe('POST /api/auth', () => {
     expect(consoleError).not.toHaveBeenCalled();
   });
 
-  it('el logout limpia la cookie', async () => {
+  it('el logout limpia la cookie con los mismos atributos de protección', async () => {
     const response = await post({ action: 'logout' });
+    const cookie = parseSetCookie(response);
 
     expect(response.status).toBe(200);
-    expect(response.headers.get('set-cookie')).toContain('Max-Age=0');
+    expect(cookie.name).toBe('auth-token');
+    expect(cookie.value).toBe('');
+    expect(cookie.attributes).toEqual(expect.arrayContaining(['Max-Age=0', 'HttpOnly', 'Path=/', 'SameSite=Lax']));
   });
 
-  it('frena la fuerza bruta tras 8 intentos desde la misma IP', async () => {
-    const headers = { 'x-forwarded-for': '192.0.2.50' };
+  describe('freno de fuerza bruta', () => {
+    it('frena tras 8 intentos desde la misma IP, aunque el noveno lleve la contraseña correcta', async () => {
+      const headers = { 'x-forwarded-for': '192.0.2.50' };
 
-    for (let attempt = 0; attempt < 8; attempt += 1) {
-      expect((await post({ action: 'login', email: 'admin@sonmyd.test', password: 'mala' }, headers)).status).toBe(401);
-    }
+      for (let attempt = 0; attempt < 8; attempt += 1) {
+        expect((await failedLogin(headers)).status).toBe(401);
+      }
 
-    const blocked = await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD }, headers);
+      const blocked = await login(headers);
 
-    expect(blocked.status).toBe(429);
+      expect(blocked.status).toBe(429);
+      expect(blocked.headers.get('set-cookie')).toBeNull();
+    });
+
+    // La pantalla de login pinta este texto tal cual.
+    it('el bloqueo por intentos le pide esperar con "tú"', async () => {
+      const headers = { 'x-forwarded-for': '192.0.2.51' };
+      for (let attempt = 0; attempt < 8; attempt += 1) await failedLogin(headers);
+
+      const { error } = await readJson(await login(headers));
+
+      expect(error).toBe('Demasiados envíos. Espera unos minutos e inténtalo de nuevo.');
+      expect(findVoseo(error)).toEqual([]);
+    });
+
+    it('el límite es por IP: otra IP sigue pudiendo entrar', async () => {
+      for (let attempt = 0; attempt < 8; attempt += 1) await failedLogin({ 'x-forwarded-for': '192.0.2.52' });
+
+      expect((await login({ 'x-forwarded-for': '192.0.2.53' })).status).toBe(200);
+    });
+
+    // x-forwarded-for lo escribe el cliente; la IP de x-nf-client-connection-ip la pone Netlify.
+    it('no se esquiva rotando x-forwarded-for: manda la IP que informa la plataforma', async () => {
+      const platformIp = '192.0.2.60';
+
+      for (let attempt = 0; attempt < 8; attempt += 1) {
+        const headers = { 'x-nf-client-connection-ip': platformIp, 'x-forwarded-for': `10.0.0.${attempt}` };
+        expect((await failedLogin(headers)).status).toBe(401);
+      }
+
+      const blocked = await login({ 'x-nf-client-connection-ip': platformIp, 'x-forwarded-for': '10.9.9.9' });
+
+      expect(blocked.status).toBe(429);
+    });
   });
 
-  // La pantalla de login pinta este texto tal cual.
-  it('el bloqueo por intentos le pide esperar con "tú"', async () => {
-    const headers = { 'x-forwarded-for': '192.0.2.51' };
-    for (let attempt = 0; attempt < 8; attempt += 1) {
-      await post({ action: 'login', email: 'admin@sonmyd.test', password: 'mala' }, headers);
-    }
+  // Sin las variables de Netlify nadie puede entrar: se avisa con claridad (503) en vez de
+  // contestar "credenciales inválidas", que mandaría a buscar el problema en la contraseña.
+  describe('con el panel sin configurar', () => {
+    let consoleError: MockInstance<typeof console.error>;
 
-    const { error } = await readJson(
-      await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD }, headers)
-    );
+    beforeEach(() => {
+      consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    });
 
-    expect(error).toBe('Demasiados envíos. Espera unos minutos e inténtalo de nuevo.');
-    expect(findVoseo(error)).toEqual([]);
+    it.each<[string, Parameters<typeof configureAdminEnv>[0], string]>([
+      ['ADMIN_EMAIL', { email: '' }, 'ADMIN_EMAIL'],
+      ['ADMIN_PASSWORD_HASH', { passwordHash: '' }, 'ADMIN_PASSWORD_HASH'],
+      [
+        'un ADMIN_PASSWORD_HASH con el formato de bcrypt',
+        { passwordHash: '$2b$10$abcdefghijklmnopqrstuv' },
+        'formato no válido',
+      ],
+      ['SESSION_SECRET', { secret: '' }, 'SESSION_SECRET'],
+      ['un SESSION_SECRET demasiado corto', { secret: 'corto' }, 'mínimo 32'],
+    ])('responde 503, y no 401, si falta %s', async (_caso, missing, inLog) => {
+      await configureAdminEnv(missing);
+
+      const response = await login();
+      const payload = await readJson(response);
+
+      expect(response.status).toBe(503);
+      expect(payload).toEqual({
+        success: false,
+        error: 'El acceso al panel todavía no está configurado en el servidor.',
+      });
+      expect(findVoseo(payload.error)).toEqual([]);
+      expect(response.headers.get('set-cookie')).toBeNull();
+      // La respuesta no dice qué variable falta; el log sí, pero solo nombres, nunca valores.
+      expect(JSON.stringify(payload)).not.toMatch(/ADMIN_|SESSION_/);
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining(inLog));
+      const logs = JSON.stringify(consoleError.mock.calls);
+      expect(logs).not.toContain(await testPasswordHash());
+      expect(logs).not.toContain(TEST_SESSION_SECRET);
+    });
+
+    it('el log enumera TODAS las variables que faltan, no solo la primera', async () => {
+      await configureAdminEnv({ email: '', passwordHash: '', secret: '' });
+
+      await login();
+
+      const [message] = consoleError.mock.calls[0];
+      expect(message).toContain('ADMIN_EMAIL');
+      expect(message).toContain('ADMIN_PASSWORD_HASH');
+      expect(message).toContain('SESSION_SECRET');
+    });
+
+    it('el logout sigue funcionando, para poder borrar una cookie vieja', async () => {
+      await configureAdminEnv({ secret: '' });
+
+      const response = await post({ action: 'logout' });
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get('set-cookie')).toContain('Max-Age=0');
+    });
+  });
+
+  describe('cuando algo falla por dentro', () => {
+    it('devuelve 500 genérico, sin filtrar el error, si el login lanza una excepción inesperada', async () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      vi.spyOn(authHelpers, 'login').mockRejectedValue(new Error('scrypt: memory limit exceeded 0xDEADBEEF'));
+
+      const response = await login();
+      const payload = await readJson(response);
+
+      expect(response.status).toBe(500);
+      expect(payload.error).toBe('Error interno del servidor. Inténtalo más tarde.');
+      expect(findVoseo(payload.error)).toEqual([]);
+      expect(JSON.stringify(payload)).not.toMatch(/scrypt|DEADBEEF/);
+      expect(response.headers.get('set-cookie')).toBeNull();
+      expect(consoleError).toHaveBeenCalledWith('[api/auth] Error en autenticación:', expect.any(Error));
+    });
   });
 });
 
 describe('GET /api/auth (sesión actual)', () => {
-  let db: Database.Database;
-
   beforeEach(async () => {
-    db = createTestDb();
-    await authHelpers.createUser('admin@sonmyd.test', PASSWORD, 'Admin');
+    resetRateLimit();
+    await configureAdminEnv();
   });
 
-  afterEach(() => closeTestDb(db));
+  afterEach(resetTestEnvironment);
 
   const get = (cookie?: string) =>
     GET({ request: new Request(ENDPOINT, { headers: cookie ? { Cookie: cookie } : {} }) } as never);
 
-  it('devuelve 401 sin cookie', async () => {
-    expect((await get()).status).toBe(401);
+  /** La cookie que el navegador guardaría tras un login real. */
+  const loggedInCookie = async () => `auth-token=${parseSetCookie(await login()).value}`;
+
+  it.each(rejectedSessions())('devuelve 401 ante %s', async (_label, cookie) => {
+    const response = await get(cookie);
+
+    expect(response.status).toBe(401);
+    expect(await readJson(response)).toEqual({ success: false, error: 'No autorizado' });
   });
 
-  it('devuelve 401 con un token corrupto', async () => {
-    expect((await get('auth-token=esto.no.es.un.jwt')).status).toBe(401);
+  it('devuelve el usuario, y nada más, con la cookie que entrega el login', async () => {
+    const payload = await readJson(await get(await loggedInCookie()));
+
+    expect(payload).toEqual({ success: true, user: { email: TEST_ADMIN_EMAIL, role: 'admin' } });
   });
 
-  it('devuelve 401 con un token firmado con otro secreto', async () => {
-    const forged =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYWRtaW5Ac29ubXlkLnRlc3QiLCJyb2xlIjoiYWRtaW4ifQ.firma-falsa';
+  it('deja de valer si cambia el administrador configurado (ADMIN_EMAIL)', async () => {
+    const cookie = await loggedInCookie();
+    expect((await get(cookie)).status).toBe(200);
 
-    expect((await get(`auth-token=${forged}`)).status).toBe(401);
+    await configureAdminEnv({ email: 'nuevo-admin@sonmyd.test' });
+
+    expect((await get(cookie)).status).toBe(401);
   });
 
-  it('devuelve el usuario con una cookie válida', async () => {
-    const login = await post({ action: 'login', email: 'admin@sonmyd.test', password: PASSWORD });
-    const cookie = (login.headers.get('set-cookie') ?? '').split(';')[0];
+  it('deja de valer al rotar SESSION_SECRET, que es la forma de cerrar todas las sesiones', async () => {
+    const cookie = await loggedInCookie();
 
-    const payload = await readJson(await get(cookie));
+    await configureAdminEnv({ secret: 'secreto-rotado-de-al-menos-32-caracteres-xx' });
 
-    expect(payload.user.email).toBe('admin@sonmyd.test');
-    expect(payload.user.password).toBeUndefined();
+    expect((await get(cookie)).status).toBe(401);
   });
 
-  it('devuelve 401 si el usuario del token ya no existe', async () => {
-    const token = authHelpers.generateToken({ userId: 9999, email: 'fantasma@sonmyd.test', role: 'admin' });
+  it('devuelve 401 si el panel queda sin configurar', async () => {
+    const cookie = await loggedInCookie();
 
-    expect((await get(`auth-token=${token}`)).status).toBe(401);
+    await configureAdminEnv({ passwordHash: '' });
+
+    expect((await get(cookie)).status).toBe(401);
+  });
+
+  it('devuelve 500 genérico, sin filtrar el error, si verificar la sesión lanza una excepción', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.spyOn(authHelpers, 'requireAuthFromCookies').mockImplementation(() => {
+      throw new Error('HMAC backend exploded 0xDEADBEEF');
+    });
+
+    const response = await get(await loggedInCookie());
+    const payload = await readJson(response);
+
+    expect(response.status).toBe(500);
+    expect(payload.error).toBe('Error interno del servidor. Inténtalo más tarde.');
+    expect(JSON.stringify(payload)).not.toMatch(/HMAC|DEADBEEF/);
+    expect(consoleError).toHaveBeenCalledWith('[api/auth] Error verificando autenticación:', expect.any(Error));
   });
 });

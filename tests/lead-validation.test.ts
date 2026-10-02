@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
   EMAIL_PATTERN,
+  FIELD_LIMITS,
   LEAD_FIELDS,
   MESSAGE_MIN_LENGTH,
   PHONE_PATTERN,
+  clip,
   findInvalidFields,
+  findTooLongField,
+  tooLongMessage,
   validators,
   type LeadField,
+  type LimitedField,
 } from '~/lib/lead-validation';
 import { findVoseo } from './voseo';
 
@@ -199,5 +204,150 @@ describe('voz de los mensajes: español de Colombia con "tú"', () => {
 
   it.each(mensajes)('el mensaje de $field con "$value" no usa voseo', ({ message }) => {
     expect(findVoseo(message as string)).toEqual([]);
+  });
+});
+
+/**
+ * Topes de longitud. Son los mismos que aplica el servidor (tests/api.contact.test.ts y
+ * tests/api.appointments.test.ts) y que llevan los formularios como `maxlength`
+ * (tests/field-limits.test.ts): una sola lista, `FIELD_LIMITS`.
+ */
+describe('topes de longitud', () => {
+  const DOMINIO = '@ejemplo.com';
+
+  /** Un texto de exactamente `length` caracteres que es válido para el campo. */
+  const deLongitud = (field: LimitedField, length: number): string =>
+    field === 'email' ? 'a'.repeat(length - DOMINIO.length) + DOMINIO : (field === 'phone' ? '3' : 'a').repeat(length);
+
+  it('fijan el máximo de cada campo', () => {
+    expect(FIELD_LIMITS).toEqual({
+      name: 100,
+      email: 254,
+      phone: 30,
+      company: 100,
+      message: 5000,
+      serviceType: 100,
+      sourcePage: 2048,
+    });
+  });
+
+  it('el del email es el de RFC 5321: una dirección no pasa de 254 caracteres', () => {
+    expect(FIELD_LIMITS.email).toBe(254);
+  });
+
+  describe.each([
+    ['name', 100],
+    ['email', 254],
+    ['phone', 30],
+    ['message', 5000],
+  ] as const)('el validador de %s (máximo %i)', (field, max) => {
+    it('acepta un valor de exactamente el máximo', () => {
+      const value = deLongitud(field, max);
+
+      expect(value).toHaveLength(max);
+      expect(validators[field](value)).toBeNull();
+    });
+
+    it('rechaza uno de un carácter más, con el aviso de "demasiado largo"', () => {
+      const value = deLongitud(field, max + 1);
+
+      expect(value).toHaveLength(max + 1);
+      expect(validators[field](value)).toBe(tooLongMessage(field));
+    });
+
+    it('findInvalidFields lo marca como inválido', () => {
+      const valido = {
+        name: 'Ana Pérez',
+        email: 'ana@ejemplo.com',
+        phone: '+57 300 000 0000',
+        message: 'Quiero automatizar la atención por WhatsApp.',
+      };
+
+      expect(findInvalidFields({ ...valido, [field]: deLongitud(field, max) })).toEqual([]);
+      expect(findInvalidFields({ ...valido, [field]: deLongitud(field, max + 1) })).toEqual([field]);
+    });
+  });
+
+  describe('el aviso', () => {
+    it.each([
+      ['name', 'El nombre es demasiado largo. Usa máximo 100 caracteres.'],
+      ['email', 'El email es demasiado largo. Usa máximo 254 caracteres.'],
+      ['phone', 'El teléfono es demasiado largo. Usa máximo 30 caracteres.'],
+      ['company', 'El nombre de la empresa es demasiado largo. Usa máximo 100 caracteres.'],
+      ['message', 'El mensaje es demasiado largo. Usa máximo 5000 caracteres.'],
+      ['serviceType', 'El tipo de servicio es demasiado largo. Usa máximo 100 caracteres.'],
+    ] as const)('de %s dice qué pasó y cuál es el máximo', (field, expected) => {
+      expect(tooLongMessage(field)).toBe(expected);
+    });
+
+    it.each(['name', 'email', 'phone', 'company', 'message', 'serviceType'] as const)(
+      'de %s le habla de "tú", sin voseo',
+      (field) => {
+        expect(findVoseo(tooLongMessage(field))).toEqual([]);
+        expect(tooLongMessage(field)).toMatch(/\bUsa\b/);
+      }
+    );
+  });
+
+  describe('findTooLongField', () => {
+    it('devuelve null cuando todo está en el tope o por debajo, o ausente', () => {
+      expect(
+        findTooLongField({
+          name: 'a'.repeat(100),
+          email: deLongitud('email', 254),
+          phone: null,
+          company: undefined,
+          message: 'a'.repeat(5000),
+        })
+      ).toBeNull();
+      expect(findTooLongField({})).toBeNull();
+    });
+
+    it('devuelve el campo que pasa su tope', () => {
+      expect(findTooLongField({ company: 'a'.repeat(101) })).toBe('company');
+      expect(findTooLongField({ serviceType: 'a'.repeat(101) })).toBe('serviceType');
+    });
+
+    it('con varios pasados, devuelve el primero en el orden del formulario: nombre, email, teléfono, empresa, mensaje', () => {
+      expect(findTooLongField({ message: 'a'.repeat(5001), name: 'a'.repeat(101) })).toBe('name');
+      expect(findTooLongField({ message: 'a'.repeat(5001), phone: '3'.repeat(31), company: 'a'.repeat(101) })).toBe(
+        'phone'
+      );
+    });
+
+    it('mide el texto tal como llega: recortar espacios es cosa de quien lo llama', () => {
+      expect(findTooLongField({ name: `  ${'a'.repeat(100)}  ` })).toBe('name');
+    });
+  });
+
+  describe('clip', () => {
+    it('deja igual lo que cabe, incluido lo que mide exactamente el máximo', () => {
+      expect(clip('/contact', 2048)).toBe('/contact');
+      expect(clip('a'.repeat(2048), 2048)).toBe('a'.repeat(2048));
+      expect(clip('', 10)).toBe('');
+    });
+
+    it('recorta lo que pasa', () => {
+      expect(clip('a'.repeat(2049), 2048)).toBe('a'.repeat(2048));
+      expect(clip('abcdef', 3)).toBe('abc');
+    });
+
+    it('devuelve null cuando no hay valor', () => {
+      expect(clip(null, 10)).toBeNull();
+      expect(clip(undefined, 10)).toBeNull();
+    });
+  });
+
+  // El email se valida con una expresión regular que, ante un texto largo que no encaja, tarda un
+  // tiempo cuadrático (50.000 caracteres son unos 7 segundos de CPU). El tope va antes: el texto
+  // largo se rechaza sin llegar a la expresión.
+  it('rechaza un email enorme al instante, sin probar la expresión regular', () => {
+    const adversario = `a@${'.'.repeat(50_000)} b`;
+    const inicio = performance.now();
+
+    const aviso = validators.email(adversario);
+
+    expect(aviso).toBe(tooLongMessage('email'));
+    expect(performance.now() - inicio).toBeLessThan(500);
   });
 });

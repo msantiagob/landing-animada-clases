@@ -1,4 +1,5 @@
 import nodemailer, { type Transporter } from 'nodemailer';
+import { withBusinessTimeLabel } from '../utils/business-time';
 
 export interface EmailConfig {
   to: string | string[];
@@ -117,6 +118,11 @@ export const emailHelpers = {
       ]),
     }),
 
+  /**
+   * `date` y `time` son la fecha y la hora de Colombia tal como se eligieron al reservar: se
+   * imprimen tal cual, sin pasar por un `Date`, que las correría según la zona del servidor.
+   * La hora lleva el nombre de la zona porque quien reserva puede estar en otro país.
+   */
   sendAppointmentNotification: (data: {
     name: string;
     email: string;
@@ -137,7 +143,7 @@ export const emailHelpers = {
         ['Empresa', data.company],
         ['Servicio', data.serviceType],
         ['Fecha', data.date],
-        ['Hora', data.time],
+        ['Hora', withBusinessTimeLabel(data.time)],
         ['Mensaje', data.message],
       ]),
     }),
@@ -158,7 +164,7 @@ export const emailHelpers = {
         [
           ['Servicio', data.serviceType],
           ['Fecha', data.date],
-          ['Hora', data.time],
+          ['Hora', withBusinessTimeLabel(data.time)],
           ['Duración', `${data.duration ?? 60} minutos`],
         ],
         `<p style="margin-top:16px;color:#475569;">Te contactamos por este mismo medio si necesitamos reprogramar. Si quieres cancelar, responde este correo.</p>`

@@ -1,25 +1,25 @@
 import type { APIRoute } from 'astro';
-import { dbHelpers } from '../../lib/database';
 import { emailHelpers } from '../../lib/email';
 import { normalizeInterest } from '../../lib/interests';
+import { FIELD_LIMITS, clip, findTooLongField, tooLongMessage } from '../../lib/lead-validation';
+import { runInBackground } from '../../lib/netlify';
+import { getLeadStore } from '../../lib/storage';
 import {
   EMAIL_REGEX,
   asOptionalString,
   asTrimmedString,
   badRequest,
+  failureResponse,
   getClientIp,
   ok,
   parseBody,
   rateLimit,
-  serverError,
   tooManyRequests,
 } from '../../lib/http';
 
 export const prerender = false;
 
-const MAX_MESSAGE_LENGTH = 5000;
-
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await parseBody(request);
 
@@ -32,36 +32,46 @@ export const POST: APIRoute = async ({ request }) => {
     const name = asTrimmedString(body.name);
     const email = asTrimmedString(body.email).toLowerCase();
     const message = asTrimmedString(body.message);
+    const phone = asOptionalString(body.phone);
+    const company = asOptionalString(body.company);
 
     if (!name || !email || !message) return badRequest('Nombre, email y mensaje son obligatorios');
+
+    // Los topes van ANTES que el formato del email: no tiene sentido probar la expresión regular
+    // sobre un texto de megabytes, y cada campo que se guarda queda acotado.
+    const tooLong = findTooLongField({ name, email, phone, company, message });
+    if (tooLong) return badRequest(tooLongMessage(tooLong));
+
     if (!EMAIL_REGEX.test(email)) return badRequest('Formato de email inválido');
-    if (message.length > MAX_MESSAGE_LENGTH) return badRequest('El mensaje es demasiado largo');
 
     const formData = {
       name,
       email,
       message,
-      phone: asOptionalString(body.phone),
-      company: asOptionalString(body.company),
+      phone,
+      company,
       interest: normalizeInterest(body.interest),
       // El formulario manda la ruta real donde se completó. El referer sirve de
-      // respaldo, pero se pierde si el navegador lo recorta por política.
-      sourcePage: asOptionalString(body.sourcePage) ?? request.headers.get('referer'),
+      // respaldo, pero se pierde si el navegador lo recorta por política. No la
+      // escribe la persona: si es desmedida se recorta en vez de perder el lead.
+      sourcePage: clip(asOptionalString(body.sourcePage) ?? request.headers.get('referer'), FIELD_LIMITS.sourcePage),
       ip,
       userAgent: request.headers.get('user-agent'),
     };
 
-    const result = dbHelpers.insertContactForm(formData);
+    const contact = await getLeadStore(locals).createContact(formData);
 
-    // El mail es best-effort: el lead ya está persistido.
-    void emailHelpers.sendContactFormNotification(formData);
+    // El mail es best-effort: el lead ya está persistido. `runInBackground` lo
+    // deja terminar después de responder, que en una función serverless no
+    // ocurre solo.
+    runInBackground(locals, emailHelpers.sendContactFormNotification(formData));
 
     return ok({
       message: 'Formulario enviado correctamente. Te contactamos pronto.',
-      id: result.lastInsertRowid,
+      id: contact.id,
     });
   } catch (error) {
     console.error('[api/contact] Error procesando formulario:', error);
-    return serverError();
+    return failureResponse(error);
   }
 };

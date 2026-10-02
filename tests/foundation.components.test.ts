@@ -618,6 +618,49 @@ describe('AppointmentBooking (ClientRouter)', () => {
   });
 });
 
+/**
+ * La agenda ofrece turnos en hora de Colombia, y el servidor los valida en esa misma hora
+ * (tests/business-time.test.ts, tests/api.appointments.test.ts). El calendario tiene que
+ * decidir qué día es "hoy" con la misma regla, no con el reloj del navegador, y avisar de la
+ * zona a quien reserva desde otro país.
+ */
+describe('AppointmentBooking: hora de Colombia', () => {
+  const source = read(COMPONENTS.booking);
+  const script = stripComments(source.slice(source.lastIndexOf('<script>')));
+  const markup = markupOf(COMPONENTS.booking).replace(source.slice(source.lastIndexOf('<script>')), '');
+
+  it('decide qué días ya pasaron con el "hoy" de Colombia, no con el del navegador', () => {
+    expect(script).toMatch(/import \{ BUSINESS_TIME_LABEL, businessDateOf \} from '~\/utils\/business-time';/);
+    expect(script).toMatch(/const today = businessDateOf\(\);/);
+    expect(script).toMatch(/if \(!isSelectableDay\(dayDate, today\)\) \{/);
+    // La regla en sí (qué días se pueden elegir) está probada en tests/booking.test.ts.
+    expect(script).not.toMatch(/dayDate\s*<\s*today|isPast/);
+    // `new Date()` sin argumentos es el reloj del navegador.
+    expect(script).not.toMatch(/new Date\(\)/);
+  });
+
+  it('arranca en el mes en que está Colombia', () => {
+    expect(script).toMatch(/const \[todayYear, todayMonth\] = businessDateOf\(\)\.split\('-'\)\.map\(Number\);/);
+    expect(script).toMatch(/const currentDate = new Date\(todayYear, todayMonth - 1, 1\);/);
+  });
+
+  it('avisa de que los horarios son de Colombia, bajo el título de los turnos', () => {
+    expect(source).toMatch(/import \{ BUSINESS_TIME_LABEL \} from '~\/utils\/business-time';/);
+    expect(markup).toContain('Horarios disponibles</h4>');
+    expect(markup).toContain('Todos en {BUSINESS_TIME_LABEL} (UTC-5).');
+    expect(markup.indexOf('Horarios disponibles')).toBeLessThan(markup.indexOf('Todos en {BUSINESS_TIME_LABEL}'));
+  });
+
+  it('la hora que se muestra al elegir un turno lleva el nombre de la zona', () => {
+    expect(script).toMatch(/selectedTimeText\.textContent = `\$\{selectedTime\} \(\$\{BUSINESS_TIME_LABEL\}\)`;/);
+  });
+
+  it('manda al servidor solo fecha y hora elegidas, sin convertirlas a UTC', () => {
+    expect(script).toMatch(/buildAppointmentPayload\(/);
+    expect(script).not.toMatch(/getTimezoneOffset|toUTCString|Date\.UTC/);
+  });
+});
+
 describe('copy del sitio: español de Colombia con "tú", sin voseo', () => {
   const owned = [
     ...Object.values(COMPONENTS),

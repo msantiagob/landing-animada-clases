@@ -1,6 +1,7 @@
 import type { Transporter } from 'nodemailer';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { emailHelpers, isEmailConfigured, setTransporter } from '~/lib/email';
+import { SERVER_TIMEZONES, resetTestEnvironment, stubServerTimezone } from './helpers';
 import { findVoseo } from './voseo';
 
 /**
@@ -220,5 +221,73 @@ describe('sendAppointmentNotification', () => {
       to: 'avisos@sonmyd.test',
       subject: 'Nueva cita agendada: Carlos Ruiz — 2026-10-15 11:00',
     });
+  });
+});
+
+/**
+ * La fecha y la hora de una cita son las de Colombia, tal como las eligió la persona. Los
+ * correos las imprimen sin convertirlas, y aclaran la zona de la hora porque quien reserva
+ * puede estar en otro país: "10:00" a secas se lee en la hora del reloj de cada quien.
+ *
+ * Se repite con el servidor en varias zonas: si alguien "mejorara" el formato pasando la
+ * fecha por un `Date` (`new Date('2026-12-31')` es medianoche UTC), en las zonas por detrás
+ * de UTC el correo diría el 30.
+ */
+describe.each(SERVER_TIMEZONES)('citas: fecha y hora de Colombia con el servidor en %s', (serverTimezone) => {
+  const cita = {
+    name: 'Ana Pérez',
+    email: 'ana@ejemplo.com',
+    serviceType: 'Clases de IA',
+    date: '2026-12-31',
+    time: '18:00',
+  };
+
+  beforeEach(() => {
+    configureSmtp();
+    stubServerTimezone(serverTimezone);
+  });
+
+  afterEach(resetTestEnvironment);
+
+  it('la confirmación para quien reservó trae el día elegido y la hora con el nombre de la zona', async () => {
+    await emailHelpers.sendAppointmentConfirmation(cita);
+
+    const { html } = sentMail();
+    expect(html).toContain('<strong>Fecha:</strong> 2026-12-31');
+    expect(html).toContain('<strong>Hora:</strong> 18:00 (hora de Colombia)');
+    expect(html).not.toContain('2026-12-30');
+    expect(html).not.toContain('2027-01-01');
+  });
+
+  it('el aviso al equipo trae lo mismo, y el asunto conserva fecha y hora tal como se eligieron', async () => {
+    await emailHelpers.sendAppointmentNotification(cita);
+
+    const { subject, html } = sentMail();
+    expect(subject).toBe('Nueva cita agendada: Ana Pérez — 2026-12-31 18:00');
+    expect(html).toContain('<strong>Fecha:</strong> 2026-12-31');
+    expect(html).toContain('<strong>Hora:</strong> 18:00 (hora de Colombia)');
+  });
+});
+
+describe('citas: el nombre de la zona en los correos', () => {
+  const cita = {
+    name: 'Ana Pérez',
+    email: 'ana@ejemplo.com',
+    serviceType: 'Clases de IA',
+    date: '2026-10-15',
+    time: '09:00',
+  };
+
+  beforeEach(configureSmtp);
+
+  it.each([
+    ['la confirmación', () => emailHelpers.sendAppointmentConfirmation(cita)],
+    ['el aviso al equipo', () => emailHelpers.sendAppointmentNotification(cita)],
+  ])('%s dice "hora de Colombia" una sola vez y le habla de "tú"', async (_correo, send) => {
+    await send();
+
+    const { html } = sentMail();
+    expect(html.match(/hora de Colombia/g)).toHaveLength(1);
+    expect(findVoseo(html)).toEqual([]);
   });
 });

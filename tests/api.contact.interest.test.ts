@@ -1,10 +1,9 @@
-import Database from 'better-sqlite3';
-import type DatabaseType from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '~/pages/api/contact';
-import { applySchema, dbHelpers, setDb } from '~/lib/database';
 import { emailHelpers } from '~/lib/email';
-import { closeTestDb, createTestDb, jsonRequest, readJson } from './helpers';
+import { INTERESTS } from '~/lib/interests';
+import type { LeadStore } from '~/lib/storage';
+import { createTestStore, jsonRequest, readJson, resetTestEnvironment } from './helpers';
 
 const ENDPOINT = 'https://sonmyd.co/api/contact';
 
@@ -18,22 +17,34 @@ const call = (body: unknown, headers: Record<string, string> = {}) =>
   POST({ request: jsonRequest(ENDPOINT, body, { headers }) } as never);
 
 describe('POST /api/contact — campo de interés', () => {
-  let db: DatabaseType.Database;
+  let store: LeadStore;
 
   beforeEach(() => {
-    db = createTestDb();
+    store = createTestStore();
     vi.spyOn(emailHelpers, 'sendContactFormNotification').mockResolvedValue(true);
   });
 
-  afterEach(() => closeTestDb(db));
+  afterEach(resetTestEnvironment);
+
+  const savedInterest = async () => (await store.listContacts())[0].interest;
 
   it('persiste un interés válido', async () => {
     const response = await call({ ...base, interest: 'whatsapp-business-api' });
     expect(response.status).toBe(200);
 
-    const [lead] = dbHelpers.getContactForms();
+    const [lead] = await store.listContacts();
     expect(lead.interest).toBe('whatsapp-business-api');
   });
+
+  // El catálogo sale del registro de landings: el formulario ofrece cada opción,
+  // la API tiene que aceptarla tal cual y el panel mostrarla.
+  it.each(INTERESTS.map((interest) => interest.value))(
+    'persiste el interés "%s" que ofrece el formulario',
+    async (value) => {
+      expect((await call({ ...base, interest: value })).status).toBe(200);
+      expect(await savedInterest()).toBe(value);
+    }
+  );
 
   // Un interés inválido NO puede costarnos el lead: se guarda como null.
   it('acepta el lead y guarda null cuando el interés es desconocido', async () => {
@@ -42,118 +53,75 @@ describe('POST /api/contact — campo de interés', () => {
 
     expect(response.status).toBe(200);
     expect(payload.success).toBe(true);
-    expect(dbHelpers.getContactForms()[0].interest).toBeNull();
+    expect(await savedInterest()).toBeNull();
+    expect(emailHelpers.sendContactFormNotification).toHaveBeenCalledWith(expect.objectContaining({ interest: null }));
   });
 
-  it('guarda null cuando no se manda interés', async () => {
+  it('guarda null (y el campo existe en el registro) cuando no se manda interés', async () => {
     await call(base);
-    expect(dbHelpers.getContactForms()[0].interest).toBeNull();
+
+    const [lead] = await store.listContacts();
+    expect(lead).toHaveProperty('interest', null);
   });
 
-  it('no permite inyectar texto arbitrario en la columna', async () => {
-    await call({ ...base, interest: "'; DROP TABLE contact_forms; --" });
+  // La lista blanca es lo único que decide qué texto llega al registro: nada de
+  // lo que mande el cliente se guarda en este campo.
+  it.each([
+    ['una inyección SQL', "'; DROP TABLE contact_forms; --"],
+    ['una ruta de clave del store', '../appointment/01ARZ3NDEKTSV4RRFFQ69G5FAV'],
+    ['HTML', '<script>alert(1)</script>'],
+    ['un slug con otra capitalización', 'WhatsApp-Business-API'],
+    ['un texto vacío', ''],
+  ])('no permite guardar texto arbitrario en el campo: %s', async (_caso, interest) => {
+    const response = await call({ ...base, interest });
 
-    expect(dbHelpers.getContactForms()[0].interest).toBeNull();
-    // La tabla sigue viva: la consulta es parametrizada.
-    expect(dbHelpers.getContactForms()).toHaveLength(1);
+    expect(response.status).toBe(200);
+    expect(await savedInterest()).toBeNull();
+    // El lead entró completo y el store sigue consistente.
+    expect(await store.listContacts()).toHaveLength(1);
+    expect(await store.listAppointments()).toHaveLength(0);
   });
 
   it('ignora un interés que no sea texto', async () => {
     await call({ ...base, interest: { value: 'ciberseguridad' } });
-    expect(dbHelpers.getContactForms()[0].interest).toBeNull();
+    expect(await savedInterest()).toBeNull();
+
+    await call({ ...base, interest: ['ciberseguridad'] });
+    expect((await store.listContacts()).every((lead) => lead.interest === null)).toBe(true);
   });
 });
 
 describe('POST /api/contact — página de origen', () => {
-  let db: DatabaseType.Database;
+  let store: LeadStore;
 
   beforeEach(() => {
-    db = createTestDb();
+    store = createTestStore();
     vi.spyOn(emailHelpers, 'sendContactFormNotification').mockResolvedValue(true);
   });
 
-  afterEach(() => closeTestDb(db));
+  afterEach(resetTestEnvironment);
+
+  const savedSourcePage = async () => (await store.listContacts())[0].source_page;
 
   it('usa la ruta que manda el formulario', async () => {
     await call({ ...base, sourcePage: '/ciberseguridad' }, { referer: 'https://sonmyd.co/otra' });
-    expect(dbHelpers.getContactForms()[0].source_page).toBe('/ciberseguridad');
+    expect(await savedSourcePage()).toBe('/ciberseguridad');
   });
 
   // El referer se pierde con ciertas políticas del navegador; por eso el
   // formulario manda la ruta, y el header queda solo como respaldo.
   it('cae al referer cuando el formulario no manda la ruta', async () => {
     await call(base, { referer: 'https://sonmyd.co/clases-de-python' });
-    expect(dbHelpers.getContactForms()[0].source_page).toBe('https://sonmyd.co/clases-de-python');
+    expect(await savedSourcePage()).toBe('https://sonmyd.co/clases-de-python');
+  });
+
+  it('cae al referer cuando la ruta del formulario viene vacía', async () => {
+    await call({ ...base, sourcePage: '   ' }, { referer: 'https://sonmyd.co/clases-de-python' });
+    expect(await savedSourcePage()).toBe('https://sonmyd.co/clases-de-python');
   });
 
   it('guarda null cuando no hay ninguno de los dos', async () => {
     await call(base);
-    expect(dbHelpers.getContactForms()[0].source_page).toBeNull();
-  });
-});
-
-describe('migración de la columna interest', () => {
-  afterEach(() => setDb(null));
-
-  it('agrega la columna a una base que ya existía sin ella', () => {
-    // Simula el volumen de producción: tabla creada por un despliegue previo.
-    const legacy = new Database(':memory:');
-    legacy.exec(`
-      CREATE TABLE contact_forms (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        email TEXT NOT NULL,
-        message TEXT NOT NULL,
-        phone TEXT,
-        company TEXT,
-        status TEXT NOT NULL DEFAULT 'new',
-        ip_address TEXT,
-        user_agent TEXT,
-        source_page TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    legacy.prepare('INSERT INTO contact_forms (name, email, message) VALUES (?, ?, ?)').run('Vieja', 'v@e.com', 'Hola');
-
-    const columnsBefore = (legacy.prepare('PRAGMA table_info(contact_forms)').all() as Array<{ name: string }>).map(
-      (column) => column.name
-    );
-    expect(columnsBefore).not.toContain('interest');
-
-    applySchema(legacy);
-
-    const columnsAfter = (legacy.prepare('PRAGMA table_info(contact_forms)').all() as Array<{ name: string }>).map(
-      (column) => column.name
-    );
-    expect(columnsAfter).toContain('interest');
-
-    // Y lo más importante: los datos que ya estaban siguen ahí.
-    const rows = legacy.prepare('SELECT name, interest FROM contact_forms').all() as Array<{
-      name: string;
-      interest: string | null;
-    }>;
-    expect(rows).toEqual([{ name: 'Vieja', interest: null }]);
-
-    legacy.close();
-  });
-
-  it('es idempotente: correrla dos veces no falla', () => {
-    const db = applySchema(new Database(':memory:'));
-    expect(() => applySchema(db)).not.toThrow();
-    expect(() => applySchema(db)).not.toThrow();
-    db.close();
-  });
-
-  it('crea el índice sobre interest para poder filtrar por silo', () => {
-    const db = applySchema(new Database(':memory:'));
-    const indexes = (
-      db.prepare("SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'contact_forms'").all() as Array<{
-        name: string;
-      }>
-    ).map((index) => index.name);
-
-    expect(indexes).toContain('idx_contact_forms_interest');
-    db.close();
+    expect(await savedSourcePage()).toBeNull();
   });
 });

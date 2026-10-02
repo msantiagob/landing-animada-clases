@@ -1,3 +1,5 @@
+import { StorageUnavailableError } from './storage/errors';
+
 export const json = (body: unknown, status = 200, headers: Record<string, string> = {}): Response =>
   new Response(JSON.stringify(body), {
     status,
@@ -10,16 +12,38 @@ export const unauthorized = () => json({ success: false, error: 'No autorizado' 
 export const conflict = (error: string) => json({ success: false, error }, 409);
 export const serverError = () =>
   json({ success: false, error: 'Error interno del servidor. Inténtalo más tarde.' }, 500);
+export const serviceUnavailable = (error: string) => json({ success: false, error }, 503);
+
+/** El almacenamiento no responde: es un fallo temporal, no un bug. La persona puede reintentar. */
+export const storageUnavailable = () =>
+  serviceUnavailable('El servicio no está disponible por ahora. Inténtalo de nuevo en unos minutos.');
+
+/**
+ * Respuesta para el `catch` de cada endpoint. Un almacenamiento caído es un 503
+ * (reintentable); cualquier otra cosa es un 500 genérico que no filtra detalles.
+ */
+export const failureResponse = (error: unknown) =>
+  error instanceof StorageUnavailableError ? storageUnavailable() : serverError();
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * IP del cliente. En Netlify, `x-nf-client-connection-ip` la pone la plataforma
+ * y un cliente no puede falsearla; `x-forwarded-for` en cambio llega con lo que
+ * el cliente haya mandado como primer valor, así que solo se usa si falta la otra.
+ */
 export const getClientIp = (request: Request): string =>
-  request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown';
+  request.headers.get('x-nf-client-connection-ip')?.trim() ||
+  request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+  request.headers.get('x-real-ip') ||
+  'unknown';
 
 /**
- * Rate limit en memoria. Suficiente para una sola instancia en Railway, que es
- * exactamente el escenario de este sitio. Si algún día hay más de una réplica
- * hay que mover esto a la base o a un store compartido.
+ * Rate limit en memoria, POR INSTANCIA. En funciones serverless cada instancia
+ * lleva su propia cuenta y se descarta cuando Netlify la apaga, así que es un
+ * freno de mejor esfuerzo: corta a un bot que insiste contra la misma instancia
+ * (el login y los formularios) pero no es un límite global exacto. Si hiciera
+ * falta uno exacto, tendría que vivir en un store compartido.
  */
 const buckets = new Map<string, number[]>();
 
